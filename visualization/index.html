@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formalize v2 Visualization</title>
+    <meta
+      name="description"
+      content="Visualization tool for formal mathematics, foundational theories, and logic"
+    />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <!-- Trunk will inject the styles here -->
+    <link data-trunk rel="css" href="styles.css" />
+
+    <!-- Trunk will inject the WASM binary here -->
+    <link
+      data-trunk
+      rel="rust"
+      data-wasm-opt="z"
+      data-cargo-features="theorem_visualizer"
+    />
+
+    <!-- Font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Initial theme class -->
+    <script>
+      // Check for saved theme preference or respect OS preference
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const savedTheme = localStorage.getItem("formalize_v2_theme");
+
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark-theme");
+      } else {
+        document.documentElement.classList.add("light-theme");
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Application will be mounted here by Leptos -->
+    <noscript>
+      <div class="noscript-message">
+        <h1>JavaScript Disabled</h1>
+        <p>
+          This application requires JavaScript to function correctly. Please
+          enable JavaScript to continue.
+        </p>
+      </div>
+    </noscript>
+
+    <!-- Loading indicator shown until the app is loaded -->
+    <div id="loading-indicator">
+      <div class="spinner"></div>
+      <p>Loading Formalize v2 Visualization...</p>
+    </div>
+
+    <script>
+      // Hide loading indicator when app is mounted
+      document.addEventListener("DOMContentLoaded", () => {
+        // Wait a bit to ensure WASM is initialized
+        setTimeout(() => {
+          const loadingIndicator = document.getElementById("loading-indicator");
+          if (loadingIndicator) {
+            loadingIndicator.style.opacity = "0";
+            setTimeout(() => {
+              loadingIndicator.style.display = "none";
+            }, 300);
+          }
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

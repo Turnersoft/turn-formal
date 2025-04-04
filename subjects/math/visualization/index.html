@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theorem Visualizer</title>
+    
+    <!-- Trunk will inject the CSS files here -->
+    <link data-trunk rel="css" href="styles.css">
+    
+    <!-- Trunk processes this and pulls in the wasm and js -->
+    <link data-trunk rel="rust" data-wasm-opt="z" data-cargo-features="theorem_visualizer"/>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .theorem-visualizer-app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        main {
+            flex: 1;
+            padding: 1rem;
+        }
+        
+        .app-container {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .sidebar {
+            flex: 0 0 300px;
+            border-right: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+        }
+        
+        footer {
+            background-color: #34495e;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- This is where the app will be mounted -->
+</body>
+</html> 
