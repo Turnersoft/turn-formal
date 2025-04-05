@@ -4,16 +4,16 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::formalize_v2::subjects::math::theories::analysis::definition::functions::Function;
-use crate::formalize_v2::subjects::math::theories::groups::definitions::{
+use crate::subjects::math::theories::analysis::definition::functions::Function;
+use crate::subjects::math::theories::groups::definitions::{
     Group, GroupOperation, GroupProperty, GroupRelation, LieGroup, TopologicalGroup,
 };
-use crate::formalize_v2::subjects::math::theories::linear_algebra::definitions::VectorSpace;
-use crate::formalize_v2::subjects::math::theories::rings::definitions::{
+use crate::subjects::math::theories::linear_algebra::definitions::VectorSpace;
+use crate::subjects::math::theories::rings::definitions::{
     Algebra, Field, Module, Ring, RingProperty,
 };
-use crate::formalize_v2::subjects::math::theories::topology::TopologicalSpace;
-use crate::formalize_v2::subjects::math::theories::zfc::Set;
+use crate::subjects::math::theories::topology::TopologicalSpace;
+use crate::subjects::math::theories::zfc::Set;
 
 use super::expressions::MathExpression;
 // Centralized re-exports for convenient access from other modules

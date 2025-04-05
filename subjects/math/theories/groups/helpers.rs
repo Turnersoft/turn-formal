@@ -2,12 +2,12 @@
 //!
 //! This module provides helper functions for creating common group types and elements.
 
-use crate::formalize_v2::subjects::math::theories::groups::definitions::{
+use crate::subjects::math::theories::groups::definitions::{
     ElementValue, Group, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
     GroupOperation, GroupOperationProperty, GroupSymbol,
 };
-use crate::formalize_v2::subjects::math::theories::zfc::Set;
-use crate::formalize_v2::subjects::math::theories::VariantSet;
+use crate::subjects::math::theories::zfc::Set;
+use crate::subjects::math::theories::VariantSet;
 use std::collections::HashMap;
 
 use super::GroupOperationVariant;

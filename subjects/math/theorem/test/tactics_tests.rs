@@ -3,15 +3,15 @@
 
 use std::collections::HashMap;
 
-use crate::formalize_v2::subjects::math::theorem::core::{
+use crate::subjects::math::theorem::core::{
     MathObjectType, ProofState, Theorem, ValueBindedVariable,
 };
-use crate::formalize_v2::subjects::math::theorem::expressions::{MathExpression, Variable};
-use crate::formalize_v2::subjects::math::theorem::proof::{
+use crate::subjects::math::theorem::expressions::{MathExpression, Variable};
+use crate::subjects::math::theorem::proof::{
     CaseAnalysisBuilder, DecompositionMethod, InductionType, ProofBranch, ProofForest, ProofStatus,
     RewriteDirection, Tactic, TheoremBuilder,
 };
-use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::theorem::relations::MathRelation;
 
 /// Test the Intro tactic
 #[test]

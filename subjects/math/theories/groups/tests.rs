@@ -3,11 +3,10 @@
 //! This file contains tests that verify the creation, manipulation, and properties
 //! of all mathematical objects defined in the group theory module.
 
-use crate::formalize_v2::subjects::math::theories::groups::definitions::*;
-use crate::formalize_v2::subjects::math::theories::zfc::set::CardinalityPropertyVariant;
-use crate::formalize_v2::subjects::math::theories::zfc::set::{Set, SetProperty};
-use crate::formalize_v2::subjects::math::theories::VariantSet;
-use crate::parse::entities::Identifier;
+use crate::subjects::math::theories::groups::definitions::*;
+use crate::subjects::math::theories::zfc::set::CardinalityPropertyVariant;
+use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
+use crate::subjects::math::theories::VariantSet;
 use serde_json::{from_str, to_string};
 use std::cmp::PartialEq;
 
@@ -773,7 +772,7 @@ mod lie_group_tests {
 
 #[cfg(test)]
 mod group_action_tests {
-    use crate::formalize_v2::subjects::math::theories::VariantSet;
+    use crate::subjects::math::theories::VariantSet;
 
     use super::*;
 

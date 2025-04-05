@@ -1,6 +1,6 @@
-use crate::formalize_v2::subjects::math::theories::topology::definitions::CompactProperty;
-use crate::formalize_v2::subjects::math::theories::zfc::set::Set;
-use crate::formalize_v2::subjects::math::theories::{
+use crate::subjects::math::theories::topology::definitions::CompactProperty;
+use crate::subjects::math::theories::zfc::set::Set;
+use crate::subjects::math::theories::{
     common::spaces::Space, linear_algebra::definitions::VectorSpace, VariantSet,
 };
 use serde::{Deserialize, Serialize};

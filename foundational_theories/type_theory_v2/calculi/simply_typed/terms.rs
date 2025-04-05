@@ -2,10 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
-use crate::parse::{
-    entities::{Identifier, Number},
-    Parse,
-};
+use crate::subjects::math::theories::number_theory::definitions::Number;
 
 use super::{
     goals::{Context, SimplyTypedCalculusError, SimplyTypedCalculusResult},
@@ -32,12 +29,12 @@ impl fmt::Display for SumSide {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Term {
     /// Variables
-    Variable(Identifier),
+    Variable(String),
 
     /// Lambda abstraction (λx:T.M)
     Abstraction {
         /// Parameter name
-        param_name: Identifier,
+        param_name: String,
         /// Parameter type
         param_type: Box<Type>,
         /// Function body
@@ -129,7 +126,7 @@ impl fmt::Display for Term {
 
 impl Term {
     /// Create a new variable term
-    pub fn var(name: Identifier) -> Self {
+    pub fn var(name: String) -> Self {
         Term::Variable(name)
     }
 
@@ -142,7 +139,7 @@ impl Term {
     }
 
     /// Get the parameter name if this is an abstraction
-    pub fn param_name(&self) -> Option<&Identifier> {
+    pub fn param_name(&self) -> Option<&String> {
         match self {
             Term::Abstraction { param_name, .. } => Some(param_name),
             _ => None,
@@ -217,7 +214,7 @@ impl Term {
     }
 
     /// Create a new lambda abstraction
-    pub fn lambda(param_name: Identifier, param_type: Type, body: Term) -> Self {
+    pub fn lambda(param_name: String, param_type: Type, body: Term) -> Self {
         Term::Abstraction {
             param_name,
             param_type: Box::new(param_type),
@@ -253,7 +250,7 @@ impl Term {
     }
 
     /// Check if a term has a free variable
-    pub fn has_free_var(&self, var_name: &Identifier) -> bool {
+    pub fn has_free_var(&self, var_name: &String) -> bool {
         match self {
             Term::Variable(name) => name == var_name,
             Term::Abstraction {
@@ -282,7 +279,7 @@ impl Term {
     }
 
     /// Substitute a variable with a term
-    pub fn substitute(&mut self, var: &Identifier, replacement: &Term) {
+    pub fn substitute(&mut self, var: &String, replacement: &Term) {
         match self {
             Term::Variable(name) => {
                 if name == var {
@@ -397,12 +394,12 @@ impl Term {
                     Term::InjectSum { term, side, .. } => match side {
                         SumSide::Left => {
                             let mut new_case = left_case.clone();
-                            new_case.substitute(&Identifier::parse("x"), &term);
+                            new_case.substitute(&String::from("x"), &term);
                             new_case.evaluate()
                         }
                         SumSide::Right => {
                             let mut new_case = right_case.clone();
-                            new_case.substitute(&Identifier::parse("x"), &term);
+                            new_case.substitute(&String::from("x"), &term);
                             new_case.evaluate()
                         }
                     },

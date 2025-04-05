@@ -1,4 +1,4 @@
-use crate::formalize_v2::foundational_theories::type_theory::calculi::{Error, Result};
+use crate::foundational_theories::type_theory::calculi::{Error, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 

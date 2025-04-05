@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::math::theories::{common::spaces::DimensionType, VariantSet};
+use crate::subjects::math::theories::{common::spaces::DimensionType, VariantSet};
 use serde::{Deserialize, Serialize};
 
 /// A projective space

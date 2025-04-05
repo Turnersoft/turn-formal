@@ -2,7 +2,7 @@
 //! Provides tactics for pattern matching in proofs
 
 use std::collections::HashMap;
-use crate::formalize_v2::foundational_theories::type_theory_v2::{
+use crate::foundational_theories::type_theory_v2::{
     core::{Term, Result, Error},
     patterns::{Pattern, Matcher, Clause},
     tactics::{Tactic, ProofState},
@@ -93,7 +93,7 @@ impl Tactic for DestructTactic {
             let mut patterns = Vec::new();
             for (i, arg_ty) in args.iter().enumerate() {
                 patterns.push(Pattern::Var(
-                    crate::formalize_v2::foundational_theories::type_theory_v2::patterns::PatternVar::new(
+                    crate::foundational_theories::type_theory_v2::patterns::PatternVar::new(
                         format!("x_{}", i),
                         arg_ty.clone(),
                     ),
@@ -103,7 +103,7 @@ impl Tactic for DestructTactic {
             // Create constructor pattern
             clauses.push(Clause::new(
                 Pattern::Constructor(
-                    crate::formalize_v2::foundational_theories::type_theory_v2::patterns::Constructor::new(
+                    crate::foundational_theories::type_theory_v2::patterns::Constructor::new(
                         name,
                         patterns,
                     ),
@@ -165,7 +165,7 @@ impl Tactic for InductionTactic {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::formalize_v2::foundational_theories::type_theory_v2::patterns::examples::*;
+    use crate::foundational_theories::type_theory_v2::patterns::examples::*;
 
     #[test]
     fn test_match_tactic() {

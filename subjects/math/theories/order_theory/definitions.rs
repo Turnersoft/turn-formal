@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::math::theories::{zfc::set::Set, VariantSet};
+use crate::subjects::math::theories::{zfc::set::Set, VariantSet};
 use serde::{Deserialize, Serialize};
 
 /// A term that can be compared

@@ -1,0 +1,47 @@
+[build]
+# Enable aggressive incremental compilation
+incremental = true
+# Parallelize the build (adjust based on CPU cores)
+jobs = 8
+# Rustc wrapper for build caching
+rustflags = ["-C", "target-cpu=native"]
+
+# Fast linker configuration
+[target.wasm32-unknown-unknown]
+linker = "rust-lld"
+rustflags = [
+    "-C",
+    "link-arg=-s",      # Strip debug info
+    "-C",
+    "opt-level=z",      # Optimize for size
+    "-C",
+    "codegen-units=16", # More parallelism
+]
+
+# Development profile optimizations
+[profile.dev]
+# Don't optimize our code in development
+opt-level = 0
+# Debug info
+debug = true
+# Use more codegen units for faster compiles
+codegen-units = 256
+# Don't panic unwind for faster recovery
+panic = "abort"
+
+# Optimize all dependencies 
+[profile.dev.package."*"]
+# Optimize all dependencies
+opt-level = 3
+# No debug info for dependencies
+debug = false
+codegen-units = 16
+
+# Specific dependency optimizations
+[profile.dev.package.leptos]
+opt-level = 3
+codegen-units = 16
+
+[profile.dev.package.leptos_router]
+opt-level = 3
+codegen-units = 16

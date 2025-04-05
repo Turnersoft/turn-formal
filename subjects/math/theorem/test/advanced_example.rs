@@ -3,16 +3,16 @@
 
 use std::collections::HashMap;
 
-use crate::formalize_v2::subjects::math::theorem::expressions::MathExpression;
-use crate::formalize_v2::subjects::math::theorem::proof::{ProofForest, Tactic, TheoremBuilder};
-use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::theorem::expressions::MathExpression;
+use crate::subjects::math::theorem::proof::{ProofForest, Tactic, TheoremBuilder};
+use crate::subjects::math::theorem::relations::MathRelation;
 
 /// Example: Proving the First Isomorphism Theorem for Groups
 ///
 /// This example shows a more complex proof with deep branches
 /// and different strategies.
 pub fn prove_first_isomorphism_theorem()
--> crate::formalize_v2::subjects::math::theorem::core::Theorem {
+-> crate::subjects::math::theorem::core::Theorem {
     // Create expressions for the isomorphism theorem
     let g_ker_phi = MathExpression::string_expr("G/Ker(φ)");
     let im_phi = MathExpression::string_expr("Im(φ)");
@@ -80,7 +80,7 @@ pub fn prove_first_isomorphism_theorem()
 ///
 /// This example shows how you could structure proofs if using an alternative
 /// closure-based API approach.
-pub fn prove_with_closures() -> crate::formalize_v2::subjects::math::theorem::core::Theorem {
+pub fn prove_with_closures() -> crate::subjects::math::theorem::core::Theorem {
     // Create a theorem statement
     let statement = MathExpression::string_expr("P(G, p)");
 
@@ -116,7 +116,7 @@ pub fn prove_with_closures() -> crate::formalize_v2::subjects::math::theorem::co
 
     // Create a helper function for branching
     let create_case =
-        |parent: &crate::formalize_v2::subjects::math::theorem::proof::ProofBranch,
+        |parent: &crate::subjects::math::theorem::proof::ProofBranch,
          desc: &str,
          index: usize| {
             parent.apply_tactic(

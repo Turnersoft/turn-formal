@@ -1,12 +1,12 @@
 // Module: src/formalize_v2/subjects/math/theorem/test/type_views.rs
 // Tests for type view conversions
 
-use crate::formalize_v2::subjects::math::theorem::core::MathObjectType;
-use crate::formalize_v2::subjects::math::theorem::expressions::{
+use crate::subjects::math::theorem::core::MathObjectType;
+use crate::subjects::math::theorem::expressions::{
     MathExpression, TypeViewError, TypeViewOperator, Variable,
 };
-use crate::formalize_v2::subjects::math::theories::groups::definitions::Group;
-use crate::formalize_v2::subjects::math::theories::rings::definitions::{Field, Ring};
+use crate::subjects::math::theories::groups::definitions::Group;
+use crate::subjects::math::theories::rings::definitions::{Field, Ring};
 
 /// Helper to create default Group
 fn default_group() -> Group {

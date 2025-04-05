@@ -2,7 +2,7 @@
 //! Automatically generates eliminators and induction principles for inductive types
 
 use std::collections::{HashMap, HashSet};
-use crate::formalize_v2::foundational_theories::type_theory_v2::{
+use crate::foundational_theories::type_theory_v2::{
     core::{Term, Result, Error},
     types::{Constructor, InductiveType},
 };

@@ -5,8 +5,6 @@
 // Uncomment to see various examples of compile-time errors in action
 // pub mod counter_example;
 
-use crate::parse::entities::Identifier;
-
 pub mod core;
 pub mod declarative_proof;
 pub mod expressions;

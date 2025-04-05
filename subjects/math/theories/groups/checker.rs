@@ -4,10 +4,10 @@
 //! ensuring that elements belong to their respective groups and that operations
 //! are well-defined within the algebraic structure.
 
-use crate::formalize_v2::subjects::math::theories::groups::definitions::{
+use crate::subjects::math::theories::groups::definitions::{
     ElementValue, Group, GroupElement, GroupExpression, GroupExpressionError,
 };
-use crate::formalize_v2::subjects::math::theories::zfc::Set;
+use crate::subjects::math::theories::zfc::Set;
 use std::collections::HashSet;
 use thiserror::Error;
 

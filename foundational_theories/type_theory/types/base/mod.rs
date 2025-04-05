@@ -2,7 +2,7 @@
 //! Provides fundamental type operations
 
 use super::TypeConstructor;
-use crate::formalize_v2::foundational_theories::type_theory::core::{Result, Term};
+use crate::foundational_theories::type_theory::core::{Result, Term};
 
 /// Base type constructor
 pub struct BaseType;

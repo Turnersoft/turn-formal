@@ -1,6 +1,6 @@
-use crate::formalize_v2::subjects::math::theories::VariantSet;
-use crate::formalize_v2::subjects::math::theories::common::spaces::*;
-use crate::formalize_v2::subjects::math::theories::zfc::set::Set;
+use crate::subjects::math::theories::VariantSet;
+use crate::subjects::math::theories::common::spaces::*;
+use crate::subjects::math::theories::zfc::set::Set;
 use serde::{Deserialize, Serialize};
 
 /// Topology structure

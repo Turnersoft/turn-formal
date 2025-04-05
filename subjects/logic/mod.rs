@@ -10,4 +10,5 @@ pub mod first_order;
 pub mod higher_order;
 pub mod modal;
 pub mod propositional;
+pub mod propositional_v0;
 pub mod temporal;

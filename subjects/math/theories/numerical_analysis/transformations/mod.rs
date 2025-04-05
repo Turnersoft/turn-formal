@@ -7,7 +7,7 @@ pub use spectral::*;
 pub use wavelet::*;
 
 /// Common traits and utilities for numerical transformations
-use crate::formalize_v2::subjects::math::theories::{
+use crate::subjects::math::theories::{
     analysis::definition::functions::Function, zfc::set::Set, VariantSet,
 };
 use serde::{Deserialize, Serialize};

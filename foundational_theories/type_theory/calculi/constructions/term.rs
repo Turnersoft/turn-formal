@@ -2,7 +2,7 @@
 //! Defines the term type for the Calculus of Constructions (λC)
 
 use serde::{Deserialize, Serialize};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::{Error, Result};
+use crate::foundational_theories::type_theory::calculi::{Error, Result};
 
 /// Sort in Calculus of Constructions
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

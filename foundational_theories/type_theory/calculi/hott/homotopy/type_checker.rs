@@ -1,7 +1,7 @@
 //! Type checking for HoTT terms
 //! Defines the type checking interface and common functionality
 
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     core::{Error, Result},
     calculi::hott::Term,
 };

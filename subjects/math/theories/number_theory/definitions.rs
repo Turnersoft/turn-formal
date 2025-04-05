@@ -1,9 +1,18 @@
 // Module: src/formalize_v2/subjects/math/theories/number_theory/definitions.rs
 // Defines structures for number theory domain
 
-use crate::formalize_v2::subjects::math::theorem::expressions::MathExpression;
-use crate::formalize_v2::subjects::math::theorem::relations::RelationDetail;
+use crate::subjects::math::theorem::expressions::MathExpression;
+use crate::subjects::math::theorem::relations::RelationDetail;
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Number {}
+
+impl ToString for Number {
+    fn to_string(&self) -> String {
+        "Number".to_string()
+    }
+}
 
 /// Entity information for number theory relation operations
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

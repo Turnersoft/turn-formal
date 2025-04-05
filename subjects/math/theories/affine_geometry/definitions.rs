@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::math::theories::{
+use crate::subjects::math::theories::{
     common::spaces::{DimensionType, Space},
     VariantSet,
 };

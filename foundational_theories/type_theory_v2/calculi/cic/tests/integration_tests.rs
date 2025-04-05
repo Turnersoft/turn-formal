@@ -3,7 +3,7 @@ use super::*;
 #[cfg(test)]
 pub mod test_integration {
     use super::*;
-    use crate::formalize_v2::foundational_theories::type_theory_v2::calculi::cic::{
+    use crate::foundational_theories::type_theory_v2::calculi::cic::{
         context::Context,
         term::Term,
         typing::TypeChecker,

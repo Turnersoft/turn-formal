@@ -3,7 +3,7 @@
 //! This module bridges first-order logic with mathematical theories, enabling
 //! rigorous theorem representation without making ZFC the foundation.
 
-use crate::formalize_v2::subjects::logic::first_order::{Formula, Term};
+use crate::subjects::logic::first_order::{Formula, Term};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 

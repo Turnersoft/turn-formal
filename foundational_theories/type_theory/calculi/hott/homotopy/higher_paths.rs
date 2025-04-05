@@ -1,7 +1,7 @@
 //! Higher Path Operations
 //! Implements operations for higher dimensional paths
 
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     calculi::{hott::Term, Error}, types::path::PathOperations
 };
 use serde::{Deserialize, Serialize};
@@ -244,7 +244,7 @@ impl PathOperations for HigherPathContext {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::formalize_v2::foundational_theories::type_theory::core::Term;
+    use crate::foundational_theories::type_theory::core::Term;
 
     fn create_test_path(level: usize, source: Term, target: Term) -> Term {
         Term::Path {

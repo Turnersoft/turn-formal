@@ -1,4 +1,4 @@
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     calculi::system_omega::{term::Term, context::Context},
     context::Environment,
 };

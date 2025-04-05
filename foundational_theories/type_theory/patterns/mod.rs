@@ -2,8 +2,8 @@
 //! Implements pattern matching for dependent types
 
 use std::collections::HashMap;
-use crate::formalize_v2::foundational_theories::type_theory_v2::core::{Term, Result, Error};
-use crate::formalize_v2::foundational_theories::type_theory_v2::unification::{Substitution, UnificationProblem};
+use crate::foundational_theories::type_theory_v2::core::{Term, Result, Error};
+use crate::foundational_theories::type_theory_v2::unification::{Substitution, UnificationProblem};
 
 /// Pattern variable with type annotation
 #[derive(Debug, Clone)]

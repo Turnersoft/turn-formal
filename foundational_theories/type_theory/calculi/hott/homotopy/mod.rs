@@ -1,7 +1,7 @@
 //! Homotopy Operations
 //! Common infrastructure for homotopy-based type theories (HoTT and Cubical)
 
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

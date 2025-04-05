@@ -2,7 +2,7 @@
 //! Defines the term type for Simply Typed Lambda Calculus (STLC)
 
 use serde::{Deserialize, Serialize};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::{Error, Result};
+use crate::foundational_theories::type_theory::calculi::{Error, Result};
 
 /// Term in Simply Typed Lambda Calculus
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

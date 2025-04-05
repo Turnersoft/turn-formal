@@ -3,16 +3,16 @@
 
 use std::collections::HashMap;
 
-use crate::formalize_v2::subjects::math::theorem::core::ProofState;
-use crate::formalize_v2::subjects::math::theorem::declarative_proof::{
+use crate::subjects::math::theorem::core::ProofState;
+use crate::subjects::math::theorem::declarative_proof::{
     self, DeclarativeProofBuilder, StepStatus, proof_builder,
 };
-use crate::formalize_v2::subjects::math::theorem::expressions::MathExpression;
-use crate::formalize_v2::subjects::math::theorem::proof::{
+use crate::subjects::math::theorem::expressions::MathExpression;
+use crate::subjects::math::theorem::proof::{
     CaseAnalysisBuilder, ProofBranch, ProofForest, ProofStatus, RewriteDirection, Tactic,
     TheoremBuilder,
 };
-use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::theorem::relations::MathRelation;
 
 /// Test a basic case analysis using the builder pattern
 #[test]

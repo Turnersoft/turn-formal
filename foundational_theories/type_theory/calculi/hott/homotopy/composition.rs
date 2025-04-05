@@ -1,12 +1,12 @@
 //! Path Composition Operations
 //! Implements composition operations for higher paths
 
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     core::{Error, Result},
 };
 
 use super::{higher_paths::HigherPathContext, HigherPathOps};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::hott::Term;
+use crate::foundational_theories::type_theory::calculi::hott::Term;
 use std::collections::HashMap;
 
 /// Composition system for higher paths
@@ -48,7 +48,7 @@ impl CompositionSystem {
 
         Ok(Term::Compose {
             left: Box::new(self.map.clone()),
-            right: Box::new(Term::Core(crate::formalize_v2::foundational_theories::type_theory::core::Term::Tuple(terms.to_vec()))),
+            right: Box::new(Term::Core(crate::foundational_theories::type_theory::core::Term::Tuple(terms.to_vec()))),
         })
     }
 }
@@ -144,9 +144,9 @@ mod tests {
         let system = CompositionSystem::new(
             Term::Unit,
             Term::Unit,
-            Term::Core(crate::formalize_v2::foundational_theories::type_theory::core::Term::Lambda {
+            Term::Core(crate::foundational_theories::type_theory::core::Term::Lambda {
                 var: "x".to_string(),
-                body: Box::new(crate::formalize_v2::foundational_theories::type_theory::core::Term::Var("x".to_string())),
+                body: Box::new(crate::foundational_theories::type_theory::core::Term::Var("x".to_string())),
             }),
             1,
         );
@@ -167,9 +167,9 @@ mod tests {
         let system = CompositionSystem::new(
             Term::Unit,
             Term::Unit,
-            Term::Core(crate::formalize_v2::foundational_theories::type_theory::core::Term::Lambda {
+            Term::Core(crate::foundational_theories::type_theory::core::Term::Lambda {
                 var: "x".to_string(),
-                body: Box::new(crate::formalize_v2::foundational_theories::type_theory::core::Term::Var("x".to_string())),
+                body: Box::new(crate::foundational_theories::type_theory::core::Term::Var("x".to_string())),
             }),
             1,
         );

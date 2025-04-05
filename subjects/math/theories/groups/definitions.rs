@@ -1,12 +1,10 @@
-use crate::formalize_v2::subjects::math::theorem::expressions::BinaryOperator;
-use crate::formalize_v2::subjects::math::theorem::expressions::MathExpression;
-use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
-use crate::formalize_v2::subjects::math::theories::VariantSet;
-use crate::formalize_v2::subjects::math::theories::topology::definitions::TopologicalSpace;
-use crate::formalize_v2::subjects::math::theories::zfc::set::{Set, SetProperty};
-use crate::parse::entities::{
-    Identifier, Integer, Number, RationalNumber, RealNumber, RealNumberType,
-};
+use crate::subjects::math::theorem::expressions::BinaryOperator;
+use crate::subjects::math::theorem::expressions::MathExpression;
+use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
+use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
+use crate::subjects::math::theories::VariantSet;
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use thiserror::Error;
@@ -38,7 +36,7 @@ pub enum GroupNotation {
     /// Infix notation: a * b
     Infix(GroupSymbol),
     /// Function notation: f(a, b)
-    Function(Identifier),
+    Function(String),
     /// Juxtaposition: ab (for multiplication)
     Juxtaposition,
 }
@@ -749,11 +747,11 @@ impl GroupRelation {
         let variable_name = "kernel_func";
 
         // Create a proper Set instead of using Set::default()
-        let base_set = crate::formalize_v2::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Kernel set".to_string(),
             membership_condition: "x ∈ ker(ϕ)".to_string(),
-            properties: crate::formalize_v2::subjects::math::theories::VariantSet::new(),
+            properties: crate::subjects::math::theories::VariantSet::new(),
         };
 
         let group = Group {
@@ -779,11 +777,11 @@ impl GroupRelation {
         let variable_name = "image_func";
 
         // Create a proper Set instead of using Set::default()
-        let base_set = crate::formalize_v2::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Image set".to_string(),
             membership_condition: "x ∈ Im(ϕ)".to_string(),
-            properties: crate::formalize_v2::subjects::math::theories::VariantSet::new(),
+            properties: crate::subjects::math::theories::VariantSet::new(),
         };
 
         let group = Group {
@@ -809,11 +807,11 @@ impl GroupRelation {
         normal_subgroup: &MathExpression,
     ) -> GroupExpression {
         // Create a placeholder group for the quotient with a proper Set
-        let base_set = crate::formalize_v2::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Quotient group set".to_string(),
             membership_condition: "x ∈ G/N".to_string(),
-            properties: crate::formalize_v2::subjects::math::theories::VariantSet::new(),
+            properties: crate::subjects::math::theories::VariantSet::new(),
         };
 
         let quotient_group = Group {
@@ -836,11 +834,11 @@ impl GroupRelation {
     // Create a structured representation of a symmetric group on a set
     pub fn symmetric_group(base_set: &MathExpression) -> GroupExpression {
         // Create a placeholder group for the symmetric group
-        let sym_set = crate::formalize_v2::subjects::math::theories::zfc::Set::Parametric {
+        let sym_set = crate::subjects::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Symmetric group set".to_string(),
             membership_condition: "x is a permutation".to_string(),
-            properties: crate::formalize_v2::subjects::math::theories::VariantSet::new(),
+            properties: crate::subjects::math::theories::VariantSet::new(),
         };
 
         let sym_group = Group {
@@ -863,32 +861,32 @@ impl GroupRelation {
     // Create an "element of" expression for group membership
     pub fn element_of_expr(element: &MathExpression, group: &MathExpression) -> MathRelation {
         // Create a SetTheoryRelation::ElementOf and wrap it in MathRelation::SetTheory
-        let set_entity = crate::formalize_v2::subjects::math::theories::zfc::relations::SetTheoryRelationEntity {
+        let set_entity = crate::subjects::math::theories::zfc::relations::SetTheoryRelationEntity {
             id: None,
             description: None,
             tags: Vec::new(),
         };
 
         MathRelation::SetTheory(
-            crate::formalize_v2::subjects::math::theories::zfc::relations::SetTheoryRelation::ElementOf {
+            crate::subjects::math::theories::zfc::relations::SetTheoryRelation::ElementOf {
                 entity: set_entity,
                 element: element.clone(),
                 set: group.clone(),
-            }
+            },
         )
     }
 
     // Define a structured representation for "p divides n" where p and n are integers
     pub fn integer_divides(divisor: &MathExpression, dividend: &MathExpression) -> MathRelation {
         // Create a NumberTheoryRelation::Divides and wrap it in MathRelation::NumberTheory
-        let num_entity = crate::formalize_v2::subjects::math::theories::number_theory::definitions::NumberTheoryRelationEntity {
+        let num_entity = crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelationEntity {
             id: None,
             description: None,
             tags: Vec::new(),
         };
 
         MathRelation::NumberTheory(
-            crate::formalize_v2::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::Divides {
+            crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::Divides {
                 entity: num_entity,
                 divisor: divisor.clone(),
                 dividend: dividend.clone(),
@@ -899,11 +897,11 @@ impl GroupRelation {
     // Add a structured representation for Sylow p-subgroups
     pub fn sylow_p_subgroup(prime: &MathExpression, group: &MathExpression) -> GroupExpression {
         // Create a placeholder group for the Sylow subgroup
-        let sylow_set = crate::formalize_v2::subjects::math::theories::zfc::Set::Parametric {
+        let sylow_set = crate::subjects::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Sylow p-subgroup set".to_string(),
             membership_condition: "x ∈ Syl_p(G)".to_string(),
-            properties: crate::formalize_v2::subjects::math::theories::VariantSet::new(),
+            properties: crate::subjects::math::theories::VariantSet::new(),
         };
 
         let sylow_group = Group {
@@ -948,16 +946,16 @@ impl GroupRelation {
         // This should create a representation that x is the inverse of y in the group
         // First create the identity element
         let identity = MathExpression::Var(
-            crate::formalize_v2::subjects::math::theorem::expressions::Variable::O(111),
+            crate::subjects::math::theorem::expressions::Variable::O(111),
         );
 
         // Since BinaryOp is removed, we need to use GroupExpression and convert
         // Create a placeholder group
-        let base_set = crate::formalize_v2::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Group set".to_string(),
             membership_condition: "x ∈ G".to_string(),
-            properties: crate::formalize_v2::subjects::math::theories::VariantSet::new(),
+            properties: crate::subjects::math::theories::VariantSet::new(),
         };
 
         let group = Group {
@@ -1208,7 +1206,7 @@ impl GroupObject {
 
     /// Convert a GroupObject to a MathExpression
     pub fn to_expression(&self) -> MathExpression {
-        use crate::formalize_v2::subjects::math::theorem::expressions::Variable;
+        use crate::subjects::math::theorem::expressions::Variable;
 
         // Create a simplified expression for each group object type
         match self {
@@ -1431,7 +1429,7 @@ impl GroupExpression {
 
     /// Convert GroupExpression to MathExpression
     pub fn to_math_expression(&self) -> MathExpression {
-        use crate::formalize_v2::subjects::math::theorem::expressions::Variable;
+        use crate::subjects::math::theorem::expressions::Variable;
 
         match self {
             GroupExpression::Element(element) => {
@@ -1492,7 +1490,7 @@ impl GroupExpression {
 
     /// Convert MathExpression to GroupExpression
     pub fn from_math_expression(expr: &MathExpression, group: &Group) -> Result<Self, String> {
-        use crate::formalize_v2::subjects::math::theorem::expressions::Variable;
+        use crate::subjects::math::theorem::expressions::Variable;
 
         match expr {
             MathExpression::Var(var) => {

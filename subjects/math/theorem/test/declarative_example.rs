@@ -1,14 +1,14 @@
 // Module: src/formalize_v2/subjects/math/theorem/test/declarative_example.rs
 // Examples of using the declarative proof structure
 
-use crate::formalize_v2::subjects::math::theorem::core::Theorem;
-use crate::formalize_v2::subjects::math::theorem::declarative_proof::tactics::*;
-use crate::formalize_v2::subjects::math::theorem::declarative_proof::{
+use crate::subjects::math::theorem::core::Theorem;
+use crate::subjects::math::theorem::declarative_proof::tactics::*;
+use crate::subjects::math::theorem::declarative_proof::{
     Branch, DeclarativeProofBuilder, ProofTree, Step,
 };
-use crate::formalize_v2::subjects::math::theorem::expressions::MathExpression;
-use crate::formalize_v2::subjects::math::theorem::proof::RewriteDirection;
-use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::theorem::expressions::MathExpression;
+use crate::subjects::math::theorem::proof::RewriteDirection;
+use crate::subjects::math::theorem::relations::MathRelation;
 
 /// Prove the group associativity theorem using a declarative structure
 pub fn prove_group_associativity_declarative() -> Theorem {

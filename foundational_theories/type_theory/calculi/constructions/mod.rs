@@ -2,7 +2,7 @@
 //! The most powerful calculus, combining System F and dependent types
 
 use serde::{Deserialize, Serialize};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::{Error, Result};
+use crate::foundational_theories::type_theory::calculi::{Error, Result};
 use std::collections::HashMap;
 
 pub mod term;

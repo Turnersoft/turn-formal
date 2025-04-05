@@ -3,7 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     core::{Term, Result, Error},
     types::{TypeConstructor, TypeEliminator},
 };

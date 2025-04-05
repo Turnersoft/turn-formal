@@ -21,7 +21,7 @@
 mod zfc_machinery_tests {
     use super::super::*;
     use super::*;
-    use crate::formalize_v2::subjects::math::theories::zfc::{
+    use crate::subjects::math::theories::zfc::{
         axioms::{SatisfiesZFC, ZFCAxioms},
         set::{
             difference_set, empty_set, intersection_set, pair_set, power_set, singleton_set,
@@ -29,7 +29,7 @@ mod zfc_machinery_tests {
         },
         ZFCVerifier,
     };
-    use crate::formalize_v2::subjects::math::theories::VariantSet;
+    use crate::subjects::math::theories::VariantSet;
 
     /// Creates a standard set of test sets used across multiple tests.
     ///

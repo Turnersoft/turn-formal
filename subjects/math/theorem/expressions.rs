@@ -3,12 +3,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    formalize_v2::subjects::math::theories::{
-        groups::Group,
-        rings::{Ring, definitions::Field},
-    },
-    parse::entities::Number,
+use crate::subjects::math::theories::{
+    groups::Group,
+    number_theory::definitions::Number,
+    rings::{definitions::Field, Ring},
 };
 
 use super::core::{MathObject, MathObjectType, MathOperation};

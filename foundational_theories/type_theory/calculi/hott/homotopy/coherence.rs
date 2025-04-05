@@ -1,14 +1,14 @@
 //! Coherence Operations
 //! Implements coherence tracking for higher paths
 
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     types::path::PathOperations,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use super::{higher_paths::HigherPathContext, coherence};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::hott::Term;
+use crate::foundational_theories::type_theory::calculi::hott::Term;
 
 /// Key for coherence witness map
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
@@ -69,7 +69,7 @@ impl CoherenceOps for CoherenceContext {
 
 #[cfg(test)]
 mod tests {
-    use crate::formalize_v2::foundational_theories::type_theory::calculi::hott::homotopy::HigherPathOps;
+    use crate::foundational_theories::type_theory::calculi::hott::homotopy::HigherPathOps;
 
     use super::*;
 

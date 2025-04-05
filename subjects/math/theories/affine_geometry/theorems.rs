@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::{
+use crate::subjects::{
     logic::propositional::{ProofRule, ProofStep, Proposition},
     math::theories::{
         affine_geometry::definitions::{AffineSpace, AffineSpaceProperty, ScalarFieldType},

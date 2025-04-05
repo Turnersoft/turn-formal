@@ -1,16 +1,16 @@
-use crate::formalize_v2::foundational_theories::type_theory_v2::calculi::simply_typed::terms::Term;
-use crate::formalize_v2::subjects::logic::propositional::foundations::TypeTheoryFoundation;
-use crate::formalize_v2::subjects::logic::propositional::tactics::basic::{
+use crate::foundational_theories::type_theory_v2::calculi::simply_typed::terms::Term;
+use crate::subjects::logic::propositional::foundations::TypeTheoryFoundation;
+use crate::subjects::logic::propositional::tactics::basic::{
     AssumptionTactic, ProofStateTactic,
 };
-use crate::formalize_v2::subjects::logic::propositional::tactics::proof_state::{
+use crate::subjects::logic::propositional::tactics::proof_state::{
     ProofState, TacticProofTerm,
 };
-use crate::formalize_v2::subjects::logic::propositional::tactics::TacticError;
-use crate::formalize_v2::subjects::logic::propositional::{Foundation, ProofTerm};
-use crate::parse::Parse;
+use crate::subjects::logic::propositional::tactics::TacticError;
+use crate::subjects::logic::propositional::{Foundation, ProofTerm};
+use parse::Parse;
 use crate::{
-    formalize_v2::subjects::logic::propositional::Proposition, parse::entities::Identifier,
+    crate::subjects::logic::propositional::Proposition, parse::entities::Identifier,
 };
 
 use super::basic::{
@@ -306,8 +306,8 @@ fn test_constructive_dilemma() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::formalize_v2::subjects::logic::propositional::{Foundation, Proposition};
-    use crate::parse::Parse;
+    use crate::subjects::logic::propositional::{Foundation, Proposition};
+    use parse::Parse;
 
     #[test]
     fn test_assumption_tactic_edge_cases() -> Result<(), TacticError> {
@@ -511,8 +511,8 @@ mod tests {
 #[cfg(test)]
 mod intensive_tests {
     use super::*;
-    use crate::formalize_v2::subjects::logic::propositional::{Foundation, Proposition};
-    use crate::parse::Parse;
+    use crate::subjects::logic::propositional::{Foundation, Proposition};
+    use parse::Parse;
 
     #[test]
     fn test_assumption_tactic_intensive() -> Result<(), TacticError> {

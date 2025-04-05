@@ -9,11 +9,11 @@ use super::expressions::{MathExpression, Variable};
 use super::properties::PropertyRequirement;
 
 // Import domain-specific relations from their respective modules
-use crate::formalize_v2::subjects::math::theories::groups::definitions::GroupRelation;
-use crate::formalize_v2::subjects::math::theories::number_theory::definitions::NumberTheoryRelation;
-use crate::formalize_v2::subjects::math::theories::rings::definitions::RingRelation;
-use crate::formalize_v2::subjects::math::theories::topology::relations::TopologyRelation;
-use crate::formalize_v2::subjects::math::theories::zfc::relations::SetTheoryRelation;
+use crate::subjects::math::theories::groups::definitions::GroupRelation;
+use crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation;
+use crate::subjects::math::theories::rings::definitions::RingRelation;
+use crate::subjects::math::theories::topology::relations::TopologyRelation;
+use crate::subjects::math::theories::zfc::relations::SetTheoryRelation;
 
 /// Quantification of a mathematical object
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

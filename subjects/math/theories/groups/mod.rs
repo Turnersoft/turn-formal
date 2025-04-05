@@ -7,14 +7,17 @@
 pub mod checker;
 pub mod definitions;
 pub mod helpers;
-// pub mod macros;
+pub mod macros;
+pub mod theorems;
 
 #[cfg(test)]
 pub mod tests;
-pub mod theorems;
+
+#[cfg(feature = "visualization")]
+pub mod leptos;
 
 pub use checker::*;
 pub use definitions::*;
 pub use helpers::*;
-// pub use macros::*;
+pub use macros::*;
 pub use theorems::*;

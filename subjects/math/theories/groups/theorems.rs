@@ -5,13 +5,13 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::formalize_v2::subjects::math::theorem::core::MathObjectType;
-use crate::formalize_v2::subjects::math::theorem::core::Theorem;
-use crate::formalize_v2::subjects::math::theorem::expressions::{MathExpression, Variable};
-use crate::formalize_v2::subjects::math::theorem::proof::{ProofBranch, Tactic, TheoremBuilder};
-use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
-use crate::formalize_v2::subjects::math::theories::VariantSet;
-use crate::formalize_v2::subjects::math::theories::zfc::Set;
+use crate::subjects::math::theorem::core::MathObjectType;
+use crate::subjects::math::theorem::core::Theorem;
+use crate::subjects::math::theorem::expressions::{MathExpression, Variable};
+use crate::subjects::math::theorem::proof::{ProofBranch, Tactic, TheoremBuilder};
+use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::theories::VariantSet;
+use crate::subjects::math::theories::zfc::Set;
 
 use super::definitions::{
     AbelianPropertyVariant, ElementValue, FinitePropertyVariant, Group, GroupExpression,

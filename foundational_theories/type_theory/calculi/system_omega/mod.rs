@@ -2,7 +2,7 @@
 //! Extends System F with type-level computation
 
 use serde::{Deserialize, Serialize};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::{Error, Result};
+use crate::foundational_theories::type_theory::calculi::{Error, Result};
 use std::collections::{HashMap, HashSet};
 
 pub mod term;

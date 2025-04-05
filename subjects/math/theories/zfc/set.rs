@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::formalize_v2::subjects::math::theories::{VariantSet, VariantWrapper};
+use crate::subjects::math::theories::{VariantSet, VariantWrapper};
 
 use super::axioms::{SatisfiesZFC, ZFCAxioms};
 use std::collections::HashSet;

@@ -3,7 +3,7 @@
 
 use std::collections::HashMap;
 
-use crate::formalize_v2::foundational_theories::type_theory::calculi::hott::Term;
+use crate::foundational_theories::type_theory::calculi::hott::Term;
 
 // use crate::core::{Term, Result, Error};
 use super::{Constraint, Substitution, UnificationProblem};

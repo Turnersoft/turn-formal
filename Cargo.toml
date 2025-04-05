@@ -1,30 +1,23 @@
 [package]
-name = "formalize_v2"
+name = "turn-formal"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 description = "A unified visualization tool for formal mathematics, logic, and foundational theories"
 
 [lib]
-name = "formalize_v2"
+name = "turn_formal"
 path = "mod.rs"
 crate-type = ["cdylib", "rlib"]
 
-[features]
-default = []
-theorem_visualizer = ["leptos", "leptos_router", "leptos_meta", "web-sys", "stylist", "console_log", "console_error_panic_hook"]
+[[bin]]
+name = "leptos_app"
+path = "leptos/main.rs"
 
 [dependencies]
+leptos = { version = "0.7.8", features = ["csr"] }
+leptos_router = "0.7.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 wasm-bindgen = { version = "0.2.87", features = ["serde-serialize"] }
-log = "0.4"
-leptos = { version = "0.7.8", optional = true }
-leptos_router = { version = "0.7.8", optional = true }
-leptos_meta = { version = "0.7.8", optional = true }
-stylist = { version = "0.13.0", features = ["macros"], optional = true }
-web-sys = { version = "0.3.64", features = ["Window", "Document", "Element", "HtmlElement"], optional = true }
-chrono = "0.4"
-
-[target."cfg(target_arch = \"wasm32\")".dependencies]
-console_log = { version = "1.0", optional = true }
-console_error_panic_hook = { version = "0.1.7", optional = true }
+thiserror = "2.0.12"
+console_error_panic_hook = "0.1.7"

@@ -1,7 +1,7 @@
 //! Cubical Type Theory
 //! Implements cubical types with composition operations
 
-use crate::formalize_v2::foundational_theories::type_theory::{
+use crate::foundational_theories::type_theory::{
     core::{Error, Result, Term},
     types::{
         path::{PathGroupoid, PathOperations},

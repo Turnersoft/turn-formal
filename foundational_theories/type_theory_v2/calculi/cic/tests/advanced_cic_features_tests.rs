@@ -4,7 +4,7 @@ use super::*;
 pub mod advanced_cic_features_tests {
     use std::rc::Rc;
 
-    use crate::formalize_v2::foundational_theories::type_theory_v2::calculi::cic::{
+    use crate::foundational_theories::type_theory_v2::calculi::cic::{
         context::{ConstraintKind, UniverseConstraint},
         tests::setup_context,
         Level, Term, Type, TypeChecker, Universe,

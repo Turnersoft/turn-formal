@@ -1,6 +1,6 @@
 //! Type theory foundation for propositional logic
 
-use crate::parse::entities::Identifier;
+use parse::entities::Identifier;
 use crate::{
     formalize_v2::{
         foundational_theories::type_theory_v2::calculi::simply_typed::{

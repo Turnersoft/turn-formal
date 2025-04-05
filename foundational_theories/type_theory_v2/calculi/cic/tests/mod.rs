@@ -1,5 +1,5 @@
 use super::*;
-use crate::formalize_v2::foundational_theories::type_theory_v2::calculi::cic::{
+use crate::foundational_theories::type_theory_v2::calculi::cic::{
     context::{ConstraintKind, Context, InductiveType, UniverseConstraint},
     term::{Constructor, MatchBranch, Pattern, Term},
     type_::Type,

@@ -1,0 +1,29 @@
+[build]
+# The index HTML file to drive the bundling process
+target = "index.html"
+# The output dir for all final assets
+dist = "dist"
+# The public URL from which assets are to be served
+public_url = "/"
+# Use debug mode for faster compilation
+release = false
+# Enable incremental compilation
+incremental = true
+
+[watch]
+# Be very specific about what to watch to reduce overhead
+watch = ["leptos/app.rs", "leptos/components", "leptos/pages", "Cargo.toml"]
+# Ignore big folders and generated files
+ignore = ["target", "dist"]
+
+[serve]
+# Going back to the working format
+address = "127.0.0.1"
+port = 8087
+# Open a browser tab once the initial build is complete
+open = true
+
+[[hooks]]
+stage = "pre_build"
+command = "mkdir"
+command_arguments = ["-p", "dist/leptos"]

@@ -10,7 +10,6 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use super::core::{MathObjectType, ProofState, Theorem, ValueBindedVariable};
 use super::expressions::{MathExpression, Variable};
 use super::relations::MathRelation;
-use crate::parse::entities::Number;
 
 /// Node ID type
 pub type NodeId = u64;
@@ -1917,9 +1916,9 @@ fn get_timestamp() -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::formalize_v2::subjects::math::theorem::core::MathObjectType;
-    use crate::formalize_v2::subjects::math::theorem::expressions::{MathExpression, Variable};
-    use crate::formalize_v2::subjects::math::theorem::relations::MathRelation;
+    use crate::subjects::math::theorem::core::MathObjectType;
+    use crate::subjects::math::theorem::expressions::{MathExpression, Variable};
+    use crate::subjects::math::theorem::relations::MathRelation;
     use std::collections::HashMap;
 
     // Helper functions to create test expressions

@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::formalize_v2::foundational_theories::type_theory::calculi::{Error, Result};
+use crate::foundational_theories::type_theory::calculi::{Error, Result};
 
 /// Term in Dependent Type Theory
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

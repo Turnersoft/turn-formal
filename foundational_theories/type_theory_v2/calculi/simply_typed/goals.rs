@@ -1,5 +1,3 @@
-use crate::parse::entities::Identifier;
-
 use super::{terms::Term, types::Type};
 use std::collections::HashMap;
 use std::fmt;
@@ -7,7 +5,7 @@ use std::fmt;
 /// Typing context mapping variables to their types
 #[derive(Debug, Clone, Default)]
 pub struct Context {
-    pub types: HashMap<Identifier, Type>,
+    pub types: HashMap<String, Type>,
 }
 
 impl Context {
@@ -19,12 +17,12 @@ impl Context {
     }
 
     /// Add a variable with its type to the context
-    pub fn add_variable(&mut self, name: Identifier, ty: Type) {
+    pub fn add_variable(&mut self, name: String, ty: Type) {
         self.types.insert(name, ty);
     }
 
     /// Look up a variable's type in the context
-    pub fn get_type(&self, name: &Identifier) -> Option<&Type> {
+    pub fn get_type(&self, name: &String) -> Option<&Type> {
         self.types.get(name)
     }
 }
@@ -84,7 +82,7 @@ pub enum SimplyTypedGoal {
 
     // Context goals
     LookupVariable {
-        name: Identifier,
+        name: String,
         process: Option<LookupProcess>,
     },
 
@@ -244,7 +242,7 @@ impl SimplyTypedGoal {
 }
 
 /// Capture-avoiding substitution
-fn substitute(term: &Term, var: &Identifier, replacement: &Term) -> Term {
+fn substitute(term: &Term, var: &String, replacement: &Term) -> Term {
     match term {
         Term::Variable(name) => {
             if name == var {
@@ -264,7 +262,7 @@ fn substitute(term: &Term, var: &Identifier, replacement: &Term) -> Term {
                 term.clone()
             } else if replacement.has_free_var(param_name) {
                 // Need alpha conversion to avoid capture
-                let fresh_name = param_name.add_prime();
+                let fresh_name = format!("{}'", param_name);
                 let fresh_var = Term::var(fresh_name.clone());
                 let new_body = substitute(body, param_name, &fresh_var);
                 Term::lambda(
@@ -292,7 +290,7 @@ fn substitute(term: &Term, var: &Identifier, replacement: &Term) -> Term {
 
 impl Term {
     /// Get the parameter name from an abstraction term
-    pub fn get_param_name(&self) -> Option<Identifier> {
+    pub fn get_param_name(&self) -> Option<String> {
         match self {
             Term::Abstraction { param_name, .. } => Some(param_name.clone()),
             _ => None,

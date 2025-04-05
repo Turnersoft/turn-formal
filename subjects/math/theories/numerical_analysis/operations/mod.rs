@@ -9,7 +9,7 @@ pub mod tensor;
 pub use tensor::*;
 
 /// Common traits and utilities for numerical operations
-use crate::formalize_v2::subjects::math::theories::{
+use crate::subjects::math::theories::{
     analysis::definition::functions::Function, zfc::set::Set, VariantSet,
 };
 use serde::{Deserialize, Serialize};

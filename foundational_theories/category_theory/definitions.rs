@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::math::theories::VariantSet;
+use crate::subjects::math::theories::VariantSet;
 use serde::{Deserialize, Serialize};
 
 /// Module containing all property variants for category theory

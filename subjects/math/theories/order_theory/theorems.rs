@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::{
+use crate::subjects::{
     logic::first_order::{Formula, Term},
     math::theories::{
         order_theory::definitions::{

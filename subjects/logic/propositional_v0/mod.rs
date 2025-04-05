@@ -1,13 +1,11 @@
 //! Propositional Logic Implementation
 //! This module provides a foundation-independent implementation of propositional logic.
 
-use crate::parse::{entities::Identifier, Parse};
-
 /// A proposition in propositional logic
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Proposition {
     /// Atomic proposition (P, Q, etc.)
-    Atomic(Identifier),
+    Atomic(String),
     /// Truth constant (⊤)
     True,
     /// Falsity constant (⊥)
@@ -25,7 +23,7 @@ pub enum Proposition {
 impl Proposition {
     /// Create a new atomic proposition
     pub fn atomic(name: &str) -> Self {
-        Proposition::Atomic(Identifier::parse(name))
+        Proposition::Atomic(String::from(name))
     }
 
     /// Create a conjunction

@@ -1,8 +1,8 @@
-use crate::formalize_v2::subjects::math::theorem::expressions::MathExpression;
-use crate::formalize_v2::subjects::math::theorem::relations::RelationDetail;
-use crate::formalize_v2::subjects::math::theories::VariantSet;
-use crate::formalize_v2::subjects::math::theories::groups::definitions::Group;
-use crate::formalize_v2::subjects::math::theories::zfc::Set;
+use crate::subjects::math::theorem::expressions::MathExpression;
+use crate::subjects::math::theorem::relations::RelationDetail;
+use crate::subjects::math::theories::VariantSet;
+use crate::subjects::math::theories::groups::definitions::Group;
+use crate::subjects::math::theories::zfc::Set;
 use serde::{Deserialize, Serialize};
 
 /// A ring (R,+,·) is a set R with two binary operations + and · satisfying:

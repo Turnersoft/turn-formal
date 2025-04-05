@@ -4,17 +4,17 @@
 //! The macros ensure that elements belong to their respective groups before operations
 //! are performed, providing both compile-time and runtime checks.
 
-use crate::formalize_v2::subjects::math::theories::groups::checker::{
+use crate::subjects::math::theories::groups::checker::{
     check_element_in_group, check_has_inverse, check_normal_subgroup, check_operation_valid,
     create_group_commutator, create_group_coset, create_group_element, create_group_identity,
     create_group_inverse, create_group_operation, evaluate_group_expression, GroupError,
     GroupResult,
 };
-use crate::formalize_v2::subjects::math::theories::groups::definitions::{
+use crate::subjects::math::theories::groups::definitions::{
     AbelianPropertyVariant, ElementValue, FinitePropertyVariant, GroupElement, GroupExpression,
     GroupOperationVariant, GroupProperty,
 };
-use crate::formalize_v2::subjects::math::theories::groups::helpers::{
+use crate::subjects::math::theories::groups::helpers::{
     cyclic_group, int, matrix, perm, sym, symmetric_group,
 };
 
@@ -31,7 +31,7 @@ use crate::formalize_v2::subjects::math::theories::groups::helpers::{
 #[macro_export]
 macro_rules! group_element {
     ($group:expr, $value:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::create_group_element(
+        crate::subjects::math::theories::groups::checker::create_group_element(
             (*$group).clone(),
             $value,
         )
@@ -54,7 +54,7 @@ macro_rules! group_element {
 #[macro_export]
 macro_rules! group_op {
     ($group:expr, $left:expr, $right:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::create_group_operation(
+        crate::subjects::math::theories::groups::checker::create_group_operation(
             (*$group).clone(),
             $left,
             $right,
@@ -77,7 +77,7 @@ macro_rules! group_op {
 #[macro_export]
 macro_rules! group_inverse {
     ($group:expr, $element:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::create_group_inverse(
+        crate::subjects::math::theories::groups::checker::create_group_inverse(
             (*$group).clone(),
             $element,
         )
@@ -95,7 +95,7 @@ macro_rules! group_inverse {
 #[macro_export]
 macro_rules! group_identity {
     ($group:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::create_group_identity(
+        crate::subjects::math::theories::groups::checker::create_group_identity(
             (*$group).clone(),
         )
     }};
@@ -117,7 +117,7 @@ macro_rules! group_identity {
 #[macro_export]
 macro_rules! group_commutator {
     ($group:expr, $a:expr, $b:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::create_group_commutator(
+        crate::subjects::math::theories::groups::checker::create_group_commutator(
             (*$group).clone(),
             $a,
             $b,
@@ -141,7 +141,7 @@ macro_rules! group_commutator {
 #[macro_export]
 macro_rules! group_coset {
     ($group:expr, $subgroup:expr, $element:expr, $is_left:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::create_group_coset(
+        crate::subjects::math::theories::groups::checker::create_group_coset(
             (*$group).clone(),
             (*$subgroup).clone(),
             $element,
@@ -162,7 +162,7 @@ macro_rules! group_coset {
 #[macro_export]
 macro_rules! is_in_group {
     ($group:expr, $element:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::check_element_in_group(
+        crate::subjects::math::theories::groups::checker::check_element_in_group(
             $group, $element,
         )
     }};
@@ -182,7 +182,7 @@ macro_rules! is_in_group {
 #[macro_export]
 macro_rules! eval_group_expr {
     ($expr:expr) => {{
-        crate::formalize_v2::subjects::math::theories::groups::checker::evaluate_group_expression(
+        crate::subjects::math::theories::groups::checker::evaluate_group_expression(
             $expr,
         )
     }};

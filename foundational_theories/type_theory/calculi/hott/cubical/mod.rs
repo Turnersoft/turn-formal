@@ -4,10 +4,10 @@
 //! - Kan operations
 //! - Composition and coherence
 
-use crate::formalize_v2::foundational_theories::type_theory::{calculi::Error, core::Result};
+use crate::foundational_theories::type_theory::{calculi::Error, core::Result};
 
 use super::Term;
-use crate::formalize_v2::foundational_theories::type_theory::calculi::hott::homotopy::{
+use crate::foundational_theories::type_theory::calculi::hott::homotopy::{
     coherence::CoherenceContext,
     composition::CompositionContext,
     higher_paths::HigherPathContext,

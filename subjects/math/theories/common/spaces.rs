@@ -1,4 +1,4 @@
-use crate::formalize_v2::subjects::math::theories::{
+use crate::subjects::math::theories::{
     affine_geometry::definitions::AffineSpace,
     algebraic_geometry::definitions::{Scheme, Variety},
     analysis::definition::spaces::{

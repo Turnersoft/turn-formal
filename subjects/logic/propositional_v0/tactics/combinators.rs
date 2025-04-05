@@ -1,6 +1,6 @@
 //! Tactic combinators for building complex proof strategies
 
-use crate::formalize_v2::subjects::logic::propositional::tactics::{
+use crate::subjects::logic::propositional::tactics::{
     ProofStateTactic, TacticResult,
 };
 

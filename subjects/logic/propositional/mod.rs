@@ -1,8 +1,6 @@
 //! Propositional Logic Implementation
 //! This module provides a foundation-independent implementation of propositional logic.
 
-use crate::parse::{entities::Identifier, Parse};
-
 /// A proposition in propositional logic
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Proposition {
