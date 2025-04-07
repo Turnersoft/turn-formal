@@ -1,3 +1,3 @@
 pub mod category_theory;
 // pub mod type_theory;
-pub mod type_theory_v2;
+pub mod type_theory;

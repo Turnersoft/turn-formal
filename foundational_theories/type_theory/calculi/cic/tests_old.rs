@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::foundational_theories::type_theory_v2::calculi::cic::{
+    use crate::foundational_theories::type_theory::calculi::cic::{
         context::{ConstraintKind, Context, InductiveType, UniverseConstraint},
         term::{Constructor, MatchBranch, Pattern, Term},
         type_::Type,

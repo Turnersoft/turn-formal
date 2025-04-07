@@ -4,10 +4,10 @@ use super::*;
 pub mod advanced_cic_features_tests {
     use std::rc::Rc;
 
-    use crate::foundational_theories::type_theory_v2::calculi::cic::{
+    use crate::foundational_theories::type_theory::calculi::cic::{
+        Level, Term, Type, TypeChecker, Universe,
         context::{ConstraintKind, UniverseConstraint},
         tests::setup_context,
-        Level, Term, Type, TypeChecker, Universe,
     };
 
     #[test]

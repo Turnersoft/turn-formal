@@ -3,12 +3,12 @@ use super::*;
 #[cfg(test)]
 pub mod test_integration {
     use super::*;
-    use crate::foundational_theories::type_theory_v2::calculi::cic::{
+    use crate::foundational_theories::type_theory::calculi::cic::{
+        Type,
         context::Context,
         term::Term,
         typing::TypeChecker,
         universe::{Level, Universe},
-        Type,
     };
     use std::rc::Rc;
 
