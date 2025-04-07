@@ -1,2 +1,11 @@
+pub mod content_viewer;
+pub mod definition;
 pub mod navigation;
+pub mod repository_layout;
+pub mod repository_reader;
+pub mod sidebar;
+pub mod theorem;
+pub mod theorem_adapter;
+pub mod theorem_proof;
+pub mod theory;
 pub mod visualization;

@@ -12,7 +12,14 @@ incremental = true
 
 [watch]
 # Be very specific about what to watch to reduce overhead
-watch = ["leptos/app.rs", "leptos/components", "leptos/pages", "Cargo.toml"]
+watch = [
+    "leptos/app.rs",
+    "leptos/components",
+    "leptos/pages",
+    # "Cargo.toml",
+    # "subjects",
+    # "foundational_theories",
+]
 # Ignore big folders and generated files
 ignore = ["target", "dist"]
 

@@ -1,36 +1,48 @@
+use crate::leptos::components::navigation::Navigation;
+use crate::leptos::components::repository_layout::{RepositoryLayout, RepositoryLayoutStyles};
+use crate::leptos::components::repository_reader::RepositoryProvider;
 use crate::leptos::pages::about_page::AboutPage;
+use crate::leptos::pages::definition_page::DefinitionPage;
 use crate::leptos::pages::home_page::HomePage;
+use crate::leptos::pages::math_theorem_page::MathTheoremPage;
+use crate::leptos::pages::theorem_page::TheoremPage;
+use crate::leptos::pages::theory_detail_page::TheoryDetailPage;
 use crate::leptos::pages::theory_page::TheoryPage;
 use leptos::prelude::*;
+use leptos::*;
+use leptos_meta::*;
 use leptos_router::{
-    components::{Route, Router, Routes, A},
+    components::{A, Route, Router, Routes},
     path,
 };
 
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <div class="app-container">
-            <Router>
-                <div class="main-nav">
-                    <div class="logo">
-                        <A href="/">"Formalize V2"</A>
-                    </div>
-                    <div class="nav-links">
-                        <A href="/">"Home"</A>
-                        <A href="/theories">"Theories"</A>
-                        <A href="/about">"About"</A>
-                    </div>
-                </div>
-                <main>
-                    <Routes fallback=|| view! { <NotFound/> }>
-                        <Route path=path!("/") view=HomePage/>
-                        <Route path=path!("/theories") view=TheoryPage/>
-                        <Route path=path!("/about") view=AboutPage/>
-                    </Routes>
-                </main>
-            </Router>
-        </div>
+        <Stylesheet id="main-stylesheet" href="/styles.css"/>
+        <Script type_="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"/>
+        <RepositoryProvider>
+            <div class="app-container">
+                <Router>
+                    <Navigation />
+                    <main>
+                        <Routes fallback=|| view! { <NotFound/> }>
+                            <Route path=path!("/") view=HomePage/>
+                            <Route path=path!("/explorer") view=RepositoryLayout/>
+                            <Route path=path!("/explorer/*any") view=RepositoryLayout/>
+                            <Route path=path!("/theories") view=TheoryPage/>
+                            <Route path=path!("/theory/:id") view=TheoryDetailPage/>
+                            <Route path=path!("/theorems") view=MathTheoremPage/>
+                            <Route path=path!("/theorem/:id") view=TheoremPage/>
+                            <Route path=path!("/definition/:id") view=DefinitionPage/>
+                            <Route path=path!("/about") view=AboutPage/>
+                        </Routes>
+                    </main>
+                </Router>
+            </div>
+
+            <RepositoryLayoutStyles />
+        </RepositoryProvider>
     }
 }
 

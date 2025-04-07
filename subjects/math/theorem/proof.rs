@@ -1,11 +1,15 @@
 // Module: src/formalize_v2/subjects/math/theorem/proof.rs
 // Implements a rich proof structure for mathematical theorems with branching support
 
+use js_sys;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+#[cfg(not(target_arch = "wasm32"))]
 use std::time::{SystemTime, UNIX_EPOCH};
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
 
 use super::core::{MathObjectType, ProofState, Theorem, ValueBindedVariable};
 use super::expressions::{MathExpression, Variable};
@@ -778,6 +782,7 @@ impl Tactic {
                 new_state
             }
 
+            /// Simplify an expression
             Tactic::Simplify(expr) => {
                 // Simplify an expression
                 let mut new_state = state.clone();
@@ -799,6 +804,7 @@ impl Tactic {
                 new_state
             }
 
+            /// Decompose a complex expression
             Tactic::Decompose { target, method } => {
                 // Decompose a complex expression
                 let mut new_state = state.clone();
@@ -831,6 +837,7 @@ impl Tactic {
                 new_state
             }
 
+            /// Apply induction on a variable
             Tactic::Induction {
                 variable,
                 induction_type,
@@ -859,6 +866,7 @@ impl Tactic {
                 new_state
             }
 
+            /// Custom tactic for specialized domains
             Tactic::Custom { name, args } => {
                 // Custom tactic
                 let mut new_state = state.clone();
@@ -1905,11 +1913,19 @@ impl ProofBranch {
 }
 
 /// Helper to get the current timestamp in milliseconds
+#[cfg(not(target_arch = "wasm32"))]
 fn get_timestamp() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
         .as_millis() as u64
+}
+
+/// Helper to get the current timestamp in milliseconds using JavaScript's Date.now() for WASM
+#[cfg(target_arch = "wasm32")]
+fn get_timestamp() -> u64 {
+    // Use js-sys to get the current timestamp in a WASM-compatible way
+    js_sys::Date::now() as u64
 }
 
 /// Example usage of the proof builder

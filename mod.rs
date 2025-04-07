@@ -5,8 +5,3 @@
 pub mod foundational_theories;
 pub mod leptos;
 pub mod subjects;
-
-// Re-export the leptos module
-pub mod leptos_app {
-    pub use crate::leptos::*;
-}

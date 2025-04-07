@@ -1,6 +1,6 @@
-# Formalize V2 - Leptos Frontend
+# Turn-Formal - Leptos Frontend
 
-This is a visualization interface for the Formalize V2 project, built with Leptos.
+This is a visualization interface for the Turn-Formal project, built with Leptos.
 
 ## Running the App
 
