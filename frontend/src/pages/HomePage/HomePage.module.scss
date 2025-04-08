@@ -1,0 +1,68 @@
+.homePage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.description {
+  font-size: 1.25rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  h2 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: $secondary-dark;
+    line-height: 1.6;
+  }
+}
+
+.cta {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0;
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background-color: $primary-color;
+  color: white;
+  border-radius: $border-radius;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: $primary-dark;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    color: white;
+  }
+}

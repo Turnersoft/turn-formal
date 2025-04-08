@@ -7,11 +7,11 @@ description = "A unified visualization tool for formal mathematics, logic, and f
 [lib]
 name = "turn_formal"
 path = "mod.rs"
-crate-type = ["cdylib", "rlib"]
+crate-type = ["rlib"]
 
 [[bin]]
-name = "leptos_app"
-path = "leptos/main.rs"
+name = "content_compiler"
+path = "scripts/content_compiler.rs"
 
 [features]
 default = ["visualization"]

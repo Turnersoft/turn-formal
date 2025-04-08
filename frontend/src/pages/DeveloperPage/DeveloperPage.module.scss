@@ -1,0 +1,101 @@
+.developerPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+
+  h1 {
+    margin-bottom: $spacing-lg;
+    color: $dark-color;
+  }
+}
+
+.card {
+  margin-bottom: $spacing-xl;
+  padding: $spacing-lg;
+  border-radius: $border-radius-lg;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid #eee;
+  }
+}
+
+.buttonsDemo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.button {
+  padding: 0.6rem 1.2rem;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+
+  &.secondary {
+    background-color: $secondary-color;
+
+    &:hover {
+      background-color: $secondary-dark;
+    }
+  }
+}
+
+.alert {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: $border-radius;
+}
+
+.roadmapList {
+  list-style-type: none;
+  padding-left: 0;
+
+  li {
+    margin-bottom: $spacing-lg;
+  }
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    color: $secondary-dark;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.subList {
+  margin-left: $spacing-lg;
+  margin-bottom: $spacing-md;
+
+  li {
+    margin-bottom: $spacing-xs;
+    color: $secondary-dark;
+    position: relative;
+
+    &:before {
+      content: "•";
+      color: $primary-color;
+      position: absolute;
+      left: -$spacing-md;
+    }
+  }
+}

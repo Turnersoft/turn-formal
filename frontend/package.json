@@ -1,0 +1,37 @@
+{
+  "name": "turn-formal-ui",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "UI for Turn-Formal - A unified visualization tool for formal mathematics",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "mathematics",
+    "formal",
+    "visualization",
+    "logic"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@shoelace-style/shoelace": "^2.20.1",
+    "dotenv": "^16.4.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.3",
+    "sass": "^1.86.3",
+    "vite-plugin-static-copy": "^2.3.0",
+    "vite-plugin-svgr": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  }
+}

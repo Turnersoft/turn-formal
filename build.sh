@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+echo "Building Turn-Formal..."
+
+# Compile Rust content to JSON
+echo "Compiling content to JSON..."
+cargo run --bin content_compiler
+
+# Build React frontend
+echo "Building React frontend..."
+cd frontend && npm run build
+
+echo "Build complete! The application is ready in frontend/dist" 

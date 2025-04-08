@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family-base;
+  line-height: $line-height-base;
+  color: $dark-color;
+  background-color: #f8f9fa;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: $transition-base;
+
+  &:hover {
+    color: $primary-dark;
+    text-decoration: underline;
+  }
+}
+
+button {
+  cursor: pointer;
+  font-family: $font-family-base;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: $spacing-md;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+// Import minimal Shoelace theme
+@import "@shoelace-style/shoelace/dist/themes/light.css";
+
+// Custom Shoelace theming
+:root {
+  --sl-color-primary-500: #{$primary-color};
+  --sl-font-sans: #{$font-family-base};
+}
