@@ -1932,9 +1932,9 @@ fn get_timestamp() -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::subjects::math::theorem::core::MathObjectType;
-    use crate::subjects::math::theorem::expressions::{MathExpression, Variable};
-    use crate::subjects::math::theorem::relations::MathRelation;
+    use crate::subjects::math::formalism::core::MathObjectType;
+    use crate::subjects::math::formalism::expressions::{MathExpression, Variable};
+    use crate::subjects::math::formalism::relations::MathRelation;
     use std::collections::HashMap;
 
     // Helper functions to create test expressions

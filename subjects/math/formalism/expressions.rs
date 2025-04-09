@@ -6,10 +6,11 @@ use serde::{Deserialize, Serialize};
 use crate::subjects::math::theories::{
     groups::Group,
     number_theory::definitions::Number,
-    rings::{definitions::Field, Ring},
+    rings::{Ring, definitions::Field},
 };
 
 use super::core::{MathObject, MathObjectType, MathOperation};
+use crate::subjects::math::formalism::interpretation::TypeViewOperator;
 
 /// Variables for use in expressions
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -25,97 +26,6 @@ pub enum Variable {
 
     /// Number variables
     N(u8),
-}
-
-/// Operator that changes the theoretical interpretation of a mathematical expression
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TypeViewOperator {
-    /// View a number as an element of a group
-    AsGroupElement {
-        /// Optional group context (e.g., Z/nZ with modulus n)
-        group: Group,
-    },
-
-    /// View a number as an element of a ring
-    AsRingElement {
-        /// Optional ring context
-        ring: Ring,
-    },
-
-    /// View a number as an element of a field
-    AsFieldElement {
-        /// Optional field context
-        field: Field,
-    },
-
-    /// View a set as a group with specified operation
-    AsGroup {
-        /// Group operation type
-        operation: Option<Box<MathExpression>>,
-    },
-
-    /// View a group as a ring (e.g., group ring construction)
-    AsRing {
-        /// Additional ring structure information
-        addition: Option<Box<MathExpression>>,
-    },
-
-    /// View a set as a topological space
-    AsTopologicalSpace {
-        /// Optional topology specification
-        topology: Option<Box<MathExpression>>,
-    },
-
-    /// View a function as a homomorphism between algebraic structures
-    AsHomomorphism {
-        /// Source structure
-        source: Box<MathExpression>,
-        /// Target structure
-        target: Box<MathExpression>,
-    },
-
-    /// View a number as defining a cyclic group Z/nZ
-    AsCyclicGroup,
-
-    /// View a vector as a point in a topological space
-    AsPoint,
-
-    /// View a polynomial as a function
-    AsFunction {
-        /// Domain of the function
-        domain: Option<Box<MathExpression>>,
-    },
-
-    /// View a matrix as a linear transformation
-    AsLinearTransformation,
-
-    /// Custom view operator with source and target types
-    Custom {
-        /// Name of the custom view
-        name: String,
-        /// Source mathematical domain
-        source_type: MathObjectType,
-        /// Target mathematical domain
-        target_type: MathObjectType,
-        /// Additional parameters
-        parameters: Vec<MathExpression>,
-    },
-}
-
-/// Binary operators for expressions
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum BinaryOperator {
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Power,
-    Compose,
-    // Set operations
-    Union,
-    Intersection,
-    SetDifference,
-    CartesianProduct,
 }
 
 /// A unified mathematical expression

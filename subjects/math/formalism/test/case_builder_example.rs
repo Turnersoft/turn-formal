@@ -3,10 +3,10 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::theorem::core::Theorem;
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::proof::{ProofBranch, TheoremBuilder};
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::core::Theorem;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::{ProofBranch, TheoremBuilder};
+use crate::subjects::math::formalism::relations::MathRelation;
 
 /// Example of proving absolute value properties using case analysis builder
 pub fn prove_absolute_value_with_builder() -> Theorem {

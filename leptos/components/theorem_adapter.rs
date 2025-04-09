@@ -1,6 +1,6 @@
 use crate::leptos::components::theorem_proof::{Proof, ProofStep, Theorem, TheoremStatement};
-use crate::subjects::math::theorem::core::{MathContext, ProofState, Theorem as CoreTheorem};
-use crate::subjects::math::theorem::proof::{ProofNode, ProofStatus, Tactic};
+use crate::subjects::math::formalism::core::{MathContext, ProofState, Theorem as CoreTheorem};
+use crate::subjects::math::formalism::proof::{ProofNode, ProofStatus, Tactic};
 use std::collections::HashMap;
 
 /// Convert a CoreTheorem to a UI theorem

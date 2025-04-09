@@ -1,9 +1,8 @@
-use crate::subjects::math::theorem::expressions::BinaryOperator;
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::relations::MathRelation;
+use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
-use crate::subjects::math::theories::VariantSet;
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -946,7 +945,7 @@ impl GroupRelation {
         // This should create a representation that x is the inverse of y in the group
         // First create the identity element
         let identity = MathExpression::Var(
-            crate::subjects::math::theorem::expressions::Variable::O(111),
+            crate::subjects::math::formalism::expressions::Variable::O(111),
         );
 
         // Since BinaryOp is removed, we need to use GroupExpression and convert
@@ -1206,7 +1205,7 @@ impl GroupObject {
 
     /// Convert a GroupObject to a MathExpression
     pub fn to_expression(&self) -> MathExpression {
-        use crate::subjects::math::theorem::expressions::Variable;
+        use crate::subjects::math::formalism::expressions::Variable;
 
         // Create a simplified expression for each group object type
         match self {
@@ -1429,7 +1428,7 @@ impl GroupExpression {
 
     /// Convert GroupExpression to MathExpression
     pub fn to_math_expression(&self) -> MathExpression {
-        use crate::subjects::math::theorem::expressions::Variable;
+        use crate::subjects::math::formalism::expressions::Variable;
 
         match self {
             GroupExpression::Element(element) => {
@@ -1490,7 +1489,7 @@ impl GroupExpression {
 
     /// Convert MathExpression to GroupExpression
     pub fn from_math_expression(expr: &MathExpression, group: &Group) -> Result<Self, String> {
-        use crate::subjects::math::theorem::expressions::Variable;
+        use crate::subjects::math::formalism::expressions::Variable;
 
         match expr {
             MathExpression::Var(var) => {

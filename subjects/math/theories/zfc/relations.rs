@@ -1,8 +1,8 @@
 // Module: src/formalize_v2/subjects/math/theories/zfc/relations.rs
 // Defines relations specific to set theory
 
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::relations::RelationDetail;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::relations::RelationDetail;
 use serde::{Deserialize, Serialize};
 
 /// Entity information for set theory relation operations

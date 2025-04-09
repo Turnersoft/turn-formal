@@ -1,7 +1,19 @@
+// Import minimal Shoelace theme
+@use "@shoelace-style/shoelace/dist/themes/light.css";
+
+/* Reset and base styles */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  /* Prevent default scrolling at document level */
+  overflow: hidden;
 }
 
 body {
@@ -9,6 +21,10 @@ body {
   line-height: $line-height-base;
   color: $dark-color;
   background-color: #f8f9fa;
+  /* Prevent browser back/forward navigation gestures */
+  overscroll-behavior: none;
+  /* Allow vertical panning but prevent horizontal navigation gestures */
+  touch-action: pan-y pinch-zoom;
 }
 
 a {
@@ -41,9 +57,6 @@ h6 {
 p {
   margin-bottom: $spacing-md;
 }
-
-// Import minimal Shoelace theme
-@import "@shoelace-style/shoelace/dist/themes/light.css";
 
 // Custom Shoelace theming
 :root {

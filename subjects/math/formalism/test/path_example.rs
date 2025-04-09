@@ -3,12 +3,12 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::theorem::core::{ProofState, Theorem};
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::proof::{
+use crate::subjects::math::formalism::core::{ProofState, Theorem};
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::{
     CaseResult, ProofBranch, ProofStatus, RewriteDirection, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::relations::MathRelation;
 
 /// Demonstrate path-based naming pattern (px_x_x_x) throughout a complex proof
 pub fn prove_with_path_naming() -> Theorem {

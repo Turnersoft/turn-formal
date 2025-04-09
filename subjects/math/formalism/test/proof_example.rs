@@ -3,12 +3,12 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::theorem::core::{ProofState, Theorem};
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::proof::{
+use crate::subjects::math::formalism::core::{ProofState, Theorem};
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::{
     ProofBranch, ProofForest, ProofStatus, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::theories::groups::definitions::GroupProperty;
 
 /// Example: Proving Group Associativity Theorem

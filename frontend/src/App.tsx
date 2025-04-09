@@ -1,13 +1,17 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import MathPage from "./pages/MathPage";
-import DeveloperPage from "./pages/DeveloperPage";
-import NotFound from "./pages/NotFound";
-import Navigation from "./components/Navigation";
-import styles from "./App.module.css";
+import HomePage from "./pages/HomePage/HomePage";
+import MathPage from "./pages/MathPage/MathPage";
+import DeveloperPage from "./pages/DeveloperPage/DeveloperPage";
+import NotFound from "./pages/NotFound/NotFound";
+import Navigation from "./components/navigation";
+import usePreventNavigationGesture from "./hooks/usePreventNavigationGesture";
+import styles from "./App.module.scss";
 
 export const App: React.FC = () => {
+  // Use the custom hook to prevent two-finger swipe navigation
+  usePreventNavigationGesture();
+
   return (
     <BrowserRouter>
       <div className={styles.appContainer}>
@@ -16,7 +20,6 @@ export const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/math" element={<MathPage />} />
-            <Route path="/roadmap" element={<DeveloperPage />} />
             <Route path="/developer" element={<DeveloperPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

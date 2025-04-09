@@ -1,6 +1,6 @@
-use crate::subjects::math::theorem::core::{ProofState, Theorem};
-use crate::subjects::math::theorem::proof::ProofStep;
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::core::{ProofState, Theorem};
+use crate::subjects::math::formalism::proof::ProofStep;
+use crate::subjects::math::formalism::relations::MathRelation;
 use leptos::prelude::*;
 
 use super::theorems::{

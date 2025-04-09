@@ -5,12 +5,12 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::subjects::math::theorem::core::ProofState;
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::proof::{
+use crate::subjects::math::formalism::core::ProofState;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::{
     CaseAnalysisBuilder, ProofBranch, ProofForest, ProofStatus, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::relations::MathRelation;
 
 // Implement Default for ProofState for testing
 impl Default for ProofState {

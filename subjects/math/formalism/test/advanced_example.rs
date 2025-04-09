@@ -3,16 +3,15 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::proof::{ProofForest, Tactic, TheoremBuilder};
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::{ProofForest, Tactic, TheoremBuilder};
+use crate::subjects::math::formalism::relations::MathRelation;
 
 /// Example: Proving the First Isomorphism Theorem for Groups
 ///
 /// This example shows a more complex proof with deep branches
 /// and different strategies.
-pub fn prove_first_isomorphism_theorem()
--> crate::subjects::math::theorem::core::Theorem {
+pub fn prove_first_isomorphism_theorem() -> crate::subjects::math::formalism::core::Theorem {
     // Create expressions for the isomorphism theorem
     let g_ker_phi = MathExpression::string_expr("G/Ker(φ)");
     let im_phi = MathExpression::string_expr("Im(φ)");
@@ -80,7 +79,7 @@ pub fn prove_first_isomorphism_theorem()
 ///
 /// This example shows how you could structure proofs if using an alternative
 /// closure-based API approach.
-pub fn prove_with_closures() -> crate::subjects::math::theorem::core::Theorem {
+pub fn prove_with_closures() -> crate::subjects::math::formalism::core::Theorem {
     // Create a theorem statement
     let statement = MathExpression::string_expr("P(G, p)");
 
@@ -115,15 +114,14 @@ pub fn prove_with_closures() -> crate::subjects::math::theorem::core::Theorem {
     );
 
     // Create a helper function for branching
-    let create_case =
-        |parent: &crate::subjects::math::theorem::proof::ProofBranch,
-         desc: &str,
-         index: usize| {
-            parent.apply_tactic(
-                Tactic::Intro(format!("Case {}: {}", index, desc), index as usize),
-                format!("Analyzing case: {}", desc),
-            )
-        };
+    let create_case = |parent: &crate::subjects::math::formalism::proof::ProofBranch,
+                       desc: &str,
+                       index: usize| {
+        parent.apply_tactic(
+            Tactic::Intro(format!("Case {}: {}", index, desc), index as usize),
+            format!("Analyzing case: {}", desc),
+        )
+    };
 
     // Create multiple branches for the different cases
     let case1 = create_case(&p1, "Direct construction", 1);

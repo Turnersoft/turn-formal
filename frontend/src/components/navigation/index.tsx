@@ -4,7 +4,7 @@ import styles from "./navigation.module.scss";
 
 const Navigation: React.FC = () => {
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -14,15 +14,6 @@ const Navigation: React.FC = () => {
         <div className={styles.logo}>
           <Link to="/">Turn-Formal</Link>
         </div>
-
-        <button
-          className={styles.mobileMenuToggle}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          ☰
-        </button>
-
         <ul
           className={`${styles.navLinks} ${
             isMobileMenuOpen ? styles.open : ""

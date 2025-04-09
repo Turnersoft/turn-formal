@@ -5,11 +5,11 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::subjects::math::theorem::core::MathObjectType;
-use crate::subjects::math::theorem::core::Theorem;
-use crate::subjects::math::theorem::expressions::{MathExpression, Variable};
-use crate::subjects::math::theorem::proof::{ProofBranch, Tactic, TheoremBuilder};
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::core::MathObjectType;
+use crate::subjects::math::formalism::core::Theorem;
+use crate::subjects::math::formalism::expressions::{MathExpression, Variable};
+use crate::subjects::math::formalism::proof::{ProofBranch, Tactic, TheoremBuilder};
+use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::zfc::Set;
 

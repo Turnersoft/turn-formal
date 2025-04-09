@@ -1,7 +1,18 @@
 .developerPage {
+  /* Container takes full size of the main content area */
+  width: 100%;
+  height: 100%;
+  /* Allow scrolling within this component only */
+  overflow-y: auto;
+  /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Ensure content is centered */
   max-width: 1200px;
   margin: 0 auto;
-  padding: $spacing-xl;
+  /* Add padding for content */
+  padding: $spacing-lg;
+  /* Stop swipe navigation without affecting scroll */
+  overscroll-behavior: none;
 
   h1 {
     margin-bottom: $spacing-lg;

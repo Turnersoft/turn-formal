@@ -1,0 +1,20 @@
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  /* Prevent entire app from scrolling */
+  overflow: hidden;
+  /* Prevent swipe navigation */
+  overscroll-behavior: none;
+}
+
+.mainContent {
+  /* Take up all remaining space after navigation */
+  flex: 1;
+  /* Do not allow scrolling at app level */
+  overflow: hidden;
+  /* Ensure content is positioned correctly */
+  position: relative;
+  /* padding: 20px; */
+}

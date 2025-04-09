@@ -3,11 +3,11 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::proof::{
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::{
     ProofStatus, RewriteDirection, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::theorem::relations::MathRelation;
+use crate::subjects::math::formalism::relations::MathRelation;
 
 /// A proof of the quadratic formula using case analysis
 pub fn prove_quadratic_formula() {

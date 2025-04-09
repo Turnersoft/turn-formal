@@ -1,5 +1,5 @@
-use crate::subjects::math::theorem::expressions::MathExpression;
-use crate::subjects::math::theorem::relations::RelationDetail;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::relations::RelationDetail;
 use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::groups::definitions::Group;
 use crate::subjects::math::theories::zfc::Set;

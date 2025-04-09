@@ -4,6 +4,7 @@ import svgr from "vite-plugin-svgr";
 import * as path from "node:path";
 import dotenv from "dotenv";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import * as sass from "sass-embedded";
 
 export default defineConfig(({ mode }) => {
   dotenv.config({ path: `.env.${mode}` });
@@ -57,7 +58,19 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "@/styles/variables.scss";\n`,
+          additionalData: `@use "@/styles/variables.scss" as *;\n`,
+          implementation: sass,
+          logger: {
+            warn: (message) => {
+              if (!message.includes("legacy-js-api")) {
+                console.warn(message);
+              }
+            },
+          },
+          sassOptions: {
+            outputStyle: "expanded",
+            charset: false,
+          },
         },
       },
     },
