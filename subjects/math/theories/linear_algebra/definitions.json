@@ -1,7 +1,7 @@
 [
   {
     "name": "VectorSpace",
-    "docs": "",
+    "docs": "A vector space is a set V equipped with vector addition and scalar multiplication\nsatisfying the vector space axioms.\n\nKey concepts:\n- Vector addition: V × V → V\n- Scalar multiplication: K × V → V\n- Linear combinations\n- Linear independence\n- Spanning sets\n- Bases",
     "kind": "struct",
     "members": [
       {
@@ -28,7 +28,7 @@
   },
   {
     "name": "NormedSpace",
-    "docs": "",
+    "docs": "A normed vector space is a vector space equipped with a norm function\nthat measures the \"size\" or \"length\" of vectors.\n\nKey concepts:\n- Norm axioms: ‖x‖ ≥ 0, ‖x‖ = 0 ⟺ x = 0, ‖λx‖ = |λ|‖x‖, ‖x+y‖ ≤ ‖x‖+‖y‖\n- Induced metric: d(x,y) = ‖x-y‖\n- Completeness: Cauchy sequences converge\n- Banach spaces: Complete normed spaces",
     "kind": "struct",
     "members": [
       {
@@ -50,7 +50,7 @@
   },
   {
     "name": "InnerProductSpace",
-    "docs": "",
+    "docs": "An inner product space is a vector space equipped with an inner product\nthat allows measurement of angles and orthogonality.\n\nKey concepts:\n- Inner product axioms: ⟨x,y⟩ = ⟨y,x⟩*, ⟨λx,y⟩ = λ⟨x,y⟩, ⟨x+y,z⟩ = ⟨x,z⟩+⟨y,z⟩, ⟨x,x⟩ > 0\n- Induced norm: ‖x‖ = √⟨x,x⟩\n- Orthogonality: x ⊥ y ⟺ ⟨x,y⟩ = 0\n- Hilbert spaces: Complete inner product spaces",
     "kind": "struct",
     "members": [
       {
@@ -72,367 +72,367 @@
   },
   {
     "name": "DimensionType",
-    "docs": "",
+    "docs": "Types of vector space dimension",
     "kind": "enum",
     "members": [
       {
         "name": "Zero",
-        "type": "Unit",
-        "docs": "Zero dimensional"
+        "docs": "Zero dimensional",
+        "type_info": null
       },
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite dimensional"
+        "docs": "Finite dimensional",
+        "type_info": "u32"
       },
       {
         "name": "CountablyInfinite",
-        "type": "Unit",
-        "docs": "Countably infinite dimensional"
+        "docs": "Countably infinite dimensional",
+        "type_info": null
       },
       {
         "name": "Uncountable",
-        "type": "Unit",
-        "docs": "Uncountably infinite dimensional"
+        "docs": "Uncountably infinite dimensional",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ScalarFieldType",
-    "docs": "",
+    "docs": "Types of scalar fields",
     "kind": "enum",
     "members": [
       {
         "name": "Real",
-        "type": "Unit",
-        "docs": "Real numbers ℝ"
+        "docs": "Real numbers ℝ",
+        "type_info": null
       },
       {
         "name": "Complex",
-        "type": "Unit",
-        "docs": "Complex numbers ℂ"
+        "docs": "Complex numbers ℂ",
+        "type_info": null
       },
       {
         "name": "Rational",
-        "type": "Unit",
-        "docs": "Rational numbers ℚ"
+        "docs": "Rational numbers ℚ",
+        "type_info": null
       },
       {
         "name": "Prime",
-        "type": "u32",
-        "docs": "Finite field of prime order"
+        "docs": "Finite field of prime order",
+        "type_info": "u32"
       }
     ]
   },
   {
     "name": "VectorSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to vector spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Basis",
-        "type": "BasisType",
-        "docs": "Basis properties"
+        "docs": "Basis properties",
+        "type_info": "BasisType"
       },
       {
         "name": "Topology",
-        "type": "TopologyType",
-        "docs": "Topology properties"
+        "docs": "Topology properties",
+        "type_info": "TopologyType"
       },
       {
         "name": "Duality",
-        "type": "DualityType",
-        "docs": "Duality properties"
+        "docs": "Duality properties",
+        "type_info": "DualityType"
       },
       {
         "name": "Decomposition",
-        "type": "DecompositionType",
-        "docs": "Decomposition properties"
+        "docs": "Decomposition properties",
+        "type_info": "DecompositionType"
       }
     ]
   },
   {
     "name": "BasisType",
-    "docs": "",
+    "docs": "Types of bases for vector spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Standard",
-        "type": "Unit",
-        "docs": "Standard basis"
+        "docs": "Standard basis",
+        "type_info": null
       },
       {
         "name": "Orthogonal",
-        "type": "Unit",
-        "docs": "Orthogonal basis"
+        "docs": "Orthogonal basis",
+        "type_info": null
       },
       {
         "name": "Orthonormal",
-        "type": "Unit",
-        "docs": "Orthonormal basis"
+        "docs": "Orthonormal basis",
+        "type_info": null
       },
       {
         "name": "Schauder",
-        "type": "Unit",
-        "docs": "Schauder basis"
+        "docs": "Schauder basis",
+        "type_info": null
       },
       {
         "name": "Hamel",
-        "type": "Unit",
-        "docs": "Hamel basis"
+        "docs": "Hamel basis",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologyType",
-    "docs": "",
+    "docs": "Types of topologies on vector spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Norm",
-        "type": "Unit",
-        "docs": "Norm topology"
+        "docs": "Norm topology",
+        "type_info": null
       },
       {
         "name": "Weak",
-        "type": "Unit",
-        "docs": "Weak topology"
+        "docs": "Weak topology",
+        "type_info": null
       },
       {
         "name": "Strong",
-        "type": "Unit",
-        "docs": "Strong topology"
+        "docs": "Strong topology",
+        "type_info": null
       },
       {
         "name": "Discrete",
-        "type": "Unit",
-        "docs": "Discrete topology"
+        "docs": "Discrete topology",
+        "type_info": null
       }
     ]
   },
   {
     "name": "DualityType",
-    "docs": "",
+    "docs": "Types of duality for vector spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Reflexive",
-        "type": "Unit",
-        "docs": "Reflexive"
+        "docs": "Reflexive",
+        "type_info": null
       },
       {
         "name": "NonReflexive",
-        "type": "Unit",
-        "docs": "Non-reflexive"
+        "docs": "Non-reflexive",
+        "type_info": null
       },
       {
         "name": "BidualIsomorphic",
-        "type": "Unit",
-        "docs": "Bidual isomorphic"
+        "docs": "Bidual isomorphic",
+        "type_info": null
       }
     ]
   },
   {
     "name": "DecompositionType",
-    "docs": "",
+    "docs": "Types of decompositions for vector spaces",
     "kind": "enum",
     "members": [
       {
         "name": "DirectSum",
-        "type": "Unit",
-        "docs": "Direct sum"
+        "docs": "Direct sum",
+        "type_info": null
       },
       {
         "name": "TensorProduct",
-        "type": "Unit",
-        "docs": "Tensor product"
+        "docs": "Tensor product",
+        "type_info": null
       },
       {
         "name": "Quotient",
-        "type": "Unit",
-        "docs": "Quotient"
+        "docs": "Quotient",
+        "type_info": null
       }
     ]
   },
   {
     "name": "NormType",
-    "docs": "",
+    "docs": "Types of norms on vector spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Euclidean",
-        "type": "Unit",
-        "docs": "Euclidean norm"
+        "docs": "Euclidean norm",
+        "type_info": null
       },
       {
         "name": "Manhattan",
-        "type": "Unit",
-        "docs": "Manhattan norm"
+        "docs": "Manhattan norm",
+        "type_info": null
       },
       {
         "name": "Maximum",
-        "type": "Unit",
-        "docs": "Maximum norm"
+        "docs": "Maximum norm",
+        "type_info": null
       },
       {
         "name": "Lp",
-        "type": "f64",
-        "docs": "p-norm"
+        "docs": "p-norm",
+        "type_info": "f64"
       },
       {
         "name": "Operator",
-        "type": "Unit",
-        "docs": "Operator norm"
+        "docs": "Operator norm",
+        "type_info": null
       }
     ]
   },
   {
     "name": "NormedSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to normed spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "CompletenessType",
-        "docs": "Completeness properties"
+        "docs": "Completeness properties",
+        "type_info": "CompletenessType"
       },
       {
         "name": "Convex",
-        "type": "ConvexityType",
-        "docs": "Convexity properties"
+        "docs": "Convexity properties",
+        "type_info": "ConvexityType"
       },
       {
         "name": "Separable",
-        "type": "SeparabilityType",
-        "docs": "Separability properties"
+        "docs": "Separability properties",
+        "type_info": "SeparabilityType"
       }
     ]
   },
   {
     "name": "CompletenessType",
-    "docs": "",
+    "docs": "Types of completeness for normed spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "Unit",
-        "docs": "Complete (Banach)"
+        "docs": "Complete (Banach)",
+        "type_info": null
       },
       {
         "name": "Incomplete",
-        "type": "Unit",
-        "docs": "Not complete"
+        "docs": "Not complete",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ConvexityType",
-    "docs": "",
+    "docs": "Types of convexity for normed spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Strictly",
-        "type": "Unit",
-        "docs": "Strictly convex"
+        "docs": "Strictly convex",
+        "type_info": null
       },
       {
         "name": "Uniformly",
-        "type": "Unit",
-        "docs": "Uniformly convex"
+        "docs": "Uniformly convex",
+        "type_info": null
       },
       {
         "name": "NonConvex",
-        "type": "Unit",
-        "docs": "Not convex"
+        "docs": "Not convex",
+        "type_info": null
       }
     ]
   },
   {
     "name": "SeparabilityType",
-    "docs": "",
+    "docs": "Types of separability for normed spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Separable",
-        "type": "Unit",
-        "docs": "Separable"
+        "docs": "Separable",
+        "type_info": null
       },
       {
         "name": "NonSeparable",
-        "type": "Unit",
-        "docs": "Non-separable"
+        "docs": "Non-separable",
+        "type_info": null
       }
     ]
   },
   {
     "name": "InnerProductType",
-    "docs": "",
+    "docs": "Types of inner products",
     "kind": "enum",
     "members": [
       {
         "name": "Real",
-        "type": "Unit",
-        "docs": "Real inner product"
+        "docs": "Real inner product",
+        "type_info": null
       },
       {
         "name": "Complex",
-        "type": "Unit",
-        "docs": "Complex inner product"
+        "docs": "Complex inner product",
+        "type_info": null
       },
       {
         "name": "Indefinite",
-        "type": "Unit",
-        "docs": "Indefinite inner product"
+        "docs": "Indefinite inner product",
+        "type_info": null
       }
     ]
   },
   {
     "name": "InnerProductSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to inner product spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Orthogonality",
-        "type": "OrthogonalityType",
-        "docs": "Orthogonality properties"
+        "docs": "Orthogonality properties",
+        "type_info": "OrthogonalityType"
       },
       {
         "name": "Complete",
-        "type": "CompletenessType",
-        "docs": "Completeness properties"
+        "docs": "Completeness properties",
+        "type_info": "CompletenessType"
       },
       {
         "name": "Separable",
-        "type": "SeparabilityType",
-        "docs": "Separability properties"
+        "docs": "Separability properties",
+        "type_info": "SeparabilityType"
       }
     ]
   },
   {
     "name": "OrthogonalityType",
-    "docs": "",
+    "docs": "Types of orthogonality for inner product spaces",
     "kind": "enum",
     "members": [
       {
         "name": "OrthonormalBasis",
-        "type": "Unit",
-        "docs": "Has orthonormal basis"
+        "docs": "Has orthonormal basis",
+        "type_info": null
       },
       {
         "name": "OrthogonalDecomposition",
-        "type": "Unit",
-        "docs": "Has orthogonal decomposition"
+        "docs": "Has orthogonal decomposition",
+        "type_info": null
       },
       {
         "name": "NonOrthogonal",
-        "type": "Unit",
-        "docs": "Not orthogonal"
+        "docs": "Not orthogonal",
+        "type_info": null
       }
     ]
   },
   {
     "name": "LinearTransformation",
-    "docs": "",
+    "docs": "A linear transformation T: V → W between vector spaces satisfies:\n1. T(u + v) = T(u) + T(v)  (additivity)\n2. T(av) = aT(v)           (homogeneity)",
     "kind": "struct",
     "members": [
       {
@@ -454,161 +454,161 @@
   },
   {
     "name": "LinearTransformationProperty",
-    "docs": "",
+    "docs": "Properties of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Kernel",
-        "type": "KernelProperty",
-        "docs": "Kernel: ker(T) = {v ∈ V : T(v) = 0}"
+        "docs": "Kernel: ker(T) = {v ∈ V : T(v) = 0}",
+        "type_info": "KernelProperty"
       },
       {
         "name": "Image",
-        "type": "ImageProperty",
-        "docs": "Image: im(T) = {T(v) : v ∈ V}"
+        "docs": "Image: im(T) = {T(v) : v ∈ V}",
+        "type_info": "ImageProperty"
       },
       {
         "name": "Rank",
-        "type": "RankProperty",
-        "docs": "Rank: dim(im(T))"
+        "docs": "Rank: dim(im(T))",
+        "type_info": "RankProperty"
       },
       {
         "name": "Nullity",
-        "type": "NullityProperty",
-        "docs": "Nullity: dim(ker(T))"
+        "docs": "Nullity: dim(ker(T))",
+        "type_info": "NullityProperty"
       },
       {
         "name": "Invertible",
-        "type": "InvertibilityProperty",
-        "docs": "Invertibility"
+        "docs": "Invertibility",
+        "type_info": "InvertibilityProperty"
       },
       {
         "name": "Diagonalizable",
-        "type": "DiagonalizabilityProperty",
-        "docs": "Diagonalizability"
+        "docs": "Diagonalizability",
+        "type_info": "DiagonalizabilityProperty"
       }
     ]
   },
   {
     "name": "KernelProperty",
-    "docs": "",
+    "docs": "Properties for kernels of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Trivial",
-        "type": "Unit",
-        "docs": "Trivial kernel"
+        "docs": "Trivial kernel",
+        "type_info": null
       },
       {
         "name": "NonTrivial",
-        "type": "Unit",
-        "docs": "Non-trivial kernel"
+        "docs": "Non-trivial kernel",
+        "type_info": null
       },
       {
         "name": "FiniteDimensional",
-        "type": "u32",
-        "docs": "Finite dimensional"
+        "docs": "Finite dimensional",
+        "type_info": "u32"
       }
     ]
   },
   {
     "name": "ImageProperty",
-    "docs": "",
+    "docs": "Properties for images of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Closed",
-        "type": "Unit",
-        "docs": "Closed image"
+        "docs": "Closed image",
+        "type_info": null
       },
       {
         "name": "Dense",
-        "type": "Unit",
-        "docs": "Dense image"
+        "docs": "Dense image",
+        "type_info": null
       },
       {
         "name": "FiniteDimensional",
-        "type": "u32",
-        "docs": "Finite dimensional"
+        "docs": "Finite dimensional",
+        "type_info": "u32"
       }
     ]
   },
   {
     "name": "RankProperty",
-    "docs": "",
+    "docs": "Properties for rank of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite rank"
+        "docs": "Finite rank",
+        "type_info": "u32"
       },
       {
         "name": "Infinite",
-        "type": "Unit",
-        "docs": "Infinite rank"
+        "docs": "Infinite rank",
+        "type_info": null
       }
     ]
   },
   {
     "name": "NullityProperty",
-    "docs": "",
+    "docs": "Properties for nullity of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite nullity"
+        "docs": "Finite nullity",
+        "type_info": "u32"
       },
       {
         "name": "Infinite",
-        "type": "Unit",
-        "docs": "Infinite nullity"
+        "docs": "Infinite nullity",
+        "type_info": null
       }
     ]
   },
   {
     "name": "InvertibilityProperty",
-    "docs": "",
+    "docs": "Properties for invertibility of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Invertible",
-        "type": "Unit",
-        "docs": "Invertible"
+        "docs": "Invertible",
+        "type_info": null
       },
       {
         "name": "NonInvertible",
-        "type": "Unit",
-        "docs": "Not invertible"
+        "docs": "Not invertible",
+        "type_info": null
       }
     ]
   },
   {
     "name": "DiagonalizabilityProperty",
-    "docs": "",
+    "docs": "Properties for diagonalizability of linear transformations",
     "kind": "enum",
     "members": [
       {
         "name": "Diagonalizable",
-        "type": "Unit",
-        "docs": "Diagonalizable"
+        "docs": "Diagonalizable",
+        "type_info": null
       },
       {
         "name": "NonDiagonalizable",
-        "type": "Unit",
-        "docs": "Not diagonalizable"
+        "docs": "Not diagonalizable",
+        "type_info": null
       },
       {
         "name": "DiagonalizableOverExtension",
-        "type": "Unit",
-        "docs": "Diagonalizable over extension field"
+        "docs": "Diagonalizable over extension field",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TensorSpace",
-    "docs": "",
+    "docs": "A tensor space is a vector space constructed from the tensor product of vector spaces\nKey concepts:\n- Multilinearity\n- Tensor product\n- Symmetry and antisymmetry\n- Contraction",
     "kind": "struct",
     "members": [
       {
@@ -635,169 +635,104 @@
   },
   {
     "name": "TensorProductStructure",
-    "docs": "",
+    "docs": "Structure of tensor products",
     "kind": "enum",
     "members": [
       {
         "name": "Standard",
-        "type": "Unit",
-        "docs": "Standard tensor product (no symmetry)"
+        "docs": "Standard tensor product (no symmetry)",
+        "type_info": null
       },
       {
-        "name": "Symmetric {",
-        "type": "Unit",
-        "docs": "Symmetric tensor product"
-      },
-      {
-        "name": "group: String",
-        "type": "Unit",
-        "docs": "Symmetry group"
+        "name": "Symmetric",
+        "docs": "Symmetry group",
+        "type_info": "{\n        group: String,\n    }"
       },
       {
         "name": "Antisymmetric",
-        "type": "Unit",
-        "docs": "Antisymmetric tensor product (exterior product)"
+        "docs": "Antisymmetric tensor product (exterior product)",
+        "type_info": null
       },
       {
-        "name": "Mixed {",
-        "type": "Unit",
-        "docs": "Mixed tensor product (combination of covariant and contravariant)"
-      },
-      {
-        "name": "covariant: Vec<usize>",
-        "type": "Unit",
-        "docs": "Covariant indices"
-      },
-      {
-        "name": "contravariant: Vec<usize>",
-        "type": "Unit",
-        "docs": "Contravariant indices"
+        "name": "Mixed",
+        "docs": "Contravariant indices",
+        "type_info": "{\n        covariant: Vec<usize>,\n        contravariant: Vec<usize>,\n    }"
       }
     ]
   },
   {
     "name": "TensorSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to tensor spaces",
     "kind": "enum",
     "members": [
       {
-        "name": "Algebraic {",
-        "type": "Unit",
-        "docs": "Algebraic properties"
+        "name": "Algebraic",
+        "docs": "Multilinearity properties",
+        "type_info": "{\n        basis: BasisType,\n        multilinear: MultilinearityType,\n    }"
       },
       {
-        "name": "basis: BasisType",
-        "type": "Unit",
-        "docs": "Basis type (reusing BasisType)"
-      },
-      {
-        "name": "multilinear: MultilinearityType",
-        "type": "Unit",
-        "docs": "Multilinearity properties"
-      },
-      {
-        "name": "Symmetry {",
-        "type": "Unit",
-        "docs": "Symmetry properties"
-      },
-      {
-        "name": "symmetry_type: String",
-        "type": "Unit",
-        "docs": "Type of symmetry"
-      },
-      {
-        "name": "group: String",
-        "type": "Unit",
-        "docs": "Symmetry group"
+        "name": "Symmetry",
+        "docs": "Symmetry group",
+        "type_info": "{\n        symmetry_type: String,\n        group: String,\n    }"
       },
       {
         "name": "Decomposition",
-        "type": "DecompositionType",
-        "docs": "Decomposition properties (reusing DecompositionType)"
+        "docs": "Decomposition properties (reusing DecompositionType)",
+        "type_info": "DecompositionType"
       }
     ]
   },
   {
     "name": "MultilinearityType",
-    "docs": "",
+    "docs": "Types of multilinearity",
     "kind": "enum",
     "members": [
       {
         "name": "Full",
-        "type": "Unit",
-        "docs": "Fully multilinear"
+        "docs": "Fully multilinear",
+        "type_info": null
       },
       {
-        "name": "Partial {",
-        "type": "Unit",
-        "docs": "Partially multilinear"
-      },
-      {
-        "name": "linear_args: Vec<bool>",
-        "type": "Unit",
-        "docs": "Which arguments are linear"
+        "name": "Partial",
+        "docs": "Which arguments are linear",
+        "type_info": "{\n        linear_args: Vec<bool>,\n    }"
       },
       {
         "name": "Alternating",
-        "type": "Unit",
-        "docs": "Alternating multilinear"
+        "docs": "Alternating multilinear",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TensorOperation",
-    "docs": "",
+    "docs": "Operations on tensors",
     "kind": "enum",
     "members": [
       {
         "name": "Product",
-        "type": "Unit",
-        "docs": "Tensor product (outer product)"
+        "docs": "Tensor product (outer product)",
+        "type_info": null
       },
       {
-        "name": "Contract {",
-        "type": "Unit",
-        "docs": "Contraction (trace on specified indices)"
+        "name": "Contract",
+        "docs": "Indices to contract (must be one covariant, one contravariant)",
+        "type_info": "{\n        indices: Vec<(usize, usize)>,\n    }"
       },
       {
-        "name": "indices: Vec<",
-        "type": "usize",
-        "docs": "Indices to contract (must be one covariant, one contravariant)"
+        "name": "Symmetrize",
+        "docs": "Indices to symmetrize",
+        "type_info": "{\n        indices: Vec<usize>,\n    }"
       },
       {
-        "name": "Symmetrize {",
-        "type": "Unit",
-        "docs": "Symmetrization"
+        "name": "Antisymmetrize",
+        "docs": "Indices to antisymmetrize",
+        "type_info": "{\n        indices: Vec<usize>,\n    }"
       },
       {
-        "name": "indices: Vec<usize>",
-        "type": "Unit",
-        "docs": "Indices to symmetrize"
-      },
-      {
-        "name": "Antisymmetrize {",
-        "type": "Unit",
-        "docs": "Antisymmetrization (exterior product)"
-      },
-      {
-        "name": "indices: Vec<usize>",
-        "type": "Unit",
-        "docs": "Indices to antisymmetrize"
-      },
-      {
-        "name": "Transform {",
-        "type": "Unit",
-        "docs": "Linear transformation (reusing LinearTransformation)"
-      },
-      {
-        "name": "transformation: LinearTransformation",
-        "type": "Unit",
-        "docs": "The transformation to apply"
-      },
-      {
-        "name": "index: usize",
-        "type": "Unit",
-        "docs": "Index to transform"
+        "name": "Transform",
+        "docs": "Index to transform",
+        "type_info": "{\n        transformation: LinearTransformation,\n        index: usize,\n    }"
       }
     ]
   }

@@ -1,13 +1,15 @@
-import React, { useMemo } from "react";
-import { getBezierPath, EdgeProps, getSmoothStepPath } from "reactflow";
+import { useMemo } from "react";
+import { EdgeProps, getSmoothStepPath } from "reactflow";
 
 import styles from "./dependency_graph.module.scss";
 
 // This component creates a floating edge that attaches to the closest point on each node
 export default function FloatingEdge({
   id,
-  source,
-  target,
+  // Unused but required by the EdgeProps interface
+  source: _source,
+  // Unused but required by the EdgeProps interface
+  target: _target,
   sourceX,
   sourceY,
   targetX,

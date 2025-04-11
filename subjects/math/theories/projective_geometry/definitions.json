@@ -1,7 +1,7 @@
 [
   {
     "name": "ProjectiveSpace",
-    "docs": "",
+    "docs": "A projective space\nA projective space P(V) is the set of lines through the origin in a vector space V.\nEquivalently, it is the quotient of V\\{0} by the scaling action of the multiplicative group.",
     "kind": "struct",
     "members": [
       {
@@ -23,50 +23,50 @@
   },
   {
     "name": "ProjectiveSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to projective spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Smooth",
-        "type": "bool",
-        "docs": "Whether the space is smooth"
+        "docs": "Whether the space is smooth",
+        "type_info": "bool"
       },
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the space is complete"
+        "docs": "Whether the space is complete",
+        "type_info": "bool"
       },
       {
         "name": "HasCoordinates",
-        "type": "bool",
-        "docs": "Whether the space has a preferred coordinate system"
+        "docs": "Whether the space has a preferred coordinate system",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "ScalarFieldType",
-    "docs": "",
+    "docs": "Types of scalar fields for projective spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Real",
-        "type": "Unit",
-        "docs": "Real numbers"
+        "docs": "Real numbers",
+        "type_info": null
       },
       {
         "name": "Complex",
-        "type": "Unit",
-        "docs": "Complex numbers"
+        "docs": "Complex numbers",
+        "type_info": null
       },
       {
         "name": "Rational",
-        "type": "Unit",
-        "docs": "Rational numbers"
+        "docs": "Rational numbers",
+        "type_info": null
       },
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite field"
+        "docs": "Finite field",
+        "type_info": "u32"
       }
     ]
   }

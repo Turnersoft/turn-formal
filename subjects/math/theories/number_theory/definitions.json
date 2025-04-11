@@ -3,6 +3,12 @@
     "name": "Number",
     "docs": "",
     "kind": "struct",
+    "members": []
+  },
+  {
+    "name": "NumberTheoryRelationEntity",
+    "docs": "Entity information for number theory relation operations",
+    "kind": "struct",
     "members": [
       {
         "name": "id",
@@ -18,36 +24,68 @@
         "name": "tags",
         "type": "Vec<(String, String)>",
         "docs": "Optional key-value pairs for additional context"
+      }
+    ]
+  },
+  {
+    "name": "NumberTheoryRelation",
+    "docs": "Relations specific to number theory",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "LessThan",
+        "docs": "One number is less than another",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n    }"
       },
       {
-        "name": "fn less_than(left",
-        "type": "&MathExpression, right: &MathExpression) -> Self {",
-        "docs": "Create a new LessThan relation"
+        "name": "LessThanOrEqual",
+        "docs": "One number is less than or equal to another",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n    }"
       },
       {
-        "name": "fn less_than_or_equal(left",
-        "type": "&MathExpression, right: &MathExpression) -> Self {",
-        "docs": "Create a new LessThanOrEqual relation"
+        "name": "GreaterThan",
+        "docs": "One number is greater than another",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n    }"
       },
       {
-        "name": "fn greater_than(left",
-        "type": "&MathExpression, right: &MathExpression) -> Self {",
-        "docs": "Create a new GreaterThan relation"
+        "name": "GreaterThanOrEqual",
+        "docs": "One number is greater than or equal to another",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n    }"
       },
       {
-        "name": "fn greater_than_or_equal(left",
-        "type": "&MathExpression, right: &MathExpression) -> Self {",
-        "docs": "Create a new GreaterThanOrEqual relation"
+        "name": "Divides",
+        "docs": "One number divides another",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        divisor: MathExpression,\n        dividend: MathExpression,\n    }"
       },
       {
-        "name": "fn divides(divisor",
-        "type": "&MathExpression, dividend: &MathExpression) -> Self {",
-        "docs": "Create a new Divides relation"
+        "name": "Congruent",
+        "docs": "Two numbers are congruent modulo a third",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n        modulus: MathExpression,\n    }"
       },
       {
-        "name": "fn custom(name",
-        "type": "&str, parameters: Vec<MathExpression>) -> Self {",
-        "docs": "Create a custom relation"
+        "name": "IsPrime",
+        "docs": "A number is prime",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        number: MathExpression,\n    }"
+      },
+      {
+        "name": "IsComposite",
+        "docs": "A number is composite",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        number: MathExpression,\n    }"
+      },
+      {
+        "name": "AreCoprime",
+        "docs": "Two numbers are coprime",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+      },
+      {
+        "name": "IsQuadraticResidue",
+        "docs": "A number is a quadratic residue modulo another",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        residue: MathExpression,\n        modulus: MathExpression,\n    }"
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom number theory relation",
+        "type_info": "{\n        entity: NumberTheoryRelationEntity,\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
       }
     ]
   }

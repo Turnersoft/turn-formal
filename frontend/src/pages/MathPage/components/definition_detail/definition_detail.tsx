@@ -18,6 +18,14 @@ const DefinitionDetail: React.FC<DefinitionDetailProps> = ({
   definitionMap,
   onScrollToDefinition,
 }) => {
+  // Safety checks
+  if (!definition) {
+    return <div className={styles.error}>Missing definition data</div>;
+  }
+
+  // Ensure members array is valid
+  const members = Array.isArray(definition.members) ? definition.members : [];
+
   return (
     <div className={styles.definition} id={`definition-${definition.name}`}>
       <h3 className={styles.definitionName}>
@@ -30,7 +38,7 @@ const DefinitionDetail: React.FC<DefinitionDetailProps> = ({
         </p>
       )}
 
-      {definition.members && definition.members.length > 0 && (
+      {members.length > 0 && (
         <div className={styles.members}>
           <h4>Members</h4>
           <table className={styles.membersTable}>
@@ -42,19 +50,35 @@ const DefinitionDetail: React.FC<DefinitionDetailProps> = ({
               </tr>
             </thead>
             <tbody>
-              {definition.members.map((member: Member, idx: number) => (
+              {members.map((member: Member, idx: number) => (
                 <tr key={idx}>
-                  <td>{member.name}</td>
+                  <td>{member.name || "unnamed"}</td>
                   <td className={styles.typeCell}>
                     <code>
-                      <TypeLink
-                        typeStr={member.type}
-                        definitionMap={definitionMap}
-                        onScrollToDefinition={onScrollToDefinition}
-                      />
+                      {member.type ? (
+                        <TypeLink
+                          typeStr={member.type}
+                          definitionMap={definitionMap}
+                          onScrollToDefinition={onScrollToDefinition}
+                        />
+                      ) : member.type_info ? (
+                        <TypeLink
+                          typeStr={member.type_info}
+                          definitionMap={definitionMap}
+                          onScrollToDefinition={onScrollToDefinition}
+                        />
+                      ) : (
+                        <span className={styles.noType}>untyped</span>
+                      )}
                     </code>
                   </td>
-                  <td>{renderMathText(member.docs)}</td>
+                  <td>
+                    {member.docs ? (
+                      renderMathText(member.docs)
+                    ) : (
+                      <em>No description</em>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

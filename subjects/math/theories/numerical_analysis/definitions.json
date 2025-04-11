@@ -1,0 +1,3845 @@
+[
+  {
+    "name": "TransformationProperty",
+    "docs": "Base transformation properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Orthogonality",
+        "docs": "Orthogonality type",
+        "type_info": "{\n        inner_product: Function,\n        orthogonality_type: String,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability type",
+        "type_info": "{\n        constant: f64,\n        stability_type: String,\n    }"
+      },
+      {
+        "name": "Computation",
+        "docs": "Inverse transform cost",
+        "type_info": "{\n        forward_cost: usize,\n        inverse_cost: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SpectralTransformation",
+    "docs": "Spectral transformation methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "domain_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "Domain space"
+      },
+      {
+        "name": "range_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "Range space"
+      },
+      {
+        "name": "basis",
+        "type": "Vec<Function>",
+        "docs": "Basis functions"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SpectralProperty>",
+        "docs": "Properties of the transformation"
+      }
+    ]
+  },
+  {
+    "name": "SpectralProperty",
+    "docs": "Properties specific to spectral transformations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Basis",
+        "docs": "Completeness",
+        "type_info": "{\n        basis_type: String,\n        complete: bool,\n    }"
+      },
+      {
+        "name": "Approximation",
+        "docs": "Error bounds",
+        "type_info": "{\n        rate: String,\n        bounds: Vec<String>,\n    }"
+      },
+      {
+        "name": "Implementation",
+        "docs": "Fast transform available",
+        "type_info": "{\n        algorithm: String,\n        fast_transform: bool,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SpectralBasis",
+    "docs": "Types of spectral bases",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Fourier",
+        "docs": "Domain period",
+        "type_info": "{\n        modes: usize,\n        period: f64,\n    }"
+      },
+      {
+        "name": "Chebyshev",
+        "docs": "Domain interval",
+        "type_info": "{\n        degree: usize,\n        interval: (f64, f64),\n    }"
+      },
+      {
+        "name": "Legendre",
+        "docs": "Domain interval",
+        "type_info": "{\n        degree: usize,\n        interval: (f64, f64),\n    }"
+      },
+      {
+        "name": "Hermite",
+        "docs": "Scaling parameter",
+        "type_info": "{\n        degree: usize,\n        scale: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "WaveletTransformation",
+    "docs": "Wavelet transformation methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "domain_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "Domain space"
+      },
+      {
+        "name": "range_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "Range space"
+      },
+      {
+        "name": "wavelet",
+        "type": "WaveletBasis",
+        "docs": "Wavelet basis"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<WaveletProperty>",
+        "docs": "Properties of the transformation"
+      }
+    ]
+  },
+  {
+    "name": "WaveletProperty",
+    "docs": "Properties specific to wavelet transformations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Wavelet",
+        "docs": "Support size",
+        "type_info": "{\n        vanishing_moments: usize,\n        support: (f64, f64),\n    }"
+      },
+      {
+        "name": "Multiresolution",
+        "docs": "Level-dependent properties",
+        "type_info": "{\n        levels: usize,\n        level_properties: Vec<String>,\n    }"
+      },
+      {
+        "name": "Implementation",
+        "docs": "Boundary handling",
+        "type_info": "{\n        algorithm: String,\n        boundary: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "WaveletBasis",
+    "docs": "Types of wavelet bases",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Haar",
+        "docs": "Number of levels",
+        "type_info": "{\n        levels: usize,\n    }"
+      },
+      {
+        "name": "Daubechies",
+        "docs": "Number of levels",
+        "type_info": "{\n        moments: usize,\n        levels: usize,\n    }"
+      },
+      {
+        "name": "Biorthogonal",
+        "docs": "Number of levels",
+        "type_info": "{\n        analysis_order: usize,\n        synthesis_order: usize,\n        levels: usize,\n    }"
+      },
+      {
+        "name": "Coiflet",
+        "docs": "Number of levels",
+        "type_info": "{\n        moments: usize,\n        levels: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationOperation",
+    "docs": "Discretization operation that converts continuous functions to discrete ones",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "DiscretizationMethod",
+        "docs": "The underlying discretization method"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<DiscretizationOperationProperty>",
+        "docs": "Additional operation properties"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationOperationProperty",
+    "docs": "Properties specific to discretization operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Implementation",
+        "docs": "Storage format",
+        "type_info": "{\n        assembly: String,\n        storage: String,\n    }"
+      },
+      {
+        "name": "Performance",
+        "docs": "Memory usage",
+        "type_info": "{\n        operations: usize,\n        memory: usize,\n    }"
+      },
+      {
+        "name": "Parallel",
+        "docs": "Communication pattern",
+        "type_info": "{\n        decomposition: String,\n        communication: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "IterationOperation",
+    "docs": "Iteration operation that applies iterative methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "The underlying iteration method"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<IterationOperationProperty>",
+        "docs": "Additional operation properties"
+      }
+    ]
+  },
+  {
+    "name": "IterationOperationProperty",
+    "docs": "Properties specific to iteration operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Implementation",
+        "docs": "Update strategy",
+        "type_info": "{\n        storage: String,\n        update: String,\n    }"
+      },
+      {
+        "name": "Performance",
+        "docs": "Memory per iteration",
+        "type_info": "{\n        iteration_cost: usize,\n        iteration_memory: usize,\n    }"
+      },
+      {
+        "name": "Monitoring",
+        "docs": "Progress metrics",
+        "type_info": "{\n        convergence_test: String,\n        metrics: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "CompositionOperation",
+    "docs": "Composition operation that combines multiple operations",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "struct CompositionOperation<T",
+        "type": "NumericalOperation, U: NumericalOperation> {",
+        "docs": "Composition operation that combines multiple operations"
+      },
+      {
+        "name": "first",
+        "type": "T",
+        "docs": "First operation"
+      },
+      {
+        "name": "second",
+        "type": "U",
+        "docs": "Second operation"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<CompositionOperationProperty>",
+        "docs": "Additional operation properties"
+      }
+    ]
+  },
+  {
+    "name": "CompositionOperationProperty",
+    "docs": "Properties specific to composition operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Implementation",
+        "docs": "Storage format",
+        "type_info": "{\n        strategy: String,\n        storage: String,\n    }"
+      },
+      {
+        "name": "Performance",
+        "docs": "Memory requirements",
+        "type_info": "{\n        total_cost: usize,\n        memory: usize,\n    }"
+      },
+      {
+        "name": "Optimization",
+        "docs": "Reordering opportunities",
+        "type_info": "{\n        fusion: Vec<String>,\n        reordering: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "Composition",
+    "docs": "Composition of two numerical operations",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "struct Composition<T",
+        "type": "Composable, U: Composable<Input = T::Output>> {",
+        "docs": "Composition of two numerical operations"
+      },
+      {
+        "name": "first",
+        "type": "T",
+        "docs": "First operation"
+      },
+      {
+        "name": "second",
+        "type": "U",
+        "docs": "Second operation"
+      }
+    ]
+  },
+  {
+    "name": "InterpolationOperation",
+    "docs": "Interpolation operation that constructs interpolants from data",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "InterpolationMethod",
+        "docs": "The underlying interpolation method"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<InterpolationOperationProperty>",
+        "docs": "Additional operation properties"
+      }
+    ]
+  },
+  {
+    "name": "InterpolationOperationProperty",
+    "docs": "Properties specific to interpolation operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Implementation",
+        "docs": "Storage format",
+        "type_info": "{\n        evaluation: String,\n        storage: String,\n    }"
+      },
+      {
+        "name": "Performance",
+        "docs": "Evaluation cost",
+        "type_info": "{\n        setup: usize,\n        evaluation: usize,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Condition number",
+        "type_info": "{\n        lebesgue: f64,\n        condition: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NumericalTensorOperations",
+    "docs": "Numerical implementations of tensor operations from linear algebra\nThis module focuses on computational aspects of tensor operations,\nincluding decompositions and numerical algorithms.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "tensor_space",
+        "type": "TensorSpace",
+        "docs": "The underlying tensor space from linear algebra"
+      },
+      {
+        "name": "numerical_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "Numerical function space for computations"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<NumericalTensorProperty>",
+        "docs": "Properties of numerical operations"
+      }
+    ]
+  },
+  {
+    "name": "NumericalTensorProperty",
+    "docs": "Properties specific to numerical tensor computations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Computational",
+        "docs": "Parallelization strategy",
+        "type_info": "{\n        operations: usize,\n        memory: usize,\n        parallel: bool,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Error bounds",
+        "type_info": "{\n        condition: f64,\n        error_bounds: Vec<String>,\n    }"
+      },
+      {
+        "name": "Storage",
+        "docs": "Compression ratio",
+        "type_info": "{\n        format: String,\n        compression: Option<f64>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "TensorDecomposition",
+    "docs": "Numerical tensor decompositions from linear algebra",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "SVD",
+        "docs": "Maximum rank",
+        "type_info": "{\n        threshold: f64,\n        max_rank: usize,\n    }"
+      },
+      {
+        "name": "CP",
+        "docs": "Maximum iterations",
+        "type_info": "{\n        rank: usize,\n        tolerance: f64,\n        max_iter: usize,\n    }"
+      },
+      {
+        "name": "Tucker",
+        "docs": "Truncation tolerance",
+        "type_info": "{\n        core_dims: Vec<usize>,\n        tolerance: f64,\n    }"
+      },
+      {
+        "name": "TensorTrain",
+        "docs": "SVD truncation tolerance",
+        "type_info": "{\n        max_rank: usize,\n        svd_tolerance: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "QuadratureMethod",
+    "docs": "Common integration methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "NewtonCotes",
+        "docs": "Open or closed",
+        "type_info": "{\n        points: usize,\n        open: bool,\n    }"
+      },
+      {
+        "name": "Gaussian",
+        "docs": "Weight function",
+        "type_info": "{\n        points: usize,\n        weight: Option<Function>,\n    }"
+      },
+      {
+        "name": "Adaptive",
+        "docs": "Error estimator",
+        "type_info": "{\n        base: Box<QuadratureMethod>,\n        error_estimator: String,\n    }"
+      },
+      {
+        "name": "Composite",
+        "docs": "Number of subintervals",
+        "type_info": "{\n        base: Box<QuadratureMethod>,\n        subintervals: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "QuadratureParameters",
+    "docs": "Parameters for quadrature methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "MethodParameters",
+        "docs": "Base method parameters"
+      },
+      {
+        "name": "interval",
+        "type": "(f64, f64)",
+        "docs": "Integration interval"
+      },
+      {
+        "name": "error_control",
+        "type": "Option<QuadratureErrorControl>",
+        "docs": "Error control parameters"
+      }
+    ]
+  },
+  {
+    "name": "QuadratureErrorControl",
+    "docs": "Error control for quadrature",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "atol",
+        "type": "f64",
+        "docs": "Absolute tolerance"
+      },
+      {
+        "name": "rtol",
+        "type": "f64",
+        "docs": "Relative tolerance"
+      },
+      {
+        "name": "max_subdivisions",
+        "type": "usize",
+        "docs": "Maximum subdivisions"
+      }
+    ]
+  },
+  {
+    "name": "GaussQuadrature",
+    "docs": "Gaussian quadrature implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "QuadratureParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "points",
+        "type": "Vec<f64>",
+        "docs": "Quadrature points"
+      },
+      {
+        "name": "weights",
+        "type": "Vec<f64>",
+        "docs": "Quadrature weights"
+      }
+    ]
+  },
+  {
+    "name": "AdaptiveQuadrature",
+    "docs": "Adaptive quadrature implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "QuadratureParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "base_rule",
+        "type": "Box<dyn NumericalMethod<Input = Function, Output = f64>>",
+        "docs": "Base quadrature rule"
+      }
+    ]
+  },
+  {
+    "name": "CompositeQuadrature",
+    "docs": "Composite quadrature implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "QuadratureParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "base_rule",
+        "type": "Box<dyn NumericalMethod<Input = Function, Output = f64>>",
+        "docs": "Base quadrature rule"
+      },
+      {
+        "name": "subintervals",
+        "type": "usize",
+        "docs": "Number of subintervals"
+      }
+    ]
+  },
+  {
+    "name": "OptimizationMethod",
+    "docs": "Common optimization methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Gradient",
+        "docs": "Step size control",
+        "type_info": "{\n        line_search: LineSearchStrategy,\n        step_size: StepSizeControl,\n    }"
+      },
+      {
+        "name": "Newton",
+        "docs": "Globalization strategy",
+        "type_info": "{\n        hessian_modification: HessianModification,\n        globalization: GlobalizationStrategy,\n    }"
+      },
+      {
+        "name": "TrustRegion",
+        "docs": "Region update strategy",
+        "type_info": "{\n        subproblem_solver: TrustRegionSolver,\n        region_update: RegionUpdateStrategy,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "LineSearchStrategy",
+    "docs": "Line search strategies",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Backtracking",
+        "docs": "Initial step length",
+        "type_info": "{\n        c1: f64,\n        alpha0: f64,\n    }"
+      },
+      {
+        "name": "StrongWolfe",
+        "docs": "Curvature condition parameter",
+        "type_info": "{\n        c1: f64,\n        c2: f64,\n    }"
+      },
+      {
+        "name": "Goldstein",
+        "docs": "Upper bound parameter",
+        "type_info": "{\n        c1: f64,\n        c2: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "StepSizeControl",
+    "docs": "Step size control methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Fixed",
+        "docs": "Fixed step size",
+        "type_info": "f64"
+      },
+      {
+        "name": "Diminishing",
+        "docs": "Decay rate",
+        "type_info": "{\n        alpha0: f64,\n        decay: f64,\n    }"
+      },
+      {
+        "name": "BarzilaiBorwein",
+        "docs": "Barzilai-Borwein step size",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "HessianModification",
+    "docs": "Hessian modification strategies",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ModifiedCholesky",
+        "docs": "Minimum eigenvalue threshold",
+        "type_info": "{\n        threshold: f64,\n    }"
+      },
+      {
+        "name": "BFGS",
+        "docs": "Initial approximation",
+        "type_info": "{\n        initial: String,\n    }"
+      },
+      {
+        "name": "SR1",
+        "docs": "Skip threshold",
+        "type_info": "{\n        threshold: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "GlobalizationStrategy",
+    "docs": "Globalization strategies",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "LineSearch",
+        "docs": "Line search",
+        "type_info": "LineSearchStrategy"
+      },
+      {
+        "name": "TrustRegion",
+        "docs": "Maximum radius",
+        "type_info": "{\n        initial_radius: f64,\n        max_radius: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "TrustRegionSolver",
+    "docs": "Trust region subproblem solvers",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Cauchy",
+        "docs": "Cauchy point",
+        "type_info": null
+      },
+      {
+        "name": "Dogleg",
+        "docs": "Dogleg method",
+        "type_info": null
+      },
+      {
+        "name": "SteihaugCG",
+        "docs": "Maximum CG iterations",
+        "type_info": "{\n        max_iterations: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "RegionUpdateStrategy",
+    "docs": "Trust region update strategies",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Standard",
+        "docs": "Contraction factor",
+        "type_info": "{\n        acceptance_ratio: f64,\n        expansion: f64,\n        contraction: f64,\n    }"
+      },
+      {
+        "name": "Adaptive",
+        "docs": "Performance history length",
+        "type_info": "{\n        history_length: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "OptimizationParameters",
+    "docs": "Parameters for optimization methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "MethodParameters",
+        "docs": "Base method parameters"
+      },
+      {
+        "name": "objective",
+        "type": "Function",
+        "docs": "Objective function"
+      },
+      {
+        "name": "constraints",
+        "type": "Option<Vec<Function>>",
+        "docs": "Constraints"
+      },
+      {
+        "name": "error_control",
+        "type": "Option<OptimizationErrorControl>",
+        "docs": "Error control parameters"
+      }
+    ]
+  },
+  {
+    "name": "OptimizationErrorControl",
+    "docs": "Error control for optimization",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "grad_tol",
+        "type": "f64",
+        "docs": "Gradient tolerance"
+      },
+      {
+        "name": "step_tol",
+        "type": "f64",
+        "docs": "Step tolerance"
+      },
+      {
+        "name": "fun_tol",
+        "type": "f64",
+        "docs": "Function tolerance"
+      },
+      {
+        "name": "constr_tol",
+        "type": "f64",
+        "docs": "Constraint tolerance"
+      }
+    ]
+  },
+  {
+    "name": "GradientDescent",
+    "docs": "Gradient descent implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "OptimizationParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "line_search",
+        "type": "LineSearchStrategy",
+        "docs": "Line search strategy"
+      },
+      {
+        "name": "step_size",
+        "type": "StepSizeControl",
+        "docs": "Step size control"
+      }
+    ]
+  },
+  {
+    "name": "NewtonOptimizer",
+    "docs": "Newton method implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "OptimizationParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "hessian_mod",
+        "type": "HessianModification",
+        "docs": "Hessian modification"
+      },
+      {
+        "name": "globalization",
+        "type": "GlobalizationStrategy",
+        "docs": "Globalization strategy"
+      }
+    ]
+  },
+  {
+    "name": "TrustRegionOptimizer",
+    "docs": "Trust region method implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "OptimizationParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "subproblem_solver",
+        "type": "TrustRegionSolver",
+        "docs": "Subproblem solver"
+      },
+      {
+        "name": "region_update",
+        "type": "RegionUpdateStrategy",
+        "docs": "Region update strategy"
+      }
+    ]
+  },
+  {
+    "name": "LinearSolverMethod",
+    "docs": "Linear solver methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Direct",
+        "docs": "Direct methods",
+        "type_info": "DirectMethod"
+      },
+      {
+        "name": "Iterative",
+        "docs": "Iterative methods",
+        "type_info": "IterativeMethod"
+      }
+    ]
+  },
+  {
+    "name": "DirectMethod",
+    "docs": "Direct solver methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "LU",
+        "docs": "Pivoting strategy",
+        "type_info": "{\n        pivoting: PivotingStrategy,\n    }"
+      },
+      {
+        "name": "Cholesky",
+        "docs": "Modification for indefinite systems",
+        "type_info": "{\n        modification: Option<f64>,\n    }"
+      },
+      {
+        "name": "QR",
+        "docs": "Column pivoting",
+        "type_info": "{\n        column_pivoting: bool,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "IterativeMethod",
+    "docs": "Iterative solver methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ConjugateGradient",
+        "docs": "Preconditioner",
+        "type_info": "{\n        preconditioner: PreconditionerType,\n    }"
+      },
+      {
+        "name": "GMRES",
+        "docs": "Preconditioner",
+        "type_info": "{\n        restart: usize,\n        preconditioner: PreconditionerType,\n    }"
+      },
+      {
+        "name": "BiCGStab",
+        "docs": "Preconditioner",
+        "type_info": "{\n        preconditioner: PreconditionerType,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "PivotingStrategy",
+    "docs": "Pivoting strategies",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "None",
+        "docs": "No pivoting",
+        "type_info": null
+      },
+      {
+        "name": "Partial",
+        "docs": "Partial pivoting",
+        "type_info": null
+      },
+      {
+        "name": "Complete",
+        "docs": "Complete pivoting",
+        "type_info": null
+      },
+      {
+        "name": "Rook",
+        "docs": "Rook pivoting",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "PreconditionerType",
+    "docs": "Preconditioner types",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Jacobi",
+        "docs": "Jacobi preconditioner",
+        "type_info": null
+      },
+      {
+        "name": "ILU",
+        "docs": "Fill level",
+        "type_info": "{\n        level: usize,\n    }"
+      },
+      {
+        "name": "IC",
+        "docs": "Fill level",
+        "type_info": "{\n        level: usize,\n    }"
+      },
+      {
+        "name": "AMG",
+        "docs": "Smoother type",
+        "type_info": "{\n        levels: usize,\n        smoother: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DirectSolver",
+    "docs": "Direct solver implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "SolverParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver properties"
+      },
+      {
+        "name": "direct_method",
+        "type": "DirectMethod",
+        "docs": "Direct method type"
+      }
+    ]
+  },
+  {
+    "name": "IterativeSolver",
+    "docs": "Iterative solver implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "SolverParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver properties"
+      },
+      {
+        "name": "iterative_method",
+        "type": "IterativeMethod",
+        "docs": "Iterative method type"
+      }
+    ]
+  },
+  {
+    "name": "TimeIntegrationMethod",
+    "docs": "Common time integration methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "SingleStep",
+        "docs": "Single-step methods",
+        "type_info": "SingleStepMethod"
+      },
+      {
+        "name": "MultiStep",
+        "docs": "Multi-step methods",
+        "type_info": "MultiStepMethod"
+      },
+      {
+        "name": "Partitioned",
+        "docs": "Partitioned methods",
+        "type_info": "PartitionedMethod"
+      }
+    ]
+  },
+  {
+    "name": "SingleStepMethod",
+    "docs": "Single-step methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "RungeKutta",
+        "docs": "Stage order",
+        "type_info": "{\n        tableau: ButcherTableau,\n        stage_order: usize,\n    }"
+      },
+      {
+        "name": "Newmark",
+        "docs": "Gamma parameter",
+        "type_info": "{\n        beta: f64,\n        gamma: f64,\n    }"
+      },
+      {
+        "name": "Exponential",
+        "docs": "Order of method",
+        "type_info": "{\n        variant: String,\n        order: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "MultiStepMethod",
+    "docs": "Multi-step methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "AdamsBashforth",
+        "docs": "Order of method",
+        "type_info": "{\n        steps: usize,\n        order: usize,\n    }"
+      },
+      {
+        "name": "BDF",
+        "docs": "Order of method",
+        "type_info": "{\n        steps: usize,\n        order: usize,\n    }"
+      },
+      {
+        "name": "GeneralLinear",
+        "docs": "Order of method",
+        "type_info": "{\n        coefficients: Vec<Vec<f64>>,\n        order: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "PartitionedMethod",
+    "docs": "Partitioned methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Symplectic",
+        "docs": "Number of stages",
+        "type_info": "{\n        order: usize,\n        stages: usize,\n    }"
+      },
+      {
+        "name": "Splitting",
+        "docs": "Order of method",
+        "type_info": "{\n        coefficients: Vec<f64>,\n        order: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ButcherTableau",
+    "docs": "Butcher tableau for Runge-Kutta methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "nodes",
+        "type": "Vec<f64>",
+        "docs": "Nodes (c coefficients)"
+      },
+      {
+        "name": "weights",
+        "type": "Vec<f64>",
+        "docs": "Weights (b coefficients)"
+      },
+      {
+        "name": "matrix",
+        "type": "Vec<Vec<f64>>",
+        "docs": "Runge-Kutta matrix (a coefficients)"
+      }
+    ]
+  },
+  {
+    "name": "TimeIntegrationParameters",
+    "docs": "Parameters specific to time integration",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "SolverParameters",
+        "docs": "Base solver parameters"
+      },
+      {
+        "name": "time_stepping",
+        "type": "TimeSteppingParameters",
+        "docs": "Time stepping parameters"
+      },
+      {
+        "name": "error_control",
+        "type": "Option<ErrorControlParameters>",
+        "docs": "Error control parameters"
+      }
+    ]
+  },
+  {
+    "name": "TimeSteppingParameters",
+    "docs": "Time stepping parameters",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "t0",
+        "type": "f64",
+        "docs": "Initial time"
+      },
+      {
+        "name": "tf",
+        "type": "f64",
+        "docs": "Final time"
+      },
+      {
+        "name": "dt0",
+        "type": "f64",
+        "docs": "Initial step size"
+      },
+      {
+        "name": "dt_bounds",
+        "type": "(f64, f64)",
+        "docs": "Step size bounds"
+      }
+    ]
+  },
+  {
+    "name": "ErrorControlParameters",
+    "docs": "Error control parameters",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "atol",
+        "type": "f64",
+        "docs": "Absolute tolerance"
+      },
+      {
+        "name": "rtol",
+        "type": "f64",
+        "docs": "Relative tolerance"
+      },
+      {
+        "name": "safety",
+        "type": "f64",
+        "docs": "Safety factor"
+      },
+      {
+        "name": "embedded_order",
+        "type": "usize",
+        "docs": "Order of embedded method"
+      }
+    ]
+  },
+  {
+    "name": "RungeKuttaSolver",
+    "docs": "Runge-Kutta solver implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "parameters",
+        "type": "TimeIntegrationParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      },
+      {
+        "name": "tableau",
+        "type": "ButcherTableau",
+        "docs": "Butcher tableau"
+      }
+    ]
+  },
+  {
+    "name": "NewmarkSolver",
+    "docs": "Newmark solver implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "parameters",
+        "type": "TimeIntegrationParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      },
+      {
+        "name": "beta",
+        "type": "f64",
+        "docs": "Beta parameter"
+      },
+      {
+        "name": "gamma",
+        "type": "f64",
+        "docs": "Gamma parameter"
+      }
+    ]
+  },
+  {
+    "name": "BDFSolver",
+    "docs": "BDF solver implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "parameters",
+        "type": "TimeIntegrationParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      },
+      {
+        "name": "steps",
+        "type": "usize",
+        "docs": "Number of steps"
+      },
+      {
+        "name": "order",
+        "type": "usize",
+        "docs": "Order of method"
+      }
+    ]
+  },
+  {
+    "name": "StiffSolver",
+    "docs": "Stiff ODE solvers",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "SDIRK",
+        "docs": "L-stability",
+        "type_info": "{\n        stages: usize,\n        order: usize,\n        l_stable: bool,\n    }"
+      },
+      {
+        "name": "Rosenbrock",
+        "docs": "W-method variant",
+        "type_info": "{\n        stages: usize,\n        order: usize,\n        w_method: bool,\n    }"
+      },
+      {
+        "name": "ExponentialIntegrator",
+        "docs": "Number of Krylov vectors",
+        "type_info": "{\n        method_type: ExpIntegratorType,\n        krylov_dim: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ExpIntegratorType",
+    "docs": "Types of exponential integrators",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ExpRK",
+        "docs": "Number of stages",
+        "type_info": "{\n        stages: usize,\n    }"
+      },
+      {
+        "name": "ExpRosenbrock",
+        "docs": "Number of stages",
+        "type_info": "{\n        stages: usize,\n    }"
+      },
+      {
+        "name": "ExpMultistep",
+        "docs": "Number of steps",
+        "type_info": "{\n        steps: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SDIRKSolver",
+    "docs": "Implementation of SDIRK method",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "parameters",
+        "type": "TimeIntegrationParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      },
+      {
+        "name": "stages",
+        "type": "usize",
+        "docs": "Number of stages"
+      },
+      {
+        "name": "tableau",
+        "type": "ButcherTableau",
+        "docs": "Butcher tableau"
+      }
+    ]
+  },
+  {
+    "name": "NonlinearSolverType",
+    "docs": "Common nonlinear solver types",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Newton",
+        "docs": "Newton-type methods",
+        "type_info": "NewtonVariant"
+      },
+      {
+        "name": "FixedPoint",
+        "docs": "Contraction constant",
+        "type_info": "{\n        contraction: f64,\n    }"
+      },
+      {
+        "name": "QuasiNewton",
+        "docs": "Memory limit",
+        "type_info": "{\n        update: String,\n        memory: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NonlinearSolverParameters",
+    "docs": "Parameters specific to nonlinear solvers",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "SolverParameters",
+        "docs": "Base solver parameters"
+      },
+      {
+        "name": "line_search",
+        "type": "Option<LineSearchParameters>",
+        "docs": "Line search parameters"
+      },
+      {
+        "name": "trust_region",
+        "type": "Option<TrustRegionParameters>",
+        "docs": "Trust region parameters"
+      }
+    ]
+  },
+  {
+    "name": "LineSearchParameters",
+    "docs": "Line search parameters",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "initial_step",
+        "type": "f64",
+        "docs": "Initial step length"
+      },
+      {
+        "name": "c1",
+        "type": "f64",
+        "docs": "Sufficient decrease parameter"
+      },
+      {
+        "name": "c2",
+        "type": "f64",
+        "docs": "Curvature condition parameter"
+      },
+      {
+        "name": "max_iterations",
+        "type": "usize",
+        "docs": "Maximum backtracking iterations"
+      }
+    ]
+  },
+  {
+    "name": "TrustRegionParameters",
+    "docs": "Trust region parameters",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "initial_radius",
+        "type": "f64",
+        "docs": "Initial radius"
+      },
+      {
+        "name": "max_radius",
+        "type": "f64",
+        "docs": "Maximum radius"
+      },
+      {
+        "name": "acceptance_ratio",
+        "type": "f64",
+        "docs": "Acceptance threshold"
+      },
+      {
+        "name": "expansion",
+        "type": "f64",
+        "docs": "Expansion factor"
+      },
+      {
+        "name": "contraction",
+        "type": "f64",
+        "docs": "Contraction factor"
+      }
+    ]
+  },
+  {
+    "name": "NewtonSolver",
+    "docs": "Newton's method implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "NewtonMethod",
+        "docs": "The Newton method being used"
+      },
+      {
+        "name": "parameters",
+        "type": "NonlinearSolverParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      }
+    ]
+  },
+  {
+    "name": "BroydenSolver",
+    "docs": "Broyden's method implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "parameters",
+        "type": "NonlinearSolverParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      }
+    ]
+  },
+  {
+    "name": "FixedPointSolver",
+    "docs": "Fixed point iteration implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "parameters",
+        "type": "NonlinearSolverParameters",
+        "docs": "Solver parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "solver_properties",
+        "type": "VariantSet<SolverProperty>",
+        "docs": "Solver-specific properties"
+      }
+    ]
+  },
+  {
+    "name": "SolverType",
+    "docs": "Common solver types",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Direct",
+        "docs": "Pivoting strategy",
+        "type_info": "{\n        factorization: String,\n        pivoting: String,\n    }"
+      },
+      {
+        "name": "Iterative",
+        "docs": "Preconditioner",
+        "type_info": "{\n        method: String,\n        preconditioner: String,\n    }"
+      },
+      {
+        "name": "TimeIntegration",
+        "docs": "Order of accuracy",
+        "type_info": "{\n        scheme: String,\n        order: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SolverProperty",
+    "docs": "Properties specific to solvers",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Matrix",
+        "docs": "Sparsity pattern",
+        "type_info": "{\n        condition: f64,\n        sparsity: String,\n    }"
+      },
+      {
+        "name": "Preconditioner",
+        "docs": "Setup cost",
+        "type_info": "{\n        quality: f64,\n        setup_cost: usize,\n    }"
+      },
+      {
+        "name": "TimeStepping",
+        "docs": "Local truncation error",
+        "type_info": "{\n        stability_region: String,\n        truncation_error: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SolverParameters",
+    "docs": "Parameters for solvers",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "MethodParameters",
+        "docs": "Base parameters"
+      },
+      {
+        "name": "solver_type",
+        "type": "SolverType",
+        "docs": "Solver type"
+      },
+      {
+        "name": "solver_specific",
+        "type": "VariantSet<SolverSpecificParameter>",
+        "docs": "Additional solver-specific parameters"
+      }
+    ]
+  },
+  {
+    "name": "SolverSpecificParameter",
+    "docs": "Additional parameters specific to solvers",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Direct",
+        "docs": "Threading threshold",
+        "type_info": "{\n        block_size: usize,\n        thread_threshold: usize,\n    }"
+      },
+      {
+        "name": "Iterative",
+        "docs": "Orthogonalization method",
+        "type_info": "{\n        restart: usize,\n        orthog: String,\n    }"
+      },
+      {
+        "name": "TimeIntegration",
+        "docs": "Error estimator",
+        "type_info": "{\n        stage_order: usize,\n        error_estimator: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "MethodProperty",
+    "docs": "Properties common to numerical methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convergence",
+        "docs": "Convergence conditions",
+        "type_info": "{\n        order: f64,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability conditions",
+        "type_info": "{\n        stability_type: String,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Computation",
+        "docs": "Memory requirements",
+        "type_info": "{\n        operations: usize,\n        memory: usize,\n    }"
+      },
+      {
+        "name": "Error",
+        "docs": "Error bounds",
+        "type_info": "{\n        error_type: String,\n        bounds: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "MethodParameters",
+    "docs": "Common parameters for numerical methods",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "tolerance",
+        "type": "f64",
+        "docs": "Tolerance for convergence"
+      },
+      {
+        "name": "max_iterations",
+        "type": "usize",
+        "docs": "Maximum iterations"
+      },
+      {
+        "name": "adaptive",
+        "type": "bool",
+        "docs": "Whether to use adaptive strategies"
+      },
+      {
+        "name": "additional",
+        "type": "VariantSet<AdditionalParameter>",
+        "docs": "Additional method-specific parameters"
+      }
+    ]
+  },
+  {
+    "name": "AdditionalParameter",
+    "docs": "Additional parameters for specific methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "TimeStep",
+        "docs": "Maximum step size",
+        "type_info": "{\n        initial: f64,\n        min: f64,\n        max: f64,\n    }"
+      },
+      {
+        "name": "Mesh",
+        "docs": "Refinement strategy",
+        "type_info": "{\n        initial: f64,\n        refinement: String,\n    }"
+      },
+      {
+        "name": "Solver",
+        "docs": "Solver specific options",
+        "type_info": "{\n        preconditioner: String,\n        options: Vec<String>,\n    }"
+      },
+      {
+        "name": "Integration",
+        "docs": "Weight function",
+        "type_info": "{\n        points: usize,\n        weight: Option<Function>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DifferentiationMethod",
+    "docs": "Common differentiation methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "FiniteDifference",
+        "docs": "Forward, backward, or central",
+        "type_info": "{\n        order: usize,\n        step_size: f64,\n        variant: FiniteDifferenceVariant,\n    }"
+      },
+      {
+        "name": "Spectral",
+        "docs": "Number of modes",
+        "type_info": "{\n        basis: String,\n        modes: usize,\n    }"
+      },
+      {
+        "name": "Automatic",
+        "docs": "Order of derivatives",
+        "type_info": "{\n        mode: AutoDiffMode,\n        order: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "FiniteDifferenceVariant",
+    "docs": "Finite difference variants",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Forward",
+        "docs": "Forward differences",
+        "type_info": null
+      },
+      {
+        "name": "Backward",
+        "docs": "Backward differences",
+        "type_info": null
+      },
+      {
+        "name": "Central",
+        "docs": "Central differences",
+        "type_info": null
+      },
+      {
+        "name": "Upwind",
+        "docs": "Flow direction",
+        "type_info": "{\n        direction: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "AutoDiffMode",
+    "docs": "Automatic differentiation modes",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Forward",
+        "docs": "Forward mode",
+        "type_info": null
+      },
+      {
+        "name": "Reverse",
+        "docs": "Reverse mode",
+        "type_info": null
+      },
+      {
+        "name": "Mixed",
+        "docs": "Number of reverse sweeps",
+        "type_info": "{\n        forward_sweeps: usize,\n        reverse_sweeps: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DifferentiationParameters",
+    "docs": "Parameters specific to differentiation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "MethodParameters",
+        "docs": "Base method parameters"
+      },
+      {
+        "name": "order",
+        "type": "usize",
+        "docs": "Differentiation order"
+      },
+      {
+        "name": "error_control",
+        "type": "Option<DifferentiationErrorControl>",
+        "docs": "Error control parameters"
+      }
+    ]
+  },
+  {
+    "name": "DifferentiationErrorControl",
+    "docs": "Error control for differentiation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "atol",
+        "type": "f64",
+        "docs": "Absolute tolerance"
+      },
+      {
+        "name": "rtol",
+        "type": "f64",
+        "docs": "Relative tolerance"
+      },
+      {
+        "name": "max_step",
+        "type": "f64",
+        "docs": "Maximum step size"
+      }
+    ]
+  },
+  {
+    "name": "FiniteDifferences",
+    "docs": "Finite difference implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "DifferentiationParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "coefficients",
+        "type": "Vec<f64>",
+        "docs": "Difference coefficients"
+      },
+      {
+        "name": "step_size",
+        "type": "f64",
+        "docs": "Step size"
+      }
+    ]
+  },
+  {
+    "name": "SpectralDifferentiation",
+    "docs": "Spectral differentiation implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "DifferentiationParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "basis",
+        "type": "Vec<Function>",
+        "docs": "Basis functions"
+      },
+      {
+        "name": "modes",
+        "type": "usize",
+        "docs": "Number of modes"
+      }
+    ]
+  },
+  {
+    "name": "AutomaticDifferentiation",
+    "docs": "Automatic differentiation implementation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "method",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "parameters",
+        "type": "DifferentiationParameters",
+        "docs": "Method parameters"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<MethodProperty>",
+        "docs": "Method properties"
+      },
+      {
+        "name": "mode",
+        "type": "AutoDiffMode",
+        "docs": "Differentiation mode"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationMethod",
+    "docs": "Discretization Method\n\nFramework for converting continuous problems into discrete ones,\nincluding mesh generation, basis selection, and assembly.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "continuous_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The continuous space"
+      },
+      {
+        "name": "discrete_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The discrete space"
+      },
+      {
+        "name": "operator",
+        "type": "NumericalOperator",
+        "docs": "The discretization operator"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<DiscretizationProperty>",
+        "docs": "Properties of discretization"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationProperty",
+    "docs": "Properties of discretization methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Mesh",
+        "docs": "Mesh properties",
+        "type_info": "MeshProperty"
+      },
+      {
+        "name": "Basis",
+        "docs": "Basis properties",
+        "type_info": "BasisProperty"
+      },
+      {
+        "name": "Assembly",
+        "docs": "Assembly properties",
+        "type_info": "AssemblyProperty"
+      },
+      {
+        "name": "Error",
+        "docs": "Error properties",
+        "type_info": "DiscretizationError"
+      }
+    ]
+  },
+  {
+    "name": "MeshProperty",
+    "docs": "Properties of computational meshes",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Geometry",
+        "docs": "Quality measures",
+        "type_info": "{\n        elements: Vec<String>,\n        quality: Vec<f64>,\n    }"
+      },
+      {
+        "name": "Topology",
+        "docs": "Boundary treatment",
+        "type_info": "{\n        connectivity: String,\n        boundary: String,\n    }"
+      },
+      {
+        "name": "Adaptivity",
+        "docs": "Error indicators",
+        "type_info": "{\n        strategy: String,\n        indicators: Vec<String>,\n    }"
+      },
+      {
+        "name": "Resolution",
+        "docs": "Grading ratio",
+        "type_info": "{\n        size: Function,\n        grading: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "BasisProperty",
+    "docs": "Properties of discrete bases",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Space",
+        "docs": "Polynomial degree",
+        "type_info": "{\n        element_type: String,\n        degree: usize,\n    }"
+      },
+      {
+        "name": "Approximation",
+        "docs": "Stability properties",
+        "type_info": "{\n        order: usize,\n        stability: Vec<String>,\n    }"
+      },
+      {
+        "name": "Implementation",
+        "docs": "Memory requirements",
+        "type_info": "{\n        cost: usize,\n        memory: usize,\n    }"
+      },
+      {
+        "name": "Special",
+        "docs": "Hierarchical",
+        "type_info": "{\n        orthogonal: bool,\n        hierarchical: bool,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "AssemblyProperty",
+    "docs": "Properties of system assembly",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Matrix",
+        "docs": "Condition number",
+        "type_info": "{\n        sparsity: String,\n        condition: f64,\n    }"
+      },
+      {
+        "name": "Computation",
+        "docs": "Parallelization",
+        "type_info": "{\n        cost: usize,\n        parallel: bool,\n    }"
+      },
+      {
+        "name": "Storage",
+        "docs": "Memory requirements",
+        "type_info": "{\n        format: String,\n        memory: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationError",
+    "docs": "Error properties of discretization",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Approximation",
+        "docs": "Error bounds",
+        "type_info": "{\n        order: usize,\n        bounds: Vec<String>,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Conditions",
+        "type_info": "{\n        constant: f64,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Consistency",
+        "docs": "Requirements",
+        "type_info": "{\n        order: usize,\n        requirements: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "FiniteElementMethod",
+    "docs": "Finite Element Method\n\nSpecialization of discretization for finite elements",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "DiscretizationMethod",
+        "docs": "Base discretization"
+      },
+      {
+        "name": "element",
+        "type": "FiniteElement",
+        "docs": "Element definition"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FiniteElementProperty>",
+        "docs": "Properties specific to FEM"
+      }
+    ]
+  },
+  {
+    "name": "FiniteElement",
+    "docs": "Finite element definition",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "reference",
+        "type": "String",
+        "docs": "Reference element"
+      },
+      {
+        "name": "basis",
+        "type": "Vec<Function>",
+        "docs": "Basis functions"
+      },
+      {
+        "name": "dofs",
+        "type": "Vec<String>",
+        "docs": "Degrees of freedom"
+      }
+    ]
+  },
+  {
+    "name": "FiniteElementProperty",
+    "docs": "Properties specific to finite elements",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Element",
+        "docs": "Completeness",
+        "type_info": "{\n        conforming: bool,\n        complete: bool,\n    }"
+      },
+      {
+        "name": "Assembly",
+        "docs": "Stiffness matrix properties",
+        "type_info": "{\n        mass_matrix: String,\n        stiffness_matrix: String,\n    }"
+      },
+      {
+        "name": "Error",
+        "docs": "Best approximation",
+        "type_info": "{\n        interpolation: String,\n        best_approximation: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "FiniteDifferenceMethod",
+    "docs": "Finite Difference Method\n\nSpecialization of discretization for finite differences",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "DiscretizationMethod",
+        "docs": "Base discretization"
+      },
+      {
+        "name": "stencil",
+        "type": "Vec<(Vec<i32>, f64)>",
+        "docs": "Stencil definition"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FiniteDifferenceProperty>",
+        "docs": "Properties specific to FDM"
+      }
+    ]
+  },
+  {
+    "name": "FiniteDifferenceProperty",
+    "docs": "Properties specific to finite differences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Stencil",
+        "docs": "Stability region",
+        "type_info": "{\n        order: usize,\n        stability: String,\n    }"
+      },
+      {
+        "name": "Boundary",
+        "docs": "Order preservation",
+        "type_info": "{\n        method: String,\n        preserves_order: bool,\n    }"
+      },
+      {
+        "name": "Special",
+        "docs": "Monotonicity",
+        "type_info": "{\n        conservative: bool,\n        monotone: bool,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ErrorAnalysis",
+    "docs": "Error Analysis\n\nFramework for analyzing errors in numerical methods,\nincluding a priori and a posteriori estimates.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The space where error is measured"
+      },
+      {
+        "name": "error",
+        "type": "Function",
+        "docs": "The error functional"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<ErrorProperty>",
+        "docs": "Properties of the error"
+      }
+    ]
+  },
+  {
+    "name": "ErrorProperty",
+    "docs": "Properties of numerical errors",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "APriori",
+        "docs": "A priori estimates",
+        "type_info": "APrioriError"
+      },
+      {
+        "name": "APosteriori",
+        "docs": "A posteriori estimates",
+        "type_info": "APosterioriError"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability aspects",
+        "type_info": "ErrorStability"
+      },
+      {
+        "name": "Propagation",
+        "docs": "Propagation aspects",
+        "type_info": "ErrorPropagation"
+      }
+    ]
+  },
+  {
+    "name": "APrioriError",
+    "docs": "A priori error estimates",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Truncation",
+        "docs": "Requirements",
+        "type_info": "{\n        order: usize,\n        constants: Vec<f64>,\n        requirements: Vec<String>,\n    }"
+      },
+      {
+        "name": "Approximation",
+        "docs": "Error bounds",
+        "type_info": "{\n        best: Function,\n        bounds: Vec<String>,\n    }"
+      },
+      {
+        "name": "Discretization",
+        "docs": "Method dependent terms",
+        "type_info": "{\n        mesh_terms: Vec<String>,\n        method_terms: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "APosterioriError",
+    "docs": "A posteriori error estimates",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Residual",
+        "docs": "Efficiency constant",
+        "type_info": "{\n        indicators: Vec<Function>,\n        reliability: f64,\n        efficiency: f64,\n    }"
+      },
+      {
+        "name": "Recovery",
+        "docs": "Superconvergence",
+        "type_info": "{\n        operator: NumericalOperator,\n        superconvergence: bool,\n    }"
+      },
+      {
+        "name": "Hierarchical",
+        "docs": "Saturation assumption",
+        "type_info": "{\n        levels: usize,\n        saturation: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ErrorStability",
+    "docs": "Error stability properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Conditioning",
+        "docs": "Growth factors",
+        "type_info": "{\n        number: f64,\n        growth: Vec<f64>,\n    }"
+      },
+      {
+        "name": "Perturbation",
+        "docs": "Robustness",
+        "type_info": "{\n        sensitivity: f64,\n        robustness: String,\n    }"
+      },
+      {
+        "name": "Asymptotic",
+        "docs": "Higher order terms",
+        "type_info": "{\n        leading: Function,\n        higher_order: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ErrorPropagation",
+    "docs": "Error propagation properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Local",
+        "docs": "Damping factors",
+        "type_info": "{\n        rate: f64,\n        damping: Vec<f64>,\n    }"
+      },
+      {
+        "name": "Global",
+        "docs": "Stability regions",
+        "type_info": "{\n        behavior: String,\n        stability: Vec<String>,\n    }"
+      },
+      {
+        "name": "Accumulation",
+        "docs": "Bounds",
+        "type_info": "{\n        pattern: String,\n        bounds: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "RoundoffError",
+    "docs": "Round-off Error Analysis\n\nSpecialization for analyzing floating-point errors",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "ErrorAnalysis",
+        "docs": "Base error analysis"
+      },
+      {
+        "name": "format",
+        "type": "FloatingPointFormat",
+        "docs": "Floating point format"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<RoundoffProperty>",
+        "docs": "Properties specific to roundoff"
+      }
+    ]
+  },
+  {
+    "name": "FloatingPointFormat",
+    "docs": "Floating point format specification",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "precision",
+        "type": "usize",
+        "docs": "Number of bits in mantissa"
+      },
+      {
+        "name": "exponent_range",
+        "type": "(i32, i32)",
+        "docs": "Exponent range"
+      },
+      {
+        "name": "special_values",
+        "type": "Vec<String>",
+        "docs": "Special values handling"
+      }
+    ]
+  },
+  {
+    "name": "RoundoffProperty",
+    "docs": "Properties specific to roundoff error",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "UnitRoundoff",
+        "docs": "Rounding mode",
+        "type_info": "{\n        epsilon: f64,\n        mode: String,\n    }"
+      },
+      {
+        "name": "Operation",
+        "docs": "Worst case scenario",
+        "type_info": "{\n        error: f64,\n        worst_case: String,\n    }"
+      },
+      {
+        "name": "Accumulation",
+        "docs": "Compensated summation",
+        "type_info": "{\n        rate: String,\n        compensation: bool,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationError",
+    "docs": "Discretization Error Analysis\n\nSpecialization for analyzing discretization errors",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "ErrorAnalysis",
+        "docs": "Base error analysis"
+      },
+      {
+        "name": "method",
+        "type": "String",
+        "docs": "Discretization method"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<DiscretizationErrorProperty>",
+        "docs": "Properties specific to discretization"
+      }
+    ]
+  },
+  {
+    "name": "DiscretizationErrorProperty",
+    "docs": "Properties specific to discretization error",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Consistency",
+        "docs": "Requirements",
+        "type_info": "{\n        order: usize,\n        requirements: Vec<String>,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Energy estimates",
+        "type_info": "{\n        cfl: Option<String>,\n        energy: Vec<String>,\n    }"
+      },
+      {
+        "name": "Convergence",
+        "docs": "Rate in different norms",
+        "type_info": "{\n        order: usize,\n        rates: Vec<(String, f64)>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceAnalysis",
+    "docs": "Convergence Analysis\n\nFramework for analyzing convergence of numerical methods,\nincluding rates, conditions, and acceleration techniques.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The space where convergence is analyzed"
+      },
+      {
+        "name": "sequence",
+        "type": "Function",
+        "docs": "The sequence or method being analyzed"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<ConvergenceProperty>",
+        "docs": "Properties of convergence"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceProperty",
+    "docs": "Properties of convergence",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Rate",
+        "docs": "Type and rate of convergence",
+        "type_info": "ConvergenceRate"
+      },
+      {
+        "name": "Conditions",
+        "docs": "Conditions for convergence",
+        "type_info": "ConvergenceConditions"
+      },
+      {
+        "name": "Acceleration",
+        "docs": "Acceleration techniques",
+        "type_info": "ConvergenceAcceleration"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability aspects",
+        "type_info": "ConvergenceStability"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceRate",
+    "docs": "Types and rates of convergence",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Linear",
+        "docs": "Error bound",
+        "type_info": "{\n        factor: f64,\n        bound: Function,\n    }"
+      },
+      {
+        "name": "Polynomial",
+        "docs": "Leading coefficient",
+        "type_info": "{\n        order: f64,\n        coefficient: f64,\n    }"
+      },
+      {
+        "name": "Exponential",
+        "docs": "Scaling factor",
+        "type_info": "{\n        base: f64,\n        scale: f64,\n    }"
+      },
+      {
+        "name": "Asymptotic",
+        "docs": "Error term",
+        "type_info": "{\n        leading: Function,\n        error: Function,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceConditions",
+    "docs": "Conditions necessary for convergence",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Initial",
+        "docs": "Size of neighborhood",
+        "type_info": "{\n        requirements: Vec<String>,\n        neighborhood: Option<f64>,\n    }"
+      },
+      {
+        "name": "Regularity",
+        "docs": "Additional conditions",
+        "type_info": "{\n        smoothness: String,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Other stability requirements",
+        "type_info": "{\n        cfl_condition: Option<String>,\n        requirements: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceAcceleration",
+    "docs": "Convergence acceleration techniques",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Extrapolation",
+        "docs": "Acceleration factor",
+        "type_info": "{\n        method: String,\n        factor: f64,\n    }"
+      },
+      {
+        "name": "Relaxation",
+        "docs": "Optimal value",
+        "type_info": "{\n        parameter: Function,\n        optimal: Option<f64>,\n    }"
+      },
+      {
+        "name": "Preconditioning",
+        "docs": "Effectiveness measure",
+        "type_info": "{\n        operator: NumericalOperator,\n        effectiveness: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceStability",
+    "docs": "Stability aspects of convergence",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Numerical",
+        "docs": "Growth bound",
+        "type_info": "{\n        constant: f64,\n        growth: Function,\n    }"
+      },
+      {
+        "name": "Perturbation",
+        "docs": "Error propagation",
+        "type_info": "{\n        sensitivity: f64,\n        propagation: String,\n    }"
+      },
+      {
+        "name": "Conditioning",
+        "docs": "Effect on convergence",
+        "type_info": "{\n        number: f64,\n        effect: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SequenceConvergence",
+    "docs": "Convergence Analysis for Sequences\n\nSpecialization for analyzing convergence of sequences",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "ConvergenceAnalysis",
+        "docs": "Base convergence analysis"
+      },
+      {
+        "name": "limit",
+        "type": "Option<Function>",
+        "docs": "The limit (if known)"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SequenceConvergenceProperty>",
+        "docs": "Properties specific to sequences"
+      }
+    ]
+  },
+  {
+    "name": "SequenceConvergenceProperty",
+    "docs": "Properties specific to sequence convergence",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Monotonicity",
+        "docs": "From which term",
+        "type_info": "{\n        monotone_type: String,\n        from_term: Option<usize>,\n    }"
+      },
+      {
+        "name": "Oscillation",
+        "docs": "Bounds on oscillation",
+        "type_info": "{\n        oscillation_type: String,\n        bounds: Option<(f64, f64)>,\n    }"
+      },
+      {
+        "name": "Subsequence",
+        "docs": "Rate for subsequences",
+        "type_info": "{\n        convergent: bool,\n        rate: Option<ConvergenceRate>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SeriesConvergence",
+    "docs": "Convergence Analysis for Series\n\nSpecialization for analyzing convergence of series",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "ConvergenceAnalysis",
+        "docs": "Base convergence analysis"
+      },
+      {
+        "name": "partial_sums",
+        "type": "Function",
+        "docs": "Partial sums"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SeriesConvergenceProperty>",
+        "docs": "Properties specific to series"
+      }
+    ]
+  },
+  {
+    "name": "SeriesConvergenceProperty",
+    "docs": "Properties specific to series convergence",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Absolute",
+        "docs": "Related properties",
+        "type_info": "{\n        is_absolute: bool,\n        properties: Vec<String>,\n    }"
+      },
+      {
+        "name": "Conditional",
+        "docs": "Effect on sum",
+        "type_info": "{\n        conditions: Vec<String>,\n        effect: String,\n    }"
+      },
+      {
+        "name": "Summability",
+        "docs": "Applicability conditions",
+        "type_info": "{\n        method: String,\n        conditions: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "IterationMethod",
+    "docs": "Iteration Method\n\nA general iteration method for solving numerical problems.\nRepresents methods like fixed point iteration, Newton's method,\ngradient descent, etc.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The space where iteration occurs"
+      },
+      {
+        "name": "iteration_map",
+        "type": "NumericalOperator",
+        "docs": "The iteration operator"
+      },
+      {
+        "name": "initial",
+        "type": "Function",
+        "docs": "Initial condition/starting point"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<IterationProperty>",
+        "docs": "Properties of the iteration"
+      }
+    ]
+  },
+  {
+    "name": "IterationProperty",
+    "docs": "Properties of iteration methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convergence",
+        "docs": "Convergence properties",
+        "type_info": "ConvergenceProperty"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability properties",
+        "type_info": "IterationStabilityProperty"
+      },
+      {
+        "name": "Basin",
+        "docs": "Basin of attraction",
+        "type_info": "BasinProperty"
+      },
+      {
+        "name": "Computation",
+        "docs": "Computational aspects",
+        "type_info": "IterationComputationProperty"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceProperty",
+    "docs": "Convergence properties of iterations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Local",
+        "docs": "Neighborhood of convergence",
+        "type_info": "{\n        rate: ConvergenceRate,\n        neighborhood: String,\n    }"
+      },
+      {
+        "name": "Global",
+        "docs": "Conditions for convergence",
+        "type_info": "{\n        rate: ConvergenceRate,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Conditional",
+        "docs": "Rate when conditions met",
+        "type_info": "{\n        conditions: Vec<String>,\n        rate: ConvergenceRate,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceRate",
+    "docs": "Types of convergence rates",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Linear",
+        "docs": "Contraction factor",
+        "type_info": "{\n        factor: f64,\n    }"
+      },
+      {
+        "name": "Superlinear",
+        "docs": "Order of convergence",
+        "type_info": "{\n        order: f64,\n    }"
+      },
+      {
+        "name": "Quadratic",
+        "docs": "Constant in bound",
+        "type_info": "{\n        constant: f64,\n    }"
+      },
+      {
+        "name": "Geometric",
+        "docs": "Constant factor",
+        "type_info": "{\n        rho: f64,\n        constant: f64,\n    }"
+      },
+      {
+        "name": "Order",
+        "docs": "Constant in bound",
+        "type_info": "{\n        p: f64,\n        constant: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "IterationStabilityProperty",
+    "docs": "Stability properties of iterations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Lyapunov",
+        "docs": "Decay rate",
+        "type_info": "{\n        function: Function,\n        rate: f64,\n    }"
+      },
+      {
+        "name": "Asymptotic",
+        "docs": "Decay rate",
+        "type_info": "{\n        radius: f64,\n        rate: f64,\n    }"
+      },
+      {
+        "name": "Structural",
+        "docs": "Effect on solution",
+        "type_info": "{\n        bound: f64,\n        effect: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "BasinProperty",
+    "docs": "Properties of basin of attraction",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Local",
+        "docs": "Size estimate",
+        "type_info": "{\n        description: String,\n        size: f64,\n    }"
+      },
+      {
+        "name": "Global",
+        "docs": "Conditions for membership",
+        "type_info": "{\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Multiple",
+        "docs": "Description of each",
+        "type_info": "{\n        count: usize,\n        descriptions: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "IterationComputationProperty",
+    "docs": "Computational aspects of iterations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Cost",
+        "docs": "Memory requirements",
+        "type_info": "{\n        operations: usize,\n        memory: usize,\n    }"
+      },
+      {
+        "name": "Parallel",
+        "docs": "Efficiency estimate",
+        "type_info": "{\n        strategy: String,\n        efficiency: f64,\n    }"
+      },
+      {
+        "name": "StoppingCriteria",
+        "docs": "Parameters",
+        "type_info": "{\n        criterion: StoppingCriterion,\n        parameters: Vec<f64>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "StoppingCriterion",
+    "docs": "Types of stopping criteria",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Residual",
+        "docs": "Norm used",
+        "type_info": "{\n        tolerance: f64,\n        norm: String,\n    }"
+      },
+      {
+        "name": "StepSize",
+        "docs": "Norm used",
+        "type_info": "{\n        tolerance: f64,\n        norm: String,\n    }"
+      },
+      {
+        "name": "MaxIterations",
+        "docs": "Maximum iterations",
+        "type_info": "usize"
+      },
+      {
+        "name": "Combined",
+        "docs": "Combination rule",
+        "type_info": "{\n        criteria: Vec<StoppingCriterion>,\n        rule: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NewtonMethod",
+    "docs": "Newton-like Methods\n\nSpecialization of iteration methods for Newton-like algorithms",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "IterationMethod",
+        "docs": "Base iteration method"
+      },
+      {
+        "name": "operator",
+        "type": "NumericalOperator",
+        "docs": "The operator being solved (F(x) = 0)"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<NewtonProperty>",
+        "docs": "Properties specific to Newton methods"
+      }
+    ]
+  },
+  {
+    "name": "NewtonProperty",
+    "docs": "Properties specific to Newton methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Derivative",
+        "docs": "Lipschitz properties",
+        "type_info": "{\n        invertibility: String,\n        lipschitz: Option<f64>,\n    }"
+      },
+      {
+        "name": "Modification",
+        "docs": "Effect on convergence",
+        "type_info": "{\n        variant: NewtonVariant,\n        effect: String,\n    }"
+      },
+      {
+        "name": "InexactSolve",
+        "docs": "Effect on convergence",
+        "type_info": "{\n        strategy: String,\n        effect: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NewtonVariant",
+    "docs": "Variants of Newton's method",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Classical",
+        "docs": "Classical Newton",
+        "type_info": null
+      },
+      {
+        "name": "Simplified",
+        "docs": "Update frequency",
+        "type_info": "{\n        update_frequency: usize,\n    }"
+      },
+      {
+        "name": "Modified",
+        "docs": "Step modification",
+        "type_info": "{\n        modification: String,\n    }"
+      },
+      {
+        "name": "QuasiNewton",
+        "docs": "Update formula",
+        "type_info": "{\n        update: String,\n    }"
+      },
+      {
+        "name": "Inexact",
+        "docs": "Linear solver tolerance",
+        "type_info": "{\n        tolerance: Function,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NumericalFunctionSpace",
+    "docs": "Numerical Function Space\n\nA function space equipped with computational structure for numerical methods.\nThis extends mathematical function spaces with discretization and computational aspects.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_space",
+        "type": "TopologicalSpace",
+        "docs": "The underlying function space"
+      },
+      {
+        "name": "norm",
+        "type": "NormStructure",
+        "docs": "Norm structure"
+      },
+      {
+        "name": "inner_product",
+        "type": "Option<InnerProductStructure>",
+        "docs": "Inner product (if Hilbert space)"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FunctionSpaceProperty>",
+        "docs": "Computational properties"
+      }
+    ]
+  },
+  {
+    "name": "NormStructure",
+    "docs": "Norm structure for function spaces",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "norm_type",
+        "type": "NormType",
+        "docs": "Type of norm"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<NormProperty>",
+        "docs": "Properties of the norm"
+      }
+    ]
+  },
+  {
+    "name": "NormType",
+    "docs": "Types of norms in numerical analysis",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Lp",
+        "docs": "Weight function (if any)",
+        "type_info": "{\n        p: f64,\n        weight: Option<Function>,\n    }"
+      },
+      {
+        "name": "Sobolev",
+        "docs": "Value of p",
+        "type_info": "{\n        order: usize,\n        p: f64,\n    }"
+      },
+      {
+        "name": "Maximum",
+        "docs": "Maximum norm",
+        "type_info": null
+      },
+      {
+        "name": "Energy",
+        "docs": "Bilinear form defining energy",
+        "type_info": "{\n        bilinear_form: Function,\n    }"
+      },
+      {
+        "name": "Composite",
+        "docs": "Weights for components",
+        "type_info": "{\n        components: Vec<NormType>,\n        weights: Vec<f64>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NormProperty",
+    "docs": "Properties of norms",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Equivalence",
+        "docs": "Equivalence constants",
+        "type_info": "{\n        other_norm: NormType,\n        constants: (f64, f64),\n    }"
+      },
+      {
+        "name": "Completeness",
+        "docs": "Completeness",
+        "type_info": "bool"
+      },
+      {
+        "name": "Computability",
+        "docs": "Computational cost",
+        "type_info": "{\n        exact: bool,\n        cost: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "InnerProductStructure",
+    "docs": "Inner product structure",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "inner_product",
+        "type": "Function",
+        "docs": "The inner product"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<InnerProductProperty>",
+        "docs": "Properties of the inner product"
+      }
+    ]
+  },
+  {
+    "name": "InnerProductProperty",
+    "docs": "Properties of inner products",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "NormCompatible",
+        "docs": "Which norm it induces",
+        "type_info": "{\n        induced_norm: NormType,\n    }"
+      },
+      {
+        "name": "Computability",
+        "docs": "Computational cost",
+        "type_info": "{\n        exact: bool,\n        cost: usize,\n    }"
+      },
+      {
+        "name": "Orthogonality",
+        "docs": "Orthogonal basis",
+        "type_info": "{\n        basis: Vec<Function>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "FunctionSpaceProperty",
+    "docs": "Properties of function spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Approximation",
+        "docs": "Approximation properties",
+        "type_info": "ApproximationProperty"
+      },
+      {
+        "name": "Embedding",
+        "docs": "Embedding properties",
+        "type_info": "EmbeddingProperty"
+      },
+      {
+        "name": "Compactness",
+        "docs": "Compactness properties",
+        "type_info": "CompactnessProperty"
+      },
+      {
+        "name": "Interpolation",
+        "docs": "Interpolation properties",
+        "type_info": "InterpolationProperty"
+      }
+    ]
+  },
+  {
+    "name": "ApproximationProperty",
+    "docs": "Approximation properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "BestApproximation",
+        "docs": "Characterization",
+        "type_info": "{\n        unique: bool,\n        characterization: String,\n    }"
+      },
+      {
+        "name": "Order",
+        "docs": "Requirements for this order",
+        "type_info": "{\n        order: usize,\n        requirements: Vec<String>,\n    }"
+      },
+      {
+        "name": "Density",
+        "docs": "Dense subspaces",
+        "type_info": "{\n        subspaces: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "EmbeddingProperty",
+    "docs": "Embedding properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuous",
+        "docs": "Embedding constant",
+        "type_info": "{\n        target: String,\n        constant: f64,\n    }"
+      },
+      {
+        "name": "Compact",
+        "docs": "Target space",
+        "type_info": "{\n        target: String,\n    }"
+      },
+      {
+        "name": "Algebraic",
+        "docs": "Algebraic relations preserved",
+        "type_info": "{\n        target: String,\n        relations: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "CompactnessProperty",
+    "docs": "Compactness properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "RelativelyCompact",
+        "docs": "Compactness criterion",
+        "type_info": "{\n        criterion: String,\n    }"
+      },
+      {
+        "name": "Precompact",
+        "docs": "Entropy estimates",
+        "type_info": "{\n        entropy: String,\n    }"
+      },
+      {
+        "name": "FiniteDimensional",
+        "docs": "Dimension",
+        "type_info": "{\n        dimension: usize,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "InterpolationProperty",
+    "docs": "Interpolation properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Between",
+        "docs": "Interpolation method",
+        "type_info": "{\n        spaces: Vec<String>,\n        method: String,\n    }"
+      },
+      {
+        "name": "Estimates",
+        "docs": "Constants in estimates",
+        "type_info": "{\n        estimate_type: String,\n        constants: Vec<f64>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DiscreteFunctionSpace",
+    "docs": "Discrete function space\n\nA finite-dimensional subspace used for numerical computations",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "parent",
+        "type": "NumericalFunctionSpace",
+        "docs": "Parent function space"
+      },
+      {
+        "name": "basis",
+        "type": "Vec<Function>",
+        "docs": "Basis functions"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<DiscreteSpaceProperty>",
+        "docs": "Properties of discrete space"
+      }
+    ]
+  },
+  {
+    "name": "DiscreteSpaceProperty",
+    "docs": "Properties of discrete spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Approximation",
+        "docs": "Error estimates",
+        "type_info": "{\n        order: usize,\n        estimates: Vec<String>,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability conditions",
+        "type_info": "{\n        constants: Vec<f64>,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "InverseEstimates",
+        "docs": "Constants in estimates",
+        "type_info": "{\n        estimate_type: String,\n        constants: Vec<f64>,\n    }"
+      },
+      {
+        "name": "Computation",
+        "docs": "Sparsity pattern",
+        "type_info": "{\n        condition_number: f64,\n        sparsity: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ApproximationMethod",
+    "docs": "Approximation Method\n\nRepresents methods for approximating functions or solutions,\nincluding interpolation, projection, and best approximation.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "target_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The space containing the target function"
+      },
+      {
+        "name": "approximation_space",
+        "type": "NumericalFunctionSpace",
+        "docs": "The space containing approximations"
+      },
+      {
+        "name": "operator",
+        "type": "NumericalOperator",
+        "docs": "The approximation operator"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<ApproximationProperty>",
+        "docs": "Properties of the approximation"
+      }
+    ]
+  },
+  {
+    "name": "ApproximationProperty",
+    "docs": "Properties of approximation methods",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Error",
+        "docs": "Error estimates and bounds",
+        "type_info": "ApproximationError"
+      },
+      {
+        "name": "Stability",
+        "docs": "Stability properties",
+        "type_info": "ApproximationStability"
+      },
+      {
+        "name": "Optimality",
+        "docs": "Optimality properties",
+        "type_info": "OptimalityProperty"
+      },
+      {
+        "name": "Computation",
+        "docs": "Computational aspects",
+        "type_info": "ApproximationComputation"
+      }
+    ]
+  },
+  {
+    "name": "ApproximationError",
+    "docs": "Error properties for approximations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "APriori",
+        "docs": "Requirements for order",
+        "type_info": "{\n        order: f64,\n        constants: Vec<f64>,\n        requirements: Vec<String>,\n    }"
+      },
+      {
+        "name": "APosteriori",
+        "docs": "Efficiency constants",
+        "type_info": "{\n        indicators: Vec<String>,\n        reliability: f64,\n        efficiency: f64,\n    }"
+      },
+      {
+        "name": "BestApproximation",
+        "docs": "Characterization",
+        "type_info": "{\n        error: Function,\n        characterization: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ApproximationStability",
+    "docs": "Stability properties for approximations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuous",
+        "docs": "Modulus of continuity",
+        "type_info": "{\n        constant: f64,\n        modulus: Function,\n    }"
+      },
+      {
+        "name": "Discrete",
+        "docs": "Mesh conditions",
+        "type_info": "{\n        constant: Function,\n        conditions: Vec<String>,\n    }"
+      },
+      {
+        "name": "Asymptotic",
+        "docs": "Rate of convergence",
+        "type_info": "{\n        behavior: String,\n        rate: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "OptimalityProperty",
+    "docs": "Optimality properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "BestApproximation",
+        "docs": "Uniqueness",
+        "type_info": "{\n        criterion: String,\n        unique: bool,\n    }"
+      },
+      {
+        "name": "QuasiOptimal",
+        "docs": "Additional properties",
+        "type_info": "{\n        constant: f64,\n        properties: Vec<String>,\n    }"
+      },
+      {
+        "name": "Saturation",
+        "docs": "Characterization",
+        "type_info": "{\n        order: f64,\n        characterization: String,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ApproximationComputation",
+    "docs": "Computational aspects",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Construction",
+        "docs": "Memory requirements",
+        "type_info": "{\n        operations: usize,\n        memory: usize,\n    }"
+      },
+      {
+        "name": "Evaluation",
+        "docs": "Preprocessing cost",
+        "type_info": "{\n        point_cost: usize,\n        setup_cost: usize,\n    }"
+      },
+      {
+        "name": "ErrorEstimation",
+        "docs": "Reliability",
+        "type_info": "{\n        cost: usize,\n        reliability: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "InterpolationMethod",
+    "docs": "Interpolation Method\n\nSpecialization of approximation methods for interpolation",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "nodes",
+        "type": "Vec<Function>",
+        "docs": "Interpolation nodes/points"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<InterpolationProperty>",
+        "docs": "Properties specific to interpolation"
+      }
+    ]
+  },
+  {
+    "name": "InterpolationProperty",
+    "docs": "Properties specific to interpolation",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Nodes",
+        "docs": "Optimality properties",
+        "type_info": "{\n        distribution: String,\n        optimality: Option<String>,\n    }"
+      },
+      {
+        "name": "Basis",
+        "docs": "Conditioning",
+        "type_info": "{\n        basis_type: String,\n        condition_number: f64,\n    }"
+      },
+      {
+        "name": "Unisolvence",
+        "docs": "Conditions for uniqueness",
+        "type_info": "{\n        unique: bool,\n        conditions: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ProjectionMethod",
+    "docs": "Projection Method\n\nSpecialization of approximation methods for projection",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base",
+        "type": "ApproximationMethod",
+        "docs": "Base approximation method"
+      },
+      {
+        "name": "projector",
+        "type": "NumericalOperator",
+        "docs": "The projection operator"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<ProjectionProperty>",
+        "docs": "Properties specific to projection"
+      }
+    ]
+  },
+  {
+    "name": "ProjectionProperty",
+    "docs": "Properties specific to projection",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Orthogonality",
+        "docs": "Inner product",
+        "type_info": "{\n        orthogonal_to: String,\n        inner_product: Function,\n    }"
+      },
+      {
+        "name": "Stability",
+        "docs": "Additional properties",
+        "type_info": "{\n        norm_bound: f64,\n        properties: Vec<String>,\n    }"
+      },
+      {
+        "name": "Approximation",
+        "docs": "Error bounds",
+        "type_info": "{\n        is_best: bool,\n        bounds: Vec<String>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NumericalOperator",
+    "docs": "Numerical Operator\n\nAn operator between numerical function spaces, equipped with\ncomputational structure for numerical methods.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "domain",
+        "type": "NumericalFunctionSpace",
+        "docs": "Domain space"
+      },
+      {
+        "name": "range",
+        "type": "NumericalFunctionSpace",
+        "docs": "Range space"
+      },
+      {
+        "name": "mapping",
+        "type": "Function",
+        "docs": "The operator mapping"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<OperatorProperty>",
+        "docs": "Properties of the operator"
+      }
+    ]
+  },
+  {
+    "name": "OperatorProperty",
+    "docs": "Properties of numerical operators",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Linearity",
+        "docs": "Linearity properties",
+        "type_info": "LinearityProperty"
+      },
+      {
+        "name": "Continuity",
+        "docs": "Continuity properties",
+        "type_info": "ContinuityProperty"
+      },
+      {
+        "name": "Boundedness",
+        "docs": "Boundedness properties",
+        "type_info": "BoundednessProperty"
+      },
+      {
+        "name": "Spectral",
+        "docs": "Spectral properties",
+        "type_info": "SpectralProperty"
+      },
+      {
+        "name": "Computation",
+        "docs": "Computational properties",
+        "type_info": "ComputationProperty"
+      }
+    ]
+  },
+  {
+    "name": "LinearityProperty",
+    "docs": "Linearity properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Linear",
+        "docs": "Matrix representation (if finite dim)",
+        "type_info": "{\n        matrix: Option<Vec<Vec<f64>>>,\n    }"
+      },
+      {
+        "name": "Affine",
+        "docs": "Translation",
+        "type_info": "{\n        linear: Box<NumericalOperator>,\n        translation: Function,\n    }"
+      },
+      {
+        "name": "Nonlinear",
+        "docs": "Linearization point",
+        "type_info": "{\n        derivative: Option<Box<NumericalOperator>>,\n        linearization_point: Option<Function>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ContinuityProperty",
+    "docs": "Continuity properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuous",
+        "docs": "Modulus of continuity",
+        "type_info": "{\n        modulus: Function,\n    }"
+      },
+      {
+        "name": "Holder",
+        "docs": "Hölder constant",
+        "type_info": "{\n        exponent: f64,\n        constant: f64,\n    }"
+      },
+      {
+        "name": "Lipschitz",
+        "docs": "Lipschitz constant",
+        "type_info": "{\n        constant: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "BoundednessProperty",
+    "docs": "Boundedness properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Bounded",
+        "docs": "Operator norm",
+        "type_info": "{\n        norm: f64,\n    }"
+      },
+      {
+        "name": "Coercive",
+        "docs": "Coercivity constant",
+        "type_info": "{\n        constant: f64,\n    }"
+      },
+      {
+        "name": "Monotone",
+        "docs": "Monotonicity constant",
+        "type_info": "{\n        constant: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SpectralProperty",
+    "docs": "Spectral properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Eigenvalues",
+        "docs": "Spectral bounds",
+        "type_info": "{\n        values: Vec<f64>,\n        bounds: (f64, f64),\n    }"
+      },
+      {
+        "name": "Resolvent",
+        "docs": "Resolvent bounds",
+        "type_info": "{\n        bounds: Vec<(f64, f64)>,\n    }"
+      },
+      {
+        "name": "SpectralRadius",
+        "docs": "Value or bound",
+        "type_info": "{\n        value: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ComputationProperty",
+    "docs": "Computational properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Matrix",
+        "docs": "Sparsity pattern",
+        "type_info": "{\n        condition: f64,\n        sparsity: String,\n    }"
+      },
+      {
+        "name": "Iteration",
+        "docs": "Cost per iteration",
+        "type_info": "{\n        rate: f64,\n        cost: usize,\n    }"
+      },
+      {
+        "name": "Preconditioning",
+        "docs": "Effectiveness",
+        "type_info": "{\n        type_: String,\n        quality: f64,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "NumericalFunctional",
+    "docs": "Numerical Functional\n\nA functional on a numerical function space, equipped with\ncomputational structure for numerical methods.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "domain",
+        "type": "NumericalFunctionSpace",
+        "docs": "Domain space"
+      },
+      {
+        "name": "mapping",
+        "type": "Function",
+        "docs": "The functional mapping"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FunctionalProperty>",
+        "docs": "Properties of the functional"
+      }
+    ]
+  },
+  {
+    "name": "FunctionalProperty",
+    "docs": "Properties of numerical functionals",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Linearity",
+        "docs": "Linearity properties",
+        "type_info": "LinearityProperty"
+      },
+      {
+        "name": "Convexity",
+        "docs": "Convexity properties",
+        "type_info": "ConvexityProperty"
+      },
+      {
+        "name": "Differentiability",
+        "docs": "Differentiability properties",
+        "type_info": "DifferentiabilityProperty"
+      },
+      {
+        "name": "Computation",
+        "docs": "Computational properties",
+        "type_info": "ComputationProperty"
+      }
+    ]
+  },
+  {
+    "name": "ConvexityProperty",
+    "docs": "Convexity properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convex",
+        "docs": "Modulus of convexity",
+        "type_info": "{\n        modulus: Option<Function>,\n    }"
+      },
+      {
+        "name": "StronglyConvex",
+        "docs": "Strong convexity constant",
+        "type_info": "{\n        constant: f64,\n    }"
+      },
+      {
+        "name": "UniformlyConvex",
+        "docs": "Convexity modulus",
+        "type_info": "{\n        modulus: Function,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "DifferentiabilityProperty",
+    "docs": "Differentiability properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Gateaux",
+        "docs": "Derivative operator",
+        "type_info": "{\n        derivative: NumericalOperator,\n    }"
+      },
+      {
+        "name": "Frechet",
+        "docs": "Modulus of differentiability",
+        "type_info": "{\n        derivative: NumericalOperator,\n        modulus: Function,\n    }"
+      },
+      {
+        "name": "TwiceDifferentiable",
+        "docs": "Second derivative",
+        "type_info": "{\n        second_derivative: NumericalOperator,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "VariationalDerivative",
+    "docs": "Variational Derivative\n\nThe variational derivative of a functional, used in optimization\nand variational problems.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "functional",
+        "type": "NumericalFunctional",
+        "docs": "The functional being differentiated"
+      },
+      {
+        "name": "derivative",
+        "type": "NumericalOperator",
+        "docs": "The derivative operator"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<VariationalProperty>",
+        "docs": "Properties of the derivative"
+      }
+    ]
+  },
+  {
+    "name": "VariationalProperty",
+    "docs": "Properties of variational derivatives",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Existence",
+        "docs": "Whether unique",
+        "type_info": "{\n        exists: bool,\n        unique: bool,\n    }"
+      },
+      {
+        "name": "Regularity",
+        "docs": "Estimates",
+        "type_info": "{\n        smoothness: String,\n        estimates: Vec<String>,\n    }"
+      },
+      {
+        "name": "Computation",
+        "docs": "Computational cost",
+        "type_info": "{\n        method: String,\n        cost: usize,\n    }"
+      }
+    ]
+  }
+]

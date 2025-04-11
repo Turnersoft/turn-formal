@@ -559,6 +559,7 @@ pub fn extract_rust_types_as_json(path: &str) -> Result<Vec<TypeDefinition>> {
 /// Extract type definitions from Rust source code
 pub fn extract_types_from_source(source: &str) -> Result<Vec<TypeDefinition>> {
     let mut types = Vec::new();
+    let mut in_doc_comment = false;
     let mut current_docs = String::new();
     let lines: Vec<&str> = source.lines().collect();
 
@@ -568,8 +569,19 @@ pub fn extract_types_from_source(source: &str) -> Result<Vec<TypeDefinition>> {
 
         // Collect documentation comments
         if line.starts_with("///") {
-            current_docs.push_str(&line[3..].trim());
-            current_docs.push('\n');
+            in_doc_comment = true;
+            let doc_text = line.trim_start_matches("///").trim();
+
+            if !current_docs.is_empty() {
+                current_docs.push('\n');
+            }
+            current_docs.push_str(doc_text);
+            i += 1;
+            continue;
+        }
+
+        // Skip attribute lines but don't reset doc collection
+        if line.starts_with("#[") {
             i += 1;
             continue;
         }
@@ -593,7 +605,7 @@ pub fn extract_types_from_source(source: &str) -> Result<Vec<TypeDefinition>> {
             let name_start = line.find(kind).unwrap() + kind.len();
             let mut name_end = line.len();
 
-            // Find where the name ends (before generic params or opening brace)
+            // Find where the name ends
             if let Some(pos) = line[name_start..].find('<') {
                 name_end = name_start + pos;
             } else if let Some(pos) = line[name_start..].find('{') {
@@ -604,15 +616,24 @@ pub fn extract_types_from_source(source: &str) -> Result<Vec<TypeDefinition>> {
 
             let name = line[name_start..name_end].trim().to_string();
 
-            // Capture the full type definition
+            // Capture the full type definition with its docs
             let mut source = String::new();
+
+            // Add all doc comments as part of the source
+            let doc_lines: Vec<&str> = current_docs.lines().collect();
+            for doc_line in &doc_lines {
+                source.push_str(&format!("/// {}\n", doc_line));
+            }
+
+            // Add the type definition line
             source.push_str(line);
 
+            // Track braces to capture the full definition
             let mut brace_count =
                 line.matches('{').count() as i32 - line.matches('}').count() as i32;
             let mut j = i + 1;
 
-            // Continue capturing until we've closed all braces
+            // Capture until we've closed all braces
             while j < lines.len() && brace_count > 0 {
                 let next_line = lines[j];
                 source.push('\n');
@@ -626,24 +647,24 @@ pub fn extract_types_from_source(source: &str) -> Result<Vec<TypeDefinition>> {
 
             types.push(TypeDefinition {
                 name,
-                docs: current_docs.clone(),
+                docs: current_docs.trim().to_string(),
                 source,
                 kind: kind.to_string(),
             });
 
             // Reset docs for the next type
             current_docs.clear();
+            in_doc_comment = false;
 
             // Skip ahead if we found the end of the type definition
             if j > i + 1 {
                 i = j;
                 continue;
             }
-        }
-
-        // If not a doc comment or type definition, reset collected docs
-        if !line.is_empty() && !line.starts_with("//") {
+        } else if !line.is_empty() && !line.starts_with("//") {
+            // If not a doc comment, attribute, or type definition, reset collected docs
             current_docs.clear();
+            in_doc_comment = false;
         }
 
         i += 1;
@@ -660,14 +681,27 @@ pub fn find_rust_files_with_derive(dir_path: &str, derive_pattern: &str) -> Resu
         let path = entry.path();
 
         if path.is_file() && path.extension().map_or(false, |ext| ext == "rs") {
+            println!("Checking file: {}", path.display());
             let content = fs::read_to_string(path)?;
 
-            // Check if the file contains the derive pattern
-            if content.contains(&format!("derive({}", derive_pattern))
+            // Check for the derive pattern in various formats
+            let derive_found = content.contains(&format!("derive({}", derive_pattern))
                 || content.contains(&format!("derive({})", derive_pattern))
                 || content.contains(&format!("derive( {}", derive_pattern))
                 || content.contains(&format!("derive( {} )", derive_pattern))
-            {
+                || content.contains(&format!("derive({} ", derive_pattern))
+                || content.contains(&format!("derive({},", derive_pattern))
+                || content.contains(&format!("derive( {},", derive_pattern))
+                || content.contains(&format!("derive({} ,", derive_pattern))
+                // Check common derive combinations
+                || content.contains(&format!("derive(Debug, {}", derive_pattern))
+                || content.contains(&format!("derive(Clone, {}", derive_pattern))
+                || content.contains(&format!("derive(Debug, Clone, {}", derive_pattern))
+                || content.contains(&format!("derive(Clone, Debug, {}", derive_pattern))
+                || content.contains(&format!("derive(Default, {}", derive_pattern));
+
+            if derive_found {
+                println!("Found file with derive: {}", path.display());
                 rust_files.push(path.to_string_lossy().to_string());
             }
         }
@@ -791,4 +825,128 @@ pub fn generate_math_typescript() -> Result<()> {
     let output_file = "subjects/math/export/math-types.ts";
 
     generate_typescript_for_directory(rust_types_dir, output_file)
+}
+
+/// Process Rust enum variants correctly, including struct-like variants
+pub fn extract_enum_variants(enum_source: &str) -> Vec<MemberWithDocs> {
+    let mut variants = Vec::new();
+    let mut current_docs = String::new();
+
+    // Get the content between the enum's braces
+    if let Some(content_start) = enum_source.find('{') {
+        if let Some(content_end) = enum_source.rfind('}') {
+            let content = &enum_source[content_start + 1..content_end];
+
+            // State tracking variables
+            let mut current_variant = String::new();
+            let mut brace_depth = 0;
+            let mut in_doc_comment = false;
+            let mut doc_buffer = Vec::new();
+
+            for line in content.lines() {
+                let trimmed = line.trim();
+
+                // Handle doc comments
+                if trimmed.starts_with("///") {
+                    in_doc_comment = true;
+                    let doc_line = trimmed.trim_start_matches("///").trim();
+                    doc_buffer.push(doc_line.to_string());
+                    continue;
+                }
+
+                // End of doc comment section
+                if in_doc_comment && !trimmed.starts_with("///") {
+                    in_doc_comment = false;
+                    current_docs = doc_buffer.join("\n");
+                    doc_buffer.clear();
+                }
+
+                // Skip empty lines and regular comments without resetting doc buffer
+                if trimmed.is_empty() || trimmed.starts_with("//") || trimmed.starts_with("#[") {
+                    continue;
+                }
+
+                // Update brace counting
+                brace_depth += trimmed.matches('{').count();
+                brace_depth -= trimmed.matches('}').count();
+
+                // Add this line to the current variant
+                current_variant.push_str(line);
+                current_variant.push('\n');
+
+                // Check if we've completed a variant
+                if (trimmed.ends_with(',') && brace_depth == 0)
+                    || (brace_depth == 0 && trimmed.contains('}') && trimmed.ends_with(','))
+                {
+                    let variant = current_variant.trim();
+                    process_variant(&mut variants, variant, &current_docs);
+                    current_variant.clear();
+                    current_docs.clear();
+                }
+            }
+
+            // Process any remaining variant
+            if !current_variant.trim().is_empty() {
+                let variant = current_variant.trim();
+                process_variant(&mut variants, variant, &current_docs);
+            }
+        }
+    }
+
+    variants
+}
+
+// Helper function to process a single variant
+fn process_variant(variants: &mut Vec<MemberWithDocs>, variant: &str, docs: &str) {
+    let variant = variant.trim().trim_end_matches(',');
+
+    // Handle unit variant (e.g., "Variant")
+    if !variant.contains('(') && !variant.contains('{') {
+        variants.push(MemberWithDocs {
+            name: variant.to_string(),
+            docs: docs.to_string(),
+            type_info: None,
+        });
+        return;
+    }
+
+    // Handle tuple variant (e.g., "Variant(Type1, Type2)")
+    if variant.contains('(') && !variant.contains('{') {
+        if let Some(name_end) = variant.find('(') {
+            let name = variant[..name_end].trim();
+            let mut type_info = variant[name_end..].trim();
+
+            // Clean up the format for single-type tuple variants
+            // For single-type tuples, we preserve the type name for type_link
+            if !type_info.contains(',') {
+                let clean_type = type_info
+                    .trim_start_matches('(')
+                    .trim_end_matches(')')
+                    .trim();
+
+                // Store just the type name for better type linking
+                type_info = clean_type;
+            }
+
+            variants.push(MemberWithDocs {
+                name: name.to_string(),
+                docs: docs.to_string(),
+                type_info: Some(type_info.to_string()),
+            });
+        }
+        return;
+    }
+
+    // Handle struct-like variant (e.g., "Variant { field: Type }")
+    if variant.contains('{') {
+        if let Some(name_end) = variant.find('{') {
+            let name = variant[..name_end].trim();
+            let type_info = variant[name_end..].trim();
+            variants.push(MemberWithDocs {
+                name: name.to_string(),
+                docs: docs.to_string(),
+                type_info: Some(type_info.to_string()),
+            });
+        }
+    }
 }

@@ -289,21 +289,40 @@ const DependencyGraphInner: React.FC<{ definitions: Definition[] }> = ({
       });
     });
 
-    // If a node has no connections, connect it to another node
+    // Find nodes that have no connections
     // This ensures all nodes are part of the connected graph
     const nodesToConnect = definitions.filter((def) => {
-      const refs = referenceMap.get(def.name)!;
-      const hasReferences = refs.size > 0;
-      const isReferenced = definitions.some((otherDef) => {
-        if (otherDef.name === def.name) return false;
-        return referenceMap.get(otherDef.name)!.has(def.name);
+      // Get all outgoing references from this node
+      const outgoingRefs = referenceMap.get(def.name)!;
+      const hasOutgoingReferences = outgoingRefs && outgoingRefs.size > 0;
+
+      // Check if any other node references this one (incoming references)
+      const hasIncomingReferences = definitions.some((otherDef) => {
+        if (otherDef.name === def.name) return false; // Skip self
+        const otherRefs = referenceMap.get(otherDef.name);
+        return otherRefs && otherRefs.has(def.name);
       });
 
-      return !hasReferences && !isReferenced;
+      // Check if this node is already included in any edge
+      const isInAnyEdge = allEdges.some(
+        (edge) => edge.source === def.name || edge.target === def.name
+      );
+
+      // A node is orphaned if it has no incoming or outgoing references
+      // and is not included in any existing edge
+      return !hasOutgoingReferences && !hasIncomingReferences && !isInAnyEdge;
     });
 
-    // Connect orphaned nodes
+    console.log(
+      `Identified ${nodesToConnect.length} orphaned nodes out of ${definitions.length} total nodes`
+    );
+
+    // Connect orphaned nodes if any found
     if (nodesToConnect.length > 0) {
+      console.log(
+        `Found ${nodesToConnect.length} orphaned nodes that need connections`
+      );
+
       // Find a suitable node to connect to (preferably one with connections)
       const connectedNodes = definitions.filter((def) => {
         const refs = referenceMap.get(def.name)!;
@@ -316,21 +335,67 @@ const DependencyGraphInner: React.FC<{ definitions: Definition[] }> = ({
         return hasReferences || isReferenced;
       });
 
-      // Connect orphaned nodes to a common node or to each other
-      const targetNode =
-        connectedNodes.length > 0
-          ? connectedNodes[0]
-          : nodesToConnect.length > 1
-          ? nodesToConnect[0]
-          : null;
+      // If we have a connected node to use as target
+      if (connectedNodes.length > 0) {
+        // Pick the most connected node as the target
+        let bestTarget = connectedNodes[0];
+        let maxConnections = 0;
 
-      if (targetNode) {
+        connectedNodes.forEach((node) => {
+          const refs = referenceMap.get(node.name)!;
+          const refCount = refs.size;
+          const referencedCount = definitions.filter(
+            (def) =>
+              def.name !== node.name &&
+              referenceMap.get(def.name)!.has(node.name)
+          ).length;
+
+          const totalConnections = refCount + referencedCount;
+          if (totalConnections > maxConnections) {
+            maxConnections = totalConnections;
+            bestTarget = node;
+          }
+        });
+
         nodesToConnect.forEach((node) => {
-          if (node.name !== targetNode.name) {
+          if (node.name !== bestTarget.name) {
+            const edgeId = `e-orphan-${node.name}-${bestTarget.name}`;
+
+            if (!allEdges.some((edge) => edge.id === edgeId)) {
+              allEdges.push({
+                id: edgeId,
+                source: node.name,
+                target: bestTarget.name,
+                type: selectedEdgeType,
+                markerEnd: {
+                  type: MarkerType.ArrowClosed,
+                },
+                style: {
+                  stroke: "#999",
+                  strokeWidth: 1.5,
+                  strokeDasharray: "5,5", // Dashed line for artificial connections
+                },
+                data: { isArtificial: true }, // Mark as artificial connection
+                label: "related",
+              });
+            }
+          }
+        });
+      }
+      // If we don't have any connected nodes, connect orphans in a chain
+      else if (nodesToConnect.length > 1) {
+        // Create a chain of connections between orphaned nodes
+        for (let i = 0; i < nodesToConnect.length - 1; i++) {
+          const source = nodesToConnect[i];
+          const target = nodesToConnect[i + 1];
+
+          const edgeId = `e-orphan-chain-${source.name}-${target.name}`;
+
+          if (!allEdges.some((edge) => edge.id === edgeId)) {
             allEdges.push({
-              id: `e-orphan-${node.name}-${targetNode.name}`,
-              source: node.name,
-              target: targetNode.name,
+              id: edgeId,
+              source: source.name,
+              target: target.name,
               type: selectedEdgeType,
               markerEnd: {
                 type: MarkerType.ArrowClosed,
@@ -338,11 +403,59 @@ const DependencyGraphInner: React.FC<{ definitions: Definition[] }> = ({
               style: {
                 stroke: "#999",
                 strokeWidth: 1.5,
+                strokeDasharray: "5,5", // Dashed line for artificial connections
               },
-              data: { isArtificial: true }, // Mark as artificial connection
+              data: { isArtificial: true },
+              label: "related",
             });
           }
-        });
+        }
+
+        // Complete the circle for better layout
+        const first = nodesToConnect[0];
+        const last = nodesToConnect[nodesToConnect.length - 1];
+
+        const circleEdgeId = `e-orphan-circle-${last.name}-${first.name}`;
+
+        if (!allEdges.some((edge) => edge.id === circleEdgeId)) {
+          allEdges.push({
+            id: circleEdgeId,
+            source: last.name,
+            target: first.name,
+            type: selectedEdgeType,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+            },
+            style: {
+              stroke: "#999",
+              strokeWidth: 1.5,
+              strokeDasharray: "5,5",
+            },
+            data: { isArtificial: true },
+            label: "related",
+          });
+        }
+      }
+      // If there's only a single orphaned node, make it self-referential
+      else if (nodesToConnect.length === 1) {
+        const node = nodesToConnect[0];
+        const edgeId = `e-orphan-self-${node.name}`;
+
+        if (!allEdges.some((edge) => edge.id === edgeId)) {
+          allEdges.push({
+            id: edgeId,
+            source: node.name,
+            target: node.name,
+            type: "floating", // Use floating for self-connections
+            style: {
+              stroke: "#999",
+              strokeWidth: 1.5,
+              strokeDasharray: "5,5",
+            },
+            data: { isArtificial: true },
+            label: "standalone",
+          });
+        }
       }
     }
 
@@ -752,60 +865,46 @@ const DependencyGraph: React.FC<{ definitions: Definition[] }> = (props) => {
   );
 };
 
-// Helper function to extract type names from type strings including generics
+// Function to extract all type names from a type string
 function extractTypeNames(typeStr: string): string[] {
-  const types: string[] = [];
+  if (!typeStr) return [];
 
-  // Remove whitespace to make parsing simpler
-  typeStr = typeStr.replace(/\s+/g, "");
+  // Array to store all found type names
+  const typeNames: string[] = [];
 
-  // Simple cases without generics
-  if (!typeStr.includes("<")) {
-    types.push(typeStr);
-    return types;
-  }
+  // First pass: find all capitalized type names (standard naming convention)
+  const typeRegex = /\b([A-Z][a-zA-Z0-9_]*)\b/g;
+  let match;
 
-  // Extract base type
-  const baseType = typeStr.split("<")[0];
-  types.push(baseType);
-
-  // Extract generic type parameters
-  let genericPart = typeStr.substring(typeStr.indexOf("<") + 1);
-
-  // Remove the closing '>' if it exists
-  if (genericPart.endsWith(">")) {
-    genericPart = genericPart.substring(0, genericPart.length - 1);
-  }
-
-  // Split by commas, but be careful about nested generics
-  let depth = 0;
-  let currentType = "";
-
-  for (let i = 0; i < genericPart.length; i++) {
-    const char = genericPart[i];
-
-    if (char === "<") {
-      depth++;
-      currentType += char;
-    } else if (char === ">") {
-      depth--;
-      currentType += char;
-    } else if (char === "," && depth === 0) {
-      if (currentType) {
-        types.push(...extractTypeNames(currentType));
-        currentType = "";
-      }
-    } else {
-      currentType += char;
+  while ((match = typeRegex.exec(typeStr)) !== null) {
+    const [, typeName] = match;
+    // Add the type name if it's not already in the array
+    if (!typeNames.includes(typeName)) {
+      typeNames.push(typeName);
     }
   }
 
-  // Add the last type if any
-  if (currentType) {
-    types.push(...extractTypeNames(currentType));
+  // Second pass: try to extract types from more complex generics or nested types
+  // Handle cases like Vec<TypeName>, Option<TypeName>, Result<TypeName, Error>
+  const genericTypeRegex = /<([^<>]+)>/g;
+  let genericMatch;
+
+  while ((genericMatch = genericTypeRegex.exec(typeStr)) !== null) {
+    const innerContent = genericMatch[1];
+
+    // For each inner content, recursively extract type names
+    // Handle cases like Vec<HashMap<Key, Value>>
+    const innerTypes = extractTypeNames(innerContent);
+
+    // Add all inner types
+    innerTypes.forEach((innerType) => {
+      if (!typeNames.includes(innerType)) {
+        typeNames.push(innerType);
+      }
+    });
   }
 
-  return types;
+  return typeNames;
 }
 
 export default DependencyGraph;

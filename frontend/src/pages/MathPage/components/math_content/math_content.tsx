@@ -9,6 +9,45 @@ import DependencyGraph from "../dependency_graph/dependency_graph";
 import DefinitionDetail from "../definition_detail/definition_detail";
 import TheoremDetail from "../theorem_detail/theorem_detail";
 
+// Helper function to extract all type names from a type string
+function extractTypeNames(typeStr: string): string[] {
+  if (!typeStr || typeof typeStr !== "string") return [];
+
+  // Array to store all found type names
+  const typeNames: string[] = [];
+
+  // Find all capitalized type names (standard naming convention)
+  const typeRegex = /\b([A-Z][a-zA-Z0-9_]*)\b/g;
+  let match;
+
+  while ((match = typeRegex.exec(typeStr)) !== null) {
+    const [, typeName] = match;
+    // Add the type name if it's not already in the array
+    if (!typeNames.includes(typeName)) {
+      typeNames.push(typeName);
+    }
+  }
+
+  // Handle nested generic types like Vec<TypeName>
+  const genericTypeRegex = /<([^<>]+)>/g;
+  let genericMatch;
+
+  while ((genericMatch = genericTypeRegex.exec(typeStr)) !== null) {
+    const innerContent = genericMatch[1];
+    // For each inner content, recursively find type names
+    const innerTypes = extractTypeNames(innerContent);
+
+    // Add all inner types
+    innerTypes.forEach((innerType) => {
+      if (!typeNames.includes(innerType)) {
+        typeNames.push(innerType);
+      }
+    });
+  }
+
+  return typeNames;
+}
+
 interface MathContentComponentProps {
   content: MathContent | null;
   loading: boolean;
@@ -43,23 +82,47 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
   // Build a map of all definitions for linking
   const definitionMap = useMemo(() => {
     const map = new Map<string, Definition>();
-    if (content && content.definitions) {
+    if (content && Array.isArray(content.definitions)) {
       content.definitions.forEach((def: Definition) => {
-        if (def && def.name) {
-          // Ensure members array is always defined
-          if (!def.members || !Array.isArray(def.members)) {
-            console.warn(
-              `Definition ${def.name} has invalid members. Adding placeholder.`
-            );
-            def.members = [
-              {
-                name: "placeholder",
-                type: "String",
-                docs: "Placeholder member",
-              },
-            ];
+        try {
+          if (def && def.name) {
+            // Make a safe deep copy to prevent mutation issues
+            const safeDef = { ...def };
+
+            // Ensure members array is always defined and valid
+            if (!safeDef.members || !Array.isArray(safeDef.members)) {
+              console.warn(
+                `Definition ${safeDef.name} has invalid members. Adding empty array.`
+              );
+              safeDef.members = [];
+            }
+
+            // Ensure each member has the required fields
+            safeDef.members = safeDef.members.map((member) => {
+              if (!member)
+                return { name: "unknown", type: "unknown", docs: "" };
+
+              // Handle both type and type_info fields
+              const hasType = !!member.type;
+              const hasTypeInfo = !!member.type_info;
+
+              // Create a normalized member with all fields
+              return {
+                ...member,
+                name: member.name || "unnamed",
+                type: hasType ? member.type : null,
+                type_info: hasTypeInfo ? member.type_info : null,
+                docs: member.docs || "",
+              };
+            });
+
+            map.set(safeDef.name, safeDef);
           }
-          map.set(def.name, def);
+        } catch (error) {
+          console.error(
+            `Error processing definition: ${def?.name || "unknown"}`,
+            error
+          );
         }
       });
     }
@@ -84,23 +147,30 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
 
     // Build dependencies
     content.definitions.forEach((def: Definition) => {
-      // Check member types for dependencies
       if (def.members) {
         def.members.forEach((member: Member) => {
-          // Look for types in the member.type field
-          const typeRegex = /\b([A-Z][a-zA-Z0-9_]*)\b/g;
-          let match;
+          // Process both type and type_info fields
+          const typeFields = [];
+          if (typeof member.type === "string") typeFields.push(member.type);
+          if (typeof member.type_info === "string")
+            typeFields.push(member.type_info);
 
-          while ((match = typeRegex.exec(member.type)) !== null) {
-            const [, typeName] = match;
-            if (defMap.has(typeName) && typeName !== def.name) {
-              // This definition depends on typeName
-              const dependencies = dependencyGraph.get(def.name);
-              if (dependencies) {
-                dependencies.add(typeName);
+          // Process each type field
+          typeFields.forEach((typeField) => {
+            // Extract all type names including from complex nested types
+            const typeNames = extractTypeNames(typeField);
+
+            // Add dependencies for each found type
+            typeNames.forEach((typeName) => {
+              if (defMap.has(typeName) && typeName !== def.name) {
+                // This definition depends on typeName
+                const dependencies = dependencyGraph.get(def.name);
+                if (dependencies) {
+                  dependencies.add(typeName);
+                }
               }
-            }
-          }
+            });
+          });
         });
       }
     });
@@ -162,24 +232,32 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     content.definitions.forEach((def: Definition) => {
       if (def.members) {
         def.members.forEach((member: Member) => {
-          // Look for types in the member.type field
-          const typeRegex = /\b([A-Z][a-zA-Z0-9_]*)\b/g;
-          let match;
+          // Process both type and type_info fields
+          const typeFields = [];
+          if (typeof member.type === "string") typeFields.push(member.type);
+          if (typeof member.type_info === "string")
+            typeFields.push(member.type_info);
 
-          while ((match = typeRegex.exec(member.type)) !== null) {
-            const [, typeName] = match;
-            if (definitionMap.has(typeName) && typeName !== def.name) {
-              // Create a link if we haven't already processed this pair
-              const linkKey = `${def.name}-${typeName}`;
-              if (!processedLinks.has(linkKey)) {
-                links.push({
-                  source: def.name,
-                  target: typeName,
-                });
-                processedLinks.add(linkKey);
+          // Process each type field
+          typeFields.forEach((typeField) => {
+            // Extract all type names including from complex nested types
+            const typeNames = extractTypeNames(typeField);
+
+            // Add links for each found type
+            typeNames.forEach((typeName) => {
+              if (definitionMap.has(typeName) && typeName !== def.name) {
+                // Create a link if we haven't already processed this pair
+                const linkKey = `${def.name}-${typeName}`;
+                if (!processedLinks.has(linkKey)) {
+                  links.push({
+                    source: def.name,
+                    target: typeName,
+                  });
+                  processedLinks.add(linkKey);
+                }
               }
-            }
-          }
+            });
+          });
         });
       }
     });

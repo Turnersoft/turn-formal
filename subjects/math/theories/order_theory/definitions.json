@@ -1,61 +1,115 @@
 [
   {
+    "name": "OrderProofStep",
+    "docs": "A proof step in order theory",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "formula",
+        "type": "Formula",
+        "docs": "The formula being proven in this step"
+      },
+      {
+        "name": "rule",
+        "type": "String",
+        "docs": "The rule used to derive this step"
+      },
+      {
+        "name": "premises",
+        "type": "Vec<usize>",
+        "docs": "Previous steps used in this derivation"
+      }
+    ]
+  },
+  {
+    "name": "OrderTheorem",
+    "docs": "A theorem in order theory with its proof",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "name",
+        "type": "String",
+        "docs": "Name of the theorem"
+      },
+      {
+        "name": "statement",
+        "type": "String",
+        "docs": "Statement of the theorem in natural language"
+      },
+      {
+        "name": "proposition",
+        "type": "Formula",
+        "docs": "Formal statement as a proposition"
+      },
+      {
+        "name": "proof",
+        "type": "Vec<OrderProofStep>",
+        "docs": "Proof of the theorem"
+      },
+      {
+        "name": "references",
+        "type": "Vec<String>",
+        "docs": "References to other theorems used in the proof"
+      }
+    ]
+  },
+  {
     "name": "Term",
-    "docs": "",
+    "docs": "A term that can be compared",
     "kind": "enum",
     "members": [
       {
         "name": "Variable",
-        "type": "String",
-        "docs": "A variable like x, y, z"
+        "docs": "A variable like x, y, z",
+        "type_info": "String"
       },
       {
         "name": "Constant",
-        "type": "f64",
-        "docs": "A constant value"
+        "docs": "A constant value",
+        "type_info": "f64"
       },
       {
         "name": "SequenceElement",
-        "type": "String",
-        "docs": "A sequence element like xₙ"
+        "docs": "A sequence element like xₙ",
+        "type_info": "(String, String), // (sequence_name, index)"
       }
     ]
   },
   {
     "name": "OrderComparison",
-    "docs": "",
+    "docs": "Order comparison operations",
     "kind": "enum",
     "members": [
       {
         "name": "GreaterThan",
-        "type": "Box<Term>",
-        "docs": "Greater than: x > y"
+        "docs": "Greater than: x > y",
+        "type_info": "(Box<Term>, Box<Term>)"
       },
       {
         "name": "GreaterOrEqual",
-        "type": "Box<Term>",
-        "docs": "Greater than or equal: x ≥ y"
+        "docs": "Greater than or equal: x ≥ y",
+        "type_info": "(Box<Term>, Box<Term>)"
       },
       {
         "name": "LessThan",
-        "type": "Box<Term>",
-        "docs": "Less than: x < y"
+        "docs": "Less than: x < y",
+        "type_info": "(Box<Term>, Box<Term>)"
       },
       {
         "name": "LessOrEqual",
-        "type": "Box<Term>",
-        "docs": "Less than or equal: x ≤ y"
+        "docs": "Less than or equal: x ≤ y",
+        "type_info": "(Box<Term>, Box<Term>)"
       },
       {
         "name": "Equal",
-        "type": "Box<Term>",
-        "docs": "Equal: x = y"
+        "docs": "Equal: x = y",
+        "type_info": "(Box<Term>, Box<Term>)"
       }
     ]
   },
   {
     "name": "PartiallyOrderedSet",
-    "docs": "",
+    "docs": "A partially ordered set (poset) is a set with a binary relation ≤ that is:\n1. Reflexive: x ≤ x\n2. Antisymmetric: x ≤ y and y ≤ x implies x = y\n3. Transitive: x ≤ y and y ≤ z implies x ≤ z",
     "kind": "struct",
     "members": [
       {
@@ -72,7 +126,7 @@
   },
   {
     "name": "TotallyOrderedSet",
-    "docs": "",
+    "docs": "A totally ordered set (chain) is a partially ordered set where any two elements\nare comparable: for any x,y either x ≤ y or y ≤ x",
     "kind": "struct",
     "members": [
       {
@@ -89,44 +143,44 @@
   },
   {
     "name": "OrderProperty",
-    "docs": "",
+    "docs": "Properties of ordered sets",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the order is complete (every bounded subset has a supremum)"
+        "docs": "Whether the order is complete (every bounded subset has a supremum)",
+        "type_info": "bool"
       },
       {
         "name": "HasMinimum",
-        "type": "bool",
-        "docs": "Whether the order has a minimum element"
+        "docs": "Whether the order has a minimum element",
+        "type_info": "bool"
       },
       {
         "name": "HasMaximum",
-        "type": "bool",
-        "docs": "Whether the order has a maximum element"
+        "docs": "Whether the order has a maximum element",
+        "type_info": "bool"
       },
       {
         "name": "Dense",
-        "type": "bool",
-        "docs": "Whether the order is dense (between any two elements there is another)"
+        "docs": "Whether the order is dense (between any two elements there is another)",
+        "type_info": "bool"
       },
       {
         "name": "Discrete",
-        "type": "bool",
-        "docs": "Whether the order is discrete (every element has immediate neighbors)"
+        "docs": "Whether the order is discrete (every element has immediate neighbors)",
+        "type_info": "bool"
       },
       {
         "name": "WellFounded",
-        "type": "bool",
-        "docs": "Whether the order is well-founded (no infinite descending chains)"
+        "docs": "Whether the order is well-founded (no infinite descending chains)",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "Lattice",
-    "docs": "",
+    "docs": "A lattice is a partially ordered set where any two elements have:\n1. A least upper bound (join, ∨)\n2. A greatest lower bound (meet, ∧)",
     "kind": "struct",
     "members": [
       {
@@ -143,39 +197,39 @@
   },
   {
     "name": "LatticeProperty",
-    "docs": "",
+    "docs": "Properties of lattices",
     "kind": "enum",
     "members": [
       {
         "name": "Distributive",
-        "type": "bool",
-        "docs": "Whether the lattice is distributive: x∧(y∨z) = (x∧y)∨(x∧z)"
+        "docs": "Whether the lattice is distributive: x∧(y∨z) = (x∧y)∨(x∧z)",
+        "type_info": "bool"
       },
       {
         "name": "Modular",
-        "type": "bool",
-        "docs": "Whether the lattice is modular: x≤z implies x∨(y∧z) = (x∨y)∧z"
+        "docs": "Whether the lattice is modular: x≤z implies x∨(y∧z) = (x∨y)∧z",
+        "type_info": "bool"
       },
       {
         "name": "Complemented",
-        "type": "bool",
-        "docs": "Whether the lattice is complemented: every element has a complement"
+        "docs": "Whether the lattice is complemented: every element has a complement",
+        "type_info": "bool"
       },
       {
         "name": "Bounded",
-        "type": "bool",
-        "docs": "Whether the lattice is bounded: has top and bottom elements"
+        "docs": "Whether the lattice is bounded: has top and bottom elements",
+        "type_info": "bool"
       },
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the lattice is complete: every subset has sup and inf"
+        "docs": "Whether the lattice is complete: every subset has sup and inf",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "BooleanAlgebra",
-    "docs": "",
+    "docs": "A Boolean algebra is a complemented distributive lattice",
     "kind": "struct",
     "members": [
       {
@@ -192,23 +246,23 @@
   },
   {
     "name": "BooleanAlgebraProperty",
-    "docs": "",
+    "docs": "Properties of Boolean algebras",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the algebra is complete (every subset has sup and inf)"
+        "docs": "Whether the algebra is complete (every subset has sup and inf)",
+        "type_info": "bool"
       },
       {
         "name": "Atomic",
-        "type": "bool",
-        "docs": "Whether the algebra is atomic (every element is sup of atoms below it)"
+        "docs": "Whether the algebra is atomic (every element is sup of atoms below it)",
+        "type_info": "bool"
       },
       {
         "name": "Finite",
-        "type": "bool",
-        "docs": "Whether the algebra is finite"
+        "docs": "Whether the algebra is finite",
+        "type_info": "bool"
       }
     ]
   }

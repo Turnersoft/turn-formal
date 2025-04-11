@@ -1,0 +1,343 @@
+[
+  {
+    "name": "Space",
+    "docs": "Registry of all mathematical spaces\nEach space type is defined in its respective theory folder\nThis enum serves as a unified type for referencing any space",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Set",
+        "docs": "Basic set without additional structure",
+        "type_info": "Set"
+      },
+      {
+        "name": "TopologicalSpace",
+        "docs": "Topological space (topology/definitions.rs)",
+        "type_info": "TopologicalSpace"
+      },
+      {
+        "name": "MetricSpace",
+        "docs": "Metric space (topology/definitions.rs)",
+        "type_info": "MetricSpace"
+      },
+      {
+        "name": "SmoothManifold",
+        "docs": "Smooth manifold (differential_geometry/definitions.rs)",
+        "type_info": "SmoothManifold"
+      },
+      {
+        "name": "RiemannianManifold",
+        "docs": "Riemannian manifold (differential_geometry/definitions.rs)",
+        "type_info": "RiemannianManifold"
+      },
+      {
+        "name": "FiberBundle",
+        "docs": "Fiber bundle (differential_geometry/definitions.rs)",
+        "type_info": "FiberBundle"
+      },
+      {
+        "name": "SymplecticManifold",
+        "docs": "Symplectic manifold (symplectic_geometry/definitions.rs)",
+        "type_info": "SymplecticManifold"
+      },
+      {
+        "name": "VectorSpace",
+        "docs": "Vector space (linear_algebra/definitions.rs)",
+        "type_info": "VectorSpace"
+      },
+      {
+        "name": "NormedSpace",
+        "docs": "Normed vector space (linear_algebra/definitions.rs)",
+        "type_info": "NormedSpace"
+      },
+      {
+        "name": "InnerProductSpace",
+        "docs": "Inner product space (linear_algebra/definitions.rs)",
+        "type_info": "InnerProductSpace"
+      },
+      {
+        "name": "FunctionSpace",
+        "docs": "Function space (analysis/definitions.rs)",
+        "type_info": "FunctionSpace"
+      },
+      {
+        "name": "MeasurableSpace",
+        "docs": "Measurable space (measure/definitions.rs)",
+        "type_info": "MeasurableSpace"
+      },
+      {
+        "name": "MeasureSpace",
+        "docs": "Measure space (measure/definitions.rs)",
+        "type_info": "MeasureSpace"
+      },
+      {
+        "name": "LpSpace",
+        "docs": "Lp space (measure/definitions.rs)",
+        "type_info": "LpSpace"
+      },
+      {
+        "name": "SobolevSpace",
+        "docs": "Sobolev space (analysis/definitions.rs)",
+        "type_info": "SobolevSpace"
+      },
+      {
+        "name": "DistributionSpace",
+        "docs": "Distribution space (analysis/definitions.rs)",
+        "type_info": "DistributionSpace"
+      },
+      {
+        "name": "AffineSpace",
+        "docs": "Affine space (affine_geometry/definitions.rs)",
+        "type_info": "AffineSpace"
+      },
+      {
+        "name": "ProjectiveSpace",
+        "docs": "Projective space (projective_geometry/definitions.rs)",
+        "type_info": "ProjectiveSpace"
+      },
+      {
+        "name": "Group",
+        "docs": "Group (groups/definitions.rs)",
+        "type_info": "Group"
+      },
+      {
+        "name": "TopologicalGroup",
+        "docs": "Topological group (groups/definitions.rs)",
+        "type_info": "TopologicalGroup"
+      },
+      {
+        "name": "LieGroup",
+        "docs": "Lie group (groups/definitions.rs)",
+        "type_info": "LieGroup"
+      },
+      {
+        "name": "Ring",
+        "docs": "Ring (rings/definitions.rs)",
+        "type_info": "Ring"
+      },
+      {
+        "name": "Field",
+        "docs": "Field (rings/definitions.rs)",
+        "type_info": "Field"
+      },
+      {
+        "name": "Scheme",
+        "docs": "Scheme (algebraic_geometry/definitions.rs)",
+        "type_info": "Scheme"
+      },
+      {
+        "name": "Variety",
+        "docs": "Variety (algebraic_geometry/definitions.rs)",
+        "type_info": "Variety"
+      },
+      {
+        "name": "BanachSpace",
+        "docs": "Banach space (analysis/definitions.rs)",
+        "type_info": "BanachSpace"
+      },
+      {
+        "name": "HilbertSpace",
+        "docs": "Hilbert space (analysis/definitions.rs)",
+        "type_info": "HilbertSpace"
+      },
+      {
+        "name": "FrechetSpace",
+        "docs": "Fréchet space (analysis/definitions.rs)",
+        "type_info": "FrechetSpace"
+      },
+      {
+        "name": "LocallyConvexSpace",
+        "docs": "Locally convex space (analysis/definitions.rs)",
+        "type_info": "LocallyConvexSpace"
+      }
+    ]
+  },
+  {
+    "name": "DimensionType",
+    "docs": "Types of dimensions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Zero",
+        "docs": "Zero dimensional",
+        "type_info": null
+      },
+      {
+        "name": "Finite",
+        "docs": "Finite dimensional",
+        "type_info": "u32"
+      },
+      {
+        "name": "CountablyInfinite",
+        "docs": "Countably infinite dimensional",
+        "type_info": null
+      },
+      {
+        "name": "Uncountable",
+        "docs": "Uncountably infinite dimensional",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "TheoremStatement",
+    "docs": "Represents a logical statement that can be used in mathematical theorems",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "name",
+        "type": "String",
+        "docs": "The name of the theorem"
+      },
+      {
+        "name": "formula",
+        "type": "Formula",
+        "docs": "The logical formula representing the theorem"
+      },
+      {
+        "name": "metadata",
+        "type": "TheoremMetadata",
+        "docs": "Optional metadata (tags, classification, etc.)"
+      }
+    ]
+  },
+  {
+    "name": "TheoremMetadata",
+    "docs": "Metadata for theorems",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "classification",
+        "type": "Vec<String>",
+        "docs": "Classification of the theorem (e.g., \"analysis\", \"algebra\")"
+      },
+      {
+        "name": "dependencies",
+        "type": "Vec<String>",
+        "docs": "Dependencies (other theorems this one depends on)"
+      },
+      {
+        "name": "has_formal_proof",
+        "type": "bool",
+        "docs": "Whether this theorem has a formal proof in the system"
+      },
+      {
+        "name": "difficulty",
+        "type": "Option<u8>",
+        "docs": "Difficulty level (1-5)"
+      }
+    ]
+  },
+  {
+    "name": "TheoremWithProof",
+    "docs": "Represents a theorem with a proof",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "statement",
+        "type": "TheoremStatement",
+        "docs": "The theorem statement"
+      },
+      {
+        "name": "proof",
+        "type": "Vec<ProofStep>",
+        "docs": "The proof steps"
+      }
+    ]
+  },
+  {
+    "name": "ProofStep",
+    "docs": "A single step in a proof",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "formula",
+        "type": "Formula",
+        "docs": "The formula representing this step"
+      },
+      {
+        "name": "justification",
+        "type": "Justification",
+        "docs": "The justification for this step"
+      }
+    ]
+  },
+  {
+    "name": "Justification",
+    "docs": "Justification for a proof step",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Axiom",
+        "docs": "Axiom reference",
+        "type_info": "String"
+      },
+      {
+        "name": "Theorem",
+        "docs": "Theorem reference",
+        "type_info": "String"
+      },
+      {
+        "name": "Inference",
+        "docs": "Follows from previous steps via a rule of inference",
+        "type_info": "(InferenceRule, Vec<usize>)"
+      },
+      {
+        "name": "Hypothesis",
+        "docs": "Given as a hypothesis",
+        "type_info": null
+      },
+      {
+        "name": "Assertion",
+        "docs": "An assertion that needs to be proven separately",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "InferenceRule",
+    "docs": "Rules of inference",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ModusPonens",
+        "docs": "Modus Ponens: From P and P → Q, deduce Q",
+        "type_info": null
+      },
+      {
+        "name": "UniversalInstantiation",
+        "docs": "Universal Instantiation: From ∀x.P(x), deduce P(t)",
+        "type_info": null
+      },
+      {
+        "name": "ExistentialGeneralization",
+        "docs": "Existential Generalization: From P(t), deduce ∃x.P(x)",
+        "type_info": null
+      },
+      {
+        "name": "AndIntroduction",
+        "docs": "And Introduction: From P and Q, deduce P ∧ Q",
+        "type_info": null
+      },
+      {
+        "name": "AndElimination",
+        "docs": "And Elimination: From P ∧ Q, deduce P (or Q)",
+        "type_info": null
+      },
+      {
+        "name": "OrIntroduction",
+        "docs": "Or Introduction: From P, deduce P ∨ Q",
+        "type_info": null
+      },
+      {
+        "name": "OrElimination",
+        "docs": "Or Elimination: From P ∨ Q, P → R, and Q → R, deduce R",
+        "type_info": null
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom inference rule with description",
+        "type_info": "String"
+      }
+    ]
+  }
+]

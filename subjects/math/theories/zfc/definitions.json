@@ -1,0 +1,416 @@
+[
+  {
+    "name": "SetTheoryRelationEntity",
+    "docs": "Entity information for set theory relation operations",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "id",
+        "type": "Option<String>",
+        "docs": "Optional ID for referencing this relation"
+      },
+      {
+        "name": "description",
+        "type": "Option<String>",
+        "docs": "Optional description explaining this relation instance"
+      },
+      {
+        "name": "tags",
+        "type": "Vec<(String, String)>",
+        "docs": "Optional key-value pairs for additional context"
+      }
+    ]
+  },
+  {
+    "name": "SetTheoryRelation",
+    "docs": "Relations specific to set theory",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ElementOf",
+        "docs": "Element is in a set: x ∈ A",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        element: MathExpression,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "NotElementOf",
+        "docs": "Element is not in a set: x ∉ A",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        element: MathExpression,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "SubsetOf",
+        "docs": "One set is a subset of another: A ⊆ B",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        subset: MathExpression,\n        superset: MathExpression,\n    }"
+      },
+      {
+        "name": "ProperSubsetOf",
+        "docs": "One set is a proper subset of another: A ⊊ B",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        subset: MathExpression,\n        superset: MathExpression,\n    }"
+      },
+      {
+        "name": "Equal",
+        "docs": "Two sets are equal: A = B",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n    }"
+      },
+      {
+        "name": "Disjoint",
+        "docs": "Two sets are disjoint: A ∩ B = ∅",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+      },
+      {
+        "name": "Union",
+        "docs": "A set is the union of two others: C = A ∪ B",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        result: MathExpression,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+      },
+      {
+        "name": "Intersection",
+        "docs": "A set is the intersection of two others: C = A ∩ B",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        result: MathExpression,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+      },
+      {
+        "name": "Complement",
+        "docs": "A set is the complement of another: A = B^c",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        complement: MathExpression,\n        original: MathExpression,\n        universe: Option<MathExpression>,\n    }"
+      },
+      {
+        "name": "PowerSet",
+        "docs": "A set is the power set of another: A = P(B)",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        power_set: MathExpression,\n        original: MathExpression,\n    }"
+      },
+      {
+        "name": "HasCardinality",
+        "docs": "A set has a specific cardinality: |A| = n",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n        cardinality: MathExpression,\n    }"
+      },
+      {
+        "name": "SameCardinality",
+        "docs": "Two sets have the same cardinality: |A| = |B|",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+      },
+      {
+        "name": "IsCountable",
+        "docs": "A set is countable",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "IsUncountable",
+        "docs": "A set is uncountable",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "IsFinite",
+        "docs": "A set is finite",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "IsInfinite",
+        "docs": "A set is infinite",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "IsEmpty",
+        "docs": "A set is empty",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom set theory relation",
+        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ElementCondition",
+    "docs": "A condition for set elements\nUsed in the Separation axiom to define subsets",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "IsEmpty",
+        "docs": "Element is empty",
+        "type_info": null
+      },
+      {
+        "name": "Contains",
+        "docs": "Element contains a specific set",
+        "type_info": "Box<Set>"
+      },
+      {
+        "name": "ContainedIn",
+        "docs": "Element is contained in a specific set",
+        "type_info": "Box<Set>"
+      },
+      {
+        "name": "NotContainedIn",
+        "docs": "Element is not contained in a specific set",
+        "type_info": "Box<Set>"
+      }
+    ]
+  },
+  {
+    "name": "SetProperty",
+    "docs": "Properties that can be applied to any set\nThese properties help track mathematical characteristics of sets",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Cardinality",
+        "docs": "The cardinality (size) of the set\nProperties:\n- Finite sets have specific size n\n- ℵ₀ for countably infinite sets\n- 2^ℵ₀ for continuum size\n- Higher cardinals for larger sets",
+        "type_info": "CardinalityPropertyVariant"
+      },
+      {
+        "name": "IsEmpty",
+        "docs": "Whether the set is empty\nProperties:\n- Contains no elements\n- Is a subset of all sets\n- Unique up to extensionality\nExamples: ∅",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsFinite",
+        "docs": "Whether the set is finite\nProperties:\n- Has finite number of elements\n- Can be put in bijection with {0,1,...,n-1}\n- Every subset has minimal element\nExamples: {∅}, {∅,{∅}}, finite powersets",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsCountable",
+        "docs": "Whether the set is countable\nProperties:\n- Can be put in bijection with ℕ\n- Has cardinality ℵ₀ if infinite\n- Union of countable sets is countable\nExamples: ℕ, ℤ, ℚ",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsWellOrdered",
+        "docs": "Whether the set is well-ordered\nProperties:\n- Every non-empty subset has least element\n- Total ordering exists\n- Transfinite induction applies\nExamples: Ordinal numbers, ℕ with usual order",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsTransitive",
+        "docs": "Whether the set is transitive\nProperties:\n- If y ∈ x ∈ A then y ∈ A\n- Contains all elements of its elements\n- Important for ordinal numbers\nExamples: Ordinal numbers, von Neumann hierarchy",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsOrdinal",
+        "docs": "Whether the set is an ordinal number\nProperties:\n- Transitive set\n- Well-ordered by ∈\n- Represents position/rank\nExamples: 0 = ∅, 1 = {∅}, 2 = {∅,{∅}}",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsCardinal",
+        "docs": "Whether the set is a cardinal number\nProperties:\n- Initial ordinal of its cardinality class\n- Measures size of sets\n- Cannot be put in bijection with smaller ordinal\nExamples: ℵ₀, ℵ₁, finite cardinals",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsReflexive",
+        "docs": "Whether the relation is reflexive\nProperties:\n- For all x in domain, (x,x) is in the relation\n- Required for equivalence relations and partial orders\nExamples: =, ≤, ⊆",
+        "type_info": "bool"
+      },
+      {
+        "name": "IsSymmetric",
+        "docs": "Whether the relation is symmetric\nProperties:\n- If (x,y) is in relation then (y,x) is also in relation\n- Required for equivalence relations\nExamples: =, ≠, \"is parallel to\"",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "CardinalityPropertyVariant",
+    "docs": "Cardinality of a set\nRepresents the size of a set, including infinite cardinalities",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Finite",
+        "docs": "Finite sets with specific size",
+        "type_info": "usize"
+      },
+      {
+        "name": "CountablyInfinite",
+        "docs": "ℵ₀ (aleph-null) - countably infinite",
+        "type_info": null
+      },
+      {
+        "name": "ContinuumSize",
+        "docs": "2^ℵ₀ - size of the continuum",
+        "type_info": null
+      },
+      {
+        "name": "LargerCardinal",
+        "docs": "Higher cardinal numbers",
+        "type_info": "usize"
+      }
+    ]
+  },
+  {
+    "name": "OrdinalOpProperty",
+    "docs": "Properties specific to ordinal operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "PreservesWellOrdering",
+        "docs": "Whether operation preserves well-ordering",
+        "type_info": "bool"
+      },
+      {
+        "name": "Associative",
+        "docs": "Whether operation is associative",
+        "type_info": "bool"
+      },
+      {
+        "name": "Commutative",
+        "docs": "Whether operation is commutative",
+        "type_info": "bool"
+      },
+      {
+        "name": "Identity",
+        "docs": "Identity element for the operation",
+        "type_info": "Box<Set>"
+      },
+      {
+        "name": "DistributesOver",
+        "docs": "Operation this one distributes over",
+        "type_info": "Box<Set>"
+      }
+    ]
+  },
+  {
+    "name": "SetOpProperty",
+    "docs": "Properties specific to set-theoretic operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "PreservesCardinality",
+        "docs": "Whether operation preserves cardinality",
+        "type_info": "bool"
+      },
+      {
+        "name": "PreservesTransitivity",
+        "docs": "Whether operation preserves transitivity",
+        "type_info": "bool"
+      },
+      {
+        "name": "SatisfiesExtensionality",
+        "docs": "Whether operation satisfies extensionality",
+        "type_info": "bool"
+      },
+      {
+        "name": "Idempotent",
+        "docs": "Whether operation is idempotent",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "Set",
+    "docs": "A set in ZFC set theory, defined by its membership rule\nThis implementation follows the ZFC axioms and provides a foundation for set-theoretic constructions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Empty",
+        "docs": "The empty set (∅), unique and contains no elements\nThis is guaranteed by the Empty Set Axiom of ZFC",
+        "type_info": null
+      },
+      {
+        "name": "Singleton",
+        "docs": "Properties of the singleton set (e.g., cardinality = 1)",
+        "type_info": "{\n        element: Box<Set>,\n        properties: VariantSet<SetProperty>,\n    }"
+      },
+      {
+        "name": "BinaryUnion",
+        "docs": "Properties of the resulting union",
+        "type_info": "{\n        left: Box<Set>,\n        right: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "BinaryIntersection",
+        "docs": "Properties of the resulting intersection",
+        "type_info": "{\n        left: Box<Set>,\n        right: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "SetDifference",
+        "docs": "Properties of the resulting difference",
+        "type_info": "{\n        left: Box<Set>,\n        right: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "SymmetricDifference",
+        "docs": "Properties of the resulting symmetric difference",
+        "type_info": "{\n        left: Box<Set>,\n        right: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "CartesianProduct",
+        "docs": "Properties of the resulting product",
+        "type_info": "{\n        left: Box<Set>,\n        right: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "BigUnion",
+        "docs": "Properties of the resulting big union",
+        "type_info": "{\n        family: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "BigIntersection",
+        "docs": "Properties of the resulting big intersection",
+        "type_info": "{\n        family: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "PowerSet",
+        "docs": "Properties of the resulting power set",
+        "type_info": "{\n        base: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "Separation",
+        "docs": "Properties of the resulting set",
+        "type_info": "{\n        source: Box<Set>,\n        condition: ElementCondition,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "Replacement",
+        "docs": "Properties of the resulting set",
+        "type_info": "{\n        source: Box<Set>,\n        mapping: SetMapping,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "OrderedPair",
+        "docs": "Properties of the resulting ordered pair",
+        "type_info": "{\n        first: Box<Set>,\n        second: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "Complement",
+        "docs": "Properties of the resulting complement",
+        "type_info": "{\n        set: Box<Set>,\n        universe: Box<Set>,\n        properties: VariantSet<SetProperty>,\n        op_properties: VariantSet<SetOpProperty>,\n    }"
+      },
+      {
+        "name": "Parametric",
+        "docs": "Properties of the parametric set",
+        "type_info": "{\n        parameters: std::collections::HashMap<String, String>,\n        description: String,\n        membership_condition: String,\n        properties: VariantSet<SetProperty>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SetMapping",
+    "docs": "Mapping functions that can be applied to set elements\nUsed in the Replacement axiom to construct new sets",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Identity",
+        "docs": "Identity function f(x) = x",
+        "type_info": null
+      },
+      {
+        "name": "Singleton",
+        "docs": "Singleton function f(x) = {x}",
+        "type_info": null
+      },
+      {
+        "name": "FirstProjection",
+        "docs": "First projection π₁((x,y)) = x",
+        "type_info": null
+      },
+      {
+        "name": "SecondProjection",
+        "docs": "Second projection π₂((x,y)) = y",
+        "type_info": null
+      },
+      {
+        "name": "Composition",
+        "docs": "Function composition (g ∘ f)(x) = g(f(x))",
+        "type_info": "(Box<SetMapping>, Box<SetMapping>)"
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom mapping defined by a string representation",
+        "type_info": "String"
+      }
+    ]
+  },
+  {
+    "name": "SetPropertiesRef",
+    "docs": "A reference to set properties\nThis allows us to access properties without taking ownership",
+    "kind": "struct",
+    "members": []
+  }
+]

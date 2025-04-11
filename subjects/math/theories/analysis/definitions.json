@@ -1,0 +1,2024 @@
+[
+  {
+    "name": "BanachSpace",
+    "docs": "A Banach space is a complete normed vector space.\nEvery Cauchy sequence in a Banach space converges to a point in the space.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "set",
+        "type": "Set",
+        "docs": "The underlying set"
+      },
+      {
+        "name": "norm",
+        "type": "Norm",
+        "docs": "The norm"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<BanachSpaceProperty>",
+        "docs": "Properties of the Banach space"
+      }
+    ]
+  },
+  {
+    "name": "BanachSpaceProperty",
+    "docs": "Properties specific to Banach spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Separable",
+        "docs": "Whether the space is separable",
+        "type_info": "bool"
+      },
+      {
+        "name": "Reflexive",
+        "docs": "Whether the space is reflexive",
+        "type_info": "bool"
+      },
+      {
+        "name": "UniformlyConvex",
+        "docs": "Whether the space is uniformly convex",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "HilbertSpace",
+    "docs": "A Hilbert space is a complete inner product space.\nThe inner product induces a norm that makes the space a Banach space.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "set",
+        "type": "Set",
+        "docs": "The underlying set"
+      },
+      {
+        "name": "inner_product",
+        "type": "InnerProduct",
+        "docs": "The inner product"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<HilbertSpaceProperty>",
+        "docs": "Properties of the Hilbert space"
+      }
+    ]
+  },
+  {
+    "name": "HilbertSpaceProperty",
+    "docs": "Properties specific to Hilbert spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Separable",
+        "docs": "Whether the space is separable",
+        "type_info": "bool"
+      },
+      {
+        "name": "HasOrthonormalBasis",
+        "docs": "Whether the space has orthonormal basis",
+        "type_info": "bool"
+      },
+      {
+        "name": "ScalarField",
+        "docs": "Whether the space is real or complex",
+        "type_info": "ScalarFieldType"
+      }
+    ]
+  },
+  {
+    "name": "Norm",
+    "docs": "A norm on a vector space",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "name",
+        "type": "String",
+        "docs": "Name or description of the norm"
+      },
+      {
+        "name": "norm_type",
+        "type": "NormType",
+        "docs": "Type of the norm"
+      }
+    ]
+  },
+  {
+    "name": "NormType",
+    "docs": "Types of norms",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Lp",
+        "docs": "L^p norm",
+        "type_info": "f64"
+      },
+      {
+        "name": "Supremum",
+        "docs": "Supremum norm",
+        "type_info": null
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom norm",
+        "type_info": "String"
+      }
+    ]
+  },
+  {
+    "name": "InnerProduct",
+    "docs": "An inner product on a vector space",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "name",
+        "type": "String",
+        "docs": "Name or description of the inner product"
+      },
+      {
+        "name": "inner_product_type",
+        "type": "InnerProductType",
+        "docs": "Type of the inner product"
+      }
+    ]
+  },
+  {
+    "name": "InnerProductType",
+    "docs": "Types of inner products",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "DotProduct",
+        "docs": "Standard dot product",
+        "type_info": null
+      },
+      {
+        "name": "L2",
+        "docs": "L^2 inner product",
+        "type_info": null
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom inner product",
+        "type_info": "String"
+      }
+    ]
+  },
+  {
+    "name": "ScalarFieldType",
+    "docs": "Types of scalar fields",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Real",
+        "docs": "Real numbers",
+        "type_info": null
+      },
+      {
+        "name": "Complex",
+        "docs": "Complex numbers",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "FunctionSpace",
+    "docs": "A function space of maps between two spaces",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "domain",
+        "type": "Box<Space>",
+        "docs": "Domain space"
+      },
+      {
+        "name": "codomain",
+        "type": "Box<Space>",
+        "docs": "Codomain space"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FunctionSpaceProperty>",
+        "docs": "Properties of the function space"
+      }
+    ]
+  },
+  {
+    "name": "FunctionSpaceProperty",
+    "docs": "Properties specific to function spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "docs": "Whether the space is complete",
+        "type_info": "bool"
+      },
+      {
+        "name": "Separable",
+        "docs": "Whether the space is separable",
+        "type_info": "bool"
+      },
+      {
+        "name": "Reflexive",
+        "docs": "Whether the space is reflexive",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "SobolevSpace",
+    "docs": "A Sobolev space W^{k,p}",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_function_space",
+        "type": "Box<Space>",
+        "docs": "The underlying function space"
+      },
+      {
+        "name": "derivative_order",
+        "type": "u32",
+        "docs": "Order of derivatives"
+      },
+      {
+        "name": "integrability_index",
+        "type": "Option<f64>",
+        "docs": "Integrability index p"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SobolevSpaceProperty>",
+        "docs": "Properties of the Sobolev space"
+      }
+    ]
+  },
+  {
+    "name": "SobolevSpaceProperty",
+    "docs": "Properties specific to Sobolev spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Order",
+        "docs": "Order of derivatives",
+        "type_info": "u32"
+      },
+      {
+        "name": "Index",
+        "docs": "Integrability index",
+        "type_info": "f64"
+      },
+      {
+        "name": "Complete",
+        "docs": "Whether the space is complete",
+        "type_info": "bool"
+      },
+      {
+        "name": "Separable",
+        "docs": "Whether the space is separable",
+        "type_info": "bool"
+      },
+      {
+        "name": "Reflexive",
+        "docs": "Whether the space is reflexive",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "DistributionSpace",
+    "docs": "A space of distributions (generalized functions)",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "test_function_space",
+        "type": "Box<Space>",
+        "docs": "The space of test functions"
+      },
+      {
+        "name": "order",
+        "type": "Option<u32>",
+        "docs": "Order of the distribution"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<DistributionSpaceProperty>",
+        "docs": "Properties of the distribution space"
+      }
+    ]
+  },
+  {
+    "name": "DistributionSpaceProperty",
+    "docs": "Properties specific to distribution spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Order",
+        "docs": "Order of the distribution",
+        "type_info": "Option<u32>"
+      },
+      {
+        "name": "Nuclear",
+        "docs": "Whether the space is nuclear",
+        "type_info": "bool"
+      },
+      {
+        "name": "Reflexive",
+        "docs": "Whether the space is reflexive",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "FrechetSpace",
+    "docs": "A Fréchet space",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "vector_space",
+        "type": "VectorSpace",
+        "docs": "The underlying vector space"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FrechetSpaceProperty>",
+        "docs": "Properties specific to the Fréchet structure"
+      }
+    ]
+  },
+  {
+    "name": "FrechetSpaceProperty",
+    "docs": "Properties specific to Fréchet spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Nuclear",
+        "docs": "Whether the space is nuclear",
+        "type_info": "bool"
+      },
+      {
+        "name": "Montel",
+        "docs": "Whether the space is Montel",
+        "type_info": "bool"
+      },
+      {
+        "name": "Separable",
+        "docs": "Whether the space is separable",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "LocallyConvexSpace",
+    "docs": "A locally convex space",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "vector_space",
+        "type": "VectorSpace",
+        "docs": "The underlying vector space"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<LocallyConvexSpaceProperty>",
+        "docs": "Properties specific to the locally convex structure"
+      }
+    ]
+  },
+  {
+    "name": "LocallyConvexSpaceProperty",
+    "docs": "Properties specific to locally convex spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Barreled",
+        "docs": "Whether the space is barreled",
+        "type_info": "bool"
+      },
+      {
+        "name": "Bornological",
+        "docs": "Whether the space is bornological",
+        "type_info": "bool"
+      },
+      {
+        "name": "Montel",
+        "docs": "Whether the space is Montel",
+        "type_info": "bool"
+      }
+    ]
+  },
+  {
+    "name": "Function",
+    "docs": "Function between spaces with properties\nA mapping F: X → Y between two spaces X and Y that assigns to each element\nx ∈ X exactly one element y ∈ Y. The function is characterized by its:\n- Domain (X): The space of input values\n- Codomain (Y): The space of possible output values\n- Properties: Mathematical characteristics of the mapping",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "domain",
+        "type": "Space",
+        "docs": "The domain X of the function, with its topological/metric structure"
+      },
+      {
+        "name": "codomain",
+        "type": "Space",
+        "docs": "The codomain Y of the function, with its topological/metric structure"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FunctionPropertyVariant>",
+        "docs": "Mathematical properties of the function"
+      },
+      {
+        "name": "concrete",
+        "type": "Option<ConcreteFunction>",
+        "docs": "Optional concrete representation"
+      }
+    ]
+  },
+  {
+    "name": "FunctionPropertyVariant",
+    "docs": "Properties that can be possessed by functions\nEach variant represents a distinct mathematical characteristic\nthat a function may or may not have",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuity",
+        "docs": "Continuity: preservation of closeness between points\nf is continuous at x₀ if ∀ε>0 ∃δ>0: |x-x₀|<δ ⟹ |f(x)-f(x₀)|<ε",
+        "type_info": "ContinuityPropertyVariant"
+      },
+      {
+        "name": "Boundedness",
+        "docs": "Boundedness: existence of upper/lower bounds\n∃M>0: |f(x)| ≤ M for all x in the domain",
+        "type_info": "BoundednessPropertyVariant"
+      },
+      {
+        "name": "Open",
+        "docs": "Open mapping: maps open sets to open sets\nU open in X ⟹ f(U) open in Y",
+        "type_info": "OpenPropertyVariant"
+      },
+      {
+        "name": "Closed",
+        "docs": "Closed mapping: maps closed sets to closed sets\nF closed in X ⟹ f(F) closed in Y",
+        "type_info": "ClosedPropertyVariant"
+      },
+      {
+        "name": "Proper",
+        "docs": "Proper mapping: inverse images of compact sets are compact\nK compact in Y ⟹ f⁻¹(K) compact in X",
+        "type_info": "ProperPropertyVariant"
+      },
+      {
+        "name": "Lipschitz",
+        "docs": "Lipschitz continuity: bounded rate of change\n∃L>0: |f(x)-f(y)| ≤ L|x-y| for all x,y",
+        "type_info": "LipschitzPropertyVariant"
+      },
+      {
+        "name": "Holder",
+        "docs": "Hölder continuity: generalized Lipschitz condition\n∃C>0,α∈(0,1]: |f(x)-f(y)| ≤ C|x-y|ᵅ for all x,y",
+        "type_info": "HolderPropertyVariant"
+      },
+      {
+        "name": "Analytic",
+        "docs": "Analyticity: locally representable as power series\nf(x) = Σₙaₙ(x-x₀)ⁿ in some neighborhood of each point",
+        "type_info": "AnalyticPropertyVariant"
+      },
+      {
+        "name": "Integrability",
+        "docs": "Integrability: existence of integral\n∫|f| exists (in some specified sense)",
+        "type_info": "IntegrabilityPropertyVariant"
+      },
+      {
+        "name": "Differentiability",
+        "docs": "Differentiability: existence of derivatives\nlimₕ→₀[f(x+h)-f(x)]/h exists",
+        "type_info": "DifferentiabilityPropertyVariant"
+      },
+      {
+        "name": "Measurability",
+        "docs": "Measurability: inverse images of measurable sets are measurable\nE measurable ⟹ f⁻¹(E) measurable",
+        "type_info": "MeasurabilityPropertyVariant"
+      },
+      {
+        "name": "Smoothness",
+        "docs": "Smoothness: degree of differentiability\nExistence and continuity of derivatives up to some order",
+        "type_info": "SmoothnessPropertyVariant"
+      },
+      {
+        "name": "Monotonicity",
+        "docs": "Monotonicity: order preservation\nx₁ ≤ x₂ ⟹ f(x₁) ≤ f(x₂) (or ≥)",
+        "type_info": "MonotonicityPropertyVariant"
+      },
+      {
+        "name": "Convexity",
+        "docs": "Convexity: midpoint property\nf(tx+(1-t)y) ≤ tf(x)+(1-t)f(y) for t∈[0,1]",
+        "type_info": "ConvexityPropertyVariant"
+      },
+      {
+        "name": "Periodicity",
+        "docs": "Periodicity: repetition pattern\n∃p≠0: f(x+p) = f(x) for all x",
+        "type_info": "PeriodicityPropertyVariant"
+      },
+      {
+        "name": "Density",
+        "docs": "Density: approximation property\nClosure of image contains specified set",
+        "type_info": "DensityPropertyVariant"
+      },
+      {
+        "name": "Compactness",
+        "docs": "Compactness: for operators between function spaces\nMaps bounded sets to relatively compact sets",
+        "type_info": "CompactnessPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "CompactnessPropertyVariant",
+    "docs": "Variants of compactness for topological spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Compact",
+        "docs": "Every open cover has a finite subcover\nFor any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ",
+        "type_info": "VariantSet<CompactProperty>"
+      },
+      {
+        "name": "NonCompact",
+        "docs": "Some open cover has no finite subcover\n∃ open cover with no finite subcover",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "DensityPropertyVariant",
+    "docs": "Density property variants\nDescribes how a subset approximates its ambient space:\n- Dense: closure equals whole space\n- Various topologies: strong, weak, pointwise",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Dense",
+        "docs": "Set is dense in specified topology\nClosure equals whole space",
+        "type_info": "VariantSet<DensityProperty>"
+      },
+      {
+        "name": "NonDense",
+        "docs": "Set is not dense\nClosure is proper subset",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "DensityProperty",
+    "docs": "Properties modifying dense sets",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where density holds",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of density",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Topology",
+        "docs": "Topology for density",
+        "type_info": "DensityTopologyVariant"
+      }
+    ]
+  },
+  {
+    "name": "DensityTopologyVariant",
+    "docs": "Types of topologies for density",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Strong",
+        "docs": "Dense in norm topology\n∀x ∃(xₙ): ‖xₙ-x‖→0",
+        "type_info": null
+      },
+      {
+        "name": "Weak",
+        "docs": "Dense in weak topology\n∀x ∃(xₙ): ⟨xₙ-x,φ⟩→0 ∀φ",
+        "type_info": null
+      },
+      {
+        "name": "WeakStar",
+        "docs": "Dense in weak* topology\n∀x* ∃(xₙ*): ⟨xₙ*-x*,x⟩→0 ∀x",
+        "type_info": null
+      },
+      {
+        "name": "Pointwise",
+        "docs": "Dense pointwise\n∀x ∃(xₙ): xₙ(t)→x(t) ∀t",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "CoveragePropertyVariant",
+    "docs": "Coverage variants describing the extent of a property",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Everywhere",
+        "docs": "Property holds without exception on X",
+        "type_info": null
+      },
+      {
+        "name": "Almost",
+        "docs": "Property holds except on a null set N (μ(N)=0)",
+        "type_info": null
+      },
+      {
+        "name": "OnDense",
+        "docs": "Property holds on a dense subset D ⊆ X",
+        "type_info": null
+      },
+      {
+        "name": "OnOpen",
+        "docs": "Property holds on an open set U ⊆ X",
+        "type_info": null
+      },
+      {
+        "name": "OnClosed",
+        "docs": "Property holds on a closed set F ⊆ X",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "LocalityPropertyVariant",
+    "docs": "Locality variants describing where a property holds",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Everywhere",
+        "docs": "Property holds on the entire space X",
+        "type_info": null
+      },
+      {
+        "name": "OnNeighborhood",
+        "docs": "Property holds in some open neighborhood U of each point",
+        "type_info": null
+      },
+      {
+        "name": "AtPoint",
+        "docs": "Property holds at a specific point x₀",
+        "type_info": null
+      },
+      {
+        "name": "OnDense",
+        "docs": "Property holds on a dense subset D ⊆ X",
+        "type_info": null
+      },
+      {
+        "name": "OnCompact",
+        "docs": "Property holds on compact subsets K ⊆ X",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "PeriodicityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Periodic",
+        "docs": "Strictly periodic: f(x+p)=f(x) for some p≠0",
+        "type_info": null
+      },
+      {
+        "name": "QuasiPeriodic",
+        "docs": "Almost periodic: f(x+pₙ)→f(x) for some sequence pₙ",
+        "type_info": null
+      },
+      {
+        "name": "Aperiodic",
+        "docs": "Not periodic in any sense",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "ConvexityPropertyVariant",
+    "docs": "Convexity property variants\nA function f is convex if:\n- f(tx + (1-t)y) ≤ tf(x) + (1-t)f(y) for t∈[0,1]\nConcave functions satisfy the reverse inequality",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convex",
+        "docs": "Function is convex\nf(tx + (1-t)y) ≤ tf(x) + (1-t)f(y)",
+        "type_info": "VariantSet<ConvexityProperty>"
+      },
+      {
+        "name": "Concave",
+        "docs": "Function is concave\nf(tx + (1-t)y) ≥ tf(x) + (1-t)f(y)",
+        "type_info": "VariantSet<ConvexityProperty>"
+      },
+      {
+        "name": "Neither",
+        "docs": "Neither convex nor concave",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "ConvexityProperty",
+    "docs": "Properties modifying convex/concave functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where convexity holds",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of convexity",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of convexity (strict, uniform)",
+        "type_info": "StrengthPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "StrengthPropertyVariant",
+    "docs": "Strength variants describing how strongly a property holds",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Strong",
+        "docs": "Property holds in the strongest possible sense",
+        "type_info": null
+      },
+      {
+        "name": "Weak",
+        "docs": "Property holds in a weaker topology/sense",
+        "type_info": null
+      },
+      {
+        "name": "Uniform",
+        "docs": "Property holds uniformly (same parameters throughout)",
+        "type_info": null
+      },
+      {
+        "name": "Essential",
+        "docs": "Property holds up to equivalence class",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "MonotonicityPropertyVariant",
+    "docs": "Monotonicity property variants\nDescribes order-preserving or order-reversing behavior:\n- Increasing: x₁ < x₂ ⟹ f(x₁) ≤ f(x₂)\n- Strictly increasing: x₁ < x₂ ⟹ f(x₁) < f(x₂)\n- Decreasing: analogous with reversed inequalities",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Monotonic",
+        "docs": "Function preserves or reverses order\nx₁ ≤ x₂ ⟹ f(x₁) ≤ f(x₂) (or ≥)",
+        "type_info": "VariantSet<MonotonicityProperty>"
+      },
+      {
+        "name": "NonMonotonic",
+        "docs": "Function neither preserves nor reverses order\n∃x₁<x₂: f(x₁)>f(x₂) and ∃y₁<y₂: f(y₁)<f(y₂)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "MonotonicityProperty",
+    "docs": "Properties modifying monotonic functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where monotonicity holds",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of monotonicity",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Direction",
+        "docs": "Direction of monotonicity",
+        "type_info": "MonotonicityDirectionVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of monotonicity",
+        "type_info": "StrengthPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "MonotonicityDirectionVariant",
+    "docs": "Directions of monotonicity",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Increasing",
+        "docs": "Non-decreasing: x₁ ≤ x₂ ⟹ f(x₁) ≤ f(x₂)",
+        "type_info": null
+      },
+      {
+        "name": "Decreasing",
+        "docs": "Non-increasing: x₁ ≤ x₂ ⟹ f(x₁) ≥ f(x₂)",
+        "type_info": null
+      },
+      {
+        "name": "StrictlyIncreasing",
+        "docs": "Strictly increasing: x₁ < x₂ ⟹ f(x₁) < f(x₂)",
+        "type_info": null
+      },
+      {
+        "name": "StrictlyDecreasing",
+        "docs": "Strictly decreasing: x₁ < x₂ ⟹ f(x₁) > f(x₂)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SmoothnessPropertyVariant",
+    "docs": "Smoothness property variants\nDescribes the regularity/differentiability class of a function:\n- C^k: k times continuously differentiable\n- C^∞: infinitely differentiable\n- Analytic: locally representable as power series\n- Gevrey: intermediate between C^∞ and analytic",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Smooth",
+        "docs": "Function has specified smoothness class\nAll derivatives up to specified order exist and are continuous",
+        "type_info": "VariantSet<SmoothProperty>"
+      },
+      {
+        "name": "NonSmooth",
+        "docs": "Function lacks required smoothness\nSome derivative fails to exist or be continuous",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SmoothProperty",
+    "docs": "Properties modifying smooth functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where smoothness holds",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of smoothness",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Class",
+        "docs": "Smoothness class (C^k, C^∞, etc.)",
+        "type_info": "SmoothnessClassVariant"
+      }
+    ]
+  },
+  {
+    "name": "SmoothnessClassVariant",
+    "docs": "Classes of smoothness in differential geometry/analysis",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Ck",
+        "docs": "k times continuously differentiable\nf⁽ⁿ⁾ exists and is continuous for n ≤ k",
+        "type_info": "u32"
+      },
+      {
+        "name": "CInfinity",
+        "docs": "Infinitely differentiable\nf⁽ⁿ⁾ exists and is continuous for all n",
+        "type_info": null
+      },
+      {
+        "name": "RealAnalytic",
+        "docs": "Real analytic function\nLocally equals its Taylor series",
+        "type_info": null
+      },
+      {
+        "name": "Gevrey",
+        "docs": "Gevrey class function\nDerivatives bounded by |f⁽ⁿ⁾| ≤ C·M^n·(n!)^s",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "MeasurabilityPropertyVariant",
+    "docs": "Variants of measurability for sets and functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Measurable",
+        "docs": "Set/function is measurable\nFor functions: f⁻¹(E) measurable for all measurable E",
+        "type_info": "VariantSet<MeasurableProperty>"
+      },
+      {
+        "name": "NonMeasurable",
+        "docs": "Set/function is not measurable\n∃ measurable E: f⁻¹(E) not measurable",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "MeasurableProperty",
+    "docs": "Measurability property for sets and functions\nFor sets: belonging to a σ-algebra\nFor functions: inverse images of measurable sets are measurable\nKey aspects:\n- Borel measurability: inverse images of open sets are measurable\n- Lebesgue measurability: inverse images of null sets are measurable",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Coverage",
+        "docs": "Extent of measurability",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of measurability",
+        "type_info": "StrengthPropertyVariant"
+      },
+      {
+        "name": "MeasureType",
+        "docs": "Type of measure (Borel, Lebesgue)",
+        "type_info": "MeasureTypePropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "MeasureTypePropertyVariant",
+    "docs": "Types of measures in measure theory",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Borel",
+        "docs": "Generated by open sets\nσ-algebra generated by topology",
+        "type_info": null
+      },
+      {
+        "name": "Lebesgue",
+        "docs": "Complete measure\nE⊆N, μ(N)=0 ⟹ E is measurable",
+        "type_info": null
+      },
+      {
+        "name": "Both",
+        "docs": "Both Borel and Lebesgue measurable",
+        "type_info": null
+      },
+      {
+        "name": "Neither",
+        "docs": "Neither Borel nor Lebesgue measurable",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "DifferentiabilityPropertyVariant",
+    "docs": "Differentiability property variants\nDescribes existence and properties of derivatives:\n- Classical derivatives: limits of difference quotients\n- Weak derivatives: integration by parts formula\n- Distributional derivatives: action on test functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Differentiable",
+        "docs": "Function is differentiable\nlimₕ→₀[f(x+h)-f(x)]/h exists",
+        "type_info": "VariantSet<DifferentiableProperty>"
+      },
+      {
+        "name": "NonDifferentiable",
+        "docs": "Function is not differentiable\nLimit of difference quotient doesn't exist",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "DifferentiableProperty",
+    "docs": "Properties modifying differentiable functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where differentiability holds",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of differentiability",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Order",
+        "docs": "Order of derivative",
+        "type_info": "DifferentiabilityOrderVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of differentiability",
+        "type_info": "StrengthPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "DifferentiabilityOrderVariant",
+    "docs": "Orders of differentiability",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "FirstOrder",
+        "docs": "First derivative exists\nf' exists",
+        "type_info": null
+      },
+      {
+        "name": "SecondOrder",
+        "docs": "Second derivative exists\nf'' exists",
+        "type_info": null
+      },
+      {
+        "name": "NthOrder",
+        "docs": "n-th derivative exists\nf⁽ⁿ⁾ exists",
+        "type_info": "u32"
+      },
+      {
+        "name": "Infinite",
+        "docs": "All derivatives exist\nf⁽ⁿ⁾ exists for all n",
+        "type_info": null
+      },
+      {
+        "name": "Distribution",
+        "docs": "Distributional derivative\n∫f·φ' = -∫f'·φ for test functions φ",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "IntegrabilityPropertyVariant",
+    "docs": "Variants of integrability for functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Integrable",
+        "docs": "Function is integrable in some sense\n∫|f| exists (in specified sense)",
+        "type_info": "VariantSet<IntegrableProperty>"
+      },
+      {
+        "name": "NonIntegrable",
+        "docs": "Function is not integrable\n∫|f| does not exist or is infinite",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "IntegrableProperty",
+    "docs": "Integrability property for functions\nDescribes how a function can be integrated:\n- Riemann: limits of sums over partitions\n- Lebesgue: limits of simple function approximations\n- Improper: limits of proper integrals",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Coverage",
+        "docs": "Extent of integrability",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Mode",
+        "docs": "Type of integral (Riemann, Lebesgue, Improper)",
+        "type_info": "IntegrableTypePropertyVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of integrability",
+        "type_info": "StrengthPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "IntegrableTypePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Lebesgue",
+        "docs": "Lebesgue integrable: ∫|f|dμ < ∞",
+        "type_info": null
+      },
+      {
+        "name": "Riemann",
+        "docs": "Riemann integrable: upper/lower sums converge",
+        "type_info": null
+      },
+      {
+        "name": "Improper",
+        "docs": "Improper integral exists: limₐ→∞∫₀ᵃf exists",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "AnalyticPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Analytic",
+        "docs": "Locally representable as power series\nf(x) = Σₙaₙ(x-x₀)ⁿ in some neighborhood",
+        "type_info": null
+      },
+      {
+        "name": "NonAnalytic",
+        "docs": "Not analytic",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "HolderPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Holder",
+        "docs": "Satisfies Hölder condition\n∃C>0,α∈(0,1]: |f(x)-f(y)| ≤ C|x-y|ᵅ",
+        "type_info": null
+      },
+      {
+        "name": "NonHolder",
+        "docs": "Does not satisfy Hölder condition",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "LipschitzPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Lipschitz",
+        "docs": "Satisfies Lipschitz condition\n∃L>0: |f(x)-f(y)| ≤ L|x-y| for all x,y",
+        "type_info": null
+      },
+      {
+        "name": "NonLipschitz",
+        "docs": "Does not satisfy Lipschitz condition",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "ProperPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Proper",
+        "docs": "Inverse images of compact sets are compact\nK compact in Y ⟹ f⁻¹(K) compact in X",
+        "type_info": null
+      },
+      {
+        "name": "NonProper",
+        "docs": "Not proper",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "OpenPropertyVariant",
+    "docs": "Basic property variants for functions and spaces",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Open",
+        "docs": "Maps open sets to open sets\nU open in X ⟹ f(U) open in Y",
+        "type_info": null
+      },
+      {
+        "name": "NonOpen",
+        "docs": "Does not preserve openness",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "ClosedPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Closed",
+        "docs": "Maps closed sets to closed sets\nF closed in X ⟹ f(F) closed in Y",
+        "type_info": null
+      },
+      {
+        "name": "NonClosed",
+        "docs": "Does not preserve closedness",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "BoundednessPropertyVariant",
+    "docs": "Variants of boundedness properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Bounded",
+        "docs": "Bounded metric space",
+        "type_info": null
+      },
+      {
+        "name": "LocallyBounded",
+        "docs": "Locally bounded",
+        "type_info": null
+      },
+      {
+        "name": "Unbounded",
+        "docs": "Unbounded",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "ContinuityPropertyVariant",
+    "docs": "Continuity property variants with precise mathematical definitions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuous",
+        "docs": "Function preserves closeness between points\n∀ε>0 ∃δ>0: |x-x₀|<δ ⟹ |f(x)-f(x₀)|<ε",
+        "type_info": "VariantSet<ContinuousProperty>"
+      },
+      {
+        "name": "Discontinuous",
+        "docs": "Function has points where limit doesn't exist or match value\n∃x₀: limₓ→ₓ₀ f(x) ≠ f(x₀) or doesn't exist",
+        "type_info": "VariantSet<DiscontinuousProperty>"
+      }
+    ]
+  },
+  {
+    "name": "ContinuousProperty",
+    "docs": "Properties modifying continuous functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where the continuity holds (globally, locally, etc.)",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of continuity (everywhere, almost everywhere, etc.)",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of continuity (uniform, weak, etc.)",
+        "type_info": "StrengthPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "DiscontinuousProperty",
+    "docs": "Properties modifying discontinuous functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Coverage",
+        "docs": "Extent of discontinuity",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Essentiality",
+        "docs": "Type of discontinuity (removable, jump, essential)",
+        "type_info": "EssentialityPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "EssentialityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Essential",
+        "docs": "Cannot be made continuous by redefining at point",
+        "type_info": null
+      },
+      {
+        "name": "Removable",
+        "docs": "Can be made continuous by redefining at point",
+        "type_info": null
+      },
+      {
+        "name": "Jump",
+        "docs": "Left and right limits exist but differ",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "DomainType",
+    "docs": "Represents the domain type for functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Real",
+        "docs": "Real numbers",
+        "type_info": null
+      },
+      {
+        "name": "Complex",
+        "docs": "Complex numbers",
+        "type_info": null
+      },
+      {
+        "name": "VectorSpace(Box<DomainType>), // field type\n    MatrixSpace",
+        "docs": "Matrix space",
+        "type_info": "{\n        rows: usize,\n        cols: usize,\n        field: Box<DomainType>,\n    }"
+      },
+      {
+        "name": "FunctionSpace",
+        "docs": "Function space",
+        "type_info": "{\n        domain: Box<DomainType>,\n        codomain: Box<DomainType>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "ConcreteFunction",
+    "docs": "Represents well-defined mathematical functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Exp",
+        "docs": "Elementary transcendental functions",
+        "type_info": "{\n        domain: DomainType,\n        branch: Option<i32>, // For complex domain\n    }"
+      },
+      {
+        "name": "Log",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n        branch: Option<i32>, // Principal branch by default\n    }"
+      },
+      {
+        "name": "Sin",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Cos",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Tan",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Polynomial",
+        "docs": "Polynomial and rational functions",
+        "type_info": "{\n        coefficients: Vec<f64>, // In ascending order of degree\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "RationalFunction",
+        "docs": "",
+        "type_info": "{\n        numerator: Vec<f64>,   // Coefficients of numerator polynomial\n        denominator: Vec<f64>, // Coefficients of denominator polynomial\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Gamma",
+        "docs": "Special functions with well-defined properties",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Zeta",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "BesselJ",
+        "docs": "",
+        "type_info": "{\n        order: f64,\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "AiryAi",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "ErrorFunction",
+        "docs": "",
+        "type_info": "{\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Sum",
+        "docs": "Basic operations preserving well-defined properties",
+        "type_info": "{\n        terms: Vec<Box<ConcreteFunction>>,\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Product",
+        "docs": "",
+        "type_info": "{\n        factors: Vec<Box<ConcreteFunction>>,\n        domain: DomainType,\n    }"
+      },
+      {
+        "name": "Composition",
+        "docs": "",
+        "type_info": "{\n        outer: Box<ConcreteFunction>,\n        inner: Box<ConcreteFunction>,\n    }"
+      },
+      {
+        "name": "Bump",
+        "docs": "Classical test functions",
+        "type_info": "{\n        center: f64,\n        radius: f64,\n    }"
+      },
+      {
+        "name": "Schwartz",
+        "docs": "",
+        "type_info": "{\n        kind: SchwartzKind,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SchwartzKind",
+    "docs": "Types of Schwartz functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Gaussian,         // exp",
+        "docs": "",
+        "type_info": "(-x^2)\n    Lorentzian,       // 1/(1 + x^2)\n    SuperExponential, // exp(-x^4)"
+      }
+    ]
+  },
+  {
+    "name": "AnalyticBoundednessPropertyVariant",
+    "docs": "Variants of boundedness for analytic functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Bounded",
+        "docs": "Function has upper/lower bounds\n∃M>0: |f(x)| ≤ M for all x",
+        "type_info": "VariantSet<AnalyticBoundedProperty>"
+      },
+      {
+        "name": "Unbounded",
+        "docs": "Function is unbounded\n∀M>0 ∃x: |f(x)| > M",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "AnalyticBoundedProperty",
+    "docs": "Properties modifying bounded analytic functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where the boundedness holds",
+        "type_info": "AnalyticLocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of boundedness",
+        "type_info": "AnalyticCoveragePropertyVariant"
+      },
+      {
+        "name": "BoundednessType",
+        "docs": "Type of boundedness",
+        "type_info": "AnalyticBoundednessTypeVariant"
+      }
+    ]
+  },
+  {
+    "name": "AnalyticBoundednessTypeVariant",
+    "docs": "Types of boundedness in analysis",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "NormBounded",
+        "docs": "Bounded in norm sense",
+        "type_info": null
+      },
+      {
+        "name": "MeasureBounded",
+        "docs": "Bounded in measure sense",
+        "type_info": null
+      },
+      {
+        "name": "EssentiallyBounded",
+        "docs": "Bounded in essential sense",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "AnalyticContinuityPropertyVariant",
+    "docs": "Variants of continuity for analytic functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuous",
+        "docs": "Function preserves limits\n∀ε>0 ∃δ>0: |x-x₀|<δ ⟹ |f(x)-f(x₀)|<ε",
+        "type_info": "VariantSet<AnalyticContinuousProperty>"
+      },
+      {
+        "name": "Discontinuous",
+        "docs": "Function has discontinuities\n∃x₀: limₓ→ₓ₀ f(x) ≠ f(x₀) or doesn't exist",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "AnalyticContinuousProperty",
+    "docs": "Properties modifying continuous analytic functions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where the continuity holds",
+        "type_info": "AnalyticLocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of continuity",
+        "type_info": "AnalyticCoveragePropertyVariant"
+      },
+      {
+        "name": "ContinuityType",
+        "docs": "Type of continuity",
+        "type_info": "AnalyticContinuityTypeVariant"
+      }
+    ]
+  },
+  {
+    "name": "AnalyticContinuityTypeVariant",
+    "docs": "Types of continuity in analysis",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "NormContinuous",
+        "docs": "Continuous in norm topology",
+        "type_info": null
+      },
+      {
+        "name": "WeakContinuous",
+        "docs": "Continuous in weak topology",
+        "type_info": null
+      },
+      {
+        "name": "WeakStarContinuous",
+        "docs": "Continuous in weak* topology",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "AnalyticLocalityPropertyVariant",
+    "docs": "Locality variants for analytic properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Global",
+        "docs": "Property holds on entire domain",
+        "type_info": null
+      },
+      {
+        "name": "Local",
+        "docs": "Property holds on open sets",
+        "type_info": null
+      },
+      {
+        "name": "PointWise",
+        "docs": "Property holds at points",
+        "type_info": null
+      },
+      {
+        "name": "OnCompact",
+        "docs": "Property holds on compact sets",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "AnalyticCoveragePropertyVariant",
+    "docs": "Coverage variants for analytic properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "docs": "Property holds everywhere",
+        "type_info": null
+      },
+      {
+        "name": "AlmostEverywhere",
+        "docs": "Property holds almost everywhere",
+        "type_info": null
+      },
+      {
+        "name": "PositiveMeasure",
+        "docs": "Property holds on a set of positive measure",
+        "type_info": null
+      },
+      {
+        "name": "Residual",
+        "docs": "Property holds on a residual set",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "Sequence",
+    "docs": "Sequence in a space with properties\nAn ordered list of elements (xₙ)ₙ∈ℕ from a space X, where each element\nis indexed by a natural number. Can be viewed as a function ℕ → X.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "space",
+        "type": "Space",
+        "docs": "The space X containing the sequence elements, with its structure"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SequenceProperty>",
+        "docs": "Mathematical properties of the sequence"
+      }
+    ]
+  },
+  {
+    "name": "SequenceProperty",
+    "docs": "Properties that can be possessed by sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convergence",
+        "docs": "Convergence: existence of a limit\n∃L: ∀ε>0 ∃N: n>N ⟹ |xₙ-L|<ε",
+        "type_info": "ConvergencePropertyVariant"
+      },
+      {
+        "name": "Boundedness",
+        "docs": "Boundedness: existence of bounds\n∃M>0: |xₙ| ≤ M for all n",
+        "type_info": "SequenceBoundednessPropertyVariant"
+      },
+      {
+        "name": "Monotonic",
+        "docs": "Monotonicity: order relation between terms\nxₙ ≤ xₙ₊₁ (or ≥) for all n",
+        "type_info": "MonotonicPropertyVariant"
+      },
+      {
+        "name": "Cauchy",
+        "docs": "Cauchy property: self-convergence\n∀ε>0 ∃N: m,n>N ⟹ |xₘ-xₙ|<ε",
+        "type_info": "CauchyPropertyVariant"
+      },
+      {
+        "name": "Continuity",
+        "docs": "Continuity: existence of a limit\nlimₙ→∞ xₙ exists and is finite",
+        "type_info": "SequenceContinuityPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "CauchyPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Cauchy",
+        "docs": "Self-convergent sequence\n∀ε>0 ∃N: m,n>N ⟹ |xₘ-xₙ|<ε",
+        "type_info": null
+      },
+      {
+        "name": "NonCauchy",
+        "docs": "Not Cauchy",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "MonotonicPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Monotonic",
+        "docs": "Preserves or reverses order\nx₁ ≤ x₂ ⟹ f(x₁) ≤ f(x₂) (or ≥)",
+        "type_info": "VariantSet<MonotonicityProperty>"
+      },
+      {
+        "name": "NonMonotonic",
+        "docs": "Function neither preserves nor reverses order\n∃x₁<x₂: f(x₁)>f(x₂) and ∃y₁<y₂: f(y₁)<f(y₂)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SequenceBoundednessPropertyVariant",
+    "docs": "Variants of boundedness for sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Bounded",
+        "docs": "Sequence has upper/lower bounds\n∃M>0: |xₙ| ≤ M for all n",
+        "type_info": "VariantSet<SequenceBoundedProperty>"
+      },
+      {
+        "name": "Unbounded",
+        "docs": "Sequence is unbounded\n∀M>0 ∃n: |xₙ| > M",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SequenceBoundedProperty",
+    "docs": "Properties modifying bounded sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where the boundedness holds",
+        "type_info": "SequenceLocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of boundedness",
+        "type_info": "SequenceCoveragePropertyVariant"
+      },
+      {
+        "name": "BoundednessType",
+        "docs": "Type of boundedness",
+        "type_info": "SequenceBoundednessTypeVariant"
+      }
+    ]
+  },
+  {
+    "name": "SequenceBoundednessTypeVariant",
+    "docs": "Types of boundedness for sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "NormBounded",
+        "docs": "Bounded in norm sense",
+        "type_info": null
+      },
+      {
+        "name": "MeasureBounded",
+        "docs": "Bounded in measure sense",
+        "type_info": null
+      },
+      {
+        "name": "ProbabilityBounded",
+        "docs": "Bounded in probability",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SequenceContinuityPropertyVariant",
+    "docs": "Variants of continuity for sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Continuous",
+        "docs": "Sequence preserves limits\nlimₙ→∞ xₙ exists and is finite",
+        "type_info": "VariantSet<SequenceContinuousProperty>"
+      },
+      {
+        "name": "Discontinuous",
+        "docs": "Sequence has discontinuities\nlimₙ→∞ xₙ does not exist or is infinite",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SequenceContinuousProperty",
+    "docs": "Properties modifying continuous sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where the continuity holds",
+        "type_info": "SequenceLocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of continuity",
+        "type_info": "SequenceCoveragePropertyVariant"
+      },
+      {
+        "name": "ContinuityType",
+        "docs": "Type of continuity",
+        "type_info": "SequenceContinuityTypeVariant"
+      }
+    ]
+  },
+  {
+    "name": "SequenceContinuityTypeVariant",
+    "docs": "Types of continuity for sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convergent",
+        "docs": "Convergent sequence",
+        "type_info": null
+      },
+      {
+        "name": "Cauchy",
+        "docs": "Cauchy sequence",
+        "type_info": null
+      },
+      {
+        "name": "Fundamental",
+        "docs": "Fundamental sequence",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SequenceLocalityPropertyVariant",
+    "docs": "Locality variants for sequence properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Global",
+        "docs": "Property holds for all terms",
+        "type_info": null
+      },
+      {
+        "name": "Eventually",
+        "docs": "Property holds for terms after some N",
+        "type_info": null
+      },
+      {
+        "name": "Frequently",
+        "docs": "Property holds for infinitely many terms",
+        "type_info": null
+      },
+      {
+        "name": "CoFinitely",
+        "docs": "Property holds for all but finitely many terms",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "SequenceCoveragePropertyVariant",
+    "docs": "Coverage variants for sequence properties",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "docs": "Property holds for all terms",
+        "type_info": null
+      },
+      {
+        "name": "Subsequence",
+        "docs": "Property holds for a subsequence",
+        "type_info": null
+      },
+      {
+        "name": "ArithmeticProgression",
+        "docs": "Property holds for terms in arithmetic progression",
+        "type_info": null
+      },
+      {
+        "name": "GeometricProgression",
+        "docs": "Property holds for terms in geometric progression",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "ConvergencePropertyVariant",
+    "docs": "Convergence property variants with precise definitions",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Convergent",
+        "docs": "Sequence/series has a limit\n∃L: ∀ε>0 ∃N: n>N ⟹ |xₙ-L|<ε",
+        "type_info": "VariantSet<ConvergentProperty>"
+      },
+      {
+        "name": "Divergent",
+        "docs": "Sequence/series grows without bound\n∀M>0 ∃N: n>N ⟹ |xₙ|>M",
+        "type_info": "VariantSet<DivergentProperty>"
+      },
+      {
+        "name": "Oscillating",
+        "docs": "Sequence/series neither converges nor diverges\nNo limit exists but sequence is bounded",
+        "type_info": "VariantSet<OscillatingProperty>"
+      }
+    ]
+  },
+  {
+    "name": "ConvergentProperty",
+    "docs": "Properties modifying convergent sequences/series",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Locality",
+        "docs": "Where the convergence holds",
+        "type_info": "LocalityPropertyVariant"
+      },
+      {
+        "name": "Coverage",
+        "docs": "Extent of convergence",
+        "type_info": "CoveragePropertyVariant"
+      },
+      {
+        "name": "Mode",
+        "docs": "Type of convergence (pointwise, uniform, etc.)",
+        "type_info": "ConvergenceModePropertyVariant"
+      },
+      {
+        "name": "Strength",
+        "docs": "Strength of convergence",
+        "type_info": "StrengthPropertyVariant"
+      },
+      {
+        "name": "Rate",
+        "docs": "Rate of convergence",
+        "type_info": "StrengthPropertyVariant"
+      }
+    ]
+  },
+  {
+    "name": "ConvergenceModePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Pointwise",
+        "docs": "Convergence at each point: ∀x limₙfₙ(x)=f(x)",
+        "type_info": null
+      },
+      {
+        "name": "Uniform",
+        "docs": "Uniform convergence: supₓ|fₙ(x)-f(x)|→0",
+        "type_info": null
+      },
+      {
+        "name": "WeakStar",
+        "docs": "Weak* topology convergence: ⟨fₙ,φ⟩→⟨f,φ⟩ ∀φ",
+        "type_info": null
+      },
+      {
+        "name": "Strong",
+        "docs": "Strong topology convergence: ‖fₙ-f‖→0",
+        "type_info": null
+      },
+      {
+        "name": "InMeasure",
+        "docs": "Convergence in measure: μ({x:|fₙ(x)-f(x)|>ε})→0",
+        "type_info": null
+      },
+      {
+        "name": "InProbability",
+        "docs": "Convergence in probability: P(|Xₙ-X|>ε)→0",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "DivergentProperty",
+    "docs": "Properties modifying divergent sequences/series",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Rate",
+        "docs": "Rate of divergence to infinity",
+        "type_info": "StrengthPropertyVariant"
+      },
+      {
+        "name": "Direction",
+        "docs": "Direction of divergence",
+        "type_info": "DivergenceDirectionVariant"
+      }
+    ]
+  },
+  {
+    "name": "DivergenceDirectionVariant",
+    "docs": "Direction of divergence for sequences",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "PositiveInfinity",
+        "docs": "Diverges to positive infinity",
+        "type_info": null
+      },
+      {
+        "name": "NegativeInfinity",
+        "docs": "Diverges to negative infinity",
+        "type_info": null
+      },
+      {
+        "name": "Oscillating",
+        "docs": "Diverges in oscillating manner",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "OscillatingProperty",
+    "docs": "Properties modifying oscillating sequences/series",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Strength",
+        "docs": "Strength of oscillation",
+        "type_info": "StrengthPropertyVariant"
+      },
+      {
+        "name": "Periodicity",
+        "docs": "Pattern of oscillation",
+        "type_info": "PeriodicityPropertyVariant"
+      }
+    ]
+  }
+]

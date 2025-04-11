@@ -3,20 +3,15 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::subjects::math::export::utils::{
-    extract_types_from_source, find_rust_files_with_derive,
+    extract_enum_variants, extract_types_from_source, find_rust_files_with_derive,
 };
 
 /// Generate JSON from Rust type definitions
 pub fn generate_math_json_exports() -> Result<()> {
-    println!("Generating JSON for math domains from Rust type definitions...");
+    println!("Exporting mathematical theories using the improved parser...");
 
-    // Get the common types directly
-    let common_types_path = "subjects/math/export/common_types.rs";
-    let mut rust_files = vec![common_types_path.to_string()];
-
-    // Change back to using the types directory
     // Define the directory where theory-specific Rust types are defined
-    let rust_types_dir = "subjects/math/export/types";
+    let rust_types_dir = "subjects/math/theories";
     let rust_files = find_rust_files_with_derive(rust_types_dir, "Serialize")?;
 
     println!(
@@ -25,26 +20,39 @@ pub fn generate_math_json_exports() -> Result<()> {
     );
 
     // Create a mapping of theory names to their Rust types
-    let mut theory_types = std::collections::HashMap::new();
+    let mut theory_types: std::collections::HashMap<
+        String,
+        Vec<crate::subjects::math::export::utils::TypeDefinition>,
+    > = std::collections::HashMap::new();
 
     // Process each Rust file to extract type definitions
     for rust_file in &rust_files {
-        let content = fs::read_to_string(rust_file)?;
-        let file_name = Path::new(rust_file)
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("unknown");
+        let file_path = Path::new(rust_file);
 
-        // Skip the main types.rs file which contains the general types
-        if file_name == "types" {
+        // Get the top-level theory folder name by extracting the first directory after theories/
+        let file_path_str = file_path.to_string_lossy();
+        let path_segments: Vec<&str> = file_path_str.split('/').collect();
+
+        // Find the "theories" segment and take the next one as the theory name
+        let mut theory_name = String::new();
+        for (i, &segment) in path_segments.iter().enumerate() {
+            if segment == "theories" && i + 1 < path_segments.len() {
+                theory_name = path_segments[i + 1].to_string();
+                break;
+            }
+        }
+
+        // Skip non-theory files, export.rs, and mod.rs when they appear as direct children of theories/
+        if theory_name.is_empty()
+            || file_path_str.ends_with("export.rs")
+            || file_path_str.ends_with("theories/mod.rs")
+        {
             continue;
         }
 
-        // Theory name is derived from the file name (e.g., groups.rs -> groups)
-        let theory_name = file_name.to_string();
-
-        // Extract the types from this file
-        let types = extract_types_from_source(&content)?;
+        // Read the file and extract type definitions
+        let source = fs::read_to_string(file_path)?;
+        let types = extract_types_from_source(&source)?;
 
         if !types.is_empty() {
             println!(
@@ -54,24 +62,11 @@ pub fn generate_math_json_exports() -> Result<()> {
                 types.iter().map(|t| &t.name).collect::<Vec<_>>()
             );
 
-            theory_types.insert(theory_name, types);
-        }
-    }
-
-    // Also check in the main types.rs file for general types that might be used across theories
-    let main_types_path = format!("{}/types.rs", "subjects/math/export/types");
-    if Path::new(&main_types_path).exists() {
-        let content = fs::read_to_string(&main_types_path)?;
-        let types = extract_types_from_source(&content)?;
-
-        // Categorize types to appropriate theories based on their name or documentation
-        for type_def in types {
-            let theory_name = determine_theory_from_type(&type_def.name, &type_def.docs);
-
-            if let Some(types_list) = theory_types.get_mut(&theory_name) {
-                types_list.push(type_def);
+            // Add to the theory types collection
+            if let Some(existing_types) = theory_types.get_mut(&theory_name) {
+                existing_types.extend(types);
             } else {
-                theory_types.insert(theory_name.clone(), vec![type_def]);
+                theory_types.insert(theory_name, types);
             }
         }
     }
@@ -94,64 +89,167 @@ pub fn generate_math_json_exports() -> Result<()> {
             fs::create_dir_all(theory_path)?;
         }
 
-        // Group types by category (definitions, axioms, theorems, etc.)
-        let mut definitions = Vec::new();
-        let mut axioms = Vec::new();
-        let mut theorems = Vec::new();
+        // Convert type definitions to JSON with proper handling of enum variants
+        let mut json_types = Vec::new();
 
         for type_def in &types {
-            // Serialize the type definition to JSON
-            let json_value = serde_json::to_value(type_def)?;
+            // Extract documentation text from source using improved extract method
+            let docs = extract_doc_comments_from_source(&type_def.source);
 
-            // Categorize based on name and documentation
-            if type_def.name.contains("Definition") || type_def.docs.contains("definition") {
-                definitions.push(json_value);
-            } else if type_def.name.contains("Axiom") || type_def.docs.contains("axiom") {
-                axioms.push(json_value);
-            } else if type_def.name.contains("Theorem") || type_def.docs.contains("theorem") {
-                theorems.push(json_value);
+            let mut json_type = serde_json::json!({
+                "name": type_def.name,
+                "docs": docs,
+                "kind": type_def.kind,
+                "members": []
+            });
+
+            // Process members differently based on type kind
+            if type_def.kind == "enum" {
+                // Use the special enum variant processor for enums
+                let variants = extract_enum_variants(&type_def.source);
+                json_type["members"] = serde_json::to_value(variants)?;
             } else {
-                // Default to definitions for other types
-                definitions.push(json_value);
+                // For structs, use simpler field extraction
+                let mut fields = Vec::new();
+
+                // Extract struct fields
+                for line in type_def.source.lines() {
+                    let trimmed = line.trim();
+                    if trimmed.starts_with("pub ") && trimmed.contains(':') {
+                        let parts: Vec<&str> = trimmed.splitn(2, ':').collect();
+                        if parts.len() == 2 {
+                            let name = parts[0].trim_start_matches("pub ").trim();
+                            let type_info = parts[1].trim().trim_end_matches(',');
+
+                            // Find doc comment for this field
+                            let field_doc = find_field_doc(&type_def.source, name);
+
+                            fields.push(serde_json::json!({
+                                "name": name,
+                                "type": type_info,
+                                "docs": field_doc
+                            }));
+                        }
+                    }
+                }
+
+                json_type["members"] = serde_json::to_value(fields)?;
             }
+
+            json_types.push(json_type);
         }
 
-        // Export definitions
-        if !definitions.is_empty() {
-            let definitions_json = serde_json::to_string_pretty(&definitions)?;
-            let definitions_path = format!("{}/definitions.json", theory_dir);
-            fs::write(&definitions_path, &definitions_json)?;
-            println!(
-                "Generated definitions JSON for {} at {}",
-                theory_name, definitions_path
-            );
-        }
-
-        // Export axioms
-        if !axioms.is_empty() {
-            let axioms_json = serde_json::to_string_pretty(&axioms)?;
-            let axioms_path = format!("{}/axioms.json", theory_dir);
-            fs::write(&axioms_path, &axioms_json)?;
-            println!(
-                "Generated axioms JSON for {} at {}",
-                theory_name, axioms_path
-            );
-        }
-
-        // Export theorems
-        if !theorems.is_empty() {
-            let theorems_json = serde_json::to_string_pretty(&theorems)?;
-            let theorems_path = format!("{}/theorems.json", theory_dir);
-            fs::write(&theorems_path, &theorems_json)?;
-            println!(
-                "Generated theorems JSON for {} at {}",
-                theory_name, theorems_path
-            );
-        }
+        // Export all types
+        let json = serde_json::to_string_pretty(&json_types)?;
+        let definitions_path = format!("{}/definitions.json", theory_dir);
+        fs::write(&definitions_path, &json)?;
+        println!(
+            "Generated definitions JSON for {} at {}",
+            theory_name, definitions_path
+        );
     }
 
     println!("Successfully generated JSON files for all theories");
     Ok(())
+}
+
+/// Extract documentation directly from the raw source code
+fn extract_doc_comments_from_source(source: &str) -> String {
+    let mut in_doc_block = false;
+    let mut doc_lines = Vec::new();
+    let mut lines = source.lines().collect::<Vec<_>>();
+
+    // Process from the beginning of the file
+    for i in 0..lines.len() {
+        let line = lines[i].trim();
+
+        // Found a doc comment
+        if line.starts_with("///") {
+            in_doc_block = true;
+            let doc_text = line.trim_start_matches("///").trim();
+            doc_lines.push(doc_text.to_string());
+
+            // Check if next non-empty, non-comment, non-attribute line is a type definition
+            let mut j = i + 1;
+            while j < lines.len() {
+                let next_line = lines[j].trim();
+
+                if next_line.starts_with("///") {
+                    // Continue collecting doc comments
+                    let next_doc = next_line.trim_start_matches("///").trim();
+                    doc_lines.push(next_doc.to_string());
+                } else if next_line.is_empty()
+                    || next_line.starts_with("//")
+                    || next_line.starts_with("#[")
+                {
+                    // Skip empty lines, regular comments, attributes
+                } else if next_line.starts_with("pub struct")
+                    || next_line.starts_with("pub enum")
+                    || next_line.starts_with("struct")
+                    || next_line.starts_with("enum")
+                {
+                    // Found a type definition, this doc block belongs to it
+                    return doc_lines.join("\n");
+                } else {
+                    // Found something else, not a type definition
+                    // Reset and continue searching
+                    in_doc_block = false;
+                    doc_lines.clear();
+                    break;
+                }
+
+                j += 1;
+            }
+        }
+    }
+
+    // If we collected docs but didn't find a type def, return them anyway
+    if !doc_lines.is_empty() {
+        return doc_lines.join("\n");
+    }
+
+    String::new()
+}
+
+/// Helper function to find the doc comment for a struct field
+fn find_field_doc(source: &str, field_name: &str) -> String {
+    let mut doc_lines = Vec::new();
+    let lines: Vec<&str> = source.lines().collect();
+
+    for (i, line) in lines.iter().enumerate() {
+        let trimmed = line.trim();
+        // Match field name more precisely
+        if (trimmed.starts_with(&format!("pub {}", field_name))
+            || trimmed == format!("pub {}", field_name)
+            || trimmed.starts_with(&format!("pub(crate) {}", field_name)))
+            && (trimmed.contains(':')
+                || (i + 1 < lines.len() && lines[i + 1].trim().starts_with(':')))
+        {
+            // Look backwards for doc comments
+            let mut j = i;
+            while j > 0 {
+                j -= 1;
+                let prev_line = lines[j].trim();
+
+                if prev_line.starts_with("///") {
+                    // Add the doc line to our collection, removing the /// prefix
+                    let doc_text = prev_line.trim_start_matches("///").trim();
+                    doc_lines.insert(0, doc_text.to_string());
+                } else if !prev_line.is_empty()
+                    && !prev_line.starts_with("//")
+                    && !prev_line.starts_with("#[")
+                {
+                    // Found a non-doc, non-attribute line, stop collecting
+                    break;
+                }
+                // Continue through attributes, empty lines, and regular comments
+            }
+
+            break;
+        }
+    }
+
+    doc_lines.join("\n")
 }
 
 /// Helper function to determine which theory a type belongs to based on its name and docs

@@ -1,7 +1,7 @@
 [
   {
     "name": "AffineSpace",
-    "docs": "",
+    "docs": "An affine space modeled on a vector space\nAn affine space is a set A together with a vector space V and a transitive\nand free action of V on A by translation.",
     "kind": "struct",
     "members": [
       {
@@ -23,50 +23,50 @@
   },
   {
     "name": "AffineSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to affine spaces",
     "kind": "enum",
     "members": [
       {
         "name": "ScalarField",
-        "type": "ScalarFieldType",
-        "docs": "Whether the space is real or complex"
+        "docs": "Whether the space is real or complex",
+        "type_info": "ScalarFieldType"
       },
       {
         "name": "HasOrigin",
-        "type": "bool",
-        "docs": "Whether the space has a preferred origin"
+        "docs": "Whether the space has a preferred origin",
+        "type_info": "bool"
       },
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the space is complete"
+        "docs": "Whether the space is complete",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "ScalarFieldType",
-    "docs": "",
+    "docs": "Types of scalar fields for affine spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Real",
-        "type": "Unit",
-        "docs": "Real numbers"
+        "docs": "Real numbers",
+        "type_info": null
       },
       {
         "name": "Complex",
-        "type": "Unit",
-        "docs": "Complex numbers"
+        "docs": "Complex numbers",
+        "type_info": null
       },
       {
         "name": "Rational",
-        "type": "Unit",
-        "docs": "Rational numbers"
+        "docs": "Rational numbers",
+        "type_info": null
       },
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite field"
+        "docs": "Finite field",
+        "type_info": "u32"
       }
     ]
   }

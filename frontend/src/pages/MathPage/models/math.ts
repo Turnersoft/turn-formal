@@ -3,7 +3,8 @@
 // Definition JSON structures
 export interface Member {
   name: string;
-  type: string;
+  type?: string | null;
+  type_info?: string | null;
   docs: string;
   default_value?: string;
   attributes?: string[];

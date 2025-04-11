@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { EdgeProps, getSmoothStepPath, BaseEdge } from "reactflow";
+import { useEffect, useState, useMemo } from "react";
+import { EdgeProps, getSmoothStepPath } from "reactflow";
 
-import styles from "./dependency_graph.module.scss";
+interface AnimatedEdgeProps extends EdgeProps {
+  animated?: boolean;
+}
 
-// This component creates an animated edge with a moving dash pattern
-export default function AnimatedEdge({
+const AnimatedEdge = ({
   id,
-  source,
-  target,
+  // Unused but required by the EdgeProps interface
+  source: _source,
+  // Unused but required by the EdgeProps interface
+  target: _target,
   sourceX,
   sourceY,
   targetX,
@@ -16,84 +19,53 @@ export default function AnimatedEdge({
   targetPosition,
   style = {},
   markerEnd,
-  label,
-  data,
-}: EdgeProps) {
-  const [edgePath, labelX, labelY] = getSmoothStepPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-  });
+  animated = false,
+}: AnimatedEdgeProps) => {
+  const [animation, setAnimation] = useState(0);
 
-  const [dashOffset, setDashOffset] = useState(0);
-
-  // Calculate path length once the component is mounted
+  // Create animation effect
   useEffect(() => {
-    // Increase animation speed for better visibility
-    const interval = setInterval(() => {
-      setDashOffset((offset) => (offset - 2) % 40);
-    }, 30);
+    if (animated) {
+      const interval = setInterval(() => {
+        setAnimation((a) => (a + 1) % 10);
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [animated]);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
-  // Determine styles based on whether this is an artificial connection
-  const isArtificial = data?.isArtificial;
-
-  // Use different dash patterns for normal vs artificial connections
-  const dashArray = useMemo(
-    () => (isArtificial ? "5,10" : "10,15"),
-    [isArtificial]
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [edgePath, _labelX, _labelY] = useMemo(
+    () =>
+      getSmoothStepPath({
+        sourceX,
+        sourceY,
+        sourcePosition,
+        targetX,
+        targetY,
+        targetPosition,
+      }),
+    [sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition]
   );
 
-  // Apply different colors for regular vs artificial connections
-  const strokeColor = useMemo(
-    () => (isArtificial ? "#999" : style.stroke || "#555"),
-    [isArtificial, style.stroke]
-  );
+  const dashOffset = useMemo(() => {
+    return animated ? 10 - animation : 0;
+  }, [animated, animation]);
 
-  // Slightly thicker lines for better visibility
-  const strokeWidth = useMemo(
-    () => (isArtificial ? 1.5 : style.strokeWidth || 2.5),
-    [isArtificial, style.strokeWidth]
-  );
+  const animatedStyle = {
+    ...style,
+    strokeDasharray: animated ? "5,5" : "none",
+    strokeDashoffset: dashOffset,
+  };
 
   return (
-    <>
-      <path
-        id={id}
-        className={styles.animatedEdgePath}
-        d={edgePath}
-        markerEnd={markerEnd}
-        style={{
-          ...style,
-          stroke: strokeColor,
-          strokeWidth,
-          strokeDasharray: dashArray,
-          strokeDashoffset: dashOffset,
-        }}
-      />
-      {label && (
-        <g className={styles.edgeLabelContainer}>
-          <foreignObject
-            width={100}
-            height={40}
-            x={labelX - 50}
-            y={labelY - 20}
-            className={styles.edgeLabelForeignObject}
-            requiredExtensions="http://www.w3.org/1999/xhtml"
-          >
-            <div className={styles.edgeLabel}>
-              <span>{label}</span>
-            </div>
-          </foreignObject>
-        </g>
-      )}
-    </>
+    <path
+      id={id}
+      className="react-flow__edge-path"
+      d={edgePath}
+      style={animatedStyle}
+      markerEnd={markerEnd}
+    />
   );
-}
+};
+
+export default AnimatedEdge;

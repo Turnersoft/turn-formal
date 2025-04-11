@@ -1,7 +1,146 @@
 [
   {
+    "name": "TopologyRelationEntity",
+    "docs": "Entity information for topology relation operations",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "id",
+        "type": "Option<String>",
+        "docs": "Optional ID for referencing this relation"
+      },
+      {
+        "name": "description",
+        "type": "Option<String>",
+        "docs": "Optional description explaining this relation instance"
+      },
+      {
+        "name": "tags",
+        "type": "Vec<(String, String)>",
+        "docs": "Optional key-value pairs for additional context"
+      }
+    ]
+  },
+  {
+    "name": "TopologyRelation",
+    "docs": "Relations specific to topology",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "IsOpen",
+        "docs": "A set is open in a topological space",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsClosed",
+        "docs": "A set is closed in a topological space",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsNeighborhood",
+        "docs": "A set is a neighborhood of a point",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        set: MathExpression,\n        point: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsBasis",
+        "docs": "A set is a basis for a topology",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        collection: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsClosure",
+        "docs": "A set is the closure of another",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        closure: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsInterior",
+        "docs": "A set is the interior of another",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        interior: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsBoundary",
+        "docs": "A set is the boundary of another",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        boundary: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsConnected",
+        "docs": "A topological space is connected",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsPathConnected",
+        "docs": "A topological space is path-connected",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsCompact",
+        "docs": "A topological space is compact",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsHausdorff",
+        "docs": "A topological space is Hausdorff",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsContinuous",
+        "docs": "A function is continuous",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        function: MathExpression,\n        domain: MathExpression,\n        codomain: MathExpression,\n    }"
+      },
+      {
+        "name": "AreHomeomorphic",
+        "docs": "Two topological spaces are homeomorphic",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+      },
+      {
+        "name": "Converges",
+        "docs": "A sequence converges to a point",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        sequence: MathExpression,\n        limit: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsHomeomorphism",
+        "docs": "A function is a homeomorphism",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        function: MathExpression,\n        domain: MathExpression,\n        codomain: MathExpression,\n    }"
+      },
+      {
+        "name": "IsSubspace",
+        "docs": "A space is a subspace of another",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        subspace: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsOpenCover",
+        "docs": "A collection is an open cover of a space",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        cover: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "HasFiniteSubcover",
+        "docs": "A cover has a finite subcover",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        cover: MathExpression,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsLocallyCompact",
+        "docs": "A space is locally compact",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsParacompact",
+        "docs": "A space is paracompact",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "IsMetrizable",
+        "docs": "A space is metrizable",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+      },
+      {
+        "name": "Custom",
+        "docs": "Custom topology relation",
+        "type_info": "{\n        entity: TopologyRelationEntity,\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
+      }
+    ]
+  },
+  {
     "name": "Topology",
-    "docs": "",
+    "docs": "Topology structure\nA collection τ of open sets on a space X satisfying:\n1. ∅ and X are in τ\n2. τ is closed under arbitrary unions\n3. τ is closed under finite intersections",
     "kind": "struct",
     "members": [
       {
@@ -18,33 +157,33 @@
     "members": [
       {
         "name": "Compactness",
-        "type": "CompactnessPropertyVariant",
-        "docs": "Compactness: every open cover has a finite subcover\nFor any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ"
+        "docs": "Compactness: every open cover has a finite subcover\nFor any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ",
+        "type_info": "CompactnessPropertyVariant"
       },
       {
         "name": "Connectedness",
-        "type": "ConnectednessPropertyVariant",
-        "docs": "Connectedness: cannot be split into disjoint open sets\nIf X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅"
+        "docs": "Connectedness: cannot be split into disjoint open sets\nIf X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅",
+        "type_info": "ConnectednessPropertyVariant"
       },
       {
         "name": "Boundedness",
-        "type": "TopologicalBoundednessPropertyVariant",
-        "docs": "Boundedness: contained in some \"ball\"\n∃x₀,r: X ⊆ B(x₀,r)"
+        "docs": "Boundedness: contained in some \"ball\"\n∃x₀,r: X ⊆ B(x₀,r)",
+        "type_info": "TopologicalBoundednessPropertyVariant"
       },
       {
         "name": "Separable",
-        "type": "SeparablePropertyVariant",
-        "docs": "Separability: has countable dense subset\n∃ countable D⊆X: D̄ = X"
+        "docs": "Separability: has countable dense subset\n∃ countable D⊆X: D̄ = X",
+        "type_info": "SeparablePropertyVariant"
       },
       {
         "name": "Countable",
-        "type": "CountablePropertyVariant",
-        "docs": "Countability: cardinality property\n|X| ≤ ℵ₀ or |X| > ℵ₀"
+        "docs": "Countability: cardinality property\n|X| ≤ ℵ₀ or |X| > ℵ₀",
+        "type_info": "CountablePropertyVariant"
       },
       {
         "name": "Paracompact",
-        "type": "ParacompactPropertyVariant",
-        "docs": "Paracompactness: locally finite refinements exist\nEvery open cover has a locally finite refinement"
+        "docs": "Paracompactness: locally finite refinements exist\nEvery open cover has a locally finite refinement",
+        "type_info": "ParacompactPropertyVariant"
       }
     ]
   },
@@ -55,13 +194,13 @@
     "members": [
       {
         "name": "Paracompact",
-        "type": "Unit",
-        "docs": "Every open cover has locally finite refinement"
+        "docs": "Every open cover has locally finite refinement",
+        "type_info": null
       },
       {
         "name": "NonParacompact",
-        "type": "Unit",
-        "docs": "Not paracompact"
+        "docs": "Not paracompact",
+        "type_info": null
       }
     ]
   },
@@ -72,13 +211,13 @@
     "members": [
       {
         "name": "Countable",
-        "type": "Unit",
-        "docs": "Has cardinality ≤ ℵ₀"
+        "docs": "Has cardinality ≤ ℵ₀",
+        "type_info": null
       },
       {
         "name": "Uncountable",
-        "type": "Unit",
-        "docs": "Has cardinality > ℵ₀"
+        "docs": "Has cardinality > ℵ₀",
+        "type_info": null
       }
     ]
   },
@@ -89,52 +228,52 @@
     "members": [
       {
         "name": "Separable",
-        "type": "Unit",
-        "docs": "Has countable dense subset\n∃ countable D⊆X: D̄ = X"
+        "docs": "Has countable dense subset\n∃ countable D⊆X: D̄ = X",
+        "type_info": null
       },
       {
         "name": "NonSeparable",
-        "type": "Unit",
-        "docs": "Not separable"
+        "docs": "Not separable",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ConnectednessPropertyVariant",
-    "docs": "",
+    "docs": "Variants of connectedness for topological spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Connected",
-        "type": "VariantSet<ConnectedProperty>",
-        "docs": "Space cannot be disconnected by open sets\nIf X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅"
+        "docs": "Space cannot be disconnected by open sets\nIf X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅",
+        "type_info": "VariantSet<ConnectedProperty>"
       },
       {
         "name": "Disconnected",
-        "type": "Unit",
-        "docs": "Space can be split into disjoint open sets\n∃U,V open: X = U∪V, U∩V=∅, U≠∅, V≠∅"
+        "docs": "Space can be split into disjoint open sets\n∃U,V open: X = U∪V, U∩V=∅, U≠∅, V≠∅",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ConnectedProperty",
-    "docs": "",
+    "docs": "Connectedness property of topological spaces\nA space X is connected if it cannot be written as a union of two disjoint\nnon-empty open sets. Formally:\n- If X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅\n- This is equivalent to having no proper clopen subsets",
     "kind": "enum",
     "members": [
       {
         "name": "Locality",
-        "type": "TopologicalLocalityPropertyVariant",
-        "docs": "Where the connectedness property holds"
+        "docs": "Where the connectedness property holds",
+        "type_info": "TopologicalLocalityPropertyVariant"
       },
       {
         "name": "Coverage",
-        "type": "TopologicalCoveragePropertyVariant",
-        "docs": "Extent of connectedness in the space"
+        "docs": "Extent of connectedness in the space",
+        "type_info": "TopologicalCoveragePropertyVariant"
       },
       {
         "name": "ConnectionType",
-        "type": "ConnectionTypePropertyVariant",
-        "docs": "Type of connectedness (path, arc, local)"
+        "docs": "Type of connectedness (path, arc, local)",
+        "type_info": "ConnectionTypePropertyVariant"
       }
     ]
   },
@@ -145,62 +284,62 @@
     "members": [
       {
         "name": "PathConnected",
-        "type": "Unit",
-        "docs": "Connected by continuous paths\n∀x,y ∃γ:[0,1]→X continuous: γ(0)=x, γ(1)=y"
+        "docs": "Connected by continuous paths\n∀x,y ∃γ:[0,1]→X continuous: γ(0)=x, γ(1)=y",
+        "type_info": null
       },
       {
         "name": "ArcConnected",
-        "type": "Unit",
-        "docs": "Connected by injective continuous paths"
+        "docs": "Connected by injective continuous paths",
+        "type_info": null
       },
       {
         "name": "LocallyConnected",
-        "type": "Unit",
-        "docs": "Connected in neighborhoods"
+        "docs": "Connected in neighborhoods",
+        "type_info": null
       },
       {
         "name": "NotConnected",
-        "type": "Unit",
-        "docs": "Not connected in any way"
+        "docs": "Not connected in any way",
+        "type_info": null
       }
     ]
   },
   {
     "name": "CompactnessPropertyVariant",
-    "docs": "",
+    "docs": "Variants of compactness for topological spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Compact",
-        "type": "VariantSet<CompactProperty>",
-        "docs": "Every open cover has a finite subcover\nFor any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ"
+        "docs": "Every open cover has a finite subcover\nFor any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ",
+        "type_info": "VariantSet<CompactProperty>"
       },
       {
         "name": "NonCompact",
-        "type": "Unit",
-        "docs": "Some open cover has no finite subcover\n∃ open cover with no finite subcover"
+        "docs": "Some open cover has no finite subcover\n∃ open cover with no finite subcover",
+        "type_info": null
       }
     ]
   },
   {
     "name": "CompactProperty",
-    "docs": "",
+    "docs": "Compactness property of topological spaces\nA space is compact if every open cover has a finite subcover.\nEquivalent characterizations:\n- Every open cover has a finite subcover\n- Every net has a convergent subnet\n- Every ultrafilter is convergent\n- Every collection of closed sets with FIP has non-empty intersection",
     "kind": "enum",
     "members": [
       {
         "name": "Locality",
-        "type": "TopologicalLocalityPropertyVariant",
-        "docs": "Where the compactness property holds"
+        "docs": "Where the compactness property holds",
+        "type_info": "TopologicalLocalityPropertyVariant"
       },
       {
         "name": "Coverage",
-        "type": "TopologicalCoveragePropertyVariant",
-        "docs": "Extent of compactness in the space"
+        "docs": "Extent of compactness in the space",
+        "type_info": "TopologicalCoveragePropertyVariant"
       },
       {
         "name": "CompactnessType",
-        "type": "CompactnessTypePropertyVariant",
-        "docs": "Type of compactness (sequential, countable)"
+        "docs": "Type of compactness (sequential, countable)",
+        "type_info": "CompactnessTypePropertyVariant"
       }
     ]
   },
@@ -211,24 +350,24 @@
     "members": [
       {
         "name": "SequentiallyCompact",
-        "type": "Unit",
-        "docs": "Every sequence has convergent subsequence\n(xₙ) bounded ⟹ ∃(xₙₖ) convergent"
+        "docs": "Every sequence has convergent subsequence\n(xₙ) bounded ⟹ ∃(xₙₖ) convergent",
+        "type_info": null
       },
       {
         "name": "CountablyCompact",
-        "type": "Unit",
-        "docs": "Every countable cover has finite subcover"
+        "docs": "Every countable cover has finite subcover",
+        "type_info": null
       },
       {
         "name": "NotCompact",
-        "type": "Unit",
-        "docs": "Not compact in any sense"
+        "docs": "Not compact in any sense",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalSpace",
-    "docs": "",
+    "docs": "A topological space (X,τ) consists of:\n- A set X of points\n- A topology τ (collection of open sets)\n\nThe topology τ determines:\n- Continuity: f: X → Y is continuous iff f⁻¹(V) is open in X for all open V in Y\n- Convergence: xₙ → x iff every open set containing x contains all but finitely many xₙ\n- Connectedness: X cannot be written as union of two disjoint non-empty open sets\n- Compactness: Every open cover has a finite subcover",
     "kind": "struct",
     "members": [
       {
@@ -250,189 +389,189 @@
   },
   {
     "name": "TopologicalSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to topological spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Separation",
-        "type": "SeparationAxiomLevel",
-        "docs": "Separation axioms (T0 through T4)"
+        "docs": "Separation axioms (T0 through T4)",
+        "type_info": "SeparationAxiomLevel"
       },
       {
         "name": "Compact",
-        "type": "CompactnessType",
-        "docs": "Compactness properties"
+        "docs": "Compactness properties",
+        "type_info": "CompactnessType"
       },
       {
         "name": "Connected",
-        "type": "ConnectednessType",
-        "docs": "Connectedness properties"
+        "docs": "Connectedness properties",
+        "type_info": "ConnectednessType"
       },
       {
         "name": "Metrizable",
-        "type": "MetrizabilityType",
-        "docs": "Metrizability properties"
+        "docs": "Metrizability properties",
+        "type_info": "MetrizabilityType"
       }
     ]
   },
   {
     "name": "SeparationAxiomLevel",
-    "docs": "",
+    "docs": "Separation axioms in topology form a hierarchy of increasingly strong conditions\non how points and closed sets can be separated by open sets.",
     "kind": "enum",
     "members": [
       {
         "name": "T0",
-        "type": "Unit",
-        "docs": "T₀ (Kolmogorov): For any two distinct points x,y ∈ X, there exists an open set\ncontaining exactly one of them"
+        "docs": "T₀ (Kolmogorov): For any two distinct points x,y ∈ X, there exists an open set\ncontaining exactly one of them",
+        "type_info": null
       },
       {
         "name": "T1",
-        "type": "Unit",
-        "docs": "T₁ (Fréchet): For any two distinct points x,y ∈ X, there exists an open set\ncontaining x but not y"
+        "docs": "T₁ (Fréchet): For any two distinct points x,y ∈ X, there exists an open set\ncontaining x but not y",
+        "type_info": null
       },
       {
         "name": "T2",
-        "type": "Unit",
-        "docs": "T₂ (Hausdorff): Any two distinct points can be separated by disjoint open sets"
+        "docs": "T₂ (Hausdorff): Any two distinct points can be separated by disjoint open sets",
+        "type_info": null
       },
       {
         "name": "T2_5",
-        "type": "Unit",
-        "docs": "T₂.₅ (Urysohn): Any two distinct points can be separated by a continuous function"
+        "docs": "T₂.₅ (Urysohn): Any two distinct points can be separated by a continuous function",
+        "type_info": null
       },
       {
         "name": "T3",
-        "type": "Unit",
-        "docs": "T₃ (Regular Hausdorff): Any point and closed set can be separated by disjoint open sets"
+        "docs": "T₃ (Regular Hausdorff): Any point and closed set can be separated by disjoint open sets",
+        "type_info": null
       },
       {
         "name": "T4",
-        "type": "Unit",
-        "docs": "T₄ (Normal Hausdorff): Any two disjoint closed sets can be separated by disjoint open sets"
+        "docs": "T₄ (Normal Hausdorff): Any two disjoint closed sets can be separated by disjoint open sets",
+        "type_info": null
       }
     ]
   },
   {
     "name": "CompactnessType",
-    "docs": "",
+    "docs": "Types of compactness in topology",
     "kind": "enum",
     "members": [
       {
         "name": "Compact",
-        "type": "Unit",
-        "docs": "Every open cover has a finite subcover"
+        "docs": "Every open cover has a finite subcover",
+        "type_info": null
       },
       {
         "name": "Sequentially",
-        "type": "Unit",
-        "docs": "Every sequence has a convergent subsequence"
+        "docs": "Every sequence has a convergent subsequence",
+        "type_info": null
       },
       {
         "name": "LocallyCompact",
-        "type": "Unit",
-        "docs": "Every closed and bounded set is compact"
+        "docs": "Every closed and bounded set is compact",
+        "type_info": null
       },
       {
         "name": "OnePointCompactification",
-        "type": "Unit",
-        "docs": "Compact after adding a single point"
+        "docs": "Compact after adding a single point",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ConnectednessType",
-    "docs": "",
+    "docs": "Types of connectedness in topology",
     "kind": "enum",
     "members": [
       {
         "name": "Connected",
-        "type": "Unit",
-        "docs": "Cannot be written as union of two disjoint non-empty open sets"
+        "docs": "Cannot be written as union of two disjoint non-empty open sets",
+        "type_info": null
       },
       {
         "name": "PathConnected",
-        "type": "Unit",
-        "docs": "Every two points can be joined by a continuous path"
+        "docs": "Every two points can be joined by a continuous path",
+        "type_info": null
       },
       {
         "name": "TotallyDisconnected",
-        "type": "Unit",
-        "docs": "Every component is a singleton"
+        "docs": "Every component is a singleton",
+        "type_info": null
       },
       {
         "name": "Continuum",
-        "type": "Unit",
-        "docs": "Connected and compact"
+        "docs": "Connected and compact",
+        "type_info": null
       }
     ]
   },
   {
     "name": "MetrizabilityType",
-    "docs": "",
+    "docs": "Types of metrizability in topology",
     "kind": "enum",
     "members": [
       {
         "name": "Metrizable",
-        "type": "Unit",
-        "docs": "Space admits a metric inducing its topology"
+        "docs": "Space admits a metric inducing its topology",
+        "type_info": null
       },
       {
         "name": "CompletelyMetrizable",
-        "type": "Unit",
-        "docs": "Space admits a complete metric"
+        "docs": "Space admits a complete metric",
+        "type_info": null
       },
       {
         "name": "NonCompletelyMetrizable",
-        "type": "Unit",
-        "docs": "Space admits a metric but is not complete"
+        "docs": "Space admits a metric but is not complete",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalMetricSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to metric spaces in topology",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the space is complete"
+        "docs": "Whether the space is complete",
+        "type_info": "bool"
       },
       {
         "name": "Compact",
-        "type": "bool",
-        "docs": "Whether the space is compact"
+        "docs": "Whether the space is compact",
+        "type_info": "bool"
       },
       {
         "name": "Separable",
-        "type": "bool",
-        "docs": "Whether the space is separable"
+        "docs": "Whether the space is separable",
+        "type_info": "bool"
       },
       {
         "name": "Proper",
-        "type": "bool",
-        "docs": "Whether the space is proper (closed balls are compact)"
+        "docs": "Whether the space is proper (closed balls are compact)",
+        "type_info": "bool"
       },
       {
         "name": "Bounded",
-        "type": "bool",
-        "docs": "Whether the space is bounded"
+        "docs": "Whether the space is bounded",
+        "type_info": "bool"
       },
       {
         "name": "TotallyBounded",
-        "type": "bool",
-        "docs": "Whether the space is totally bounded"
+        "docs": "Whether the space is totally bounded",
+        "type_info": "bool"
       },
       {
         "name": "LocallyCompact",
-        "type": "bool",
-        "docs": "Whether the space is locally compact"
+        "docs": "Whether the space is locally compact",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "MetricSpace",
-    "docs": "",
+    "docs": "A metric space is a set M together with a distance function (metric) that defines\na notion of distance between elements of the set.\nThe metric must satisfy:\n1. d(x,y) ≥ 0 (non-negativity)\n2. d(x,y) = 0 iff x = y (identity of indiscernibles)\n3. d(x,y) = d(y,x) (symmetry)\n4. d(x,z) ≤ d(x,y) + d(y,z) (triangle inequality)",
     "kind": "struct",
     "members": [
       {
@@ -454,149 +593,149 @@
   },
   {
     "name": "AffineSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to affine spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Dimension",
-        "type": "u32",
-        "docs": "Dimension of the affine space"
+        "docs": "Dimension of the affine space",
+        "type_info": "u32"
       },
       {
         "name": "ScalarField",
-        "type": "ScalarFieldType",
-        "docs": "Whether the space is real or complex"
+        "docs": "Whether the space is real or complex",
+        "type_info": "ScalarFieldType"
       },
       {
         "name": "Complete",
-        "type": "bool",
-        "docs": "Whether the space is complete"
+        "docs": "Whether the space is complete",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "FiberBundleProperty",
-    "docs": "",
+    "docs": "Properties specific to fiber bundles",
     "kind": "enum",
     "members": [
       {
         "name": "Trivial",
-        "type": "bool",
-        "docs": "Whether the bundle is trivial"
+        "docs": "Whether the bundle is trivial",
+        "type_info": "bool"
       },
       {
         "name": "LocallyTrivial",
-        "type": "bool",
-        "docs": "Whether the bundle is locally trivial"
+        "docs": "Whether the bundle is locally trivial",
+        "type_info": "bool"
       },
       {
         "name": "Principal",
-        "type": "bool",
-        "docs": "Whether the bundle is principal"
+        "docs": "Whether the bundle is principal",
+        "type_info": "bool"
       },
       {
         "name": "VectorBundle",
-        "type": "bool",
-        "docs": "Whether the bundle is vector bundle"
+        "docs": "Whether the bundle is vector bundle",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "ProjectiveSpaceProperty",
-    "docs": "",
+    "docs": "Properties specific to projective spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Dimension",
-        "type": "u32",
-        "docs": "Dimension of the projective space"
+        "docs": "Dimension of the projective space",
+        "type_info": "u32"
       },
       {
         "name": "ScalarField",
-        "type": "ScalarFieldType",
-        "docs": "Whether the space is real or complex"
+        "docs": "Whether the space is real or complex",
+        "type_info": "ScalarFieldType"
       },
       {
         "name": "Smooth",
-        "type": "bool",
-        "docs": "Whether the space is smooth"
+        "docs": "Whether the space is smooth",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "ScalarFieldType",
-    "docs": "",
+    "docs": "Types of scalar fields",
     "kind": "enum",
     "members": [
       {
         "name": "Real",
-        "type": "Unit",
-        "docs": "Real numbers"
+        "docs": "Real numbers",
+        "type_info": null
       },
       {
         "name": "Complex",
-        "type": "Unit",
-        "docs": "Complex numbers"
+        "docs": "Complex numbers",
+        "type_info": null
       },
       {
         "name": "Rational",
-        "type": "Unit",
-        "docs": "Rational numbers"
+        "docs": "Rational numbers",
+        "type_info": null
       },
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite field"
+        "docs": "Finite field",
+        "type_info": "u32"
       }
     ]
   },
   {
     "name": "CompletenessPropertyVariant",
-    "docs": "",
+    "docs": "Variants of completeness properties",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "Unit",
-        "docs": "Complete metric space"
+        "docs": "Complete metric space",
+        "type_info": null
       },
       {
         "name": "Incomplete",
-        "type": "Unit",
-        "docs": "Not complete"
+        "docs": "Not complete",
+        "type_info": null
       },
       {
         "name": "Completable",
-        "type": "Unit",
-        "docs": "Completable"
+        "docs": "Completable",
+        "type_info": null
       }
     ]
   },
   {
     "name": "SeparabilityPropertyVariant",
-    "docs": "",
+    "docs": "Variants of separability properties",
     "kind": "enum",
     "members": [
       {
         "name": "Separable",
-        "type": "Unit",
-        "docs": "Separable metric space"
+        "docs": "Separable metric space",
+        "type_info": null
       },
       {
         "name": "NonSeparable",
-        "type": "Unit",
-        "docs": "Not separable"
+        "docs": "Not separable",
+        "type_info": null
       },
       {
         "name": "SecondCountable",
-        "type": "Unit",
-        "docs": "Second countable"
+        "docs": "Second countable",
+        "type_info": null
       }
     ]
   },
   {
     "name": "MetricCompletion",
-    "docs": "",
+    "docs": "A metric space completion is a complete metric space that contains the original space as a dense subset",
     "kind": "struct",
     "members": [
       {
@@ -623,29 +762,29 @@
   },
   {
     "name": "CompletionProperty",
-    "docs": "",
+    "docs": "Properties specific to metric space completions",
     "kind": "enum",
     "members": [
       {
         "name": "Unique",
-        "type": "bool",
-        "docs": "Whether the completion is unique up to isometry"
+        "docs": "Whether the completion is unique up to isometry",
+        "type_info": "bool"
       },
       {
         "name": "DenseEmbedding",
-        "type": "bool",
-        "docs": "Whether the original space is dense in the completion"
+        "docs": "Whether the original space is dense in the completion",
+        "type_info": "bool"
       },
       {
         "name": "PreservesStructure",
-        "type": "bool",
-        "docs": "Whether the completion preserves additional structure (e.g. group structure)"
+        "docs": "Whether the completion preserves additional structure (e.g. group structure)",
+        "type_info": "bool"
       }
     ]
   },
   {
     "name": "Metric",
-    "docs": "",
+    "docs": "Metric structure\nA function d: X × X → ℝ satisfying:\n1. d(x,y) ≥ 0 and d(x,y) = 0 iff x = y (positive definiteness)\n2. d(x,y) = d(y,x) (symmetry)\n3. d(x,z) ≤ d(x,y) + d(y,z) (triangle inequality)",
     "kind": "struct",
     "members": [
       {
@@ -662,33 +801,33 @@
     "members": [
       {
         "name": "Continuity",
-        "type": "TopologicalContinuityPropertyVariant",
-        "docs": "Continuity of the metric function\n(x,y) ↦ d(x,y) is continuous from X×X to ℝ"
+        "docs": "Continuity of the metric function\n(x,y) ↦ d(x,y) is continuous from X×X to ℝ",
+        "type_info": "TopologicalContinuityPropertyVariant"
       },
       {
         "name": "Boundedness",
-        "type": "TopologicalBoundednessPropertyVariant",
-        "docs": "Boundedness of distances\n∃M>0: d(x,y) ≤ M for all x,y"
+        "docs": "Boundedness of distances\n∃M>0: d(x,y) ≤ M for all x,y",
+        "type_info": "TopologicalBoundednessPropertyVariant"
       },
       {
         "name": "Geodesic",
-        "type": "GeodesicPropertyVariant",
-        "docs": "Geodesic property: existence of length-minimizing paths\n∃ path γ: d(x,y) = length(γ) connecting x to y"
+        "docs": "Geodesic property: existence of length-minimizing paths\n∃ path γ: d(x,y) = length(γ) connecting x to y",
+        "type_info": "GeodesicPropertyVariant"
       },
       {
         "name": "LengthSpace",
-        "type": "LengthSpacePropertyVariant",
-        "docs": "Length space property: distance as infimum of path lengths\nd(x,y) = inf{length(γ): γ connects x to y}"
+        "docs": "Length space property: distance as infimum of path lengths\nd(x,y) = inf{length(γ): γ connects x to y}",
+        "type_info": "LengthSpacePropertyVariant"
       },
       {
         "name": "IsometryGroup",
-        "type": "IsometryGroupPropertyVariant",
-        "docs": "Isometry group: symmetries preserving distance\nGroup of maps T: d(Tx,Ty) = d(x,y)"
+        "docs": "Isometry group: symmetries preserving distance\nGroup of maps T: d(Tx,Ty) = d(x,y)",
+        "type_info": "IsometryGroupPropertyVariant"
       },
       {
         "name": "UniformStructure",
-        "type": "UniformStructurePropertyVariant",
-        "docs": "Uniform structure: compatible uniformity\nTopology induced by d agrees with given uniform structure"
+        "docs": "Uniform structure: compatible uniformity\nTopology induced by d agrees with given uniform structure",
+        "type_info": "UniformStructurePropertyVariant"
       }
     ]
   },
@@ -699,13 +838,13 @@
     "members": [
       {
         "name": "Uniform",
-        "type": "Unit",
-        "docs": "Has compatible uniform structure\nTopology from uniformity agrees with given topology"
+        "docs": "Has compatible uniform structure\nTopology from uniformity agrees with given topology",
+        "type_info": null
       },
       {
         "name": "NonUniform",
-        "type": "Unit",
-        "docs": "No compatible uniform structure"
+        "docs": "No compatible uniform structure",
+        "type_info": null
       }
     ]
   },
@@ -716,13 +855,13 @@
     "members": [
       {
         "name": "HasIsometryGroup",
-        "type": "Unit",
-        "docs": "Has non-trivial isometry group\n∃T≠id: d(Tx,Ty) = d(x,y) for all x,y"
+        "docs": "Has non-trivial isometry group\n∃T≠id: d(Tx,Ty) = d(x,y) for all x,y",
+        "type_info": null
       },
       {
         "name": "NoIsometryGroup",
-        "type": "Unit",
-        "docs": "No non-trivial isometries"
+        "docs": "No non-trivial isometries",
+        "type_info": null
       }
     ]
   },
@@ -733,13 +872,13 @@
     "members": [
       {
         "name": "LengthSpace",
-        "type": "Unit",
-        "docs": "Distance is infimum of path lengths\nd(x,y) = inf{length(γ): γ connects x to y}"
+        "docs": "Distance is infimum of path lengths\nd(x,y) = inf{length(γ): γ connects x to y}",
+        "type_info": null
       },
       {
         "name": "NonLengthSpace",
-        "type": "Unit",
-        "docs": "Not a length space"
+        "docs": "Not a length space",
+        "type_info": null
       }
     ]
   },
@@ -750,189 +889,189 @@
     "members": [
       {
         "name": "Geodesic",
-        "type": "Unit",
-        "docs": "Distance realized by length of path\n∃ path γ: d(x,y) = length(γ)"
+        "docs": "Distance realized by length of path\n∃ path γ: d(x,y) = length(γ)",
+        "type_info": null
       },
       {
         "name": "NonGeodesic",
-        "type": "Unit",
-        "docs": "Not geodesic"
+        "docs": "Not geodesic",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalBoundednessPropertyVariant",
-    "docs": "",
+    "docs": "Variants of boundedness for topological spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Bounded",
-        "type": "VariantSet<TopologicalBoundedProperty>",
-        "docs": "Space is bounded in some metric\n∃ metric d, x₀,r: X ⊆ B(x₀,r)"
+        "docs": "Space is bounded in some metric\n∃ metric d, x₀,r: X ⊆ B(x₀,r)",
+        "type_info": "VariantSet<TopologicalBoundedProperty>"
       },
       {
         "name": "Unbounded",
-        "type": "Unit",
-        "docs": "Space is not bounded in any metric\n∀ metric d, x₀,r: X ⊈ B(x₀,r)"
+        "docs": "Space is not bounded in any metric\n∀ metric d, x₀,r: X ⊈ B(x₀,r)",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalBoundedProperty",
-    "docs": "",
+    "docs": "Properties modifying bounded topological spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Locality",
-        "type": "TopologicalLocalityPropertyVariant",
-        "docs": "Where the boundedness holds"
+        "docs": "Where the boundedness holds",
+        "type_info": "TopologicalLocalityPropertyVariant"
       },
       {
         "name": "Coverage",
-        "type": "TopologicalCoveragePropertyVariant",
-        "docs": "Extent of boundedness"
+        "docs": "Extent of boundedness",
+        "type_info": "TopologicalCoveragePropertyVariant"
       },
       {
         "name": "BoundednessType",
-        "type": "TopologicalBoundednessTypeVariant",
-        "docs": "Type of boundedness"
+        "docs": "Type of boundedness",
+        "type_info": "TopologicalBoundednessTypeVariant"
       }
     ]
   },
   {
     "name": "TopologicalBoundednessTypeVariant",
-    "docs": "",
+    "docs": "Types of boundedness in topology",
     "kind": "enum",
     "members": [
       {
         "name": "MetricBounded",
-        "type": "Unit",
-        "docs": "Bounded in metric sense"
+        "docs": "Bounded in metric sense",
+        "type_info": null
       },
       {
         "name": "MeasureBounded",
-        "type": "Unit",
-        "docs": "Bounded in measure sense"
+        "docs": "Bounded in measure sense",
+        "type_info": null
       },
       {
         "name": "OrderBounded",
-        "type": "Unit",
-        "docs": "Bounded in order sense"
+        "docs": "Bounded in order sense",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalContinuityPropertyVariant",
-    "docs": "",
+    "docs": "Variants of continuity for topological spaces",
     "kind": "enum",
     "members": [
       {
         "name": "Continuous",
-        "type": "VariantSet<TopologicalContinuousProperty>",
-        "docs": "Function preserves topology\nInverse images of open sets are open"
+        "docs": "Function preserves topology\nInverse images of open sets are open",
+        "type_info": "VariantSet<TopologicalContinuousProperty>"
       },
       {
         "name": "Discontinuous",
-        "type": "Unit",
-        "docs": "Function does not preserve topology\nSome inverse image of open set is not open"
+        "docs": "Function does not preserve topology\nSome inverse image of open set is not open",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalContinuousProperty",
-    "docs": "",
+    "docs": "Properties modifying continuous functions in topology",
     "kind": "enum",
     "members": [
       {
         "name": "Locality",
-        "type": "TopologicalLocalityPropertyVariant",
-        "docs": "Where the continuity holds"
+        "docs": "Where the continuity holds",
+        "type_info": "TopologicalLocalityPropertyVariant"
       },
       {
         "name": "Coverage",
-        "type": "TopologicalCoveragePropertyVariant",
-        "docs": "Extent of continuity"
+        "docs": "Extent of continuity",
+        "type_info": "TopologicalCoveragePropertyVariant"
       },
       {
         "name": "ContinuityType",
-        "type": "TopologicalContinuityTypeVariant",
-        "docs": "Type of continuity"
+        "docs": "Type of continuity",
+        "type_info": "TopologicalContinuityTypeVariant"
       }
     ]
   },
   {
     "name": "TopologicalContinuityTypeVariant",
-    "docs": "",
+    "docs": "Types of continuity in topology",
     "kind": "enum",
     "members": [
       {
         "name": "Continuous",
-        "type": "Unit",
-        "docs": "Continuous everywhere"
+        "docs": "Continuous everywhere",
+        "type_info": null
       },
       {
         "name": "ContinuousAtPoint",
-        "type": "Unit",
-        "docs": "Continuous at a point"
+        "docs": "Continuous at a point",
+        "type_info": null
       },
       {
         "name": "UniformlyContinuous",
-        "type": "Unit",
-        "docs": "Uniformly continuous"
+        "docs": "Uniformly continuous",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalLocalityPropertyVariant",
-    "docs": "",
+    "docs": "Locality variants for topological properties",
     "kind": "enum",
     "members": [
       {
         "name": "Global",
-        "type": "Unit",
-        "docs": "Property holds on entire space"
+        "docs": "Property holds on entire space",
+        "type_info": null
       },
       {
         "name": "Local",
-        "type": "Unit",
-        "docs": "Property holds on open neighborhoods"
+        "docs": "Property holds on open neighborhoods",
+        "type_info": null
       },
       {
         "name": "PointWise",
-        "type": "Unit",
-        "docs": "Property holds at points"
+        "docs": "Property holds at points",
+        "type_info": null
       },
       {
         "name": "OnCompact",
-        "type": "Unit",
-        "docs": "Property holds on compact sets"
+        "docs": "Property holds on compact sets",
+        "type_info": null
       }
     ]
   },
   {
     "name": "TopologicalCoveragePropertyVariant",
-    "docs": "",
+    "docs": "Coverage variants for topological properties",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "Unit",
-        "docs": "Property holds everywhere"
+        "docs": "Property holds everywhere",
+        "type_info": null
       },
       {
         "name": "Dense",
-        "type": "Unit",
-        "docs": "Property holds on dense subset"
+        "docs": "Property holds on dense subset",
+        "type_info": null
       },
       {
         "name": "Open",
-        "type": "Unit",
-        "docs": "Property holds on open subset"
+        "docs": "Property holds on open subset",
+        "type_info": null
       },
       {
         "name": "Closed",
-        "type": "Unit",
-        "docs": "Property holds on closed subset"
+        "docs": "Property holds on closed subset",
+        "type_info": null
       }
     ]
   }
