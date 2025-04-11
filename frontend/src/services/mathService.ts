@@ -235,88 +235,208 @@ async function loadDefinitionsDirectly(
 ): Promise<Definition[]> {
   console.log(`Attempting to load definitions directly for ${theoryName}`);
 
-  try {
-    const response = await fetch(
-      `../subjects/math/theories/${theoryName}/definitions.json`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
+  // Define multiple paths to try, with more variations
+  const pathsToTry = [
+    // Standard paths
+    `../subjects/math/theories/${theoryName}/definitions.json`,
+    `/subjects/math/theories/${theoryName}/definitions.json`,
+    `./subjects/math/theories/${theoryName}/definitions.json`,
+    `/math/theories/${theoryName}/definitions.json`,
 
-    const data = await response.json();
-    console.log(`Successfully loaded definitions for ${theoryName}:`, data);
+    // Path with full 'theories/' structure preserved
+    ...(theoryName.includes("/")
+      ? [
+          `../subjects/math/${theoryName}/definitions.json`,
+          `/subjects/math/${theoryName}/definitions.json`,
+          `/math/${theoryName}/definitions.json`,
+        ]
+      : []),
 
-    // Process the data based on its structure
-    if (Array.isArray(data)) {
-      // If it's an array, process each definition
-      return data.map((def) => ({
-        name: def.name || "Unknown",
-        docs: def.docs || def.documentation || `Definition from ${theoryName}`,
-        kind: def.kind || "struct",
-        members: def.members || [],
-      }));
-    } else {
-      // If it's a single object, wrap it in an array
-      return [
-        {
-          name: data.name || "Unknown",
+    // Try definition.json singular form
+    `../subjects/math/theories/${theoryName}/definition.json`,
+    `/subjects/math/theories/${theoryName}/definition.json`,
+
+    // Additional variations with different base paths
+    `../../../subjects/math/theories/${theoryName}/definitions.json`,
+    `../../subjects/math/theories/${theoryName}/definitions.json`,
+    `/public/subjects/math/theories/${theoryName}/definitions.json`,
+
+    // Try with 'content' subdirectory
+    `/subjects/math/theories/${theoryName}/content/definitions.json`,
+
+    // Try public static files
+    `/public/theories/${theoryName}/definitions.json`,
+    `/static/theories/${theoryName}/definitions.json`,
+    `/assets/theories/${theoryName}/definitions.json`,
+  ];
+
+  for (const path of pathsToTry) {
+    try {
+      console.log(`Trying to fetch from: ${path}`);
+      const response = await fetch(path);
+
+      if (!response.ok) {
+        console.log(`Failed to load from ${path}: ${response.status}`);
+        continue;
+      }
+
+      // Check if the response is valid JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.log(`Skipping non-JSON response from: ${path}`);
+        continue;
+      }
+
+      const data = await response.json();
+      console.log(`Successfully loaded definitions from ${path}:`, data);
+
+      // Process the data based on its structure
+      if (Array.isArray(data)) {
+        // If it's an array, process each definition
+        return data.map((def) => ({
+          name: def.name || "Unknown",
           docs:
-            data.docs || data.documentation || `Definition from ${theoryName}`,
-          kind: data.kind || "struct",
-          members: data.members || [],
-        },
-      ];
+            def.docs || def.documentation || `Definition from ${theoryName}`,
+          kind: def.kind || "struct",
+          members: def.members || [],
+        }));
+      } else {
+        // If it's a single object, wrap it in an array
+        return [
+          {
+            name: data.name || "Unknown",
+            docs:
+              data.docs ||
+              data.documentation ||
+              `Definition from ${theoryName}`,
+            kind: data.kind || "struct",
+            members: data.members || [],
+          },
+        ];
+      }
+    } catch (error) {
+      console.log(`Error loading from ${path}:`, error);
+      // Continue to the next path if there's an error
+      continue;
     }
-  } catch (error) {
-    console.error(
-      `Error loading definitions directly for ${theoryName}:`,
-      error
-    );
-    return [];
   }
+
+  // If we get here, we couldn't load from any path
+  console.log(`Unable to load definitions for ${theoryName} from any path`);
+
+  // Create placeholder content to prevent "No theory selected" message
+  if (theoryName) {
+    console.log(`Creating placeholder content for ${theoryName}`);
+    return [
+      {
+        name: `${theoryName} (Placeholder)`,
+        docs: `This is a placeholder for the ${theoryName} theory. The actual content might not be available yet.`,
+        kind: "struct",
+        members: [
+          {
+            name: "placeholder",
+            type: "String",
+            docs: "This is a placeholder member to ensure the definition can be rendered correctly.",
+          },
+        ],
+      },
+    ];
+  }
+
+  return [];
 }
 
 // Add a new function to load theorems directly
 async function loadTheoremsDirectly(theoryName: string): Promise<Theorem[]> {
   console.log(`Attempting to load theorems directly for ${theoryName}`);
 
-  try {
-    const response = await fetch(
-      `../subjects/math/theories/${theoryName}/theorems.json`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
+  // Define multiple paths to try, with more variations
+  const pathsToTry = [
+    // Standard paths
+    `../subjects/math/theories/${theoryName}/theorems.json`,
+    `/subjects/math/theories/${theoryName}/theorems.json`,
+    `./subjects/math/theories/${theoryName}/theorems.json`,
+    `/math/theories/${theoryName}/theorems.json`,
 
-    const data = await response.json();
-    console.log(`Successfully loaded theorems for ${theoryName}:`, data);
+    // Path with full 'theories/' structure preserved
+    ...(theoryName.includes("/")
+      ? [
+          `../subjects/math/${theoryName}/theorems.json`,
+          `/subjects/math/${theoryName}/theorems.json`,
+          `/math/${theoryName}/theorems.json`,
+        ]
+      : []),
 
-    // Process the data based on its structure
-    if (Array.isArray(data)) {
-      // If it's an array, process each theorem
-      return data.map((thm) => ({
-        name: thm.name || "Unknown",
-        statement: thm.statement || "",
-        description: thm.description || `Theorem from ${theoryName}`,
-        proof_steps: thm.proof_steps || [],
-        tags: thm.tags || [],
-      }));
-    } else {
-      // If it's a single object, wrap it in an array
-      return [
-        {
-          name: data.name || "Unknown",
-          statement: data.statement || "",
-          description: data.description || `Theorem from ${theoryName}`,
-          proof_steps: data.proof_steps || [],
-          tags: data.tags || [],
-        },
-      ];
+    // Try theorem.json singular form
+    `../subjects/math/theories/${theoryName}/theorem.json`,
+    `/subjects/math/theories/${theoryName}/theorem.json`,
+
+    // Additional variations with different base paths
+    `../../../subjects/math/theories/${theoryName}/theorems.json`,
+    `../../subjects/math/theories/${theoryName}/theorems.json`,
+    `/public/subjects/math/theories/${theoryName}/theorems.json`,
+
+    // Try with 'content' subdirectory
+    `/subjects/math/theories/${theoryName}/content/theorems.json`,
+
+    // Try public static files
+    `/public/theories/${theoryName}/theorems.json`,
+    `/static/theories/${theoryName}/theorems.json`,
+    `/assets/theories/${theoryName}/theorems.json`,
+  ];
+
+  for (const path of pathsToTry) {
+    try {
+      console.log(`Trying to fetch from: ${path}`);
+      const response = await fetch(path);
+
+      if (!response.ok) {
+        console.log(`Failed to load from ${path}: ${response.status}`);
+        continue;
+      }
+
+      // Check if the response is valid JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.log(`Skipping non-JSON response from: ${path}`);
+        continue;
+      }
+
+      const data = await response.json();
+      console.log(`Successfully loaded theorems from ${path}:`, data);
+
+      // Process the data based on its structure
+      if (Array.isArray(data)) {
+        // If it's an array, process each theorem
+        return data.map((thm) => ({
+          name: thm.name || "Unknown",
+          statement: thm.statement || "",
+          description: thm.description || `Theorem from ${theoryName}`,
+          proof_steps: thm.proof_steps || [],
+          tags: thm.tags || [],
+        }));
+      } else {
+        // If it's a single object, wrap it in an array
+        return [
+          {
+            name: data.name || "Unknown",
+            statement: data.statement || "",
+            description: data.description || `Theorem from ${theoryName}`,
+            proof_steps: data.proof_steps || [],
+            tags: data.tags || [],
+          },
+        ];
+      }
+    } catch (error) {
+      console.log(`Error loading from ${path}:`, error);
+      // Continue to the next path if there's an error
+      continue;
     }
-  } catch (error) {
-    console.error(`Error loading theorems directly for ${theoryName}:`, error);
-    return [];
   }
+
+  // If we get here, we couldn't load from any path
+  console.log(`Unable to load theorems for ${theoryName} from any path`);
+  return [];
 }
 
 /**
@@ -343,16 +463,27 @@ export async function fetchTheoryContent(
       ? theoryPath.split("/").pop() || theoryPath
       : theoryPath;
 
-    // First, try the regular method using the theory cache
     // Get all JSON files for this theory - supporting both paths with and without subfolders
-    const theoryFiles = Object.keys(theoryCache).filter(
-      (path) =>
-        (path.includes(`/theories/${searchPath}/`) ||
-          // Handle subfolders if using the complete path
-          (theoryPath.includes("/") && path.includes(theoryPath))) &&
-        // Only include JSON files
-        path.endsWith(".json")
-    );
+    const theoryFiles = Object.keys(theoryCache).filter((path) => {
+      // Only include JSON files
+      if (!path.endsWith(".json")) return false;
+
+      // For paths that start with "theories/"
+      if (theoryPath.startsWith("theories/")) {
+        const actualTheoryName = theoryPath.slice("theories/".length);
+        return (
+          path.includes(`/theories/${actualTheoryName}/`) ||
+          path.includes(`/theories/${actualTheoryName}.json`)
+        );
+      }
+
+      // Standard paths without "theories/" prefix
+      return (
+        path.includes(`/theories/${searchPath}/`) ||
+        // Handle subfolders if using the complete path
+        (theoryPath.includes("/") && path.includes(theoryPath))
+      );
+    });
 
     if (theoryFiles.length > 0) {
       console.log(
@@ -455,8 +586,35 @@ export async function fetchTheoryContent(
       );
 
       // Try to load the files directly using fetch as a fallback
-      const definitions = await loadDefinitionsDirectly(searchPath);
-      const theorems = await loadTheoremsDirectly(searchPath);
+      // If searchPath already has the correct value based on our earlier processing
+      let directLoadPath = searchPath;
+
+      // Double-check that we're not trying to load from "theories/theories/..."
+      if (theoryPath.startsWith("theories/")) {
+        directLoadPath = theoryPath.slice("theories/".length);
+        console.log(`Adjusted path for direct loading: ${directLoadPath}`);
+      }
+
+      const definitions = await loadDefinitionsDirectly(directLoadPath);
+      let theorems = await loadTheoremsDirectly(directLoadPath);
+
+      // If we didn't find content and the path doesn't include "theories/",
+      // try adding it to handle case where server expects the full path
+      if (definitions.length === 0 && !theoryPath.startsWith("theories/")) {
+        console.log(`Trying with theories/ prefix: theories/${directLoadPath}`);
+        const altDefinitions = await loadDefinitionsDirectly(
+          `theories/${directLoadPath}`
+        );
+        if (altDefinitions.length > 0) {
+          console.log(`Found definitions using theories/ prefix`);
+          return {
+            definitions: altDefinitions,
+            theorems,
+            folder: theoryPath,
+            theory: theoryName,
+          };
+        }
+      }
 
       console.log(
         `Direct loading results - Definitions: ${definitions.length}, Theorems: ${theorems.length}`
@@ -478,7 +636,29 @@ export async function fetchTheoryContent(
         return content;
       }
 
-      return null;
+      // Create placeholder content if we can't find any real content
+      // This prevents "No theory selected" message but also signals to the user
+      // that content should exist but couldn't be found
+      console.log(`Creating placeholder content for ${theoryName}`);
+      return {
+        definitions: [
+          {
+            name: `${theoryName} Content (Not Found)`,
+            docs: `We couldn't locate the content for the ${theoryName} theory. This could be because the data files are missing or incorrectly formatted. Try selecting another theory from the sidebar.`,
+            kind: "struct",
+            members: [
+              {
+                name: "placeholder",
+                type: "String",
+                docs: "This is a placeholder. Please check that theory content is properly configured.",
+              },
+            ],
+          },
+        ],
+        theorems: [],
+        folder: theoryPath,
+        theory: theoryName,
+      };
     }
   } catch (error) {
     console.error(`Error fetching theory content for ${theoryPath}:`, error);
@@ -790,4 +970,71 @@ export async function debugFilePaths(): Promise<void> {
   }
 
   console.log("===== DEBUG: Path check complete =====");
+}
+
+/**
+ * Utility function to try loading theory content with alternative paths
+ * This helps when the normal fetching fails or returns placeholder content
+ * @param originalPath The original path that failed to load
+ * @param depth Used internally to prevent recursion
+ */
+export async function tryLoadWithAlternativePaths(
+  originalPath: string,
+  depth: number = 0
+): Promise<MathContent | null> {
+  // Prevent infinite recursion
+  if (depth > 1) {
+    console.log(`Maximum recursion depth reached for ${originalPath}`);
+    return null;
+  }
+
+  console.log(`Trying alternative paths for ${originalPath}`);
+
+  // Collection of alternative paths to try
+  const alternativePaths = [];
+
+  // If the path doesn't have a theories/ prefix, add it
+  if (!originalPath.startsWith("theories/")) {
+    alternativePaths.push(`theories/${originalPath}`);
+  }
+
+  // If the path has a theories/ prefix, try without it
+  if (originalPath.startsWith("theories/")) {
+    alternativePaths.push(originalPath.slice("theories/".length));
+  }
+
+  // Also try adding or removing various other path structures
+  if (!originalPath.includes("/")) {
+    alternativePaths.push(`mathematics/${originalPath}`);
+    alternativePaths.push(`math_theories/${originalPath}`);
+  }
+
+  // For each alternative path, try fetching content
+  for (const path of alternativePaths) {
+    // Skip if we're trying the original path again
+    if (path === originalPath) continue;
+
+    console.log(`Trying alternative path: ${path}`);
+    try {
+      const content = await fetchTheoryContent(path);
+
+      // Check if we got useful content (not just placeholders)
+      if (content && content.definitions && content.definitions.length > 0) {
+        // Check if first definition is not just a placeholder
+        const firstDef = content.definitions[0];
+        if (
+          !firstDef.name.includes("(Not Found)") &&
+          !firstDef.name.includes("Placeholder")
+        ) {
+          console.log(`Found valid content with alternative path: ${path}`);
+          return content;
+        }
+      }
+    } catch (err) {
+      console.log(`Failed to load with alternative path ${path}:`, err);
+    }
+  }
+
+  console.log("No valid content found with alternative paths");
+  return null;
 }

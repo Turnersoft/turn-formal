@@ -45,7 +45,22 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     const map = new Map<string, Definition>();
     if (content && content.definitions) {
       content.definitions.forEach((def: Definition) => {
-        map.set(def.name, def);
+        if (def && def.name) {
+          // Ensure members array is always defined
+          if (!def.members || !Array.isArray(def.members)) {
+            console.warn(
+              `Definition ${def.name} has invalid members. Adding placeholder.`
+            );
+            def.members = [
+              {
+                name: "placeholder",
+                type: "String",
+                docs: "Placeholder member",
+              },
+            ];
+          }
+          map.set(def.name, def);
+        }
       });
     }
     return map;

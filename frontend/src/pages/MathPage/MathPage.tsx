@@ -11,6 +11,7 @@ import {
   buildCompleteFileTree,
   FolderNode,
   debugFilePaths,
+  tryLoadWithAlternativePaths,
 } from "../../services/mathService";
 
 const MathPage: React.FC = () => {
@@ -25,7 +26,11 @@ const MathPage: React.FC = () => {
     if (path === "/math") return undefined;
 
     // Remove the leading '/math/' to get the theory path
-    return path.replace(/^\/math\//, "");
+    const theoryPath = path.replace(/^\/math\//, "");
+
+    // When the path is directly accessed (like on refresh), it will include the full path
+    // We want to preserve that full path (including "theories/" prefix if it exists)
+    return theoryPath;
   };
 
   const theoryPath = getTheoryPathFromUrl();
@@ -64,7 +69,12 @@ const MathPage: React.FC = () => {
         setFolderTree(treeData);
 
         // If no theory is selected in the URL but theories are available, redirect to the first one
-        if (!theoryPath && theoryData.length > 0) {
+        // OR if a theory path is already in the URL, ensure we load it properly
+        if (theoryPath) {
+          console.log("Theory path found in URL:", theoryPath);
+          // We don't need to navigate since we're already at this path
+          // The second useEffect will handle loading content
+        } else if (theoryData.length > 0) {
           console.log(
             "No theory selected, redirecting to first theory:",
             theoryData[0].path
@@ -97,9 +107,59 @@ const MathPage: React.FC = () => {
       try {
         // Fetch theory content from filesystem
         console.log("Fetching theory content for:", theoryPath);
-        const content = await fetchTheoryContent(theoryPath);
+        let content = await fetchTheoryContent(theoryPath);
 
         console.log("Theory content received:", content);
+
+        // Check if we got placeholder content
+        const isPlaceholder =
+          content &&
+          content.definitions &&
+          content.definitions.length === 1 &&
+          (content.definitions[0].name.includes("(Not Found)") ||
+            content.definitions[0].name.includes("Placeholder"));
+
+        // If we got placeholder content, try alternative paths
+        if (isPlaceholder) {
+          console.log("Received placeholder content, trying alternative paths");
+          const altContent = await tryLoadWithAlternativePaths(theoryPath);
+
+          if (altContent) {
+            console.log("Using content from alternative path");
+            content = altContent;
+          }
+        }
+
+        // Extra validation to ensure the content is valid
+        if (
+          content &&
+          content.definitions &&
+          Array.isArray(content.definitions)
+        ) {
+          // Validate members to ensure they're properly initialized
+          content.definitions.forEach((def, index) => {
+            if (!def.members || !Array.isArray(def.members)) {
+              console.warn(
+                `Definition ${index} (${def.name}) has invalid or missing members array. Fixing.`
+              );
+              def.members = [
+                {
+                  name: "placeholder",
+                  type: "String",
+                  docs: "This is a placeholder member to ensure the definition can be rendered correctly.",
+                },
+              ];
+            }
+          });
+
+          console.log(
+            "Validated content. Definitions:",
+            content.definitions.length
+          );
+        } else {
+          console.warn("Content is null or has invalid structure");
+        }
+
         setMathContent(content);
         setError(null);
 
