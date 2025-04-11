@@ -22,6 +22,7 @@
     "axios": "^1.8.4",
     "chokidar": "^4.0.3",
     "cors": "^2.8.5",
+    "dagre": "^0.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "react": "^18.2.0",
@@ -33,6 +34,7 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "@types/dagre": "^0.7.52",
     "@types/node": "^22.14.0",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

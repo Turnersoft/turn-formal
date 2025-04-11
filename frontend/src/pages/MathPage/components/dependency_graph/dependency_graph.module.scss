@@ -4,13 +4,182 @@
   border-radius: 8px;
   overflow: hidden;
   position: relative;
-  height: 500px;
+  height: 700px;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.3s ease;
 
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+}
+
+.reactFlowWrapper {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.loadingIndicator {
+  font-style: italic;
+  color: #f48b4b;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.statsPanel {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 6px;
+  padding: 6px 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+  color: #555;
+  display: flex;
+  gap: 10px;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+
+  span {
+    font-weight: bold;
+    margin-right: 4px;
+    color: #4b8bf4;
+  }
+}
+
+.layoutControls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.connectionDebug {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  width: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+}
+
+.debugHeader {
+  padding: 6px 10px;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  border-radius: 6px 6px 0 0;
+}
+
+.debugContent {
+  padding: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.connectionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.connectionItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border-left: 3px solid #4b8bf4;
+}
+
+.sourceNode,
+.targetNode {
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.sourceNode {
+  color: #4b8bf4;
+}
+
+.targetNode {
+  color: #8b4bf4;
+}
+
+.arrow {
+  font-size: 14px;
+  color: #666;
+}
+
+.artificialBadge {
+  font-size: 9px;
+  padding: 1px 4px;
+  background-color: #f48b4b;
+  color: white;
+  border-radius: 3px;
+  margin-left: auto;
+}
+
+.moreConnections {
+  text-align: center;
+  padding: 4px;
+  color: #666;
+  font-style: italic;
+}
+
+.layoutButton {
+  background-color: #4b8bf4;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #3a7ae3;
+  }
+
+  &:active {
+    background-color: #2968c7;
+  }
+}
+
+.layoutInfo {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
 }
 
 .dependencyGraph {
@@ -20,32 +189,125 @@
 }
 
 .customNode {
-  padding: 10px;
-  border-radius: 6px;
-  width: 160px;
+  padding: 12px;
+  border-radius: 8px;
+  width: 180px;
   color: white;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: system-ui, -apple-system, sans-serif;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+
+  /* Add a slight gradient */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15),
+    rgba(0, 0, 0, 0.1)
+  );
+
+  /* Add subtle pattern */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    background-image: repeating-linear-gradient(
+      45deg,
+      #fff,
+      #fff 5px,
+      transparent 5px,
+      transparent 10px
+    );
+    border-radius: 6px;
+    pointer-events: none;
+  }
 
   &:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10;
   }
 }
 
 .nodeLabel {
   font-weight: bold;
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .nodeType {
   font-size: 12px;
-  opacity: 0.8;
+  opacity: 0.9;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Edge styles */
+.floatingEdgePath {
+  fill: none;
+  stroke-width: 2;
+  stroke: #555;
+
+  &:hover {
+    stroke-width: 3;
+    stroke: #3a7ae3;
+  }
+}
+
+.animatedEdgePath {
+  fill: none;
+  stroke-width: 2;
+  stroke: #555;
+  transition: stroke 0.2s;
+
+  &:hover {
+    stroke-width: 3;
+    stroke: #3a7ae3;
+  }
+}
+
+.edgeLabelContainer {
+  pointer-events: none;
+}
+
+.edgeLabelForeignObject {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.edgeLabel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  font-size: 10px;
+  color: #fff;
+  pointer-events: none;
+
+  span {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1px 5px;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px black;
+    pointer-events: none;
+    white-space: nowrap;
+  }
 }
 
 .emptyState {
@@ -75,12 +337,108 @@
 
 @media (max-width: 768px) {
   .graphContainer {
-    height: 400px;
+    height: 600px;
     margin: 15px 0;
+  }
+
+  .customNode {
+    width: 150px;
+    padding: 10px;
+  }
+
+  .layoutControls {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .graphContainer {
+    height: 500px;
   }
 
   .customNode {
     width: 120px;
     padding: 8px;
+  }
+
+  .nodeLabel {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .nodeType {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+
+  .layoutButton {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .layoutInfo {
+    font-size: 10px;
+  }
+}
+
+// Node highlighting styles
+.hoveredNode {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+  z-index: 10;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+.incomingNode {
+  filter: drop-shadow(0 0 6px rgba(100, 200, 255, 0.7));
+  opacity: 0.9;
+  z-index: 5;
+  border: 2px solid #64c8ff;
+  transition: all 0.2s ease;
+}
+
+.outgoingNode {
+  filter: drop-shadow(0 0 6px rgba(255, 150, 100, 0.7));
+  opacity: 0.9;
+  z-index: 5;
+  border: 2px solid #ff9664;
+  transition: all 0.2s ease;
+}
+
+.dimmedNode {
+  opacity: 0.25;
+  transition: opacity 0.2s ease;
+}
+
+// Edge highlighting styles
+.incomingEdge {
+  stroke: #64c8ff !important;
+  stroke-width: 3px !important;
+  opacity: 1 !important;
+  z-index: 5;
+  animation: flowAnimation 2s infinite;
+}
+
+.outgoingEdge {
+  stroke: #ff9664 !important;
+  stroke-width: 3px !important;
+  opacity: 1 !important;
+  z-index: 5;
+  animation: flowAnimation 2s infinite;
+}
+
+.dimmedEdge {
+  opacity: 0.1 !important;
+  transition: opacity 0.2s ease;
+}
+
+@keyframes flowAnimation {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
   }
 }

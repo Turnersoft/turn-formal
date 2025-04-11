@@ -256,6 +256,22 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
                           key={`overview-${index}`}
                           className={styles.definitionItem}
                           onClick={() => scrollToDefinition(definition.name)}
+                          onMouseEnter={() => {
+                            // When hovering an item in the structure overview,
+                            // dispatch event to highlight it in the graph
+                            const event = new CustomEvent("overviewHover", {
+                              detail: { nodeId: definition.name },
+                            });
+                            document.dispatchEvent(event);
+                          }}
+                          onMouseLeave={() => {
+                            // Clear highlight when mouse leaves
+                            const event = new CustomEvent("overviewHover", {
+                              detail: { nodeId: null },
+                            });
+                            document.dispatchEvent(event);
+                          }}
+                          data-node-id={definition.name}
                         >
                           <span className={styles.definitionKind}>
                             {definition.kind}

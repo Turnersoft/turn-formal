@@ -100,14 +100,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
           </div>
         )}
-
-        {/* Mathematical content will be shown here in the future when API is ready */}
-        <div className={styles.rustDataSection}>
-          <h3>Mathematical Content</h3>
-          <p className={styles.emptyState}>
-            Select a theory file to view its content.
-          </p>
-        </div>
       </div>
     </div>
   );
