@@ -1,0 +1,461 @@
+[
+  {
+    "name": "SymplecticManifold",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "smooth_manifold",
+        "type": "SmoothManifold",
+        "docs": "The underlying smooth manifold"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<SymplecticManifoldProperty>",
+        "docs": "Properties specific to the symplectic structure"
+      }
+    ]
+  },
+  {
+    "name": "SymplecticManifoldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Exact",
+        "type": "ExactnessType",
+        "docs": "Exactness properties"
+      },
+      {
+        "name": "Monotone",
+        "type": "MonotonicityType",
+        "docs": "Monotonicity properties"
+      },
+      {
+        "name": "Kahler",
+        "type": "KahlerType",
+        "docs": "Kähler properties"
+      },
+      {
+        "name": "Quantizable",
+        "type": "QuantizationType",
+        "docs": "Quantization properties"
+      }
+    ]
+  },
+  {
+    "name": "ExactnessType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Exact",
+        "type": "Unit",
+        "docs": "ω = dλ globally"
+      },
+      {
+        "name": "LocallyExact",
+        "type": "Unit",
+        "docs": "ω = dλ locally"
+      },
+      {
+        "name": "NonExact",
+        "type": "Unit",
+        "docs": "Not exact"
+      }
+    ]
+  },
+  {
+    "name": "MonotonicityType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Monotone",
+        "type": "Unit",
+        "docs": "Area and index are proportional"
+      },
+      {
+        "name": "WeaklyMonotone",
+        "type": "Unit",
+        "docs": "Weakly monotone"
+      },
+      {
+        "name": "NonMonotone",
+        "type": "Unit",
+        "docs": "Not monotone"
+      }
+    ]
+  },
+  {
+    "name": "KahlerType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Kahler",
+        "type": "Unit",
+        "docs": "Compatible complex and metric structures"
+      },
+      {
+        "name": "AlmostKahler",
+        "type": "Unit",
+        "docs": "Compatible metric but not complex"
+      },
+      {
+        "name": "NonKahler",
+        "type": "Unit",
+        "docs": "No compatible Kähler structure"
+      }
+    ]
+  },
+  {
+    "name": "QuantizationType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Geometric",
+        "type": "Unit",
+        "docs": "Admits geometric quantization"
+      },
+      {
+        "name": "Deformation",
+        "type": "Unit",
+        "docs": "Admits deformation quantization"
+      },
+      {
+        "name": "NonQuantizable",
+        "type": "Unit",
+        "docs": "Not quantizable"
+      }
+    ]
+  },
+  {
+    "name": "LagrangianSubmanifold",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "ambient_manifold",
+        "type": "SymplecticManifold",
+        "docs": "The ambient symplectic manifold"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<LagrangianProperty>",
+        "docs": "Properties specific to the Lagrangian structure"
+      }
+    ]
+  },
+  {
+    "name": "LagrangianProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Exact",
+        "type": "LagrangianExactnessType",
+        "docs": "Exactness properties"
+      },
+      {
+        "name": "Monotone",
+        "type": "LagrangianMonotonicityType",
+        "docs": "Monotonicity properties"
+      },
+      {
+        "name": "MaslovClass",
+        "type": "MaslovClassType",
+        "docs": "Maslov class properties"
+      },
+      {
+        "name": "Displaceable",
+        "type": "DisplaceabilityType",
+        "docs": "Displaceability properties"
+      }
+    ]
+  },
+  {
+    "name": "LagrangianExactnessType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Exact",
+        "type": "Unit",
+        "docs": "Primitive extends to Lagrangian"
+      },
+      {
+        "name": "NonExact",
+        "type": "Unit",
+        "docs": "Not exact"
+      }
+    ]
+  },
+  {
+    "name": "LagrangianMonotonicityType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Monotone",
+        "type": "Unit",
+        "docs": "Area and Maslov index proportional"
+      },
+      {
+        "name": "NonMonotone",
+        "type": "Unit",
+        "docs": "Not monotone"
+      }
+    ]
+  },
+  {
+    "name": "MaslovClassType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Minimal",
+        "type": "u32",
+        "docs": "Minimal Maslov number"
+      },
+      {
+        "name": "Zero",
+        "type": "Unit",
+        "docs": "Zero Maslov class"
+      }
+    ]
+  },
+  {
+    "name": "DisplaceabilityType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Displaceable",
+        "type": "Unit",
+        "docs": "Can be displaced by Hamiltonian isotopy"
+      },
+      {
+        "name": "NonDisplaceable",
+        "type": "Unit",
+        "docs": "Cannot be displaced"
+      }
+    ]
+  },
+  {
+    "name": "HamiltonianSystem",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "manifold",
+        "type": "SymplecticManifold",
+        "docs": "The underlying symplectic manifold"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<HamiltonianSystemProperty>",
+        "docs": "Properties of the system"
+      }
+    ]
+  },
+  {
+    "name": "HamiltonianSystemProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "CompletelyIntegrable",
+        "type": "IntegrabilityPropertyVariant",
+        "docs": "Completely integrable: n commuting integrals"
+      },
+      {
+        "name": "Proper",
+        "type": "PropernessPropertyVariant",
+        "docs": "Proper: Preimages are compact"
+      },
+      {
+        "name": "Periodic",
+        "type": "PeriodicityPropertyVariant",
+        "docs": "Periodic: All orbits periodic"
+      }
+    ]
+  },
+  {
+    "name": "IntegrabilityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "CompletelyIntegrable",
+        "type": "Unit",
+        "docs": "Completely integrable"
+      },
+      {
+        "name": "PartiallyIntegrable",
+        "type": "Unit",
+        "docs": "Partially integrable"
+      },
+      {
+        "name": "NonIntegrable",
+        "type": "Unit",
+        "docs": "Non-integrable"
+      }
+    ]
+  },
+  {
+    "name": "PropernessPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Proper",
+        "type": "Unit",
+        "docs": "Proper"
+      },
+      {
+        "name": "LocallyProper",
+        "type": "Unit",
+        "docs": "Locally proper"
+      },
+      {
+        "name": "NonProper",
+        "type": "Unit",
+        "docs": "Non-proper"
+      }
+    ]
+  },
+  {
+    "name": "PeriodicityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "AllPeriodic",
+        "type": "Unit",
+        "docs": "All orbits periodic"
+      },
+      {
+        "name": "SomePeriodic",
+        "type": "Unit",
+        "docs": "Some orbits periodic"
+      },
+      {
+        "name": "NonPeriodic",
+        "type": "Unit",
+        "docs": "No periodic orbits"
+      }
+    ]
+  },
+  {
+    "name": "SymplecticVectorBundle",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_manifold",
+        "type": "SmoothManifold",
+        "docs": "The base manifold"
+      },
+      {
+        "name": "fiber_dimension",
+        "type": "u32",
+        "docs": "The fiber dimension (must be even)"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SymplecticVectorBundleProperty>",
+        "docs": "Properties of the bundle"
+      }
+    ]
+  },
+  {
+    "name": "SymplecticVectorBundleProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Trivial",
+        "type": "TrivialityPropertyVariant",
+        "docs": "Trivial: Isomorphic to product bundle"
+      },
+      {
+        "name": "Split",
+        "type": "SplittingPropertyVariant",
+        "docs": "Split: Direct sum decomposition"
+      },
+      {
+        "name": "MaslovClass",
+        "type": "MaslovClassPropertyVariant",
+        "docs": "Maslov class: Obstruction to Lagrangian subbundle"
+      }
+    ]
+  },
+  {
+    "name": "TrivialityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Trivial",
+        "type": "Unit",
+        "docs": "Globally trivial"
+      },
+      {
+        "name": "LocallyTrivial",
+        "type": "Unit",
+        "docs": "Locally trivial"
+      },
+      {
+        "name": "NonTrivial",
+        "type": "Unit",
+        "docs": "Non-trivial"
+      }
+    ]
+  },
+  {
+    "name": "SplittingPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Split",
+        "type": "Unit",
+        "docs": "Splits as direct sum"
+      },
+      {
+        "name": "LocallySplit",
+        "type": "Unit",
+        "docs": "Locally splits"
+      },
+      {
+        "name": "NonSplit",
+        "type": "Unit",
+        "docs": "Does not split"
+      }
+    ]
+  },
+  {
+    "name": "MaslovClassPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Zero",
+        "type": "Unit",
+        "docs": "Zero Maslov class"
+      },
+      {
+        "name": "NonZero",
+        "type": "i32",
+        "docs": "Non-zero Maslov class"
+      },
+      {
+        "name": "Undefined",
+        "type": "Unit",
+        "docs": "Undefined"
+      }
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+.debugContainer {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.debugButton {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  background-color: #f1f3f5;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+}
+
+.debugPre {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.8rem;
+  max-height: 300px;
+  overflow-y: auto;
+}

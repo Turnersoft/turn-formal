@@ -1,42 +1,22 @@
 import React, { useRef, useEffect } from "react";
 import styles from "./Sidebar.module.scss";
-import TreeView from "../Treeview/treeview";
-
-// Interfaces for our data structures
-interface FolderNode {
-  name: string;
-  path: string;
-  isDirectory: boolean;
-  children?: FolderNode[];
-}
-
-// Interface for parsed Rust data
-interface RustMathData {
-  theorems: {
-    id: string;
-    name: string;
-    description: string;
-    proofState?: any;
-  }[];
-  definitions: {
-    id: string;
-    name: string;
-    content: string;
-  }[];
-}
+import TreeView from "../treeview/treeview";
+import { TheoryFolder } from "../../models/math";
+import { FolderNode } from "../../../../services/mathService";
 
 interface SidebarProps {
+  theories: TheoryFolder[];
   folderTree: FolderNode[];
-  selectedFolder: string;
-  onFolderSelect: (folderPath: string) => void;
-  rustData: RustMathData | null;
+  selectedTheory: string | null;
+  onTheorySelect: (theoryPath: string) => void;
+  loading: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   folderTree,
-  selectedFolder,
-  onFolderSelect,
-  rustData,
+  selectedTheory,
+  onTheorySelect,
+  loading,
 }) => {
   const sidebarContentRef = useRef<HTMLDivElement>(null);
 
@@ -62,14 +42,42 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, []);
 
+  // For debugging
+  useEffect(() => {
+    if (selectedTheory) {
+      console.log("Sidebar received selectedTheory update:", selectedTheory);
+      console.log("Sidebar has folderTree with nodes:", folderTree.length);
+    }
+  }, [selectedTheory, folderTree]);
+
+  // Format theory name for display
+  const formatTheoryName = (name: string): string => {
+    return name
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  // Handle selection from the tree view
+  const handleTreeSelection = (path: string, isFile: boolean) => {
+    console.log("Tree selection made:", path, "isFile:", isFile);
+    // Update the URL by notifying parent component
+    onTheorySelect(path);
+  };
+
+  // Display the current folder name
+  const displayFolderName = () => {
+    return selectedTheory ? formatTheoryName(selectedTheory) : "None selected";
+  };
+
   return (
     <div className={styles.sidebar}>
       {/* Fixed header */}
       <div className={styles.sidebarHeader}>
         <h2>Mathematics Explorer</h2>
         <div className={styles.sidebarPath}>
-          <span>Current path:</span>
-          <code>{selectedFolder}</code>
+          <span>Current folder:</span>
+          <code>{displayFolderName()}</code>
         </div>
       </div>
 
@@ -79,58 +87,27 @@ const Sidebar: React.FC<SidebarProps> = ({
         ref={sidebarContentRef}
         onTouchStart={() => {}} // Empty handler to ensure iOS registers touch scrolling
       >
-        <div className={styles.folderTree}>
-          <TreeView
-            nodes={folderTree}
-            selectedPath={selectedFolder}
-            onSelect={onFolderSelect}
-          />
-        </div>
-
-        {rustData && (
-          <div className={styles.rustDataSection}>
-            <h3>Generated Data</h3>
-
-            {rustData.theorems.length > 0 && (
-              <div className={styles.dataSection}>
-                <h4>Theorems</h4>
-                <ul className={styles.dataList}>
-                  {rustData.theorems.map((theorem) => (
-                    <li key={theorem.id} className={styles.dataItem}>
-                      <div className={styles.dataTitle}>{theorem.name}</div>
-                      <div className={styles.dataStatus}>
-                        {theorem.proofState?.status && (
-                          <span
-                            className={`${styles.statusTag} ${
-                              theorem.proofState.status === "Complete"
-                                ? styles.complete
-                                : styles.inProgress
-                            }`}
-                          >
-                            {theorem.proofState.status}
-                          </span>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {rustData.definitions.length > 0 && (
-              <div className={styles.dataSection}>
-                <h4>Definitions</h4>
-                <ul className={styles.dataList}>
-                  {rustData.definitions.map((def) => (
-                    <li key={def.id} className={styles.dataItem}>
-                      <div className={styles.dataTitle}>{def.name}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        {loading ? (
+          <div className={styles.loading}>Loading theories...</div>
+        ) : (
+          <div className={styles.folderTree}>
+            {folderTree.length > 0 && (
+              <TreeView
+                nodes={folderTree}
+                selectedPath={selectedTheory || ""}
+                onSelect={handleTreeSelection}
+              />
             )}
           </div>
         )}
+
+        {/* Mathematical content will be shown here in the future when API is ready */}
+        <div className={styles.rustDataSection}>
+          <h3>Mathematical Content</h3>
+          <p className={styles.emptyState}>
+            Select a theory file to view its content.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,511 @@
+[
+  {
+    "name": "Scheme",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_space",
+        "type": "Set",
+        "docs": "The underlying topological space"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<SchemeProperty>",
+        "docs": "Properties of the scheme"
+      }
+    ]
+  },
+  {
+    "name": "SchemeProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Separated",
+        "type": "SeparatedPropertyVariant",
+        "docs": "Separated: Diagonal morphism is closed"
+      },
+      {
+        "name": "Proper",
+        "type": "ProperPropertyVariant",
+        "docs": "Proper: Separated + universally closed"
+      },
+      {
+        "name": "Smooth",
+        "type": "SmoothnessPropertyVariant",
+        "docs": "Smooth: Regular in characteristic 0"
+      },
+      {
+        "name": "Projective",
+        "type": "ProjectivityPropertyVariant",
+        "docs": "Projective: Admits closed embedding into P^n"
+      },
+      {
+        "name": "Noetherian",
+        "type": "NoetherianPropertyVariant",
+        "docs": "Noetherian: Ascending chain condition"
+      },
+      {
+        "name": "Regular",
+        "type": "RegularityPropertyVariant",
+        "docs": "Regular: Local rings are regular"
+      },
+      {
+        "name": "Normal",
+        "type": "NormalityPropertyVariant",
+        "docs": "Normal: Local rings are integrally closed"
+      }
+    ]
+  },
+  {
+    "name": "SeparatedPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Separated",
+        "type": "Unit",
+        "docs": "Separated scheme"
+      },
+      {
+        "name": "LocallySeparated",
+        "type": "Unit",
+        "docs": "Locally separated"
+      },
+      {
+        "name": "NonSeparated",
+        "type": "Unit",
+        "docs": "Non-separated"
+      }
+    ]
+  },
+  {
+    "name": "ProperPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Proper",
+        "type": "Unit",
+        "docs": "Proper scheme"
+      },
+      {
+        "name": "LocallyProper",
+        "type": "Unit",
+        "docs": "Locally proper"
+      },
+      {
+        "name": "NonProper",
+        "type": "Unit",
+        "docs": "Non-proper"
+      }
+    ]
+  },
+  {
+    "name": "ProjectivityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Projective",
+        "type": "Unit",
+        "docs": "Projective scheme"
+      },
+      {
+        "name": "QuasiProjective",
+        "type": "Unit",
+        "docs": "Quasi-projective"
+      },
+      {
+        "name": "NonProjective",
+        "type": "Unit",
+        "docs": "Non-projective"
+      }
+    ]
+  },
+  {
+    "name": "NoetherianPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Noetherian",
+        "type": "Unit",
+        "docs": "Noetherian scheme"
+      },
+      {
+        "name": "LocallyNoetherian",
+        "type": "Unit",
+        "docs": "Locally Noetherian"
+      },
+      {
+        "name": "NonNoetherian",
+        "type": "Unit",
+        "docs": "Non-Noetherian"
+      }
+    ]
+  },
+  {
+    "name": "RegularityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Regular",
+        "type": "Unit",
+        "docs": "Regular scheme"
+      },
+      {
+        "name": "LocallyRegular",
+        "type": "Unit",
+        "docs": "Locally regular"
+      },
+      {
+        "name": "Singular",
+        "type": "Unit",
+        "docs": "Singular"
+      }
+    ]
+  },
+  {
+    "name": "NormalityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Normal",
+        "type": "Unit",
+        "docs": "Normal scheme"
+      },
+      {
+        "name": "LocallyNormal",
+        "type": "Unit",
+        "docs": "Locally normal"
+      },
+      {
+        "name": "NonNormal",
+        "type": "Unit",
+        "docs": "Non-normal"
+      }
+    ]
+  },
+  {
+    "name": "Variety",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "scheme",
+        "type": "Scheme",
+        "docs": "The underlying scheme"
+      },
+      {
+        "name": "base_field",
+        "type": "BaseField",
+        "docs": "The base field"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<VarietyProperty>",
+        "docs": "Properties of the variety"
+      }
+    ]
+  },
+  {
+    "name": "VarietyProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Affine",
+        "type": "AffinePropertyVariant",
+        "docs": "Affine: Spec of finitely generated k-algebra"
+      },
+      {
+        "name": "Projective",
+        "type": "ProjectivePropertyVariant",
+        "docs": "Projective: Closed subscheme of P^n"
+      },
+      {
+        "name": "QuasiProjective",
+        "type": "QuasiProjectivePropertyVariant",
+        "docs": "Quasi-projective: Open in projective variety"
+      },
+      {
+        "name": "Complete",
+        "type": "CompletenessPropertyVariant",
+        "docs": "Complete: Proper over base field"
+      },
+      {
+        "name": "Rational",
+        "type": "RationalityPropertyVariant",
+        "docs": "Rational: Birational to projective space"
+      },
+      {
+        "name": "Unirational",
+        "type": "UnirationialityPropertyVariant",
+        "docs": "Unirational: Dominated by projective space"
+      }
+    ]
+  },
+  {
+    "name": "AffinePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Affine",
+        "type": "Unit",
+        "docs": "Affine variety"
+      },
+      {
+        "name": "LocallyAffine",
+        "type": "Unit",
+        "docs": "Locally affine"
+      },
+      {
+        "name": "NonAffine",
+        "type": "Unit",
+        "docs": "Non-affine"
+      }
+    ]
+  },
+  {
+    "name": "ProjectivePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Projective",
+        "type": "Unit",
+        "docs": "Projective variety"
+      },
+      {
+        "name": "LocallyProjective",
+        "type": "Unit",
+        "docs": "Locally projective"
+      },
+      {
+        "name": "NonProjective",
+        "type": "Unit",
+        "docs": "Non-projective"
+      }
+    ]
+  },
+  {
+    "name": "QuasiProjectivePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "QuasiProjective",
+        "type": "Unit",
+        "docs": "Quasi-projective variety"
+      },
+      {
+        "name": "LocallyQuasiProjective",
+        "type": "Unit",
+        "docs": "Locally quasi-projective"
+      },
+      {
+        "name": "NonQuasiProjective",
+        "type": "Unit",
+        "docs": "Not quasi-projective"
+      }
+    ]
+  },
+  {
+    "name": "CompletenessPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "type": "Unit",
+        "docs": "Complete variety"
+      },
+      {
+        "name": "LocallyComplete",
+        "type": "Unit",
+        "docs": "Locally complete"
+      },
+      {
+        "name": "NonComplete",
+        "type": "Unit",
+        "docs": "Non-complete"
+      }
+    ]
+  },
+  {
+    "name": "RationalityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Rational",
+        "type": "Unit",
+        "docs": "Rational variety"
+      },
+      {
+        "name": "Unirational",
+        "type": "Unit",
+        "docs": "Unirational"
+      },
+      {
+        "name": "NonRational",
+        "type": "Unit",
+        "docs": "Non-rational"
+      }
+    ]
+  },
+  {
+    "name": "UnirationialityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Unirational",
+        "type": "Unit",
+        "docs": "Unirational variety"
+      },
+      {
+        "name": "LocallyUnirational",
+        "type": "Unit",
+        "docs": "Locally unirational"
+      },
+      {
+        "name": "NonUnirational",
+        "type": "Unit",
+        "docs": "Non-unirational"
+      }
+    ]
+  },
+  {
+    "name": "CoherentSheaf",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_scheme",
+        "type": "Scheme",
+        "docs": "The underlying scheme"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<CoherentSheafProperty>",
+        "docs": "Properties of the sheaf"
+      }
+    ]
+  },
+  {
+    "name": "CoherentSheafProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "LocallyFree",
+        "type": "LocallyFreePropertyVariant",
+        "docs": "Locally free: Locally isomorphic to O_X^n"
+      },
+      {
+        "name": "TorsionFree",
+        "type": "TorsionFreePropertyVariant",
+        "docs": "Torsion free: No local torsion elements"
+      },
+      {
+        "name": "Reflexive",
+        "type": "ReflexivityPropertyVariant",
+        "docs": "Reflexive: Double dual isomorphism"
+      },
+      {
+        "name": "Normal",
+        "type": "NormalityPropertyVariant",
+        "docs": "Normal: Pushforward under normal maps"
+      }
+    ]
+  },
+  {
+    "name": "LocallyFreePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "LocallyFree",
+        "type": "u32",
+        "docs": "Locally free sheaf"
+      },
+      {
+        "name": "NonLocallyFree",
+        "type": "Unit",
+        "docs": "Not locally free"
+      }
+    ]
+  },
+  {
+    "name": "TorsionFreePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "TorsionFree",
+        "type": "Unit",
+        "docs": "Torsion free sheaf"
+      },
+      {
+        "name": "HasTorsion",
+        "type": "Unit",
+        "docs": "Has torsion"
+      }
+    ]
+  },
+  {
+    "name": "ReflexivityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Reflexive",
+        "type": "Unit",
+        "docs": "Reflexive sheaf"
+      },
+      {
+        "name": "NonReflexive",
+        "type": "Unit",
+        "docs": "Not reflexive"
+      }
+    ]
+  },
+  {
+    "name": "BaseField",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complex",
+        "type": "Unit",
+        "docs": "Complex numbers ℂ"
+      },
+      {
+        "name": "Real",
+        "type": "Unit",
+        "docs": "Real numbers ℝ"
+      },
+      {
+        "name": "Finite",
+        "type": "u32",
+        "docs": "Finite field F_q"
+      },
+      {
+        "name": "AlgebraicallyClosed",
+        "type": "Unit",
+        "docs": "Algebraically closed field"
+      },
+      {
+        "name": "Perfect",
+        "type": "Unit",
+        "docs": "Perfect field"
+      }
+    ]
+  }
+]

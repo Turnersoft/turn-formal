@@ -1,0 +1,215 @@
+[
+  {
+    "name": "Term",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Variable",
+        "type": "String",
+        "docs": "A variable like x, y, z"
+      },
+      {
+        "name": "Constant",
+        "type": "f64",
+        "docs": "A constant value"
+      },
+      {
+        "name": "SequenceElement",
+        "type": "String",
+        "docs": "A sequence element like xₙ"
+      }
+    ]
+  },
+  {
+    "name": "OrderComparison",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "GreaterThan",
+        "type": "Box<Term>",
+        "docs": "Greater than: x > y"
+      },
+      {
+        "name": "GreaterOrEqual",
+        "type": "Box<Term>",
+        "docs": "Greater than or equal: x ≥ y"
+      },
+      {
+        "name": "LessThan",
+        "type": "Box<Term>",
+        "docs": "Less than: x < y"
+      },
+      {
+        "name": "LessOrEqual",
+        "type": "Box<Term>",
+        "docs": "Less than or equal: x ≤ y"
+      },
+      {
+        "name": "Equal",
+        "type": "Box<Term>",
+        "docs": "Equal: x = y"
+      }
+    ]
+  },
+  {
+    "name": "PartiallyOrderedSet",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_set",
+        "type": "Set",
+        "docs": "The underlying set"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<OrderProperty>",
+        "docs": "Properties of the partial order"
+      }
+    ]
+  },
+  {
+    "name": "TotallyOrderedSet",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_set",
+        "type": "Set",
+        "docs": "The underlying set"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<OrderProperty>",
+        "docs": "Properties of the total order"
+      }
+    ]
+  },
+  {
+    "name": "OrderProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "type": "bool",
+        "docs": "Whether the order is complete (every bounded subset has a supremum)"
+      },
+      {
+        "name": "HasMinimum",
+        "type": "bool",
+        "docs": "Whether the order has a minimum element"
+      },
+      {
+        "name": "HasMaximum",
+        "type": "bool",
+        "docs": "Whether the order has a maximum element"
+      },
+      {
+        "name": "Dense",
+        "type": "bool",
+        "docs": "Whether the order is dense (between any two elements there is another)"
+      },
+      {
+        "name": "Discrete",
+        "type": "bool",
+        "docs": "Whether the order is discrete (every element has immediate neighbors)"
+      },
+      {
+        "name": "WellFounded",
+        "type": "bool",
+        "docs": "Whether the order is well-founded (no infinite descending chains)"
+      }
+    ]
+  },
+  {
+    "name": "Lattice",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "poset",
+        "type": "PartiallyOrderedSet",
+        "docs": "The underlying partially ordered set"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<LatticeProperty>",
+        "docs": "Properties of the lattice"
+      }
+    ]
+  },
+  {
+    "name": "LatticeProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Distributive",
+        "type": "bool",
+        "docs": "Whether the lattice is distributive: x∧(y∨z) = (x∧y)∨(x∧z)"
+      },
+      {
+        "name": "Modular",
+        "type": "bool",
+        "docs": "Whether the lattice is modular: x≤z implies x∨(y∧z) = (x∨y)∧z"
+      },
+      {
+        "name": "Complemented",
+        "type": "bool",
+        "docs": "Whether the lattice is complemented: every element has a complement"
+      },
+      {
+        "name": "Bounded",
+        "type": "bool",
+        "docs": "Whether the lattice is bounded: has top and bottom elements"
+      },
+      {
+        "name": "Complete",
+        "type": "bool",
+        "docs": "Whether the lattice is complete: every subset has sup and inf"
+      }
+    ]
+  },
+  {
+    "name": "BooleanAlgebra",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "lattice",
+        "type": "Lattice",
+        "docs": "The underlying lattice"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<BooleanAlgebraProperty>",
+        "docs": "Properties of the Boolean algebra"
+      }
+    ]
+  },
+  {
+    "name": "BooleanAlgebraProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "type": "bool",
+        "docs": "Whether the algebra is complete (every subset has sup and inf)"
+      },
+      {
+        "name": "Atomic",
+        "type": "bool",
+        "docs": "Whether the algebra is atomic (every element is sup of atoms below it)"
+      },
+      {
+        "name": "Finite",
+        "type": "bool",
+        "docs": "Whether the algebra is finite"
+      }
+    ]
+  }
+]

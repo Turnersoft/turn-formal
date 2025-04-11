@@ -92,3 +92,6 @@ pub trait HasProperties<T> {
     fn get_properties(&self) -> &VariantSet<T>;
     fn get_properties_mut(&mut self) -> &mut VariantSet<T>;
 }
+
+pub use groups::*;
+pub use zfc::*;

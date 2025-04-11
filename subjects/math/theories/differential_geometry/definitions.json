@@ -1,0 +1,569 @@
+[
+  {
+    "name": "SmoothManifold",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_set",
+        "type": "Set",
+        "docs": "The underlying set of points"
+      },
+      {
+        "name": "dimension",
+        "type": "u32",
+        "docs": "Dimension of the manifold"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<SmoothManifoldProperty>",
+        "docs": "Properties specific to the smooth structure"
+      }
+    ]
+  },
+  {
+    "name": "RiemannianManifold",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "smooth_manifold",
+        "type": "SmoothManifold",
+        "docs": "The underlying smooth manifold"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<RiemannianManifoldProperty>",
+        "docs": "Properties specific to the Riemannian structure"
+      }
+    ]
+  },
+  {
+    "name": "SmoothManifoldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Orientable",
+        "type": "OrientabilityType",
+        "docs": "Orientability properties"
+      },
+      {
+        "name": "Boundary",
+        "type": "BoundaryType",
+        "docs": "Boundary properties"
+      },
+      {
+        "name": "Parallelizable",
+        "type": "ParallelizabilityType",
+        "docs": "Parallelizability properties"
+      },
+      {
+        "name": "ComplexStructure",
+        "type": "ComplexStructureType",
+        "docs": "Complex structure properties"
+      }
+    ]
+  },
+  {
+    "name": "RiemannianManifoldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Curvature",
+        "type": "CurvatureType",
+        "docs": "Curvature properties"
+      },
+      {
+        "name": "Complete",
+        "type": "CompletenessType",
+        "docs": "Completeness properties"
+      },
+      {
+        "name": "Einstein",
+        "type": "EinsteinType",
+        "docs": "Einstein properties"
+      },
+      {
+        "name": "Kahler",
+        "type": "KahlerType",
+        "docs": "Kähler properties"
+      }
+    ]
+  },
+  {
+    "name": "OrientabilityType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Orientable",
+        "type": "Unit",
+        "docs": "Admits consistent orientation"
+      },
+      {
+        "name": "NonOrientable",
+        "type": "Unit",
+        "docs": "Does not admit consistent orientation"
+      },
+      {
+        "name": "PinStructure",
+        "type": "Unit",
+        "docs": "Orientation reverses along some paths"
+      }
+    ]
+  },
+  {
+    "name": "BoundaryType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Closed",
+        "type": "Unit",
+        "docs": "No boundary"
+      },
+      {
+        "name": "WithBoundary",
+        "type": "Unit",
+        "docs": "Has boundary components"
+      },
+      {
+        "name": "WithCorners",
+        "type": "Unit",
+        "docs": "Boundary is a corner"
+      }
+    ]
+  },
+  {
+    "name": "ParallelizabilityType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Parallelizable",
+        "type": "Unit",
+        "docs": "Admits global frame field"
+      },
+      {
+        "name": "NonParallelizable",
+        "type": "Unit",
+        "docs": "Does not admit global frame field"
+      },
+      {
+        "name": "Spin",
+        "type": "Unit",
+        "docs": "Admits spin structure"
+      }
+    ]
+  },
+  {
+    "name": "ComplexStructureType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complex",
+        "type": "Unit",
+        "docs": "Admits integrable complex structure"
+      },
+      {
+        "name": "AlmostComplex",
+        "type": "Unit",
+        "docs": "Admits almost complex structure"
+      },
+      {
+        "name": "NonComplex",
+        "type": "Unit",
+        "docs": "Does not admit complex structure"
+      }
+    ]
+  },
+  {
+    "name": "CurvatureType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ConstantSectional",
+        "type": "f64",
+        "docs": "Constant sectional curvature"
+      },
+      {
+        "name": "PositiveRicci",
+        "type": "Unit",
+        "docs": "Positive Ricci curvature"
+      },
+      {
+        "name": "NegativeRicci",
+        "type": "Unit",
+        "docs": "Negative Ricci curvature"
+      },
+      {
+        "name": "RicciFlat",
+        "type": "Unit",
+        "docs": "Zero Ricci curvature"
+      }
+    ]
+  },
+  {
+    "name": "CompletenessType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "type": "Unit",
+        "docs": "Geodesically complete"
+      },
+      {
+        "name": "Incomplete",
+        "type": "Unit",
+        "docs": "Not geodesically complete"
+      },
+      {
+        "name": "CompleteWithBoundary",
+        "type": "Unit",
+        "docs": "Complete with boundary"
+      }
+    ]
+  },
+  {
+    "name": "EinsteinType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Einstein",
+        "type": "Unit",
+        "docs": "Ricci tensor proportional to metric"
+      },
+      {
+        "name": "NonEinstein",
+        "type": "Unit",
+        "docs": "Not Einstein"
+      },
+      {
+        "name": "EinsteinLambda",
+        "type": "f64",
+        "docs": "Einstein with cosmological constant"
+      }
+    ]
+  },
+  {
+    "name": "KahlerType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Kahler",
+        "type": "Unit",
+        "docs": "Kähler metric"
+      },
+      {
+        "name": "AlmostKahler",
+        "type": "Unit",
+        "docs": "Almost Kähler metric"
+      },
+      {
+        "name": "NonKahler",
+        "type": "Unit",
+        "docs": "Not Kähler"
+      }
+    ]
+  },
+  {
+    "name": "VectorBundle",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_manifold",
+        "type": "SmoothManifold",
+        "docs": "The base manifold"
+      },
+      {
+        "name": "fiber_dimension",
+        "type": "u32",
+        "docs": "The fiber dimension"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<VectorBundleProperty>",
+        "docs": "Properties of the bundle"
+      }
+    ]
+  },
+  {
+    "name": "VectorBundleProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Trivial",
+        "type": "TrivialityPropertyVariant",
+        "docs": "Trivial: Isomorphic to product bundle"
+      },
+      {
+        "name": "Orientable",
+        "type": "OrientabilityPropertyVariant",
+        "docs": "Orientable: Admits consistent orientation"
+      },
+      {
+        "name": "Stable",
+        "type": "StabilityPropertyVariant",
+        "docs": "Stable: Stable under direct sum"
+      }
+    ]
+  },
+  {
+    "name": "TrivialityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Trivial",
+        "type": "Unit",
+        "docs": "Globally trivial"
+      },
+      {
+        "name": "LocallyTrivial",
+        "type": "Unit",
+        "docs": "Locally trivial"
+      },
+      {
+        "name": "NonTrivial",
+        "type": "Unit",
+        "docs": "Non-trivial"
+      }
+    ]
+  },
+  {
+    "name": "OrientabilityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Orientable",
+        "type": "Unit",
+        "docs": "Orientable bundle"
+      },
+      {
+        "name": "NonOrientable",
+        "type": "Unit",
+        "docs": "Non-orientable bundle"
+      }
+    ]
+  },
+  {
+    "name": "StabilityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Stable",
+        "type": "Unit",
+        "docs": "Stable under direct sum"
+      },
+      {
+        "name": "NonStable",
+        "type": "Unit",
+        "docs": "Not stable"
+      }
+    ]
+  },
+  {
+    "name": "Connection",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "bundle",
+        "type": "VectorBundle",
+        "docs": "The underlying vector bundle"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<ConnectionProperty>",
+        "docs": "Properties of the connection"
+      }
+    ]
+  },
+  {
+    "name": "ConnectionProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Flat",
+        "type": "FlatnessPropertyVariant",
+        "docs": "Flat: Zero curvature"
+      },
+      {
+        "name": "MetricCompatible",
+        "type": "MetricCompatibilityPropertyVariant",
+        "docs": "Compatible with metric"
+      },
+      {
+        "name": "TorsionFree",
+        "type": "TorsionFreePropertyVariant",
+        "docs": "Torsion free: T(X,Y) = 0"
+      }
+    ]
+  },
+  {
+    "name": "FlatnessPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Flat",
+        "type": "Unit",
+        "docs": "Zero curvature"
+      },
+      {
+        "name": "NonFlat",
+        "type": "Unit",
+        "docs": "Non-zero curvature"
+      }
+    ]
+  },
+  {
+    "name": "MetricCompatibilityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Compatible",
+        "type": "Unit",
+        "docs": "Compatible with metric"
+      },
+      {
+        "name": "NonCompatible",
+        "type": "Unit",
+        "docs": "Not compatible"
+      }
+    ]
+  },
+  {
+    "name": "TorsionFreePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "TorsionFree",
+        "type": "Unit",
+        "docs": "Zero torsion"
+      },
+      {
+        "name": "HasTorsion",
+        "type": "Unit",
+        "docs": "Non-zero torsion"
+      }
+    ]
+  },
+  {
+    "name": "FiberBundle",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "total_space",
+        "type": "Set",
+        "docs": "The total space E"
+      },
+      {
+        "name": "base_space",
+        "type": "Set",
+        "docs": "The base space B"
+      },
+      {
+        "name": "fiber",
+        "type": "Set",
+        "docs": "The fiber F"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<FiberBundleProperty>",
+        "docs": "Properties of the fiber bundle"
+      }
+    ]
+  },
+  {
+    "name": "FiberBundleProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Trivial",
+        "type": "bool",
+        "docs": "Whether the bundle is trivial (globally homeomorphic to B × F)"
+      },
+      {
+        "name": "LocallyTrivial",
+        "type": "bool",
+        "docs": "Whether the bundle is locally trivial"
+      },
+      {
+        "name": "Principal",
+        "type": "bool",
+        "docs": "Whether the bundle is a principal bundle (fiber is a Lie group acting freely)"
+      },
+      {
+        "name": "VectorBundle",
+        "type": "bool",
+        "docs": "Whether the bundle is a vector bundle (fiber is a vector space)"
+      },
+      {
+        "name": "AdmitsGlobalSection",
+        "type": "bool",
+        "docs": "Whether the bundle admits a global section"
+      },
+      {
+        "name": "Orientable",
+        "type": "bool",
+        "docs": "Whether the bundle is orientable"
+      }
+    ]
+  },
+  {
+    "name": "BundleSection",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "name",
+        "type": "String",
+        "docs": "Name or description of the section"
+      },
+      {
+        "name": "section_type",
+        "type": "SectionType",
+        "docs": "Whether the section is global or local"
+      }
+    ]
+  },
+  {
+    "name": "SectionType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Global",
+        "type": "Unit",
+        "docs": "Global section (defined on all of B)"
+      },
+      {
+        "name": "Local",
+        "type": "Unit",
+        "docs": "Local section (defined on an open subset of B)"
+      },
+      {
+        "name": "Meromorphic",
+        "type": "Unit",
+        "docs": "Meromorphic section (defined except at poles)"
+      }
+    ]
+  }
+]

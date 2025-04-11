@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Number",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "id",
+        "type": "Option<String>",
+        "docs": "Optional ID for referencing this relation"
+      },
+      {
+        "name": "description",
+        "type": "Option<String>",
+        "docs": "Optional description explaining this relation instance"
+      },
+      {
+        "name": "tags",
+        "type": "Vec<(String, String)>",
+        "docs": "Optional key-value pairs for additional context"
+      },
+      {
+        "name": "fn less_than(left",
+        "type": "&MathExpression, right: &MathExpression) -> Self {",
+        "docs": "Create a new LessThan relation"
+      },
+      {
+        "name": "fn less_than_or_equal(left",
+        "type": "&MathExpression, right: &MathExpression) -> Self {",
+        "docs": "Create a new LessThanOrEqual relation"
+      },
+      {
+        "name": "fn greater_than(left",
+        "type": "&MathExpression, right: &MathExpression) -> Self {",
+        "docs": "Create a new GreaterThan relation"
+      },
+      {
+        "name": "fn greater_than_or_equal(left",
+        "type": "&MathExpression, right: &MathExpression) -> Self {",
+        "docs": "Create a new GreaterThanOrEqual relation"
+      },
+      {
+        "name": "fn divides(divisor",
+        "type": "&MathExpression, dividend: &MathExpression) -> Self {",
+        "docs": "Create a new Divides relation"
+      },
+      {
+        "name": "fn custom(name",
+        "type": "&str, parameters: Vec<MathExpression>) -> Self {",
+        "docs": "Create a custom relation"
+      }
+    ]
+  }
+]

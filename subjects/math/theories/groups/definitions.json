@@ -1,0 +1,1693 @@
+[
+  {
+    "name": "GroupOperationVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Multiplication",
+        "type": "Unit",
+        "docs": "Standard multiplication (used in most abstract groups)"
+      },
+      {
+        "name": "Addition",
+        "type": "Unit",
+        "docs": "Addition (used in additive groups)"
+      },
+      {
+        "name": "Composition",
+        "type": "Unit",
+        "docs": "Composition (used in transformation groups)"
+      },
+      {
+        "name": "MatrixMultiplication",
+        "type": "Unit",
+        "docs": "Matrix multiplication (for matrix groups)"
+      },
+      {
+        "name": "DirectProduct",
+        "type": "Unit",
+        "docs": "Direct product of groups"
+      },
+      {
+        "name": "SemidirectProduct",
+        "type": "Unit",
+        "docs": "Semidirect product of groups"
+      },
+      {
+        "name": "FreeProduct",
+        "type": "Unit",
+        "docs": "Free product (used in combinatorial group theory)"
+      }
+    ]
+  },
+  {
+    "name": "GroupNotation",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Infix",
+        "type": "GroupSymbol",
+        "docs": "Infix notation: a * b"
+      },
+      {
+        "name": "Function",
+        "type": "String",
+        "docs": "Function notation: f(a, b)"
+      },
+      {
+        "name": "Juxtaposition",
+        "type": "Unit",
+        "docs": "Juxtaposition: ab (for multiplication)"
+      }
+    ]
+  },
+  {
+    "name": "GroupSymbol",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Times",
+        "type": "Unit",
+        "docs": "Multiplication: ×"
+      },
+      {
+        "name": "Dot",
+        "type": "Unit",
+        "docs": "Multiplication: ·"
+      },
+      {
+        "name": "Asterisk",
+        "type": "Unit",
+        "docs": "Multiplication: *"
+      },
+      {
+        "name": "Plus",
+        "type": "Unit",
+        "docs": "Addition: +"
+      },
+      {
+        "name": "Circle",
+        "type": "Unit",
+        "docs": "Circle: ∘"
+      },
+      {
+        "name": "SemiDirectLeft",
+        "type": "Unit",
+        "docs": "Semidirect product: ⋊"
+      },
+      {
+        "name": "SemiDirectRight",
+        "type": "Unit",
+        "docs": "Semidirect product: ⋉"
+      },
+      {
+        "name": "DirectProduct",
+        "type": "Unit",
+        "docs": "Direct product: ×"
+      }
+    ]
+  },
+  {
+    "name": "GroupIdentity",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "One",
+        "type": "Unit",
+        "docs": "Multiplicative identity: 1"
+      },
+      {
+        "name": "Zero",
+        "type": "Unit",
+        "docs": "Additive identity: 0"
+      },
+      {
+        "name": "IdentityMatrix",
+        "type": "Unit",
+        "docs": "Identity matrix"
+      },
+      {
+        "name": "IdentityPermutation",
+        "type": "Unit",
+        "docs": "Identity permutation"
+      },
+      {
+        "name": "IdentityFunction",
+        "type": "Unit",
+        "docs": "Identity function"
+      }
+    ]
+  },
+  {
+    "name": "GroupInverse",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "MultiplicativeInverse",
+        "type": "Unit",
+        "docs": "Multiplicative inverse: x⁻¹"
+      },
+      {
+        "name": "AdditiveInverse",
+        "type": "Unit",
+        "docs": "Additive inverse: -x"
+      },
+      {
+        "name": "MatrixInverse",
+        "type": "Unit",
+        "docs": "Matrix inverse"
+      },
+      {
+        "name": "PermutationInverse",
+        "type": "Unit",
+        "docs": "Permutation inverse"
+      },
+      {
+        "name": "FunctionInverse",
+        "type": "Unit",
+        "docs": "Function inverse (for function composition groups)"
+      }
+    ]
+  },
+  {
+    "name": "GroupInverseApplication",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Left",
+        "type": "Unit",
+        "docs": "Left inverse: b*a = e"
+      },
+      {
+        "name": "Right",
+        "type": "Unit",
+        "docs": "Right inverse: a*b = e"
+      },
+      {
+        "name": "TwoSided",
+        "type": "Unit",
+        "docs": "Two-sided inverse: a*b = b*a = e (standard for groups)"
+      }
+    ]
+  },
+  {
+    "name": "GroupOperationProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Associative",
+        "type": "Unit",
+        "docs": "Whether the operation is associative (required for groups)"
+      },
+      {
+        "name": "Commutative",
+        "type": "bool",
+        "docs": "Whether the operation is commutative"
+      },
+      {
+        "name": "Closed",
+        "type": "Unit",
+        "docs": "Whether the operation is closed (required for groups)"
+      }
+    ]
+  },
+  {
+    "name": "GroupOperation",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "operation_type",
+        "type": "GroupOperationVariant",
+        "docs": "Type of operation"
+      },
+      {
+        "name": "notation",
+        "type": "GroupNotation",
+        "docs": "Notation/symbol used for this operation"
+      },
+      {
+        "name": "identity",
+        "type": "GroupIdentity",
+        "docs": "Identity element (required for groups)"
+      },
+      {
+        "name": "inverse",
+        "type": "GroupInverse",
+        "docs": "Inverse operation (required for groups)"
+      },
+      {
+        "name": "inverse_application",
+        "type": "GroupInverseApplication",
+        "docs": "How inverses are applied (usually two-sided in groups)"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<GroupOperationProperty>",
+        "docs": "Properties of this operation"
+      }
+    ]
+  },
+  {
+    "name": "Group",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_set",
+        "type": "Set",
+        "docs": "The underlying set"
+      },
+      {
+        "name": "operation",
+        "type": "GroupOperation",
+        "docs": "The binary operation with its properties"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<GroupProperty>",
+        "docs": "Properties specific to the group structure"
+      }
+    ]
+  },
+  {
+    "name": "TopologicalGroup",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "group",
+        "type": "Group",
+        "docs": "The underlying group"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<TopologicalGroupProperty>",
+        "docs": "Properties specific to the topological structure"
+      }
+    ]
+  },
+  {
+    "name": "LieGroup",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "topological_group",
+        "type": "TopologicalGroup",
+        "docs": "The underlying topological group"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<LieGroupProperty>",
+        "docs": "Properties specific to the Lie structure"
+      }
+    ]
+  },
+  {
+    "name": "GroupProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Abelian",
+        "type": "AbelianPropertyVariant",
+        "docs": "Commutativity properties"
+      },
+      {
+        "name": "Finite",
+        "type": "FinitePropertyVariant",
+        "docs": "Finiteness properties"
+      },
+      {
+        "name": "FiniteGroup",
+        "type": "bool",
+        "docs": "Simple finite group"
+      },
+      {
+        "name": "Simple",
+        "type": "SimplePropertyVariant",
+        "docs": "Simplicity properties"
+      },
+      {
+        "name": "Solvable",
+        "type": "SolvablePropertyVariant",
+        "docs": "Solvability properties"
+      },
+      {
+        "name": "Nilpotent",
+        "type": "NilpotentPropertyVariant",
+        "docs": "Nilpotency properties"
+      }
+    ]
+  },
+  {
+    "name": "TopologicalGroupProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Compact",
+        "type": "CompactPropertyVariant",
+        "docs": "Compactness properties"
+      },
+      {
+        "name": "Connected",
+        "type": "ConnectedPropertyVariant",
+        "docs": "Connectedness properties"
+      },
+      {
+        "name": "Metrizable",
+        "type": "MetrizablePropertyVariant",
+        "docs": "Metrizability properties"
+      }
+    ]
+  },
+  {
+    "name": "LieGroupProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Semisimple",
+        "type": "SemisimplePropertyVariant",
+        "docs": "Semisimplicity properties"
+      },
+      {
+        "name": "Reductive",
+        "type": "ReductivePropertyVariant",
+        "docs": "Reductivity properties"
+      }
+    ]
+  },
+  {
+    "name": "AbelianPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Abelian",
+        "type": "Unit",
+        "docs": "Commutative"
+      },
+      {
+        "name": "NonAbelian",
+        "type": "Unit",
+        "docs": "Non-commutative"
+      }
+    ]
+  },
+  {
+    "name": "FinitePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Finite",
+        "type": "u32",
+        "docs": "Finite order"
+      },
+      {
+        "name": "Infinite",
+        "type": "Unit",
+        "docs": "Infinite order"
+      },
+      {
+        "name": "LocallyFinite",
+        "type": "Unit",
+        "docs": "Locally finite (every finitely generated subgroup is finite)"
+      }
+    ]
+  },
+  {
+    "name": "SimplePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Simple",
+        "type": "Unit",
+        "docs": "No proper normal subgroups"
+      },
+      {
+        "name": "NonSimple",
+        "type": "Unit",
+        "docs": "Not simple"
+      },
+      {
+        "name": "QuasiSimple",
+        "type": "Unit",
+        "docs": "Quasi-simple"
+      }
+    ]
+  },
+  {
+    "name": "SolvablePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Solvable",
+        "type": "Unit",
+        "docs": "Has solvable series"
+      },
+      {
+        "name": "NonSolvable",
+        "type": "Unit",
+        "docs": "Not solvable"
+      },
+      {
+        "name": "Polysolvable",
+        "type": "Unit",
+        "docs": "Polysolvable"
+      }
+    ]
+  },
+  {
+    "name": "NilpotentPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Nilpotent",
+        "type": "u32",
+        "docs": "Has nilpotent series"
+      },
+      {
+        "name": "NonNilpotent",
+        "type": "Unit",
+        "docs": "Not nilpotent"
+      }
+    ]
+  },
+  {
+    "name": "CompactPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Compact",
+        "type": "Unit",
+        "docs": "Compact"
+      },
+      {
+        "name": "NonCompact",
+        "type": "Unit",
+        "docs": "Non-compact"
+      },
+      {
+        "name": "LocallyCompact",
+        "type": "Unit",
+        "docs": "Locally compact"
+      }
+    ]
+  },
+  {
+    "name": "ConnectedPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Connected",
+        "type": "Unit",
+        "docs": "Connected"
+      },
+      {
+        "name": "SimplyConnected",
+        "type": "Unit",
+        "docs": "Simply connected (stronger than just connected)"
+      },
+      {
+        "name": "TotallyDisconnected",
+        "type": "Unit",
+        "docs": "Totally disconnected"
+      },
+      {
+        "name": "LocallyConnected",
+        "type": "Unit",
+        "docs": "Locally connected"
+      },
+      {
+        "name": "LocallySimplyConnected",
+        "type": "Unit",
+        "docs": "Locally simply connected"
+      }
+    ]
+  },
+  {
+    "name": "MetrizablePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Metrizable",
+        "type": "Unit",
+        "docs": "Admits compatible metric"
+      },
+      {
+        "name": "NonMetrizable",
+        "type": "Unit",
+        "docs": "Not metrizable"
+      }
+    ]
+  },
+  {
+    "name": "SemisimplePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Semisimple",
+        "type": "Unit",
+        "docs": "No abelian ideals"
+      },
+      {
+        "name": "NonSemisimple",
+        "type": "Unit",
+        "docs": "Not semisimple"
+      },
+      {
+        "name": "Split",
+        "type": "Unit",
+        "docs": "Split semisimple"
+      }
+    ]
+  },
+  {
+    "name": "ReductivePropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Reductive",
+        "type": "Unit",
+        "docs": "Reductive"
+      },
+      {
+        "name": "NonReductive",
+        "type": "Unit",
+        "docs": "Not reductive"
+      }
+    ]
+  },
+  {
+    "name": "GroupAction",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "SetAction {",
+        "type": "Unit",
+        "docs": "Action on a set"
+      },
+      {
+        "name": "group: Group",
+        "type": "Unit",
+        "docs": "The acting group"
+      },
+      {
+        "name": "space: Set",
+        "type": "Unit",
+        "docs": "The space being acted on"
+      },
+      {
+        "name": "point: Option<Box<MathExpression>>",
+        "type": "Unit",
+        "docs": "The specific point in the space (if any)"
+      },
+      {
+        "name": "properties: VariantSet<GroupActionProperty>",
+        "type": "Unit",
+        "docs": "Properties of the action"
+      },
+      {
+        "name": "VectorSpaceAction {",
+        "type": "Unit",
+        "docs": "Action on a vector space"
+      },
+      {
+        "name": "group: Group",
+        "type": "Unit",
+        "docs": "The acting group"
+      },
+      {
+        "name": "space: String",
+        "type": "Unit",
+        "docs": "The vector space being acted on"
+      },
+      {
+        "name": "vector: Option<Vec<f64>>",
+        "type": "Unit",
+        "docs": "Specific vector in the space (if any)"
+      },
+      {
+        "name": "properties: VariantSet<GroupActionProperty>",
+        "type": "Unit",
+        "docs": "Properties of the action"
+      },
+      {
+        "name": "TopologicalSpaceAction {",
+        "type": "Unit",
+        "docs": "Action on a topological space"
+      },
+      {
+        "name": "group: Group",
+        "type": "Unit",
+        "docs": "The acting group"
+      },
+      {
+        "name": "space: String",
+        "type": "Unit",
+        "docs": "The space"
+      },
+      {
+        "name": "point: Option<String>",
+        "type": "Unit",
+        "docs": "Specific point in the space (if any)"
+      },
+      {
+        "name": "properties: VariantSet<GroupActionProperty>",
+        "type": "Unit",
+        "docs": "Properties of the action"
+      }
+    ]
+  },
+  {
+    "name": "GroupActionProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Transitive",
+        "type": "TransitivityPropertyVariant",
+        "docs": "Transitive: Single orbit"
+      },
+      {
+        "name": "Free",
+        "type": "FreenessPropertyVariant",
+        "docs": "Free: Stabilizers are trivial"
+      },
+      {
+        "name": "Proper",
+        "type": "PropernessPropertyVariant",
+        "docs": "Proper: Preimages of compacts are compact"
+      },
+      {
+        "name": "Faithful",
+        "type": "FaithfulnessPropertyVariant",
+        "docs": "Faithful: Kernel is trivial"
+      }
+    ]
+  },
+  {
+    "name": "TransitivityPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Transitive",
+        "type": "Unit",
+        "docs": "Single orbit"
+      },
+      {
+        "name": "FinitelyTransitive",
+        "type": "Unit",
+        "docs": "Finitely many orbits"
+      },
+      {
+        "name": "NonTransitive",
+        "type": "Unit",
+        "docs": "Infinitely many orbits"
+      }
+    ]
+  },
+  {
+    "name": "PropernessPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Proper",
+        "type": "Unit",
+        "docs": "Proper action"
+      },
+      {
+        "name": "NonProper",
+        "type": "Unit",
+        "docs": "Non-proper"
+      },
+      {
+        "name": "LocallyProper",
+        "type": "Unit",
+        "docs": "Locally proper"
+      }
+    ]
+  },
+  {
+    "name": "FaithfulnessPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Faithful",
+        "type": "Unit",
+        "docs": "Trivial kernel"
+      },
+      {
+        "name": "NonFaithful",
+        "type": "Unit",
+        "docs": "Non-faithful"
+      },
+      {
+        "name": "LocallyFaithful",
+        "type": "Unit",
+        "docs": "Locally faithful (finite kernel)"
+      }
+    ]
+  },
+  {
+    "name": "FreenessPropertyVariant",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Free",
+        "type": "Unit",
+        "docs": "Trivial stabilizers"
+      },
+      {
+        "name": "NonFree",
+        "type": "Unit",
+        "docs": "Non-free"
+      },
+      {
+        "name": "LocallyFree",
+        "type": "Unit",
+        "docs": "Locally free (finite stabilizers)"
+      }
+    ]
+  },
+  {
+    "name": "GroupRelationEntity",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "id",
+        "type": "Option<String>",
+        "docs": "Optional ID for referencing this relation"
+      },
+      {
+        "name": "description",
+        "type": "Option<String>",
+        "docs": "Optional description explaining this relation instance"
+      },
+      {
+        "name": "tags",
+        "type": "Vec<(String, String)>",
+        "docs": "Optional key-value pairs for additional context"
+      }
+    ]
+  },
+  {
+    "name": "GroupRelation",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "IsSubgroupOf {",
+        "type": "Unit",
+        "docs": "One group is a subgroup of another"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsNormalSubgroupOf {",
+        "type": "Unit",
+        "docs": "One group is a normal subgroup of another"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsIsomorphicTo {",
+        "type": "Unit",
+        "docs": "Two groups are isomorphic"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "first: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "second: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsQuotientOf {",
+        "type": "Unit",
+        "docs": "One group is a quotient of another"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "quotient: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "normal_subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsInCenterOf {",
+        "type": "Unit",
+        "docs": "Element is in the center of a group"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "AreConjugateIn {",
+        "type": "Unit",
+        "docs": "Two elements are conjugate in a group"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element1: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element2: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "HasOrderInGroup {",
+        "type": "Unit",
+        "docs": "An element has a specified order in a group"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "order: usize",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "HasIndexInGroup {",
+        "type": "Unit",
+        "docs": "A subgroup is of a specific index in a group"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "index: usize",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "HasOrder {",
+        "type": "Unit",
+        "docs": "A group has a specific number of elements"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "order: usize",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsCyclicWithGenerator {",
+        "type": "Unit",
+        "docs": "A group is cyclic with a specific generator"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "generator: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "NormalizesSubgroup {",
+        "type": "Unit",
+        "docs": "An element normalizes a subgroup"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "CentralizesSubgroup {",
+        "type": "Unit",
+        "docs": "An element centralizes a subgroup"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsCharacteristicSubgroupOf {",
+        "type": "Unit",
+        "docs": "A subgroup is characteristic"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "subgroup: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "OrderDivides {",
+        "type": "Unit",
+        "docs": "The order of one group divides the order of another"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group1: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group2: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "HasUniqueInverse {",
+        "type": "Unit",
+        "docs": "An element has a unique inverse in a group"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "SylowSubgroupProperties {",
+        "type": "Unit",
+        "docs": "Sylow p-subgroup properties"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "prime: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsInverseOf {",
+        "type": "Unit",
+        "docs": "One element is the inverse of another"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "element: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "inverse: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "group: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsHomomorphism {",
+        "type": "Unit",
+        "docs": "A homomorphism between groups"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "homomorphism: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "domain: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "codomain: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "IsomorphicEmbedding {",
+        "type": "Unit",
+        "docs": "An isomorphic embedding of one group into another"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "source: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      },
+      {
+        "name": "target: MathExpression",
+        "type": "Unit",
+        "docs": ""
+      }
+    ]
+  },
+  {
+    "name": "GroupObject",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Kernel {",
+        "type": "Unit",
+        "docs": "The kernel of a homomorphism: Ker(φ)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "homomorphism: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The homomorphism"
+      },
+      {
+        "name": "Image {",
+        "type": "Unit",
+        "docs": "The image of a homomorphism: Im(φ)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "homomorphism: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The homomorphism"
+      },
+      {
+        "name": "QuotientGroup {",
+        "type": "Unit",
+        "docs": "A quotient group: G/N"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "normal_subgroup: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The normal subgroup"
+      },
+      {
+        "name": "SymmetricGroup {",
+        "type": "Unit",
+        "docs": "A symmetric group: Sym(G)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "base_set: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The base set"
+      },
+      {
+        "name": "SylowSubgroup {",
+        "type": "Unit",
+        "docs": "A Sylow p-subgroup: Syl_p(G)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "prime: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The prime"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "Center {",
+        "type": "Unit",
+        "docs": "The center of a group: Z(G)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "Centralizer {",
+        "type": "Unit",
+        "docs": "A centralizer: C_G(x)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "element: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The element being centralized"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "Normalizer {",
+        "type": "Unit",
+        "docs": "A normalizer: N_G(H)"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "subgroup: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The subgroup being normalized"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "CommutatorSubgroup {",
+        "type": "Unit",
+        "docs": "The commutator subgroup: [G,G]"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "GroupOrder {",
+        "type": "Unit",
+        "docs": "The order of a group: |G|"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      },
+      {
+        "name": "ElementOrder {",
+        "type": "Unit",
+        "docs": "The order of an element: |g|"
+      },
+      {
+        "name": "entity: GroupRelationEntity",
+        "type": "Unit",
+        "docs": "Entity information"
+      },
+      {
+        "name": "element: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The element"
+      },
+      {
+        "name": "group: Box<MathExpression>",
+        "type": "Unit",
+        "docs": "The group"
+      }
+    ]
+  },
+  {
+    "name": "GroupElement",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "group",
+        "type": "Box<Group>",
+        "docs": "The group this element belongs to"
+      },
+      {
+        "name": "value",
+        "type": "ElementValue",
+        "docs": "The underlying representation of the element (depends on the group's structure)"
+      }
+    ]
+  },
+  {
+    "name": "ElementValue",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Integer",
+        "type": "i64",
+        "docs": "A numeric element (useful for Z/nZ, etc.)"
+      },
+      {
+        "name": "Permutation",
+        "type": "Vec<usize>",
+        "docs": "A permutation (for symmetric groups)"
+      },
+      {
+        "name": "Matrix",
+        "type": "Vec<Vec<i64>>",
+        "docs": "A matrix (for matrix groups)"
+      },
+      {
+        "name": "Symbol",
+        "type": "String",
+        "docs": "A symbolic element (for abstract elements)"
+      }
+    ]
+  },
+  {
+    "name": "GroupExpression",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Element",
+        "type": "GroupElement",
+        "docs": "An element in a group"
+      },
+      {
+        "name": "Identity",
+        "type": "Box<Group>",
+        "docs": "The identity element of a group"
+      },
+      {
+        "name": "Operation {",
+        "type": "Unit",
+        "docs": "A group operation between two expressions"
+      },
+      {
+        "name": "group: Box<Group>",
+        "type": "Unit",
+        "docs": "The group this operation belongs to"
+      },
+      {
+        "name": "left: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The left operand"
+      },
+      {
+        "name": "right: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The right operand"
+      },
+      {
+        "name": "Inverse {",
+        "type": "Unit",
+        "docs": "The inverse of an expression"
+      },
+      {
+        "name": "group: Box<Group>",
+        "type": "Unit",
+        "docs": "The group this inverse belongs to"
+      },
+      {
+        "name": "element: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The element to invert"
+      },
+      {
+        "name": "Commutator {",
+        "type": "Unit",
+        "docs": "A commutator of two elements"
+      },
+      {
+        "name": "group: Box<Group>",
+        "type": "Unit",
+        "docs": "The group this commutator belongs to"
+      },
+      {
+        "name": "a: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The first element"
+      },
+      {
+        "name": "b: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The second element"
+      },
+      {
+        "name": "Coset {",
+        "type": "Unit",
+        "docs": "A coset of a subgroup"
+      },
+      {
+        "name": "group: Box<Group>",
+        "type": "Unit",
+        "docs": "The group this coset belongs to"
+      },
+      {
+        "name": "element: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The element for the coset"
+      },
+      {
+        "name": "subgroup: Box<Group>",
+        "type": "Unit",
+        "docs": "The subgroup"
+      },
+      {
+        "name": "is_left: bool",
+        "type": "Unit",
+        "docs": "Whether this is a left or right coset"
+      },
+      {
+        "name": "Variable {",
+        "type": "Unit",
+        "docs": "A variable referencing a group element"
+      },
+      {
+        "name": "group: Box<Group>",
+        "type": "Unit",
+        "docs": "The group this variable belongs to"
+      },
+      {
+        "name": "name: String",
+        "type": "Unit",
+        "docs": "The name of the variable"
+      },
+      {
+        "name": "Action {",
+        "type": "Unit",
+        "docs": "A group action"
+      },
+      {
+        "name": "element: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The element being acted on"
+      },
+      {
+        "name": "action: Box<GroupAction>",
+        "type": "Unit",
+        "docs": "The action being applied"
+      },
+      {
+        "name": "Power {",
+        "type": "Unit",
+        "docs": "Represents a power (exponentiation)"
+      },
+      {
+        "name": "group: Box<Group>",
+        "type": "Unit",
+        "docs": "The base group"
+      },
+      {
+        "name": "base: Box<GroupExpression>",
+        "type": "Unit",
+        "docs": "The base expression"
+      },
+      {
+        "name": "exponent: i32",
+        "type": "Unit",
+        "docs": "The exponent"
+      }
+    ]
+  },
+  {
+    "name": "GroupExpressionError",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "InvalidElement",
+        "type": "String",
+        "docs": "Element is not in the group"
+      },
+      {
+        "name": "InvalidOperation",
+        "type": "String",
+        "docs": "Operation not defined for these elements"
+      },
+      {
+        "name": "Other",
+        "type": "String",
+        "docs": "Other errors"
+      }
+    ]
+  },
+  {
+    "name": "GroupError",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "#[error",
+        "type": "\"Invalid element: {0}\")]",
+        "docs": ""
+      },
+      {
+        "name": "InvalidElement",
+        "type": "String",
+        "docs": ""
+      },
+      {
+        "name": "#[error",
+        "type": "\"Invalid operation: {0}\")]",
+        "docs": ""
+      },
+      {
+        "name": "InvalidOperation",
+        "type": "String",
+        "docs": ""
+      },
+      {
+        "name": "#[error",
+        "type": "\"Other error: {0}\")]",
+        "docs": ""
+      },
+      {
+        "name": "Other",
+        "type": "String",
+        "docs": ""
+      }
+    ]
+  }
+]

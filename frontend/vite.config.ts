@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
         },
       },
       fs: {
-        allow: [".."],
+        allow: ["../", "../subjects"],
       },
     },
     resolve: {
@@ -49,6 +49,10 @@ export default defineConfig(({ mode }) => {
         {
           find: "@",
           replacement: path.resolve(process.cwd(), "./src"),
+        },
+        {
+          find: "/subjects",
+          replacement: path.resolve(process.cwd(), "../subjects"),
         },
       ],
     },

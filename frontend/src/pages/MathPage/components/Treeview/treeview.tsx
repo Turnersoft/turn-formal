@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styles from "./TreeView.module.scss";
-
-// Interface for folder node data
-interface FolderNode {
-  name: string;
-  path: string;
-  isDirectory: boolean;
-  children?: FolderNode[];
-}
+import { FolderNode } from "../../../../services/mathService";
 
 // Props for the TreeView component
 interface TreeViewProps {
   nodes: FolderNode[];
   selectedPath: string;
-  onSelect: (path: string) => void;
+  onSelect: (path: string, isFile: boolean) => void;
 }
 
 // Main TreeView component that displays a list of nodes
@@ -22,16 +15,23 @@ const TreeView: React.FC<TreeViewProps> = ({
   selectedPath,
   onSelect,
 }) => {
+  // Log selection info for debugging
+  useEffect(() => {
+    console.log("TreeView selectedPath:", selectedPath);
+    console.log("TreeView nodes:", nodes);
+  }, [selectedPath, nodes]);
+
   return (
     <div className={styles.treeView}>
-      {nodes.map((node) => (
-        <TreeNode
-          key={node.path}
-          node={node}
-          selectedPath={selectedPath}
-          onSelect={onSelect}
-        />
-      ))}
+      {nodes &&
+        nodes.map((node) => (
+          <TreeNode
+            key={node.path}
+            node={node}
+            selectedPath={selectedPath}
+            onSelect={onSelect}
+          />
+        ))}
     </div>
   );
 };
@@ -40,7 +40,7 @@ const TreeView: React.FC<TreeViewProps> = ({
 interface TreeNodeProps {
   node: FolderNode;
   selectedPath: string;
-  onSelect: (path: string) => void;
+  onSelect: (path: string, isFile: boolean) => void;
 }
 
 // Individual TreeNode component (recursive)
@@ -53,15 +53,49 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 
   // Auto-expand if this node or any of its children is selected
   useEffect(() => {
-    if (
-      selectedPath === node.path ||
-      (node.children && selectedPath.startsWith(node.path))
-    ) {
+    // Skip if no selectedPath
+    if (!selectedPath) return;
+
+    const isExactMatch = selectedPath === node.path;
+    const isPathParent =
+      selectedPath.startsWith(node.path + "/") ||
+      selectedPath.startsWith(node.path + "\\");
+
+    if (isExactMatch || isPathParent) {
+      console.log(
+        "Expanding node:",
+        node.path,
+        "for selected path:",
+        selectedPath
+      );
       setExpanded(true);
     }
   }, [selectedPath, node.path, node.children]);
 
-  const isSelected = selectedPath === node.path;
+  // More flexible path comparison for selection
+  const isSelected =
+    selectedPath &&
+    (selectedPath === node.path ||
+      // Also check for trailing slash variations
+      selectedPath + "/" === node.path ||
+      selectedPath === node.path + "/");
+
+  // Check if this node has JSON files as children
+  const hasJsonChildren =
+    node.isDirectory &&
+    node.children?.some(
+      (child) =>
+        !child.isDirectory && child.name.toLowerCase().endsWith(".json")
+    );
+
+  // Count JSON files
+  const jsonFileCount =
+    node.isDirectory && node.children
+      ? node.children.filter(
+          (child) =>
+            !child.isDirectory && child.name.toLowerCase().endsWith(".json")
+        ).length
+      : 0;
 
   const handleToggle = (e: React.MouseEvent) => {
     if (node.isDirectory) {
@@ -71,9 +105,35 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   };
 
   const handleSelect = () => {
-    if (node.isDirectory) {
-      onSelect(node.path);
+    const isFile = !node.isDirectory;
+    console.log(`Selected node: ${node.path}, isFile: ${isFile}`);
+
+    // When selecting a node, always invoke onSelect to update the URL
+    onSelect(node.path, isFile);
+  };
+
+  // Determine which icon to show
+  const getNodeIcon = () => {
+    if (!node.isDirectory) {
+      if (node.name.toLowerCase().endsWith(".json")) {
+        return (
+          <span className={`${styles.nodeIcon} ${styles.jsonFileIcon}`}>
+            📊
+          </span>
+        );
+      }
+      return (
+        <span className={`${styles.nodeIcon} ${styles.fileIcon}`}>📄</span>
+      );
     }
+    if (hasJsonChildren) {
+      return (
+        <span className={`${styles.nodeIcon} ${styles.folderIcon}`}>📂</span>
+      );
+    }
+    return (
+      <span className={`${styles.nodeIcon} ${styles.folderIcon}`}>📁</span>
+    );
   };
 
   return (
@@ -81,7 +141,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
       <div
         className={`${styles.treeNodeItem} ${
           isSelected ? styles.selected : ""
-        }`}
+        } ${hasJsonChildren ? styles.hasJsonContent : ""}`}
         onClick={handleSelect}
       >
         {node.isDirectory && (
@@ -89,10 +149,11 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             {expanded ? "▾" : "▸"}
           </span>
         )}
-        <span className={styles.nodeIcon}>
-          {node.isDirectory ? "📁" : "📄"}
-        </span>
+        {getNodeIcon()}
         <span className={styles.nodeName}>{node.name}</span>
+        {jsonFileCount > 0 && (
+          <span className={styles.jsonBadge}>{jsonFileCount}</span>
+        )}
       </div>
 
       {expanded && node.children && node.children.length > 0 && (

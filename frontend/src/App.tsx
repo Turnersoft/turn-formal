@@ -19,8 +19,12 @@ export const App: React.FC = () => {
         <main className={styles.mainContent}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            {/* Math section routes - use wildcard to handle nested theory paths */}
             <Route path="/math" element={<MathPage />} />
+            <Route path="/math/*" element={<MathPage />} />
+            {/* Developer section */}
             <Route path="/developer" element={<DeveloperPage />} />
+            {/* Catch-all for not found pages */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

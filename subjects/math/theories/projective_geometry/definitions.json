@@ -1,0 +1,73 @@
+[
+  {
+    "name": "ProjectiveSpace",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "dimension",
+        "type": "DimensionType",
+        "docs": "Dimension (one less than vector space dimension)"
+      },
+      {
+        "name": "scalar_field",
+        "type": "ScalarFieldType",
+        "docs": "Field over which space is defined"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<ProjectiveSpaceProperty>",
+        "docs": "Properties of the projective space"
+      }
+    ]
+  },
+  {
+    "name": "ProjectiveSpaceProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Smooth",
+        "type": "bool",
+        "docs": "Whether the space is smooth"
+      },
+      {
+        "name": "Complete",
+        "type": "bool",
+        "docs": "Whether the space is complete"
+      },
+      {
+        "name": "HasCoordinates",
+        "type": "bool",
+        "docs": "Whether the space has a preferred coordinate system"
+      }
+    ]
+  },
+  {
+    "name": "ScalarFieldType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Real",
+        "type": "Unit",
+        "docs": "Real numbers"
+      },
+      {
+        "name": "Complex",
+        "type": "Unit",
+        "docs": "Complex numbers"
+      },
+      {
+        "name": "Rational",
+        "type": "Unit",
+        "docs": "Rational numbers"
+      },
+      {
+        "name": "Finite",
+        "type": "u32",
+        "docs": "Finite field"
+      }
+    ]
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "inverse uniqueness",
+    "id": "prove_inverse_uniqueness",
+    "statement": "inverse uniqueness",
+    "description": "Prove the theorem that in a group, inverses are unique",
+    "proof_steps": [],
+    "tags": [
+      "auto-generated"
+    ]
+  },
+  {
+    "name": "identity uniqueness with syntax trees",
+    "id": "prove_identity_uniqueness_with_syntax_trees",
+    "statement": "identity uniqueness with syntax trees",
+    "description": "Prove that the identity element in a group is unique using syntax trees",
+    "proof_steps": [],
+    "tags": [
+      "auto-generated"
+    ]
+  },
+  {
+    "name": "inverse product rule",
+    "id": "prove_inverse_product_rule",
+    "statement": "inverse product rule",
+    "description": "Prove that in a group, (ab)⁻¹ = b⁻¹a⁻¹",
+    "proof_steps": [],
+    "tags": [
+      "auto-generated"
+    ]
+  },
+  {
+    "name": "abelian squared criterion",
+    "id": "prove_abelian_squared_criterion",
+    "statement": "abelian squared criterion",
+    "description": "Prove that a group is abelian if and only if (ab)² = a²b² for all a,b in the group",
+    "proof_steps": [],
+    "tags": [
+      "auto-generated"
+    ]
+  },
+  {
+    "name": "lagrange theorem",
+    "id": "prove_lagrange_theorem",
+    "statement": "lagrange theorem",
+    "description": "Prove Lagrange's Theorem: If H is a subgroup of a finite group G,\nthen the order of H divides the order of G",
+    "proof_steps": [],
+    "tags": [
+      "auto-generated"
+    ]
+  }
+]

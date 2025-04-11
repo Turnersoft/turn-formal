@@ -1,0 +1,73 @@
+[
+  {
+    "name": "AffineSpace",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "dimension",
+        "type": "DimensionType",
+        "docs": "Dimension of the space"
+      },
+      {
+        "name": "vector_space",
+        "type": "Box<Space>",
+        "docs": "The modeling vector space"
+      },
+      {
+        "name": "properties",
+        "type": "VariantSet<AffineSpaceProperty>",
+        "docs": "Properties of the affine space"
+      }
+    ]
+  },
+  {
+    "name": "AffineSpaceProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ScalarField",
+        "type": "ScalarFieldType",
+        "docs": "Whether the space is real or complex"
+      },
+      {
+        "name": "HasOrigin",
+        "type": "bool",
+        "docs": "Whether the space has a preferred origin"
+      },
+      {
+        "name": "Complete",
+        "type": "bool",
+        "docs": "Whether the space is complete"
+      }
+    ]
+  },
+  {
+    "name": "ScalarFieldType",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Real",
+        "type": "Unit",
+        "docs": "Real numbers"
+      },
+      {
+        "name": "Complex",
+        "type": "Unit",
+        "docs": "Complex numbers"
+      },
+      {
+        "name": "Rational",
+        "type": "Unit",
+        "docs": "Rational numbers"
+      },
+      {
+        "name": "Finite",
+        "type": "u32",
+        "docs": "Finite field"
+      }
+    ]
+  }
+]
