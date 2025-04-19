@@ -2,19 +2,19 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::collections::HashMap;
 
-use crate::subjects::math::theories::groups::definitions::{
+use super::super::super::super::math::theories::groups::definitions::{
     AbelianPropertyVariant, FinitePropertyVariant, Group, GroupIdentity, GroupInverse,
     GroupInverseApplication, GroupNotation, GroupOperationProperty, GroupOperationVariant,
     GroupProperty, GroupSymbol, LieGroup, SimplePropertyVariant, TopologicalGroup,
 };
 
-use crate::subjects::math::theories::groups::theorems::{
+use super::super::super::super::math::theories::groups::theorems::{
     prove_abelian_squared_criterion, prove_identity_uniqueness_with_syntax_trees,
     prove_inverse_product_rule, prove_inverse_uniqueness, prove_lagrange_theorem,
 };
 
-use crate::subjects::math::theorem::core::Theorem;
-use crate::subjects::math::theorem::proof::{ProofBranch, Tactic};
+use super::super::super::super::math::theorem::core::Theorem;
+use super::super::super::super::math::theorem::proof::{ProofBranch, Tactic};
 
 #[derive(Serialize, Deserialize)]
 pub struct DefinitionExport {

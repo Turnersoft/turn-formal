@@ -1,6 +1,7 @@
-use crate::subjects::math::theories::{
-    analysis::definition::functions::Function, linear_algebra::definitions::VectorSpace,
-    topology::definitions::TopologicalSpace, zfc::set::Set, VariantSet,
+use super::super::super::super::math::theories::{
+    VariantSet, analysis::definition::functions::Function,
+    linear_algebra::definitions::VectorSpace, topology::definitions::TopologicalSpace,
+    zfc::set::Set,
 };
 use serde::{Deserialize, Serialize};
 

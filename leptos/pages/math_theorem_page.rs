@@ -1,4 +1,4 @@
-use crate::subjects::math::theories::groups::leptos::{GroupStyles, GroupTheorems};
+use super::super::super::subjects::math::theories::groups::leptos::{GroupStyles, GroupTheorems};
 use leptos::prelude::*;
 
 #[component]

@@ -3,18 +3,33 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::{
     ProofStatus, RewriteDirection, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::rings::definitions::{Ring, RingElementValue, RingExpression};
+
+/// Helper function to create a variable expression
+fn create_var(name: &str) -> MathExpression {
+    MathExpression::Var(Identifier::Name(name.to_string(), 0))
+}
+
+/// Helper function to create a simple ring-based expression
+fn create_expr(expr_str: &str) -> MathExpression {
+    // This is a simplification - in a real implementation, we would parse the expression
+    // For now, we'll just create a variable with the same name
+    let ring = Ring::default();
+    let ring_var = RingExpression::variable(ring, expr_str);
+    MathExpression::Expression(TheoryExpression::Ring(ring_var))
+}
 
 /// A proof of the quadratic formula using case analysis
 pub fn prove_quadratic_formula() {
     // Create expression for the quadratic equation
-    let polynomial = MathExpression::string_expr("ax² + bx + c");
-    let equation = MathExpression::string_expr("ax² + bx + c = 0");
-    let solution = MathExpression::string_expr("x = (-b ± √(b² - 4ac)) / (2a)");
+    let polynomial = create_expr("ax² + bx + c");
+    let equation = create_expr("ax² + bx + c = 0");
+    let solution = create_expr("x = (-b ± √(b² - 4ac)) / (2a)");
 
     println!("Beginning proof of the quadratic formula...");
 
@@ -22,7 +37,7 @@ pub fn prove_quadratic_formula() {
     let builder = TheoremBuilder::new(
         "Quadratic Formula",
         MathRelation::implies(
-            MathRelation::equal(polynomial, MathExpression::string_expr("0")),
+            MathRelation::equal(polynomial, create_var("0")),
             MathRelation::custom("SolutionFor".to_string(), vec![solution, equation]),
         ),
         vec![],
@@ -131,10 +146,10 @@ pub fn prove_quadratic_formula() {
 /// A proof of Fermat's Little Theorem using modular arithmetic
 pub fn prove_fermats_little_theorem() {
     // Create expressions
-    let p = MathExpression::string_expr("p");
-    let a = MathExpression::string_expr("a");
-    let expr1 = MathExpression::string_expr("a^p");
-    let expr2 = MathExpression::string_expr("a");
+    let p = create_var("p");
+    let a = create_var("a");
+    let expr1 = create_expr("a^p");
+    let expr2 = create_var("a");
 
     println!("Beginning proof of Fermat's Little Theorem...");
 

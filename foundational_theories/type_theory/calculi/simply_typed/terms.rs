@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
-use crate::subjects::math::theories::number_theory::definitions::Number;
+use super::super::super::super::super::subjects::math::theories::number_theory::definitions::Number;
 
 use super::{
     goals::{Context, SimplyTypedCalculusError, SimplyTypedCalculusResult},

@@ -2,7 +2,7 @@ pub mod linear;
 pub mod nonlinear;
 pub mod time_integration;
 
-use crate::subjects::math::theories::{
+use super::super::super::super::math::theories::{
     analysis::definition::functions::Function, zfc::set::Set, VariantSet,
 };
 use serde::{Deserialize, Serialize};

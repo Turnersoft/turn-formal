@@ -1,4 +1,5 @@
-use crate::subjects::math::theories::VariantSet;
+use super::super::super::subjects::math::formalism::expressions::MathExpression;
+use super::super::super::subjects::math::theories::VariantSet;
 use serde::{Deserialize, Serialize};
 
 /// Module containing all property variants for category theory
@@ -321,6 +322,202 @@ pub enum MonadProperty {
     Commutativity(CommutativityPropertyVariant),
     /// Idempotency properties
     Idempotency(IdempotencyPropertyVariant),
+}
+
+// Category theory relations
+
+/// Entity information for category theory relation operations
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CategoryRelationEntity {
+    /// Optional ID for referencing this relation
+    pub id: Option<String>,
+
+    /// Optional description explaining this relation instance  
+    pub description: Option<String>,
+
+    /// Optional key-value pairs for additional context
+    pub tags: Vec<(String, String)>,
+}
+
+/// Relations specific to category theory
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum CategoryRelation {
+    /// Relation indicating an object belongs to a category
+    ObjectInCategory {
+        entity: CategoryRelationEntity,
+        object: MathExpression,
+        category: MathExpression,
+    },
+
+    /// Relation indicating a morphism between objects in a category
+    MorphismBetween {
+        entity: CategoryRelationEntity,
+        morphism: MathExpression,
+        source: MathExpression,
+        target: MathExpression,
+        category: MathExpression,
+    },
+
+    /// Relation indicating composition of morphisms
+    CompositionOf {
+        entity: CategoryRelationEntity,
+        result: MathExpression,
+        first: MathExpression,
+        second: MathExpression,
+    },
+
+    /// Relation indicating a morphism is an identity morphism
+    IsIdentityMorphism {
+        entity: CategoryRelationEntity,
+        morphism: MathExpression,
+        object: MathExpression,
+    },
+
+    /// Relation indicating a functor mapping between categories
+    FunctorBetween {
+        entity: CategoryRelationEntity,
+        functor: MathExpression,
+        source: MathExpression,
+        target: MathExpression,
+    },
+
+    /// Relation indicating a natural transformation between functors
+    NaturalTransformationBetween {
+        entity: CategoryRelationEntity,
+        transformation: MathExpression,
+        source_functor: MathExpression,
+        target_functor: MathExpression,
+    },
+
+    /// Relation indicating an adjunction between functors
+    AdjunctionBetween {
+        entity: CategoryRelationEntity,
+        left_adjoint: MathExpression,
+        right_adjoint: MathExpression,
+    },
+
+    /// Relation indicating a morphism is an isomorphism
+    IsIsomorphism {
+        entity: CategoryRelationEntity,
+        morphism: MathExpression,
+    },
+
+    /// Relation indicating a morphism is a monomorphism (left-cancellative)
+    IsMonomorphism {
+        entity: CategoryRelationEntity,
+        morphism: MathExpression,
+    },
+
+    /// Relation indicating a morphism is an epimorphism (right-cancellative)
+    IsEpimorphism {
+        entity: CategoryRelationEntity,
+        morphism: MathExpression,
+    },
+
+    /// Relation for a limit in a category
+    IsLimit {
+        entity: CategoryRelationEntity,
+        limit: MathExpression,
+        diagram: MathExpression,
+    },
+
+    /// Relation for a colimit in a category
+    IsColimit {
+        entity: CategoryRelationEntity,
+        colimit: MathExpression,
+        diagram: MathExpression,
+    },
+
+    /// Custom category theory relation
+    Custom {
+        entity: CategoryRelationEntity,
+        name: String,
+        parameters: Vec<MathExpression>,
+    },
+}
+
+// Helper methods for constructor functions
+impl CategoryRelation {
+    /// Create a new ObjectInCategory relation
+    pub fn object_in_category(object: &MathExpression, category: &MathExpression) -> Self {
+        let entity = CategoryRelationEntity {
+            id: None,
+            description: None,
+            tags: Vec::new(),
+        };
+        CategoryRelation::ObjectInCategory {
+            entity,
+            object: object.clone(),
+            category: category.clone(),
+        }
+    }
+
+    /// Create a new MorphismBetween relation
+    pub fn morphism_between(
+        morphism: &MathExpression,
+        source: &MathExpression,
+        target: &MathExpression,
+        category: &MathExpression,
+    ) -> Self {
+        let entity = CategoryRelationEntity {
+            id: None,
+            description: None,
+            tags: Vec::new(),
+        };
+        CategoryRelation::MorphismBetween {
+            entity,
+            morphism: morphism.clone(),
+            source: source.clone(),
+            target: target.clone(),
+            category: category.clone(),
+        }
+    }
+
+    /// Create a new IsIsomorphism relation
+    pub fn is_isomorphism(morphism: &MathExpression) -> Self {
+        let entity = CategoryRelationEntity {
+            id: None,
+            description: None,
+            tags: Vec::new(),
+        };
+        CategoryRelation::IsIsomorphism {
+            entity,
+            morphism: morphism.clone(),
+        }
+    }
+
+    /// Create a new FunctorBetween relation
+    pub fn functor_between(
+        functor: &MathExpression,
+        source: &MathExpression,
+        target: &MathExpression,
+    ) -> Self {
+        let entity = CategoryRelationEntity {
+            id: None,
+            description: None,
+            tags: Vec::new(),
+        };
+        CategoryRelation::FunctorBetween {
+            entity,
+            functor: functor.clone(),
+            source: source.clone(),
+            target: target.clone(),
+        }
+    }
+
+    /// Create a custom relation
+    pub fn custom(name: &str, parameters: Vec<MathExpression>) -> Self {
+        let entity = CategoryRelationEntity {
+            id: None,
+            description: None,
+            tags: Vec::new(),
+        };
+        CategoryRelation::Custom {
+            entity,
+            name: name.to_string(),
+            parameters,
+        }
+    }
 }
 
 // ... more definitions with detailed documentation

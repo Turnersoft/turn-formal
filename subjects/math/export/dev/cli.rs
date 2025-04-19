@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::error::Error;
 
-use crate::subjects::math::export::json::generate_math_json_exports;
+use super::json::generate_math_json_exports;
 
 /// CLI command to export mathematical domain data
 pub fn export_math_data_command() -> Result<()> {

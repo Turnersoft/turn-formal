@@ -1,6 +1,6 @@
-use crate::subjects::math::theories::zfc::set::Set;
-use crate::subjects::math::theories::{
-    common::spaces::Space, linear_algebra::definitions::VectorSpace, VariantSet,
+use super::super::super::super::super::math::theories::zfc::set::Set;
+use super::super::super::super::super::math::theories::{
+    VariantSet, common::spaces::Space, linear_algebra::definitions::VectorSpace,
 };
 use serde::{Deserialize, Serialize};
 

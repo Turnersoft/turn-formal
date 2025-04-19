@@ -1,10 +1,11 @@
 use anyhow::Result;
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::subjects::math::export::utils::{
-    extract_enum_variants, extract_types_from_source, find_rust_files_with_derive,
-};
+use super::super::super::super::math::export::dev::utils::TypeDefinition;
+
+use super::utils::{extract_enum_variants, extract_types_from_source, find_rust_files_with_derive};
 
 /// Generate JSON from Rust type definitions
 pub fn generate_math_json_exports() -> Result<()> {
@@ -20,10 +21,7 @@ pub fn generate_math_json_exports() -> Result<()> {
     );
 
     // Create a mapping of theory names to their Rust types
-    let mut theory_types: std::collections::HashMap<
-        String,
-        Vec<crate::subjects::math::export::utils::TypeDefinition>,
-    > = std::collections::HashMap::new();
+    let mut theory_types: HashMap<String, Vec<TypeDefinition>> = std::collections::HashMap::new();
 
     // Process each Rust file to extract type definitions
     for rust_file in &rust_files {

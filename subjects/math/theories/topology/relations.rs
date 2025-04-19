@@ -1,8 +1,8 @@
 // Module: src/formalize_v2/subjects/math/theories/topology/relations.rs
 // Defines relations specific to topology theory
 
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::relations::RelationDetail;
+use super::super::super::super::math::formalism::expressions::MathExpression;
+use super::super::super::super::math::formalism::relations::RelationDetail;
 use serde::{Deserialize, Serialize};
 
 /// Entity information for topology relation operations

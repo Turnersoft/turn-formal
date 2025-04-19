@@ -3,16 +3,31 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::core::Theorem;
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{ProofBranch, TheoremBuilder};
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::core::Theorem;
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::{ProofBranch, TheoremBuilder};
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::rings::definitions::{Ring, RingExpression};
+
+/// Helper function to create a variable expression
+fn create_var(name: &str) -> MathExpression {
+    MathExpression::Var(Identifier::Name(name.to_string(), 0))
+}
+
+/// Helper function to create a simple ring-based expression
+fn create_expr(expr_str: &str) -> MathExpression {
+    // This is a simplification - in a real implementation, we would parse the expression
+    // For now, we'll just create a variable with the same name
+    let ring = Ring::default();
+    let ring_var = RingExpression::variable(ring, expr_str);
+    MathExpression::Expression(TheoryExpression::Ring(ring_var))
+}
 
 /// Example of proving absolute value properties using case analysis builder
 pub fn prove_absolute_value_with_builder() -> Theorem {
     // Create a theorem about absolute value being non-negative
-    let absolute_value = MathExpression::string_expr("|x|");
-    let zero = MathExpression::string_expr("0");
+    let absolute_value = create_expr("|x|");
+    let zero = create_var("0");
 
     let builder = TheoremBuilder::new(
         "Absolute Value Non-Negativity (Builder)",
@@ -73,8 +88,8 @@ pub fn prove_absolute_value_with_builder() -> Theorem {
 /// Example of proving a more complex theorem with nested case analysis
 pub fn prove_complex_theorem_with_builder() -> Theorem {
     // Create a theorem statement
-    let expr1 = MathExpression::string_expr("f(x)");
-    let expr2 = MathExpression::string_expr("g(x)");
+    let expr1 = create_expr("f(x)");
+    let expr2 = create_expr("g(x)");
 
     let builder = TheoremBuilder::new(
         "Piecewise Function Properties (Builder)",
@@ -159,7 +174,7 @@ pub fn prove_complex_theorem_with_builder() -> Theorem {
 /// Example of a proof where cases use different theorem applications
 pub fn prove_number_theory_theorem_with_builder() -> Theorem {
     // Create a theorem about number properties
-    let expr = MathExpression::string_expr("P(n)");
+    let expr = create_expr("P(n)");
 
     let builder = TheoremBuilder::new(
         "Number Theory Property (Builder)",

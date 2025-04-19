@@ -4,17 +4,16 @@
 //! The macros ensure that elements belong to their respective groups before operations
 //! are performed, providing both compile-time and runtime checks.
 
-use crate::subjects::math::theories::groups::checker::{
-    check_element_in_group, check_has_inverse, check_normal_subgroup, check_operation_valid,
-    create_group_commutator, create_group_coset, create_group_element, create_group_identity,
-    create_group_inverse, create_group_operation, evaluate_group_expression, GroupError,
-    GroupResult,
+use super::super::super::super::math::theories::groups::checker::{
+    GroupError, GroupResult, check_element_in_group, check_has_inverse, check_normal_subgroup,
+    check_operation_valid, create_group_commutator, create_group_coset, create_group_element,
+    create_group_identity, create_group_inverse, create_group_operation, evaluate_group_expression,
 };
-use crate::subjects::math::theories::groups::definitions::{
+use super::super::super::super::math::theories::groups::definitions::{
     AbelianPropertyVariant, ElementValue, FinitePropertyVariant, GroupElement, GroupExpression,
     GroupOperationVariant, GroupProperty,
 };
-use crate::subjects::math::theories::groups::helpers::{
+use super::super::super::super::math::theories::groups::helpers::{
     cyclic_group, int, matrix, perm, sym, symmetric_group,
 };
 
@@ -31,7 +30,7 @@ use crate::subjects::math::theories::groups::helpers::{
 #[macro_export]
 macro_rules! group_element {
     ($group:expr, $value:expr) => {{
-        crate::subjects::math::theories::groups::checker::create_group_element(
+        super::super::super::super::super::math::theories::groups::checker::create_group_element(
             (*$group).clone(),
             $value,
         )
@@ -54,7 +53,7 @@ macro_rules! group_element {
 #[macro_export]
 macro_rules! group_op {
     ($group:expr, $left:expr, $right:expr) => {{
-        crate::subjects::math::theories::groups::checker::create_group_operation(
+        super::super::super::super::super::math::theories::groups::checker::create_group_operation(
             (*$group).clone(),
             $left,
             $right,
@@ -77,7 +76,7 @@ macro_rules! group_op {
 #[macro_export]
 macro_rules! group_inverse {
     ($group:expr, $element:expr) => {{
-        crate::subjects::math::theories::groups::checker::create_group_inverse(
+        super::super::super::super::super::math::theories::groups::checker::create_group_inverse(
             (*$group).clone(),
             $element,
         )
@@ -95,7 +94,7 @@ macro_rules! group_inverse {
 #[macro_export]
 macro_rules! group_identity {
     ($group:expr) => {{
-        crate::subjects::math::theories::groups::checker::create_group_identity(
+        super::super::super::super::super::math::theories::groups::checker::create_group_identity(
             (*$group).clone(),
         )
     }};
@@ -117,7 +116,7 @@ macro_rules! group_identity {
 #[macro_export]
 macro_rules! group_commutator {
     ($group:expr, $a:expr, $b:expr) => {{
-        crate::subjects::math::theories::groups::checker::create_group_commutator(
+        super::super::super::super::super::math::theories::groups::checker::create_group_commutator(
             (*$group).clone(),
             $a,
             $b,
@@ -141,7 +140,7 @@ macro_rules! group_commutator {
 #[macro_export]
 macro_rules! group_coset {
     ($group:expr, $subgroup:expr, $element:expr, $is_left:expr) => {{
-        crate::subjects::math::theories::groups::checker::create_group_coset(
+        super::super::super::super::super::math::theories::groups::checker::create_group_coset(
             (*$group).clone(),
             (*$subgroup).clone(),
             $element,
@@ -162,7 +161,7 @@ macro_rules! group_coset {
 #[macro_export]
 macro_rules! is_in_group {
     ($group:expr, $element:expr) => {{
-        crate::subjects::math::theories::groups::checker::check_element_in_group(
+        super::super::super::super::super::math::theories::groups::checker::check_element_in_group(
             $group, $element,
         )
     }};
@@ -182,7 +181,7 @@ macro_rules! is_in_group {
 #[macro_export]
 macro_rules! eval_group_expr {
     ($expr:expr) => {{
-        crate::subjects::math::theories::groups::checker::evaluate_group_expression(
+        super::super::super::super::super::math::theories::groups::checker::evaluate_group_expression(
             $expr,
         )
     }};
@@ -278,14 +277,16 @@ mod tests {
     fn test_cyclic_group() {
         let z5 = cyclic_group(5);
         assert_eq!(z5.operation.operation_type, GroupOperationVariant::Addition);
-        assert!(z5
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(5)))));
-        assert!(z5
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian))));
+        assert!(
+            z5.properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(5))))
+        );
+        assert!(
+            z5.properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)))
+        );
     }
 
     #[test]
@@ -295,10 +296,11 @@ mod tests {
             s3.operation.operation_type,
             GroupOperationVariant::Composition
         );
-        assert!(s3
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(6)))));
+        assert!(
+            s3.properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(6))))
+        );
         assert!(s3.properties.iter().any(|p| matches!(
             p,
             GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)

@@ -5,3 +5,6 @@
 pub mod foundational_theories;
 pub mod leptos;
 pub mod subjects;
+
+#[path = "./frontend/src/pages/MathPage/components/turn-canvas/mod.rs"]
+pub mod turn_math;

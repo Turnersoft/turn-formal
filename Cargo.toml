@@ -33,15 +33,3 @@ ts-rs = { version = "7.1", features = ["format"] }
 chrono = { version = "0.4.40", features = ["serde"] }
 anyhow = "1.0.97"
 walkdir = "2.5.0"
-
-[[bin]]
-name = "export-math-domains"
-path = "src/bin/export-math-domains.rs"
-
-[[bin]]
-name = "export-theories"
-path = "export_theories.rs"
-
-[[bin]]
-name = "export-math-theories"
-path = "src/bin/export-math-theories.rs"

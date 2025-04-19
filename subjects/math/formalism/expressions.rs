@@ -3,18 +3,25 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::subjects::math::theories::{
-    groups::Group,
-    number_theory::definitions::Number,
-    rings::{Ring, definitions::Field},
+use super::super::{
+    GroupExpression,
+    rings::definitions::{FieldExpression, RingExpression},
+    theories::{
+        groups::Group,
+        number_theory::definitions::Number,
+        rings::{Ring, definitions::Field},
+    },
 };
 
-use super::core::{MathObject, MathObjectType, MathOperation};
-use crate::subjects::math::formalism::interpretation::TypeViewOperator;
+use super::{
+    core::{MathObject, MathObjectType},
+    relations::MathRelation,
+};
+use super::super::formalism::interpretation::TypeViewOperator;
 
 /// Variables for use in expressions
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum Variable {
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum Identifier {
     /// Object variables
     O(u8),
 
@@ -26,19 +33,36 @@ pub enum Variable {
 
     /// Number variables
     N(u8),
+
+    /// custom name that you really want to costomize
+    /// Named variables with an identifier
+    /// The string is the human-readable name
+    /// The u32 is a unique identifier to distinguish variables with the same name
+    Name(String, u32),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum TheoryExpression {
+    Group(GroupExpression),
+    Ring(RingExpression),
+    Field(FieldExpression),
 }
 
 /// A unified mathematical expression
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum MathExpression {
     /// Variable reference
-    Var(Variable),
+    Var(Identifier),
 
     /// Reference to a mathematical object
     Object(MathObject),
 
-    /// Operation on mathematical objects
-    Operation(MathOperation),
+    Expression(TheoryExpression),
+
+    /// treating math relationships as first-flass citizens
+    /// this makes relation a sub class of MathExpression, but it is not, we can choose which
+    /// node is the root node at a given problem.
+    Relation(Box<MathRelation>),
 
     /// Numeric value
     Number(Number),
@@ -102,11 +126,30 @@ impl From<String> for TypeViewError {
 }
 
 impl MathExpression {
-    /// Create a simple expression from a string for testing/example purposes
-    pub fn string_expr(str: &str) -> Self {
-        // This is a simplified implementation for example purposes
-        // In a real system, this would parse the string into a proper expression
-        MathExpression::Var(Variable::E(0)) // Just return a generic element variable
+    /// Create a variable expression from a name
+    pub fn var(name: &str) -> Self {
+        MathExpression::Var(Identifier::Name(
+            name.to_string(),
+            name.bytes().fold(0, |acc, b| acc + b as u32),
+        ))
+    }
+
+    /// Create a variable expression with an explicit identifier
+    pub fn var_with_id(name: &str, id: u32) -> Self {
+        MathExpression::Var(Identifier::Name(name.to_string(), id))
+    }
+
+    /// Apply a type view to this expression
+    pub fn with_view(self, view: TypeViewOperator) -> Self {
+        MathExpression::ViewAs {
+            expression: Box::new(self),
+            view,
+        }
+    }
+
+    /// View this expression as a specific type
+    pub fn view_as(self, type_name: &str) -> Self {
+        self.with_view(TypeViewOperator::simple_view(type_name))
     }
 
     /// Helper to check if an expression can be viewed in a particular way
@@ -118,17 +161,41 @@ impl MathExpression {
     /// Infer the type of an expression
     pub fn infer_type(&self) -> String {
         match self {
+            MathExpression::Var(Identifier::Name(name, _)) => format!("Variable({})", name),
             MathExpression::Var(_) => "Variable".to_string(),
             MathExpression::Object(_) => "Object".to_string(),
-            MathExpression::Operation(_) => "Operation".to_string(),
             MathExpression::Number(_) => "Number".to_string(),
-            MathExpression::ViewAs { .. } => "ViewAs".to_string(),
+            MathExpression::Relation(_) => "Relation".to_string(),
+            MathExpression::Expression(theory_expr) => match theory_expr {
+                TheoryExpression::Group(_) => "GroupExpression".to_string(),
+                TheoryExpression::Ring(_) => "RingExpression".to_string(),
+                TheoryExpression::Field(_) => "FieldExpression".to_string(),
+            },
+            MathExpression::ViewAs { expression, view } => {
+                format!("{} viewed as {:?}", expression.infer_type(), view)
+            }
         }
     }
 
     /// Returns true if this expression is a view of another expression
     pub fn is_view(&self) -> bool {
         matches!(self, MathExpression::ViewAs { .. })
+    }
+
+    /// Get the variable name if this is a variable expression
+    pub fn as_variable_name(&self) -> Option<String> {
+        match self {
+            MathExpression::Var(Identifier::Name(name, _)) => Some(name.clone()),
+            _ => None,
+        }
+    }
+
+    /// Check if this expression is a variable with the given name
+    pub fn is_variable_named(&self, name: &str) -> bool {
+        match self {
+            MathExpression::Var(Identifier::Name(var_name, _)) => var_name == name,
+            _ => false,
+        }
     }
 }
 

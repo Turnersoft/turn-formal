@@ -3,23 +3,23 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::core::ProofState;
-use crate::subjects::math::formalism::declarative_proof::{
+use super::super::super::formalism::core::ProofState;
+use super::super::super::formalism::declarative_proof::{
     self, DeclarativeProofBuilder, StepStatus, proof_builder,
 };
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{
+use super::super::super::formalism::expressions::MathExpression;
+use super::super::super::formalism::proof::{
     CaseAnalysisBuilder, ProofBranch, ProofForest, ProofStatus, RewriteDirection, Tactic,
     TheoremBuilder,
 };
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::relations::MathRelation;
 
 /// Test a basic case analysis using the builder pattern
 #[test]
 fn test_case_analysis_abs_value() {
     // Create a theorem about absolute value being non-negative
-    let absolute_value = MathExpression::string_expr("|x|");
-    let zero = MathExpression::string_expr("0");
+    let absolute_value = MathExpression::var("|x|");
+    let zero = MathExpression::var("0");
 
     let builder = TheoremBuilder::new(
         "Absolute Value Non-Negativity",
@@ -73,8 +73,8 @@ fn test_case_analysis_abs_value() {
 #[test]
 fn test_nested_case_analysis() {
     // Create a theorem statement
-    let expr1 = MathExpression::string_expr("f(n)");
-    let expr2 = MathExpression::string_expr("g(n)");
+    let expr1 = MathExpression::var("f(n)");
+    let expr2 = MathExpression::var("g(n)");
 
     let builder = TheoremBuilder::new(
         "Number Theory Property",
@@ -140,8 +140,8 @@ fn test_declarative_case_analysis() {
     use proof_builder::{branch, case_analysis, intro, proof_tree, theorem_app};
 
     // Create a theorem statement
-    let absolute_value = MathExpression::string_expr("|x|");
-    let zero = MathExpression::string_expr("0");
+    let absolute_value = MathExpression::var("|x|");
+    let zero = MathExpression::var("0");
 
     // Create case branches
     let cases = vec![
@@ -192,7 +192,7 @@ fn test_declarative_case_analysis() {
 #[test]
 fn test_advanced_case_analysis() {
     // Create a theorem statement about a mathematical property
-    let expr = MathExpression::string_expr("P(x)");
+    let expr = MathExpression::var("P(x)");
 
     let builder = TheoremBuilder::new(
         "Advanced Mathematical Property",

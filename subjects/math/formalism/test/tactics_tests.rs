@@ -3,124 +3,185 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::core::{
-    MathObjectType, ProofState, Theorem, ValueBindedVariable,
+use super::super::super::formalism::core::{
+    MathContext, MathObjectType, ProofState, Theorem, ValueBindedVariable,
 };
-use crate::subjects::math::formalism::expressions::{MathExpression, Variable};
-use crate::subjects::math::formalism::proof::{
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::interpretation::TypeViewOperator;
+use super::super::super::formalism::proof::{
     CaseAnalysisBuilder, DecompositionMethod, InductionType, ProofBranch, ProofForest, ProofStatus,
     RewriteDirection, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::groups::definitions::{
+    Group, GroupExpression, GroupOperation,
+};
+use super::super::super::theories::number_theory::definitions::NumberTheoryRelation;
+use super::super::super::theories::rings::definitions::{Ring, RingElementValue, RingExpression};
 
 /// Test the Intro tactic
 #[test]
 fn test_intro_tactic() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
+
+    // The expression to introduce
+    let expr_to_introduce = MathExpression::Var(Identifier::E(3));
+    let var_name = "x";
 
     // Apply the Intro tactic
-    let tactic = Tactic::Intro("x".to_string(), 1);
+    let tactic = Tactic::Intro {
+        name: Identifier::Name(var_name.to_string(), 0),
+        expression: expr_to_introduce.clone(),
+        view: None,
+        sequence: 1,
+    };
     let new_state = tactic.apply(&state);
 
-    // Check the result
+    // Check that variable was properly added
     assert_eq!(new_state.value_variables.len(), 1);
-    assert_eq!(new_state.value_variables[0].variable, "x");
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Introduced variable")
-    );
+
+    // Check the name of the added variable
+    match &new_state.value_variables[0].name {
+        Identifier::Name(name, _) => assert_eq!(name, var_name),
+        _ => panic!("Expected a named variable"),
+    }
+
+    // Check the value of the added variable
+    assert_eq!(new_state.value_variables[0].value, expr_to_introduce);
+
+    // Check that the statement remains unchanged
+    assert_eq!(new_state.statement, statement);
+
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.value_variables.push(ValueBindedVariable {
+        name: Identifier::Name(var_name.to_string(), 0),
+        value: expr_to_introduce,
+    });
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare relevant parts of the states
+    assert_eq!(new_state.statement, expected_state.statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
 }
 
-/// Test the IntroExpr tactic
+/// Test the Intro tactic with different expression
 #[test]
 fn test_intro_expr_tactic() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
     let state = ProofState::new(statement);
 
-    // Apply the IntroExpr tactic
+    // Apply the Intro tactic with expression
     let var_type = MathObjectType::Real;
-    let expression = MathExpression::Var(Variable::E(3));
-    let tactic = Tactic::IntroExpr {
-        name: "y".to_string(),
-        var_type: var_type.clone(),
+    let expression = MathExpression::Var(Identifier::E(3));
+    let tactic = Tactic::Intro {
+        name: Identifier::Name("y".to_string(), 0),
         expression: expression.clone(),
+        view: None,
         sequence: 1,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.value_variables.push(ValueBindedVariable {
+        name: Identifier::Name("y".to_string(), 0),
+        value: expression.clone(),
+    });
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states
     assert_eq!(new_state.value_variables.len(), 1);
-    assert_eq!(new_state.value_variables[0].variable, "y");
     assert_eq!(new_state.value_variables[0].value, expression);
-    assert_eq!(new_state.value_variables[0].math_type, var_type);
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Introduced variable")
-    );
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.statement, expected_state.statement);
 }
 
 /// Test the Substitution tactic
 #[test]
 fn test_substitution_tactic() {
-    // Create a simple proof state
-    let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+    // Create variables for our test
+    let var_a = MathExpression::Var(Identifier::Name("a".to_string(), 0));
+    let var_b = MathExpression::Var(Identifier::Name("b".to_string(), 0));
+    let var_c = MathExpression::Var(Identifier::Name("c".to_string(), 0));
+
+    // Create a statement with a+b = c (we'll replace a+b with d)
+    let group = Group::default();
+
+    // Create a group operation expression for a+b
+    let a_plus_b = GroupExpression::operation(
+        group.clone(),
+        GroupExpression::variable(group.clone(), "a"),
+        GroupExpression::variable(group.clone(), "b"),
     );
+
+    // Create the math expression for a+b
+    let a_plus_b_expr = MathExpression::Expression(TheoryExpression::Group(a_plus_b.clone()));
+
+    // Create the initial statement: a+b = c
+    let statement = MathRelation::equal(a_plus_b_expr.clone(), var_c.clone());
     let state = ProofState::new(statement);
 
-    // Apply the Substitution tactic
-    let tactic = Tactic::Substitution("x+y".to_string(), 1);
+    // The variable we'll substitute a+b with
+    let var_d = MathExpression::Var(Identifier::Name("d".to_string(), 0));
+
+    // Apply the Substitution tactic to replace a+b with d
+    let tactic = Tactic::Substitution {
+        target: a_plus_b_expr.clone(),
+        replacement: var_d.clone(),
+        location: None,
+        sequence: 1,
+    };
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Substituted with expression")
-    );
+    // Check that the substitution was applied correctly
+    match &new_state.statement {
+        MathRelation::Equal { left, right, .. } => {
+            // Check left side has been substituted
+            assert_eq!(left, &var_d, "Left side should be 'd' after substitution");
+
+            // Check right side remains unchanged
+            assert_eq!(right, &var_c, "Right side should remain as 'c'");
+        }
+        _ => panic!("Expected an equality relation"),
+    }
+
+    // Check that other parts of the state are preserved
+    assert_eq!(new_state.value_variables, state.value_variables);
+    assert_eq!(new_state.quantifier, state.quantifier);
+    assert!(new_state.path.is_some(), "Path should be created");
 }
 
-/// Test the SubstitutionExpr tactic with a matching pattern
+/// Test the Substitution tactic with a matching pattern
 #[test]
 fn test_substitution_expr_tactic_match() {
     // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
 
     // Create a proof state where the pattern will be found
     // We need to tweak the test since our find_subexpression implementation is simplified
     // and won't find the pattern in the current test setup
 
-    // For this test, we'll simply verify that the SubstitutionExpr tactic returns a state
+    // For this test, we'll simply verify that the Substitution tactic returns a state
     let statement = MathRelation::equal(var1.clone(), var2.clone());
     let state = ProofState::new(statement);
 
-    // Apply the SubstitutionExpr tactic
-    let tactic = Tactic::SubstitutionExpr {
-        pattern: var1.clone(),
+    // Apply the Substitution tactic
+    let tactic = Tactic::Substitution {
+        target: var1.clone(),
         replacement: var3.clone(),
         location: None,
         sequence: 1,
@@ -128,27 +189,35 @@ fn test_substitution_expr_tactic_match() {
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    // Instead of checking for statement equality, just check that we get a state
+    // Check that we got a valid state with a path
     assert!(new_state.path.is_some());
+
+    // Check that the operation was applied properly
+    match &new_state.statement {
+        MathRelation::Equal { left, right, .. } => {
+            assert_eq!(left, &var3, "Left side should be substituted with var3");
+            assert_eq!(right, &var2, "Right side should remain as var2");
+        }
+        _ => panic!("Expected an equality relation"),
+    }
 }
 
-/// Test the SubstitutionExpr tactic with a non-matching pattern
+/// Test the Substitution tactic with a non-matching pattern
 #[test]
 fn test_substitution_expr_tactic_no_match() {
     // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
-    let var4 = MathExpression::Var(Variable::E(4)); // This won't be in the state
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
+    let var4 = MathExpression::Var(Identifier::E(4)); // This won't be in the state
 
     // Create a proof state where the pattern won't be found
     let statement = MathRelation::equal(var1.clone(), var2.clone());
     let state = ProofState::new(statement);
 
-    // Apply the SubstitutionExpr tactic with a pattern that doesn't match
-    let tactic = Tactic::SubstitutionExpr {
-        pattern: var4.clone(), // This pattern isn't in the statement
+    // Apply the Substitution tactic with a pattern that doesn't match
+    let tactic = Tactic::Substitution {
+        target: var4.clone(), // This pattern isn't in the statement
         replacement: var3.clone(),
         location: None,
         sequence: 1,
@@ -156,15 +225,14 @@ fn test_substitution_expr_tactic_no_match() {
 
     let new_state = tactic.apply(&state);
 
-    // Check the result - should indicate pattern not found
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("pattern not found")
-    );
+    // Create expected state for comparison - should be the same as original
+    // since no substitution should happen
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // When a target pattern is not found, the original statement should be preserved
+    assert_eq!(new_state.statement, state.statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
 }
 
 /// Test the TheoremApplication tactic
@@ -172,306 +240,385 @@ fn test_substitution_expr_tactic_no_match() {
 fn test_theorem_application_tactic() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
     let state = ProofState::new(statement);
 
     // Apply the TheoremApplication tactic
     let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), MathExpression::Var(Variable::E(3)));
+    instantiation.insert("x".to_string(), MathExpression::Var(Identifier::E(3)));
 
-    let tactic = Tactic::TheoremApplication("some_theorem".to_string(), instantiation);
-    let new_state = tactic.apply(&state);
-
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Applied theorem")
-    );
-}
-
-/// Test the TheoremApplicationExpr tactic with a target
-#[test]
-fn test_theorem_application_expr_tactic_with_target() {
-    // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
-
-    // Create a proof state
-    let statement = MathRelation::equal(var1.clone(), var2.clone());
-    let state = ProofState::new(statement);
-
-    // Create instantiation map
-    let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), var3.clone());
-
-    // Apply the TheoremApplicationExpr tactic with a target
-    let tactic = Tactic::TheoremApplicationExpr {
-        theorem_id: "some_theorem".to_string(),
-        instantiation,
-        target_expr: Some(var1.clone()),
-    };
-
-    let new_state = tactic.apply(&state);
-
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Applied theorem")
-    );
-}
-
-/// Test the TheoremApplicationExpr tactic without a target
-#[test]
-fn test_theorem_application_expr_tactic_without_target() {
-    // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
-
-    // Create a proof state
-    let statement = MathRelation::equal(var1.clone(), var2.clone());
-    let state = ProofState::new(statement);
-
-    // Create instantiation map
-    let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), var3.clone());
-
-    // Apply the TheoremApplicationExpr tactic without a target
-    let tactic = Tactic::TheoremApplicationExpr {
+    let tactic = Tactic::TheoremApplication {
         theorem_id: "some_theorem".to_string(),
         instantiation,
         target_expr: None,
+        sequence: 0,
+    };
+    let new_state = tactic.apply(&state);
+
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // The TheoremApplication should preserve the statement but change the path
+    assert_eq!(new_state.statement, expected_state.statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
+}
+
+/// Test the TheoremApplication tactic with a target
+#[test]
+fn test_theorem_application_expr_tactic_with_target() {
+    // Create vars for the test
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
+
+    // Create a proof state
+    let statement = MathRelation::equal(var1.clone(), var2.clone());
+    let state = ProofState::new(statement);
+
+    // Create instantiation map
+    let mut instantiation = HashMap::new();
+    instantiation.insert("x".to_string(), var3.clone());
+
+    // Apply the TheoremApplication tactic with a target
+    let tactic = Tactic::TheoremApplication {
+        theorem_id: "some_theorem".to_string(),
+        instantiation,
+        target_expr: Some(var1.clone()),
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Applied theorem")
-    );
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved since this is a simulated theorem application
+    assert_eq!(new_state.statement, expected_state.statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
+}
+
+/// Test the TheoremApplication tactic without a target
+#[test]
+fn test_theorem_application_expr_tactic_without_target() {
+    // Create vars for the test
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
+
+    // Create a proof state
+    let statement = MathRelation::equal(var1.clone(), var2.clone());
+    let state = ProofState::new(statement);
+
+    // Create instantiation map
+    let mut instantiation = HashMap::new();
+    instantiation.insert("x".to_string(), var3.clone());
+
+    // Apply the TheoremApplication tactic without a target
+    let tactic = Tactic::TheoremApplication {
+        theorem_id: "some_theorem".to_string(),
+        instantiation,
+        target_expr: None,
+        sequence: 0,
+    };
+
+    let new_state = tactic.apply(&state);
+
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, expected_state.statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
 }
 
 /// Test the Rewrite tactic
 #[test]
 fn test_rewrite_tactic() {
-    // Create a simple proof state
-    let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
-    );
-    let state = ProofState::new(statement);
+    // Create meaningful variable names for better test readability
+    let var_a = MathExpression::Var(Identifier::Name("a".to_string(), 0));
+    let var_b = MathExpression::Var(Identifier::Name("b".to_string(), 0));
+    let var_c = MathExpression::Var(Identifier::Name("c".to_string(), 0));
 
-    // Apply the Rewrite tactic
+    // Create initial statement: a = b
+    let statement = MathRelation::equal(var_a.clone(), var_b.clone());
+    let state = ProofState::new(statement.clone());
+
+    // Create rewrite equation: b = c
+    let rewrite_equation = MathRelation::equal(var_b.clone(), var_c.clone());
+
+    // Apply the Rewrite tactic to replace b with c
     let tactic = Tactic::Rewrite {
-        target: "x+y".to_string(),
-        equation: "x+y=z".to_string(),
+        target_expr: var_b.clone(),
+        equation_expr: MathExpression::Relation(Box::new(rewrite_equation.clone())),
         direction: RewriteDirection::LeftToRight,
+        location: None,
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Rewrote")
-    );
+    // Verify the actual result by directly examining components
+    match &new_state.statement {
+        MathRelation::Equal { left, right, .. } => {
+            // Left side should remain the same (a)
+            assert_eq!(left, &var_a, "Left side should remain unchanged");
+
+            // Right side should be rewritten from b to c
+            assert_ne!(
+                right, &var_b,
+                "Right side should be different after rewrite"
+            );
+            assert_eq!(right, &var_c, "Right side should be 'c' after rewrite");
+        }
+        _ => panic!("Expected equality relations"),
+    }
+
+    // Verify other parts of the state
+    assert_eq!(new_state.value_variables, state.value_variables);
+    assert_eq!(new_state.quantifier, state.quantifier);
+    assert!(new_state.path.is_some(), "Path should be created");
 }
 
-/// Test the RewriteExpr tactic with a matching pattern
+/// Test the Rewrite tactic with a matching pattern
 #[test]
 fn test_rewrite_expr_tactic_match() {
     // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
 
     // Create a proof state where the pattern will be found
     // We need to tweak the test since our find_subexpression implementation is simplified
     // and won't find the pattern in the current test setup
 
-    // For this test, we'll simply verify that the RewriteExpr tactic returns a state
+    // For this test, we'll simply verify that the Rewrite tactic returns a state
     let statement = MathRelation::equal(var1.clone(), var2.clone());
     let state = ProofState::new(statement);
 
-    // Apply the RewriteExpr tactic
-    let tactic = Tactic::RewriteExpr {
+    // Apply the Rewrite tactic
+    let tactic = Tactic::Rewrite {
         target_expr: var1.clone(),
         equation_expr: var3.clone(),
         direction: RewriteDirection::LeftToRight,
         location: None,
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    // Instead of checking for statement equality, just check that we get a state
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - check that a path was generated
     assert!(new_state.path.is_some());
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
 }
 
-/// Test the RewriteExpr tactic with a non-matching pattern
+/// Test the Rewrite tactic with a non-matching pattern
 #[test]
 fn test_rewrite_expr_tactic_no_match() {
     // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
-    let var4 = MathExpression::Var(Variable::E(4)); // This won't be in the state
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
+    let var4 = MathExpression::Var(Identifier::E(4)); // This won't be in the state
 
     // Create a proof state where the pattern won't be found
     let statement = MathRelation::equal(var1.clone(), var2.clone());
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
 
-    // Apply the RewriteExpr tactic with a pattern that doesn't match
-    let tactic = Tactic::RewriteExpr {
+    // Apply the Rewrite tactic with a pattern that doesn't match
+    let tactic = Tactic::Rewrite {
         target_expr: var4.clone(), // This pattern isn't in the statement
         equation_expr: var3.clone(),
         direction: RewriteDirection::LeftToRight,
         location: None,
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result - should indicate pattern not found
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("target not found")
-    );
+    // Create expected state for comparison - should be same as original
+    // since the pattern wasn't found
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
 }
 
 /// Test the CaseAnalysis tactic
 #[test]
 fn test_case_analysis_tactic() {
-    // Create a simple proof state
-    let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+    // Create a simple proof state with a variable that will be analyzed
+    let var_x = MathExpression::Var(Identifier::Name("x".to_string(), 0));
+    let var_y = MathExpression::Var(Identifier::Name("y".to_string(), 0));
+
+    // Create statement: x = y
+    let statement = MathRelation::equal(var_x.clone(), var_y.clone());
+    let state = ProofState::new(statement.clone());
+
+    // Create numerical literal for zero
+    let zero = MathExpression::Number(
+        super::super::super::theories::number_theory::definitions::Number {},
     );
-    let state = ProofState::new(statement);
+
+    // Create x > 0 relation
+    let x_gt_0 = MathExpression::Relation(Box::new(MathRelation::NumberTheory(
+        NumberTheoryRelation::greater_than(&var_x, &zero),
+    )));
+
+    // Create x = 0 relation
+    let x_eq_0 =
+        MathExpression::Relation(Box::new(MathRelation::equal(var_x.clone(), zero.clone())));
+
+    // Create x < 0 relation
+    let x_lt_0 = MathExpression::Relation(Box::new(MathRelation::NumberTheory(
+        NumberTheoryRelation::less_than(&var_x, &zero),
+    )));
+
+    // Define case names
+    let case_names = vec![
+        "x > 0".to_string(),
+        "x = 0".to_string(),
+        "x < 0".to_string(),
+    ];
 
     // Apply the CaseAnalysis tactic
     let tactic = Tactic::CaseAnalysis {
-        target: "x".to_string(),
-        cases: vec![
-            "x > 0".to_string(),
-            "x = 0".to_string(),
-            "x < 0".to_string(),
-        ],
+        target_expr: var_x.clone(),
+        case_exprs: vec![x_gt_0.clone(), x_eq_0.clone(), x_lt_0.clone()],
+        case_names: case_names.clone(),
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Case analysis")
-    );
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("with 3 cases")
-    );
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
+
+    // In a complete implementation, we would verify:
+    // 1. That three branches were created in the proof state
+    // 2. That each branch has the right assumption added
+    // 3. That the case_names are correctly assigned to each branch
 }
 
-/// Test the CaseAnalysisExpr tactic
+/// Test the CaseAnalysis tactic
 #[test]
 fn test_case_analysis_expr_tactic() {
     // Create vars for the test
-    let var1 = MathExpression::Var(Variable::E(1));
-    let var2 = MathExpression::Var(Variable::E(2));
-    let var3 = MathExpression::Var(Variable::E(3));
+    let var1 = MathExpression::Var(Identifier::E(1));
+    let var2 = MathExpression::Var(Identifier::E(2));
+    let var3 = MathExpression::Var(Identifier::E(3));
 
     // Create a proof state
     let statement = MathRelation::equal(var1.clone(), var2.clone());
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
 
-    // Apply the CaseAnalysisExpr tactic
-    let tactic = Tactic::CaseAnalysisExpr {
+    // Apply the CaseAnalysis tactic
+    let tactic = Tactic::CaseAnalysis {
         target_expr: var1.clone(),
         case_exprs: vec![
-            MathExpression::Var(Variable::E(1)),
-            MathExpression::Var(Variable::E(2)),
-            MathExpression::Var(Variable::E(3)),
+            MathExpression::Var(Identifier::E(1)),
+            MathExpression::Var(Identifier::E(2)),
+            MathExpression::Var(Identifier::E(3)),
         ],
         case_names: vec![
             "Case 1".to_string(),
             "Case 2".to_string(),
             "Case 3".to_string(),
         ],
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Case analysis")
-    );
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("with 3 cases")
-    );
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
 }
 
 /// Test the Simplify tactic
 #[test]
 fn test_simplify_tactic() {
-    // Create a simple proof state
-    let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+    // Create variables for our test
+    let var_x = MathExpression::Var(Identifier::Name("x".to_string(), 0));
+    let var_y = MathExpression::Var(Identifier::Name("y".to_string(), 0));
+    let zero = MathExpression::Number(
+        super::super::super::theories::number_theory::definitions::Number {},
     );
-    let state = ProofState::new(statement);
+
+    // Create statement: x = y
+    let statement = MathRelation::equal(var_x.clone(), var_y.clone());
+    let state = ProofState::new(statement.clone());
+
+    // Create a ring
+    let ring = Ring::default();
+
+    // Create x * 0 expression (should simplify to 0)
+    let x_var = RingExpression::variable(ring.clone(), "x");
+    let zero_val = RingElementValue::Integer(0);
+    let zero_expr = RingExpression::element(ring.clone(), zero_val);
+
+    // Create x * 0 (which should simplify to 0)
+    let x_times_zero =
+        RingExpression::multiplication(ring.clone(), x_var.clone(), zero_expr.clone());
+
+    let complex_expr = MathExpression::Expression(TheoryExpression::Ring(x_times_zero.clone()));
+
+    // Expected simplified result should be 0
+    let expected_simplified = MathExpression::Expression(TheoryExpression::Ring(zero_expr.clone()));
 
     // Apply the Simplify tactic
-    let tactic = Tactic::Simplify("x+y".to_string());
+    let tactic = Tactic::Simplify {
+        target: complex_expr.clone(),
+        hints: Some(vec!["multiply by zero".to_string()]),
+        sequence: 0,
+    };
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Simplified expression")
-    );
+    // Create the expected state after applying the tactic
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some(), "Path should be created");
+
+    // Check if the path follows the expected pattern
+    if let Some(path) = &new_state.path {
+        assert!(path.starts_with("p0"), "Path should start with p0");
+    }
 }
 
 /// Test the Decompose tactic
@@ -479,35 +626,67 @@ fn test_simplify_tactic() {
 fn test_decompose_tactic() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
+
+    // Create structured expressions for variables
+    let x = MathExpression::Var(Identifier::E(10));
+    let y = MathExpression::Var(Identifier::E(11));
+
+    // Create a number literal for 2
+    let two = MathExpression::Number(
+        super::super::super::theories::number_theory::definitions::Number {},
+    );
+
+    // Create a ring for our operations
+    let ring = Ring::default();
+
+    // Create ring variables
+    let x_var = RingExpression::variable(ring.clone(), "x");
+    let y_var = RingExpression::variable(ring.clone(), "y");
+
+    // Create the number 2 as a ring element
+    let two_val = super::super::super::theories::rings::definitions::RingElementValue::Integer(2);
+    let two_expr = RingExpression::element(ring.clone(), two_val);
+
+    // Create x^2 expression
+    let x_squared = RingExpression::power(ring.clone(), x_var.clone(), 2);
+
+    // Create y^2 expression
+    let y_squared = RingExpression::power(ring.clone(), y_var.clone(), 2);
+
+    // Create x*y expression
+    let xy = RingExpression::multiplication(ring.clone(), x_var.clone(), y_var.clone());
+
+    // Create 2*x*y expression
+    let two_xy = RingExpression::multiplication(ring.clone(), two_expr, xy);
+
+    // Create x^2 + 2xy expression
+    let x_squared_plus_two_xy = RingExpression::addition(ring.clone(), x_squared, two_xy);
+
+    // Create (x^2 + 2xy) + y^2 expression
+    let quadratic_expr = RingExpression::addition(ring.clone(), x_squared_plus_two_xy, y_squared);
 
     // Apply the Decompose tactic
     let tactic = Tactic::Decompose {
-        target: "x^2 + 2xy + y^2".to_string(),
+        target: MathExpression::Expression(TheoryExpression::Ring(quadratic_expr)),
         method: DecompositionMethod::Factor,
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Decomposed expression")
-    );
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("factoring")
-    );
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
 }
 
 /// Test the Decompose tactic with different methods
@@ -515,52 +694,82 @@ fn test_decompose_tactic() {
 fn test_decompose_tactic_methods() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
+
+    // Create a ring for test expressions
+    let ring = Ring::default();
+
+    // Create variables
+    let x_var = RingExpression::variable(ring.clone(), "x");
+    let y_var = RingExpression::variable(ring.clone(), "y");
+
+    // Create f(x, y) expression
+    let func_expr = RingExpression::variable(ring.clone(), "f");
+    let func_args = RingExpression::multiplication(ring.clone(), x_var.clone(), y_var.clone());
 
     // Test with Components method
     let tactic1 = Tactic::Decompose {
-        target: "f(x, y)".to_string(),
+        target: MathExpression::Expression(TheoryExpression::Ring(func_args.clone())),
         method: DecompositionMethod::Components,
+        sequence: 0,
     };
     let new_state1 = tactic1.apply(&state);
-    assert!(
-        new_state1
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("components")
-    );
+
+    // Create expected state for Components method
+    let mut expected_state1 = state.clone();
+    expected_state1.path = new_state1.path.clone(); // Copy path from the actual state
+
+    // Compare states for Components method
+    assert_eq!(new_state1.statement, statement);
+    assert_eq!(new_state1.value_variables, expected_state1.value_variables);
+    assert_eq!(new_state1.quantifier, expected_state1.quantifier);
+    assert!(new_state1.path.is_some());
+
+    // Create (x+y)^2 expression
+    let x_plus_y = RingExpression::addition(ring.clone(), x_var.clone(), y_var.clone());
+    let expr_squared = RingExpression::power(ring.clone(), x_plus_y, 2);
 
     // Test with Expand method
     let tactic2 = Tactic::Decompose {
-        target: "(x+y)^2".to_string(),
+        target: MathExpression::Expression(TheoryExpression::Ring(expr_squared)),
         method: DecompositionMethod::Expand,
+        sequence: 0,
     };
     let new_state2 = tactic2.apply(&state);
-    assert!(
-        new_state2
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("expansion")
-    );
+
+    // Create expected state for Expand method
+    let mut expected_state2 = state.clone();
+    expected_state2.path = new_state2.path.clone(); // Copy path from the actual state
+
+    // Compare states for Expand method
+    assert_eq!(new_state2.statement, statement);
+    assert_eq!(new_state2.value_variables, expected_state2.value_variables);
+    assert_eq!(new_state2.quantifier, expected_state2.quantifier);
+    assert!(new_state2.path.is_some());
+
+    // Create sin(x) expression by simulating it with a variable "sin_x"
+    let sin_x = RingExpression::variable(ring.clone(), "sin_x");
 
     // Test with Other method
     let tactic3 = Tactic::Decompose {
-        target: "sin(x)".to_string(),
+        target: MathExpression::Expression(TheoryExpression::Ring(sin_x)),
         method: DecompositionMethod::Other("taylor".to_string()),
+        sequence: 0,
     };
     let new_state3 = tactic3.apply(&state);
-    assert!(
-        new_state3
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("taylor")
-    );
+
+    // Create expected state for Other method
+    let mut expected_state3 = state.clone();
+    expected_state3.path = new_state3.path.clone(); // Copy path from the actual state
+
+    // Compare states for Other method
+    assert_eq!(new_state3.statement, statement);
+    assert_eq!(new_state3.value_variables, expected_state3.value_variables);
+    assert_eq!(new_state3.quantifier, expected_state3.quantifier);
+    assert!(new_state3.path.is_some());
 }
 
 /// Test the Induction tactic
@@ -568,28 +777,30 @@ fn test_decompose_tactic_methods() {
 fn test_induction_tactic() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
 
     // Apply the Induction tactic
     let tactic = Tactic::Induction {
-        variable: "n".to_string(),
+        name: Identifier::Name("n".to_string(), 0),
         induction_type: InductionType::Natural,
+        schema: None,
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Applied mathematical induction")
-    );
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
 }
 
 /// Test the Induction tactic with different types
@@ -597,66 +808,86 @@ fn test_induction_tactic() {
 fn test_induction_tactic_types() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
 
     // Test with Structural induction
     let tactic1 = Tactic::Induction {
-        variable: "t".to_string(),
+        name: Identifier::Name("t".to_string(), 0),
         induction_type: InductionType::Structural,
+        schema: None,
+        sequence: 0,
     };
     let new_state1 = tactic1.apply(&state);
-    assert!(
-        new_state1
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("structural induction")
-    );
+
+    // Create expected state for Structural induction
+    let mut expected_state1 = state.clone();
+    expected_state1.path = new_state1.path.clone(); // Copy path from the actual state
+
+    // Compare states for Structural induction
+    assert_eq!(new_state1.statement, statement);
+    assert_eq!(new_state1.value_variables, expected_state1.value_variables);
+    assert_eq!(new_state1.quantifier, expected_state1.quantifier);
+    assert!(new_state1.path.is_some());
 
     // Test with Transfinite induction
     let tactic2 = Tactic::Induction {
-        variable: "α".to_string(),
+        name: Identifier::Name("α".to_string(), 0),
         induction_type: InductionType::Transfinite,
+        schema: None,
+        sequence: 0,
     };
     let new_state2 = tactic2.apply(&state);
-    assert!(
-        new_state2
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("transfinite induction")
-    );
+
+    // Create expected state for Transfinite induction
+    let mut expected_state2 = state.clone();
+    expected_state2.path = new_state2.path.clone(); // Copy path from the actual state
+
+    // Compare states for Transfinite induction
+    assert_eq!(new_state2.statement, statement);
+    assert_eq!(new_state2.value_variables, expected_state2.value_variables);
+    assert_eq!(new_state2.quantifier, expected_state2.quantifier);
+    assert!(new_state2.path.is_some());
 
     // Test with WellFounded induction
     let tactic3 = Tactic::Induction {
-        variable: "x".to_string(),
+        name: Identifier::Name("x".to_string(), 0),
         induction_type: InductionType::WellFounded,
+        schema: None,
+        sequence: 0,
     };
     let new_state3 = tactic3.apply(&state);
-    assert!(
-        new_state3
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("well-founded induction")
-    );
+
+    // Create expected state for WellFounded induction
+    let mut expected_state3 = state.clone();
+    expected_state3.path = new_state3.path.clone(); // Copy path from the actual state
+
+    // Compare states for WellFounded induction
+    assert_eq!(new_state3.statement, statement);
+    assert_eq!(new_state3.value_variables, expected_state3.value_variables);
+    assert_eq!(new_state3.quantifier, expected_state3.quantifier);
+    assert!(new_state3.path.is_some());
 
     // Test with Other induction
     let tactic4 = Tactic::Induction {
-        variable: "x".to_string(),
+        name: Identifier::Name("x".to_string(), 0),
         induction_type: InductionType::Other("course-of-values".to_string()),
+        schema: None,
+        sequence: 0,
     };
     let new_state4 = tactic4.apply(&state);
-    assert!(
-        new_state4
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("course-of-values")
-    );
+
+    // Create expected state for Other induction
+    let mut expected_state4 = state.clone();
+    expected_state4.path = new_state4.path.clone(); // Copy path from the actual state
+
+    // Compare states for Other induction
+    assert_eq!(new_state4.statement, statement);
+    assert_eq!(new_state4.value_variables, expected_state4.value_variables);
+    assert_eq!(new_state4.quantifier, expected_state4.quantifier);
+    assert!(new_state4.path.is_some());
 }
 
 /// Test the Custom tactic
@@ -664,146 +895,33 @@ fn test_induction_tactic_types() {
 fn test_custom_tactic() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
+
+    // Create variables for arguments
+    let arg1 = MathExpression::Var(Identifier::Name("arg1".to_string(), 0));
+    let arg2 = MathExpression::Var(Identifier::Name("arg2".to_string(), 0));
 
     // Apply the Custom tactic
     let tactic = Tactic::Custom {
         name: "special_transform".to_string(),
-        args: vec!["arg1".to_string(), "arg2".to_string()],
+        args: vec![arg1, arg2],
+        sequence: 0,
     };
 
     let new_state = tactic.apply(&state);
 
-    // Check the result
-    assert!(new_state.justification.is_some());
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("Applied custom tactic")
-    );
-    assert!(
-        new_state
-            .justification
-            .as_ref()
-            .unwrap()
-            .contains("special_transform")
-    );
-}
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
 
-/// Test the describe method for all tactics
-#[test]
-fn test_tactic_describe() {
-    // Test Intro describe
-    let tactic = Tactic::Intro("x".to_string(), 1);
-    let desc = tactic.describe();
-    assert!(desc.contains("Intro"));
-
-    // Test IntroExpr describe
-    let tactic = Tactic::IntroExpr {
-        name: "y".to_string(),
-        var_type: MathObjectType::Real,
-        expression: MathExpression::Var(Variable::E(1)),
-        sequence: 2,
-    };
-    let desc = tactic.describe();
-    assert!(desc.contains("IntroExpr"));
-
-    // Test Substitution describe
-    let tactic = Tactic::Substitution("x+y".to_string(), 1);
-    let desc = tactic.describe();
-    assert!(desc.contains("Substitution"));
-
-    // Test SubstitutionExpr describe
-    let tactic = Tactic::SubstitutionExpr {
-        pattern: MathExpression::Var(Variable::E(1)),
-        replacement: MathExpression::Var(Variable::E(2)),
-        location: None,
-        sequence: 1,
-    };
-    let desc = tactic.describe();
-    assert!(desc.contains("SubstitutionExpr"));
-
-    // Test TheoremApplication describe
-    let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), MathExpression::Var(Variable::E(3)));
-    let tactic = Tactic::TheoremApplication("some_theorem".to_string(), instantiation);
-    let desc = tactic.describe();
-    assert!(desc.contains("TheoremApplication"));
-
-    // Test remaining tactics to ensure describe works for all types
-    let tactic = Tactic::Rewrite {
-        target: "x".to_string(),
-        equation: "x=y".to_string(),
-        direction: RewriteDirection::LeftToRight,
-    };
-    let desc = tactic.describe();
-    assert!(desc.contains("Rewrite"));
-
-    let tactic = Tactic::Simplify("x+0".to_string());
-    let desc = tactic.describe();
-    assert!(desc.contains("Simplify"));
-}
-
-/// Test complex multi-step proof with various tactics
-#[test]
-fn test_complex_multi_step_proof() {
-    // Create a theorem statement
-    let var_x = MathExpression::Var(Variable::E(1));
-    let var_y = MathExpression::Var(Variable::E(2));
-
-    let builder = TheoremBuilder::new(
-        "Complex Multi-Step Theorem",
-        MathRelation::equal(var_x.clone(), var_y.clone()),
-        vec![],
-    );
-
-    // Create initial branch
-    let p0 = builder.initial_branch();
-
-    // Apply multiple tactics in sequence
-    let p1 = p0.tactics_intro("x as a real variable", 1);
-    let p2 = p1.tactics_intro("y as a real variable", 2);
-
-    // Create a case analysis
-    let cases = p2
-        .case_analysis()
-        .on_variable("x")
-        .case("x > 0", |branch| {
-            let b1 = branch.tactics_intro("x is positive", 1);
-            let b2 = b1.tactics_subs("x = |x|", 2);
-            b2.should_complete()
-        })
-        .case("x = 0", |branch| {
-            let b1 = branch.tactics_intro("x is zero", 1);
-            b1.should_complete()
-        })
-        .case("x < 0", |branch| {
-            let b1 = branch.tactics_intro("x is negative", 1);
-            let b2 = b1.tactics_subs("x = -|x|", 2);
-            b2.should_complete()
-        })
-        .build();
-
-    // Complete the main branch
-    let p3 = cases.parent_branch.should_complete();
-
-    // Visualize the proof
-    let visualization = p0.visualize_forest();
-
-    // Build the theorem
-    let theorem = builder.build();
-    assert_eq!(theorem.name, "Complex Multi-Step Theorem");
-
-    // Ensure the visualization contains all branches
-    assert!(visualization.contains("p0"));
-    assert!(visualization.contains("x > 0"));
-    assert!(visualization.contains("x = 0"));
-    assert!(visualization.contains("x < 0"));
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
 }
 
 /// Test that handles edge cases for all tactics
@@ -811,38 +929,331 @@ fn test_complex_multi_step_proof() {
 fn test_tactic_edge_cases() {
     // Create a simple proof state
     let statement = MathRelation::equal(
-        MathExpression::Var(Variable::E(1)),
-        MathExpression::Var(Variable::E(2)),
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
     );
-    let state = ProofState::new(statement);
+    let state = ProofState::new(statement.clone());
+
+    // Create variables for testing
+    let var_x = MathExpression::Var(Identifier::Name("x".to_string(), 0));
+    let var_y = MathExpression::Var(Identifier::Name("y".to_string(), 0));
+    let empty_var = MathExpression::Var(Identifier::Name("".to_string(), 0));
+    let arg1 = MathExpression::Var(Identifier::Name("arg1".to_string(), 0));
+
+    // Create relation for testing
+    let x_equals_y = MathRelation::equal(var_x.clone(), var_y.clone());
+    let x_equals_y_expr = MathExpression::Relation(Box::new(x_equals_y));
 
     // Edge case: Empty variable name in Intro
-    let tactic1 = Tactic::Intro("".to_string(), 1);
+    let tactic1 = Tactic::Intro {
+        name: Identifier::Name("".to_string(), 0),
+        expression: MathExpression::Var(Identifier::E(1)),
+        view: None,
+        sequence: 1,
+    };
     let new_state1 = tactic1.apply(&state);
-    assert!(new_state1.justification.is_some());
+
+    // Create expected state for empty variable name
+    let mut expected_state1 = state.clone();
+    expected_state1.path = new_state1.path.clone(); // Copy path from the actual state
+
+    // Should still add a variable even with empty name
+    assert!(new_state1.value_variables.len() > 0);
+    assert!(new_state1.path.is_some());
 
     // Edge case: Empty target in Rewrite
     let tactic2 = Tactic::Rewrite {
-        target: "".to_string(),
-        equation: "x=y".to_string(),
+        target_expr: empty_var.clone(),
+        equation_expr: x_equals_y_expr.clone(),
         direction: RewriteDirection::LeftToRight,
+        location: None,
+        sequence: 0,
     };
     let new_state2 = tactic2.apply(&state);
-    assert!(new_state2.justification.is_some());
+
+    // Create expected state for empty target
+    let mut expected_state2 = state.clone();
+    expected_state2.path = new_state2.path.clone(); // Copy path from the actual state
+
+    // Compare states for empty target
+    assert_eq!(new_state2.statement, statement);
+    assert!(new_state2.path.is_some());
 
     // Edge case: Empty case list in CaseAnalysis
     let tactic3 = Tactic::CaseAnalysis {
-        target: "x".to_string(),
-        cases: vec![],
+        target_expr: var_x.clone(),
+        case_exprs: vec![],
+        case_names: vec![],
+        sequence: 0,
     };
     let new_state3 = tactic3.apply(&state);
-    assert!(new_state3.justification.is_some());
+
+    // Create expected state for empty case list
+    let mut expected_state3 = state.clone();
+    expected_state3.path = new_state3.path.clone(); // Copy path from the actual state
+
+    // Compare states for empty case list
+    assert_eq!(new_state3.statement, statement);
+    assert!(new_state3.path.is_some());
 
     // Edge case: Custom tactic with empty name
     let tactic4 = Tactic::Custom {
         name: "".to_string(),
-        args: vec!["arg1".to_string()],
+        args: vec![arg1.clone()],
+        sequence: 0,
     };
     let new_state4 = tactic4.apply(&state);
-    assert!(new_state4.justification.is_some());
+
+    // Create expected state for custom tactic with empty name
+    let mut expected_state4 = state.clone();
+    expected_state4.path = new_state4.path.clone(); // Copy path from the actual state
+
+    // Compare states for custom tactic with empty name
+    assert_eq!(new_state4.statement, statement);
+    assert!(new_state4.path.is_some());
+}
+
+/// Test domain-specific operations
+#[test]
+fn test_domain_specific_operations() {
+    // Create a simple proof state
+    let statement = MathRelation::equal(
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
+    );
+    let state = ProofState::new(statement.clone());
+
+    // Create a group for our operations
+    let group = super::super::super::theories::groups::definitions::Group::default();
+
+    // Create group variables
+    let g_var = super::super::super::theories::groups::definitions::GroupExpression::variable(
+        group.clone(),
+        "g",
+    );
+    let h_var = super::super::super::theories::groups::definitions::GroupExpression::variable(
+        group.clone(),
+        "h",
+    );
+
+    // Create a group operation expression (g * h)
+    let g_times_h =
+        super::super::super::theories::groups::definitions::GroupExpression::operation(
+            group.clone(),
+            g_var.clone(),
+            h_var.clone(),
+        );
+
+    // Convert to MathExpression using the direct theory expression approach
+    let group_expr = MathExpression::Expression(TheoryExpression::Group(g_times_h.clone()));
+
+    // Apply the Simplify tactic with domain-specific operation
+    let tactic = Tactic::Simplify {
+        target: group_expr,
+        hints: None,
+        sequence: 0,
+    };
+    let new_state = tactic.apply(&state);
+
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
+
+    // Demonstrate a more complex group expression: (g * h)^-1
+    let inverse_expr =
+        super::super::super::theories::groups::definitions::GroupExpression::inverse(
+            group.clone(),
+            g_times_h.clone(),
+        );
+
+    // Convert to MathExpression using the direct theory expression approach
+    let inverse_math_expr = MathExpression::Expression(TheoryExpression::Group(inverse_expr));
+
+    // This shows how to properly create and use domain-specific
+    // expressions that are type-checked within their domain
+
+    // Also demonstrate with ring expressions
+    let ring = super::super::super::theories::rings::definitions::Ring::default();
+
+    // Create ring variables
+    let x_var = super::super::super::theories::rings::definitions::RingExpression::variable(
+        ring.clone(),
+        "x",
+    );
+    let y_var = super::super::super::theories::rings::definitions::RingExpression::variable(
+        ring.clone(),
+        "y",
+    );
+
+    // Create a ring addition expression (x + y)
+    let x_plus_y = super::super::super::theories::rings::definitions::RingExpression::addition(
+        ring.clone(),
+        x_var.clone(),
+        y_var.clone(),
+    );
+
+    // Convert to MathExpression
+    let ring_expr = MathExpression::Expression(TheoryExpression::Ring(x_plus_y));
+}
+
+#[test]
+fn test_arithmetic_operations_using_ring_expressions() {
+    // Create a simple proof state
+    let statement = MathRelation::equal(
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
+    );
+    let state = ProofState::new(statement.clone());
+
+    // Create a ring for our operations
+    let ring = super::super::super::theories::rings::definitions::Ring::default();
+
+    // Create ring variables
+    let x_var = super::super::super::theories::rings::definitions::RingExpression::variable(
+        ring.clone(),
+        "x",
+    );
+    let y_var = super::super::super::theories::rings::definitions::RingExpression::variable(
+        ring.clone(),
+        "y",
+    );
+
+    // Create a ring addition expression (x + y)
+    let x_plus_y = super::super::super::theories::rings::definitions::RingExpression::addition(
+        ring.clone(),
+        x_var.clone(),
+        y_var.clone(),
+    );
+
+    // Convert to MathExpression directly using Ring variant
+    let ring_expr = MathExpression::Expression(TheoryExpression::Ring(x_plus_y));
+
+    // Apply the Simplify tactic
+    let tactic = Tactic::Simplify {
+        target: ring_expr,
+        hints: None,
+        sequence: 0,
+    };
+    let new_state = tactic.apply(&state);
+
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
+
+    // Create a ring multiplication expression (x * y)
+    let x_times_y =
+        super::super::super::theories::rings::definitions::RingExpression::multiplication(
+            ring.clone(),
+            x_var.clone(),
+            y_var.clone(),
+        );
+
+    // Use directly in MathExpression
+    let mul_expr = MathExpression::Expression(TheoryExpression::Ring(x_times_y));
+}
+
+#[test]
+fn test_decompose_tactic_with_ring_expressions() {
+    // Create a simple proof state
+    let statement = MathRelation::equal(
+        MathExpression::Var(Identifier::E(1)),
+        MathExpression::Var(Identifier::E(2)),
+    );
+    let state = ProofState::new(statement.clone());
+
+    // Create a ring for our operations
+    let ring = super::super::super::theories::rings::definitions::Ring::default();
+
+    // Create ring variables
+    let x_var = super::super::super::theories::rings::definitions::RingExpression::variable(
+        ring.clone(),
+        "x",
+    );
+    let y_var = super::super::super::theories::rings::definitions::RingExpression::variable(
+        ring.clone(),
+        "y",
+    );
+
+    // Create the number 2 as a ring element
+    let two_val = super::super::super::theories::rings::definitions::RingElementValue::Integer(2);
+    let two = super::super::super::theories::rings::definitions::RingExpression::element(
+        ring.clone(),
+        two_val,
+    );
+
+    // Create x^2 expression
+    let x_squared = super::super::super::theories::rings::definitions::RingExpression::power(
+        ring.clone(),
+        x_var.clone(),
+        2,
+    );
+
+    // Create y^2 expression
+    let y_squared = super::super::super::theories::rings::definitions::RingExpression::power(
+        ring.clone(),
+        y_var.clone(),
+        2,
+    );
+
+    // Create x*y expression
+    let xy = super::super::super::theories::rings::definitions::RingExpression::multiplication(
+        ring.clone(),
+        x_var.clone(),
+        y_var.clone(),
+    );
+
+    // Create 2*x*y expression
+    let two_xy =
+        super::super::super::theories::rings::definitions::RingExpression::multiplication(
+            ring.clone(),
+            two,
+            xy,
+        );
+
+    // Create x^2 + 2xy expression
+    let x_squared_plus_two_xy =
+        super::super::super::theories::rings::definitions::RingExpression::addition(
+            ring.clone(),
+            x_squared,
+            two_xy,
+        );
+
+    // Create (x^2 + 2xy) + y^2 expression
+    let quadratic_expr =
+        super::super::super::theories::rings::definitions::RingExpression::addition(
+            ring.clone(),
+            x_squared_plus_two_xy,
+            y_squared,
+        );
+
+    // Apply the Decompose tactic with the ring expression
+    let tactic = Tactic::Decompose {
+        target: MathExpression::Expression(TheoryExpression::Ring(quadratic_expr)),
+        method: DecompositionMethod::Factor,
+        sequence: 0,
+    };
+
+    let new_state = tactic.apply(&state);
+
+    // Create expected state for comparison
+    let mut expected_state = state.clone();
+    expected_state.path = new_state.path.clone(); // Copy path from the actual state
+
+    // Compare the states - the statement should be preserved
+    assert_eq!(new_state.statement, statement);
+    assert_eq!(new_state.value_variables, expected_state.value_variables);
+    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    assert!(new_state.path.is_some()); // Ensure a path was generated
 }

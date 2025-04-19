@@ -1,10 +1,8 @@
 //! Tactic combinators for building complex proof strategies
 
-use crate::subjects::logic::propositional::tactics::{
-    ProofStateTactic, TacticResult,
-};
+use super::super::super::super::logic::propositional::tactics::{ProofStateTactic, TacticResult};
 
-use super::{proof_state::ProofState, TacticError};
+use super::{TacticError, proof_state::ProofState};
 
 /// A tactic that applies two tactics in sequence
 #[derive(Debug, Clone)]

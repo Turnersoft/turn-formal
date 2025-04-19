@@ -3,13 +3,28 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::core::{ProofState, Theorem};
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{
+use super::super::super::formalism::core::{ProofState, Theorem};
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::{
     ProofBranch, ProofForest, ProofStatus, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::formalism::relations::MathRelation;
-use crate::subjects::math::theories::groups::definitions::GroupProperty;
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::groups::definitions::GroupProperty;
+use super::super::super::theories::rings::definitions::{Ring, RingExpression};
+
+/// Helper function to create a variable expression
+fn create_var(name: &str) -> MathExpression {
+    MathExpression::Var(Identifier::Name(name.to_string(), 0))
+}
+
+/// Helper function to create a simple ring-based expression
+fn create_expr(expr_str: &str) -> MathExpression {
+    // This is a simplification - in a real implementation, we would parse the expression
+    // For now, we'll just create a variable with the same name
+    let ring = Ring::default();
+    let ring_var = RingExpression::variable(ring, expr_str);
+    MathExpression::Expression(TheoryExpression::Ring(ring_var))
+}
 
 /// Example: Proving Group Associativity Theorem
 ///
@@ -17,8 +32,8 @@ use crate::subjects::math::theories::groups::definitions::GroupProperty;
 /// with multiple proof branches at different depths.
 pub fn prove_group_associativity() -> Theorem {
     // Create a theorem about group associativity
-    let left = MathExpression::string_expr("a * (b * c)");
-    let right = MathExpression::string_expr("(a * b) * c");
+    let left = create_expr("a * (b * c)");
+    let right = create_expr("(a * b) * c");
 
     let builder = TheoremBuilder::new(
         "Group Associativity",
@@ -70,8 +85,8 @@ pub fn prove_group_associativity() -> Theorem {
 
 /// Example: Using bookmarks for complex proofs
 pub fn prove_with_bookmarks() -> Theorem {
-    let left = MathExpression::string_expr("a * b");
-    let right = MathExpression::string_expr("b * a");
+    let left = create_expr("a * b");
+    let right = create_expr("b * a");
 
     let builder = TheoremBuilder::new(
         "Commutative Group Properties",
@@ -124,8 +139,8 @@ pub fn prove_with_bookmarks() -> Theorem {
 
 /// Example: Named proof steps for better clarity
 pub fn prove_with_named_steps() -> Theorem {
-    let left = MathExpression::string_expr("a * a⁻¹");
-    let right = MathExpression::string_expr("e");
+    let left = create_expr("a * a⁻¹");
+    let right = create_expr("e");
 
     let builder = TheoremBuilder::new(
         "Inverse Element Theorem",

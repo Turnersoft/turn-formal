@@ -3,10 +3,10 @@
 //! This file contains tests that verify the creation, manipulation, and properties
 //! of all mathematical objects defined in the group theory module.
 
-use crate::subjects::math::theories::groups::definitions::*;
-use crate::subjects::math::theories::zfc::set::CardinalityPropertyVariant;
-use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
-use crate::subjects::math::theories::VariantSet;
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::groups::definitions::*;
+use super::super::super::super::math::theories::zfc::set::CardinalityPropertyVariant;
+use super::super::super::super::math::theories::zfc::set::{Set, SetProperty};
 use serde_json::{from_str, to_string};
 use std::cmp::PartialEq;
 
@@ -375,28 +375,36 @@ mod group_tests {
             p,
             GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
         )));
-        assert!(symmetric_group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(6)))));
+        assert!(
+            symmetric_group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(6))))
+        );
 
         // Verify Z/2Z properties
         assert!(matches!(
             cyclic_group.operation.operation_type,
             GroupOperationVariant::Addition
         ));
-        assert!(cyclic_group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian))));
-        assert!(cyclic_group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(2)))));
-        assert!(cyclic_group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple))));
+        assert!(
+            cyclic_group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)))
+        );
+        assert!(
+            cyclic_group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(2))))
+        );
+        assert!(
+            cyclic_group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple)))
+        );
     }
 }
 
@@ -451,17 +459,21 @@ mod topological_group_tests {
         )));
 
         // Verify that the underlying group is abelian and infinite
-        assert!(topological_group
-            .group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian))));
+        assert!(
+            topological_group
+                .group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)))
+        );
 
-        assert!(topological_group
-            .group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Infinite))));
+        assert!(
+            topological_group
+                .group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Infinite)))
+        );
     }
 
     #[test]
@@ -543,21 +555,27 @@ mod topological_group_tests {
         )));
 
         // Verify discrete group properties
-        assert!(discrete_topological_group
-            .properties
-            .iter()
-            .any(|p| matches!(
-                p,
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::TotallyDisconnected)
-            )));
+        assert!(
+            discrete_topological_group
+                .properties
+                .iter()
+                .any(|p| matches!(
+                    p,
+                    TopologicalGroupProperty::Connected(
+                        ConnectedPropertyVariant::TotallyDisconnected
+                    )
+                ))
+        );
 
-        assert!(discrete_topological_group
-            .properties
-            .iter()
-            .any(|p| matches!(
-                p,
-                TopologicalGroupProperty::Metrizable(MetrizablePropertyVariant::Metrizable)
-            )));
+        assert!(
+            discrete_topological_group
+                .properties
+                .iter()
+                .any(|p| matches!(
+                    p,
+                    TopologicalGroupProperty::Metrizable(MetrizablePropertyVariant::Metrizable)
+                ))
+        );
     }
 }
 
@@ -621,25 +639,29 @@ mod lie_group_tests {
         )));
 
         // Verify topological properties
-        assert!(lie_group
-            .topological_group
-            .properties
-            .iter()
-            .any(|p| matches!(
-                p,
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected)
-            )));
+        assert!(
+            lie_group
+                .topological_group
+                .properties
+                .iter()
+                .any(|p| matches!(
+                    p,
+                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected)
+                ))
+        );
 
         // Verify group properties
-        assert!(lie_group
-            .topological_group
-            .group
-            .properties
-            .iter()
-            .any(|p| matches!(
-                p,
-                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
-            )));
+        assert!(
+            lie_group
+                .topological_group
+                .group
+                .properties
+                .iter()
+                .any(|p| matches!(
+                    p,
+                    GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
+                ))
+        );
 
         assert!(matches!(
             lie_group.topological_group.group.operation.operation_type,
@@ -737,14 +759,16 @@ mod lie_group_tests {
             LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple)
         )));
 
-        assert!(so3_lie_group
-            .topological_group
-            .properties
-            .iter()
-            .any(|p| matches!(
-                p,
-                TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact)
-            )));
+        assert!(
+            so3_lie_group
+                .topological_group
+                .properties
+                .iter()
+                .any(|p| matches!(
+                    p,
+                    TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact)
+                ))
+        );
 
         // Verify SL(2,R) properties
         assert!(sl2r_lie_group.properties.iter().any(|p| matches!(
@@ -752,27 +776,31 @@ mod lie_group_tests {
             LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple)
         )));
 
-        assert!(sl2r_lie_group
-            .topological_group
-            .properties
-            .iter()
-            .any(|p| matches!(
-                p,
-                TopologicalGroupProperty::Compact(CompactPropertyVariant::NonCompact)
-            )));
+        assert!(
+            sl2r_lie_group
+                .topological_group
+                .properties
+                .iter()
+                .any(|p| matches!(
+                    p,
+                    TopologicalGroupProperty::Compact(CompactPropertyVariant::NonCompact)
+                ))
+        );
 
-        assert!(sl2r_lie_group
-            .topological_group
-            .group
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple))));
+        assert!(
+            sl2r_lie_group
+                .topological_group
+                .group
+                .properties
+                .iter()
+                .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple)))
+        );
     }
 }
 
 #[cfg(test)]
 mod group_action_tests {
-    use crate::subjects::math::theories::VariantSet;
+    use super::super::super::super::super::math::theories::VariantSet;
 
     use super::*;
 
@@ -828,12 +856,14 @@ mod group_action_tests {
         )));
 
         // Verify the acting group
-        assert!(action
-            .get_group()
-            .base_set
-            .get_properties()
-            .inner
-            .is_empty());
+        assert!(
+            action
+                .get_group()
+                .base_set
+                .get_properties()
+                .inner
+                .is_empty()
+        );
     }
 
     #[test]
@@ -887,22 +917,28 @@ mod group_action_tests {
         let rotation_action = GroupAction::set_action(z2_group, space, rotation_properties);
 
         // Verify reflection action properties
-        assert!(reflection_action
-            .get_properties()
-            .contains_variant(&GroupActionProperty::Free(FreenessPropertyVariant::NonFree)));
+        assert!(
+            reflection_action
+                .get_properties()
+                .contains_variant(&GroupActionProperty::Free(FreenessPropertyVariant::NonFree))
+        );
         assert!(reflection_action.get_properties().contains_variant(
             &GroupActionProperty::Faithful(FaithfulnessPropertyVariant::Faithful)
         ));
 
         // Verify rotation action properties
-        assert!(rotation_action
-            .get_properties()
-            .contains_variant(&GroupActionProperty::Free(FreenessPropertyVariant::Free)));
-        assert!(rotation_action
-            .get_properties()
-            .contains_variant(&GroupActionProperty::Faithful(
-                FaithfulnessPropertyVariant::Faithful
-            )));
+        assert!(
+            rotation_action
+                .get_properties()
+                .contains_variant(&GroupActionProperty::Free(FreenessPropertyVariant::Free))
+        );
+        assert!(
+            rotation_action
+                .get_properties()
+                .contains_variant(&GroupActionProperty::Faithful(
+                    FaithfulnessPropertyVariant::Faithful
+                ))
+        );
     }
 }
 

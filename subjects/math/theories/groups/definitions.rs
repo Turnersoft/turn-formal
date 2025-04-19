@@ -1,8 +1,8 @@
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::relations::MathRelation;
-use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
-use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
+use super::super::super::super::math::formalism::expressions::MathExpression;
+use super::super::super::super::math::formalism::relations::MathRelation;
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::topology::definitions::TopologicalSpace;
+use super::super::super::super::math::theories::zfc::set::{Set, SetProperty};
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -521,6 +521,7 @@ pub struct GroupRelationEntity {
 }
 
 /// Relations specific to group theory
+/// these are the verbs in the language of group theory
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum GroupRelation {
     /// One group is a subgroup of another
@@ -746,11 +747,11 @@ impl GroupRelation {
         let variable_name = "kernel_func";
 
         // Create a proper Set instead of using Set::default()
-        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Kernel set".to_string(),
             membership_condition: "x ∈ ker(ϕ)".to_string(),
-            properties: crate::subjects::math::theories::VariantSet::new(),
+            properties: super::super::super::super::math::theories::VariantSet::new(),
         };
 
         let group = Group {
@@ -776,11 +777,11 @@ impl GroupRelation {
         let variable_name = "image_func";
 
         // Create a proper Set instead of using Set::default()
-        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Image set".to_string(),
             membership_condition: "x ∈ Im(ϕ)".to_string(),
-            properties: crate::subjects::math::theories::VariantSet::new(),
+            properties: super::super::super::super::math::theories::VariantSet::new(),
         };
 
         let group = Group {
@@ -806,11 +807,11 @@ impl GroupRelation {
         normal_subgroup: &MathExpression,
     ) -> GroupExpression {
         // Create a placeholder group for the quotient with a proper Set
-        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Quotient group set".to_string(),
             membership_condition: "x ∈ G/N".to_string(),
-            properties: crate::subjects::math::theories::VariantSet::new(),
+            properties: super::super::super::super::math::theories::VariantSet::new(),
         };
 
         let quotient_group = Group {
@@ -833,11 +834,11 @@ impl GroupRelation {
     // Create a structured representation of a symmetric group on a set
     pub fn symmetric_group(base_set: &MathExpression) -> GroupExpression {
         // Create a placeholder group for the symmetric group
-        let sym_set = crate::subjects::math::theories::zfc::Set::Parametric {
+        let sym_set = super::super::super::super::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Symmetric group set".to_string(),
             membership_condition: "x is a permutation".to_string(),
-            properties: crate::subjects::math::theories::VariantSet::new(),
+            properties: super::super::super::super::math::theories::VariantSet::new(),
         };
 
         let sym_group = Group {
@@ -860,14 +861,15 @@ impl GroupRelation {
     // Create an "element of" expression for group membership
     pub fn element_of_expr(element: &MathExpression, group: &MathExpression) -> MathRelation {
         // Create a SetTheoryRelation::ElementOf and wrap it in MathRelation::SetTheory
-        let set_entity = crate::subjects::math::theories::zfc::relations::SetTheoryRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
+        let set_entity =
+            super::super::super::super::math::theories::zfc::relations::SetTheoryRelationEntity {
+                id: None,
+                description: None,
+                tags: Vec::new(),
+            };
 
         MathRelation::SetTheory(
-            crate::subjects::math::theories::zfc::relations::SetTheoryRelation::ElementOf {
+            super::super::super::super::math::theories::zfc::relations::SetTheoryRelation::ElementOf {
                 entity: set_entity,
                 element: element.clone(),
                 set: group.clone(),
@@ -878,14 +880,14 @@ impl GroupRelation {
     // Define a structured representation for "p divides n" where p and n are integers
     pub fn integer_divides(divisor: &MathExpression, dividend: &MathExpression) -> MathRelation {
         // Create a NumberTheoryRelation::Divides and wrap it in MathRelation::NumberTheory
-        let num_entity = crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelationEntity {
+        let num_entity = super::super::super::super::math::theories::number_theory::definitions::NumberTheoryRelationEntity {
             id: None,
             description: None,
             tags: Vec::new(),
         };
 
         MathRelation::NumberTheory(
-            crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::Divides {
+            super::super::super::super::math::theories::number_theory::definitions::NumberTheoryRelation::Divides {
                 entity: num_entity,
                 divisor: divisor.clone(),
                 dividend: dividend.clone(),
@@ -896,11 +898,11 @@ impl GroupRelation {
     // Add a structured representation for Sylow p-subgroups
     pub fn sylow_p_subgroup(prime: &MathExpression, group: &MathExpression) -> GroupExpression {
         // Create a placeholder group for the Sylow subgroup
-        let sylow_set = crate::subjects::math::theories::zfc::Set::Parametric {
+        let sylow_set = super::super::super::super::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Sylow p-subgroup set".to_string(),
             membership_condition: "x ∈ Syl_p(G)".to_string(),
-            properties: crate::subjects::math::theories::VariantSet::new(),
+            properties: super::super::super::super::math::theories::VariantSet::new(),
         };
 
         let sylow_group = Group {
@@ -945,16 +947,16 @@ impl GroupRelation {
         // This should create a representation that x is the inverse of y in the group
         // First create the identity element
         let identity = MathExpression::Var(
-            crate::subjects::math::formalism::expressions::Variable::O(111),
+            super::super::super::super::math::formalism::expressions::Identifier::O(111),
         );
 
         // Since BinaryOp is removed, we need to use GroupExpression and convert
         // Create a placeholder group
-        let base_set = crate::subjects::math::theories::zfc::Set::Parametric {
+        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
             parameters: std::collections::HashMap::new(),
             description: "Group set".to_string(),
             membership_condition: "x ∈ G".to_string(),
-            properties: crate::subjects::math::theories::VariantSet::new(),
+            properties: super::super::super::super::math::theories::VariantSet::new(),
         };
 
         let group = Group {
@@ -1205,17 +1207,17 @@ impl GroupObject {
 
     /// Convert a GroupObject to a MathExpression
     pub fn to_expression(&self) -> MathExpression {
-        use crate::subjects::math::formalism::expressions::Variable;
+        use super::super::super::super::math::formalism::expressions::Identifier;
 
         // Create a simplified expression for each group object type
         match self {
             GroupObject::Kernel { homomorphism, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(100))
+                MathExpression::Var(Identifier::O(100))
             }
             GroupObject::Image { homomorphism, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(101))
+                MathExpression::Var(Identifier::O(101))
             }
             GroupObject::QuotientGroup {
                 group,
@@ -1223,41 +1225,41 @@ impl GroupObject {
                 ..
             } => {
                 // Using Variable instead of BinaryOp
-                MathExpression::Var(Variable::O(102))
+                MathExpression::Var(Identifier::O(102))
             }
             GroupObject::SymmetricGroup { base_set, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(103))
+                MathExpression::Var(Identifier::O(103))
             }
             GroupObject::SylowSubgroup { prime, group, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(104))
+                MathExpression::Var(Identifier::O(104))
             }
             GroupObject::GroupOrder { group, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(105))
+                MathExpression::Var(Identifier::O(105))
             }
             GroupObject::ElementOrder { element, group, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(106))
+                MathExpression::Var(Identifier::O(106))
             }
             GroupObject::Center { group, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(107))
+                MathExpression::Var(Identifier::O(107))
             }
             GroupObject::Centralizer { element, group, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(108))
+                MathExpression::Var(Identifier::O(108))
             }
             GroupObject::Normalizer {
                 subgroup, group, ..
             } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(109))
+                MathExpression::Var(Identifier::O(109))
             }
             GroupObject::CommutatorSubgroup { group, .. } => {
                 // Using Variable instead of Apply
-                MathExpression::Var(Variable::O(110))
+                MathExpression::Var(Identifier::O(110))
             }
         }
     }
@@ -1428,74 +1430,27 @@ impl GroupExpression {
 
     /// Convert GroupExpression to MathExpression
     pub fn to_math_expression(&self) -> MathExpression {
-        use crate::subjects::math::formalism::expressions::Variable;
-
-        match self {
-            GroupExpression::Element(element) => {
-                // Simply use the MathExpression directly
-                // Convert GroupElement to MathExpression
-                MathExpression::Var(Variable::O(200))
-            }
-            GroupExpression::Identity(_) => {
-                // Represent identity as a special variable
-                MathExpression::Var(Variable::O(200))
-            }
-            GroupExpression::Variable { name, .. } => {
-                // Represent variable as symbol
-                MathExpression::Var(Variable::O(201))
-            }
-            GroupExpression::Operation { left, right, .. } => {
-                // Convert operation to a variable with an id based on operation type
-                let left_expr = left.to_math_expression();
-                let right_expr = right.to_math_expression();
-
-                // Use a variable to represent this operation
-                MathExpression::Var(Variable::O(100))
-            }
-            GroupExpression::Inverse { element, .. } => {
-                // Represent inverse as a variable
-                let element_expr = element.to_math_expression();
-                MathExpression::Var(Variable::O(110))
-            }
-            GroupExpression::Power { base, exponent, .. } => {
-                // Represent power as a variable
-                let base_expr = base.to_math_expression();
-                MathExpression::Var(Variable::O(120))
-            }
-            GroupExpression::Commutator { a, b, .. } => {
-                // Represent commutator as a variable
-                let a_expr = a.to_math_expression();
-                let b_expr = b.to_math_expression();
-                MathExpression::Var(Variable::O(130))
-            }
-            GroupExpression::Coset {
-                element,
-                subgroup,
-                is_left,
-                ..
-            } => {
-                // Represent coset as a variable
-                let element_expr = element.to_math_expression();
-                let coset_type = if *is_left { 140 } else { 141 };
-                MathExpression::Var(Variable::O(coset_type))
-            }
-            GroupExpression::Action { element, action } => {
-                // Represent action as a variable
-                let element_expr = element.to_math_expression();
-                MathExpression::Var(Variable::O(150))
-            }
-        }
+        use super::super::super::super::math::formalism::expressions::{
+            MathExpression, TheoryExpression,
+        };
+        MathExpression::Expression(TheoryExpression::Group(self.clone()))
     }
 
     /// Convert MathExpression to GroupExpression
     pub fn from_math_expression(expr: &MathExpression, group: &Group) -> Result<Self, String> {
-        use crate::subjects::math::formalism::expressions::Variable;
+        use super::super::super::super::math::formalism::expressions::{
+            Identifier, TheoryExpression,
+        };
 
         match expr {
+            MathExpression::Expression(TheoryExpression::Group(group_expr)) => {
+                // Direct conversion from group expression
+                Ok(group_expr.clone())
+            }
             MathExpression::Var(var) => {
                 // Handle variables directly
                 match var {
-                    Variable::O(id) => {
+                    Identifier::O(id) => {
                         // Object variable with special handling
                         if *id == 200 {
                             // This is our special identity element

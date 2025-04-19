@@ -1,4 +1,4 @@
-use crate::subjects::math::theories::{
+use super::super::super::super::math::theories::{
     analysis::definition::functions::Function, linear_algebra::definitions::VectorSpace,
     topology::definitions::TopologicalSpace, zfc::set::Set, VariantSet,
 };

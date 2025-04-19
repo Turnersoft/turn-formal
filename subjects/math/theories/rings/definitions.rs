@@ -1,8 +1,8 @@
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::relations::RelationDetail;
-use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::groups::definitions::Group;
-use crate::subjects::math::theories::zfc::Set;
+use super::super::super::super::math::formalism::expressions::MathExpression;
+use super::super::super::super::math::formalism::relations::RelationDetail;
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::groups::definitions::Group;
+use super::super::super::super::math::theories::zfc::Set;
 use serde::{Deserialize, Serialize};
 
 /// A ring (R,+,·) is a set R with two binary operations + and · satisfying:
@@ -534,6 +534,433 @@ impl RingRelation {
             parameters,
         }
     }
+}
+
+/// A structured expression within the ring theory domain
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum RingExpression {
+    /// An element in a ring
+    Element(RingElement),
+    /// The additive identity element (zero) of a ring
+    Zero(Box<Ring>),
+    /// The multiplicative identity element (one) of a ring, if it exists
+    One(Box<Ring>),
+    /// Ring addition operation
+    Addition {
+        /// The ring this operation belongs to
+        ring: Box<Ring>,
+        /// The left operand
+        left: Box<RingExpression>,
+        /// The right operand
+        right: Box<RingExpression>,
+    },
+    /// Ring multiplication operation
+    Multiplication {
+        /// The ring this operation belongs to
+        ring: Box<Ring>,
+        /// The left operand
+        left: Box<RingExpression>,
+        /// The right operand
+        right: Box<RingExpression>,
+    },
+    /// The additive inverse of an expression
+    AdditiveInverse {
+        /// The ring this inverse belongs to
+        ring: Box<Ring>,
+        /// The element to invert
+        element: Box<RingExpression>,
+    },
+    /// A variable referencing a ring element
+    Variable {
+        /// The ring this variable belongs to
+        ring: Box<Ring>,
+        /// The name of the variable
+        name: String,
+    },
+    /// Represents a power (exponentiation), only for commutative rings
+    Power {
+        /// The base ring
+        ring: Box<Ring>,
+        /// The base expression
+        base: Box<RingExpression>,
+        /// The exponent (restricted to natural numbers in general rings)
+        exponent: u32,
+    },
+}
+
+impl RingExpression {
+    /// Create a ring element expression
+    pub fn element(ring: Ring, value: RingElementValue) -> Self {
+        RingExpression::Element(RingElement::new(ring, value))
+    }
+
+    /// Create a ring addition expression
+    pub fn addition(ring: Ring, left: RingExpression, right: RingExpression) -> Self {
+        RingExpression::Addition {
+            ring: Box::new(ring),
+            left: Box::new(left),
+            right: Box::new(right),
+        }
+    }
+
+    /// Create a ring multiplication expression
+    pub fn multiplication(ring: Ring, left: RingExpression, right: RingExpression) -> Self {
+        RingExpression::Multiplication {
+            ring: Box::new(ring),
+            left: Box::new(left),
+            right: Box::new(right),
+        }
+    }
+
+    /// Create a zero element expression
+    pub fn zero(ring: Ring) -> Self {
+        RingExpression::Zero(Box::new(ring))
+    }
+
+    /// Create a one element expression
+    pub fn one(ring: Ring) -> Self {
+        RingExpression::One(Box::new(ring))
+    }
+
+    /// Create an additive inverse expression
+    pub fn additive_inverse(ring: Ring, element: RingExpression) -> Self {
+        RingExpression::AdditiveInverse {
+            ring: Box::new(ring),
+            element: Box::new(element),
+        }
+    }
+
+    /// Create a variable expression
+    pub fn variable(ring: Ring, name: impl Into<String>) -> Self {
+        RingExpression::Variable {
+            ring: Box::new(ring),
+            name: name.into(),
+        }
+    }
+
+    /// Create a power expression (only for commutative rings with natural exponents)
+    pub fn power(ring: Ring, base: RingExpression, exponent: u32) -> Self {
+        RingExpression::Power {
+            ring: Box::new(ring),
+            base: Box::new(base),
+            exponent,
+        }
+    }
+
+    /// Convert RingExpression to MathExpression
+    pub fn to_math_expression(&self) -> MathExpression {
+        use super::super::super::super::math::formalism::expressions::{
+            MathExpression, TheoryExpression,
+        };
+        MathExpression::Expression(TheoryExpression::Ring(self.clone()))
+    }
+
+    /// Convert MathExpression to RingExpression
+    pub fn from_math_expression(expr: &MathExpression, ring: &Ring) -> Result<Self, String> {
+        use super::super::super::super::math::formalism::expressions::{
+            Identifier, TheoryExpression,
+        };
+
+        match expr {
+            MathExpression::Expression(TheoryExpression::Ring(ring_expr)) => {
+                // Direct conversion from ring expression
+                Ok(ring_expr.clone())
+            }
+            MathExpression::Var(var) => {
+                // Handle variables directly
+                match var {
+                    Identifier::O(id) => {
+                        if *id == 101 {
+                            // This is our special zero element
+                            Ok(RingExpression::Zero(Box::new(ring.clone())))
+                        } else if *id == 102 {
+                            // This is our special one element
+                            Ok(RingExpression::One(Box::new(ring.clone())))
+                        } else {
+                            // Other object variables become ring variables
+                            Ok(RingExpression::Variable {
+                                ring: Box::new(ring.clone()),
+                                name: format!("var_{}", id),
+                            })
+                        }
+                    }
+                    _ => Err(format!("Unsupported variable type: {:?}", var)),
+                }
+            }
+            // Handle other expression types as needed...
+            _ => {
+                // Default case: treat as an element directly
+                Ok(RingExpression::Element(RingElement::new(
+                    ring.clone(),
+                    RingElementValue::Symbol("unknown".to_string()),
+                )))
+            }
+        }
+    }
+}
+
+/// A ring element with its value
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct RingElement {
+    /// The ring this element belongs to
+    pub ring: Box<Ring>,
+    /// The underlying representation of the element
+    pub value: RingElementValue,
+}
+
+impl RingElement {
+    /// Create a new ring element
+    pub fn new(ring: Ring, value: RingElementValue) -> Self {
+        Self {
+            ring: Box::new(ring),
+            value,
+        }
+    }
+}
+
+/// Value types for ring elements
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum RingElementValue {
+    /// An integer element
+    Integer(i64),
+    /// A polynomial element
+    Polynomial(Vec<i64>),
+    /// A symbolic element
+    Symbol(String),
+    /// A matrix element
+    Matrix(Vec<Vec<i64>>),
+}
+
+/// A structured expression within the field theory domain
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum FieldExpression {
+    /// An element in a field
+    Element(FieldElement),
+    /// The additive identity element (zero) of a field
+    Zero(Box<Field>),
+    /// The multiplicative identity element (one) of a field
+    One(Box<Field>),
+    /// Field addition operation
+    Addition {
+        /// The field this operation belongs to
+        field: Box<Field>,
+        /// The left operand
+        left: Box<FieldExpression>,
+        /// The right operand
+        right: Box<FieldExpression>,
+    },
+    /// Field multiplication operation
+    Multiplication {
+        /// The field this operation belongs to
+        field: Box<Field>,
+        /// The left operand
+        left: Box<FieldExpression>,
+        /// The right operand
+        right: Box<FieldExpression>,
+    },
+    /// Field division operation (additional operation not available in general rings)
+    Division {
+        /// The field this operation belongs to
+        field: Box<Field>,
+        /// The numerator
+        numerator: Box<FieldExpression>,
+        /// The denominator (must be non-zero)
+        denominator: Box<FieldExpression>,
+    },
+    /// The additive inverse of an expression
+    AdditiveInverse {
+        /// The field this inverse belongs to
+        field: Box<Field>,
+        /// The element to invert
+        element: Box<FieldExpression>,
+    },
+    /// The multiplicative inverse of an expression (must be non-zero)
+    MultiplicativeInverse {
+        /// The field this inverse belongs to
+        field: Box<Field>,
+        /// The element to invert (must be non-zero)
+        element: Box<FieldExpression>,
+    },
+    /// A variable referencing a field element
+    Variable {
+        /// The field this variable belongs to
+        field: Box<Field>,
+        /// The name of the variable
+        name: String,
+    },
+    /// Represents a power (exponentiation, including negative exponents)
+    Power {
+        /// The base field
+        field: Box<Field>,
+        /// The base expression
+        base: Box<FieldExpression>,
+        /// The exponent (can be positive or negative in fields)
+        exponent: i32,
+    },
+}
+
+impl FieldExpression {
+    /// Create a field element expression
+    pub fn element(field: Field, value: FieldElementValue) -> Self {
+        FieldExpression::Element(FieldElement::new(field, value))
+    }
+
+    /// Create a field addition expression
+    pub fn addition(field: Field, left: FieldExpression, right: FieldExpression) -> Self {
+        FieldExpression::Addition {
+            field: Box::new(field),
+            left: Box::new(left),
+            right: Box::new(right),
+        }
+    }
+
+    /// Create a field multiplication expression
+    pub fn multiplication(field: Field, left: FieldExpression, right: FieldExpression) -> Self {
+        FieldExpression::Multiplication {
+            field: Box::new(field),
+            left: Box::new(left),
+            right: Box::new(right),
+        }
+    }
+
+    /// Create a field division expression
+    pub fn division(
+        field: Field,
+        numerator: FieldExpression,
+        denominator: FieldExpression,
+    ) -> Self {
+        FieldExpression::Division {
+            field: Box::new(field),
+            numerator: Box::new(numerator),
+            denominator: Box::new(denominator),
+        }
+    }
+
+    /// Create a zero element expression
+    pub fn zero(field: Field) -> Self {
+        FieldExpression::Zero(Box::new(field))
+    }
+
+    /// Create a one element expression
+    pub fn one(field: Field) -> Self {
+        FieldExpression::One(Box::new(field))
+    }
+
+    /// Create an additive inverse expression
+    pub fn additive_inverse(field: Field, element: FieldExpression) -> Self {
+        FieldExpression::AdditiveInverse {
+            field: Box::new(field),
+            element: Box::new(element),
+        }
+    }
+
+    /// Create a multiplicative inverse expression
+    pub fn multiplicative_inverse(field: Field, element: FieldExpression) -> Self {
+        FieldExpression::MultiplicativeInverse {
+            field: Box::new(field),
+            element: Box::new(element),
+        }
+    }
+
+    /// Create a variable expression
+    pub fn variable(field: Field, name: impl Into<String>) -> Self {
+        FieldExpression::Variable {
+            field: Box::new(field),
+            name: name.into(),
+        }
+    }
+
+    /// Create a power expression
+    pub fn power(field: Field, base: FieldExpression, exponent: i32) -> Self {
+        FieldExpression::Power {
+            field: Box::new(field),
+            base: Box::new(base),
+            exponent,
+        }
+    }
+
+    /// Convert FieldExpression to MathExpression
+    pub fn to_math_expression(&self) -> MathExpression {
+        use super::super::super::super::math::formalism::expressions::{
+            MathExpression, TheoryExpression,
+        };
+        MathExpression::Expression(TheoryExpression::Field(self.clone()))
+    }
+
+    /// Convert MathExpression to FieldExpression
+    pub fn from_math_expression(expr: &MathExpression, field: &Field) -> Result<Self, String> {
+        use super::super::super::super::math::formalism::expressions::{
+            Identifier, TheoryExpression,
+        };
+
+        match expr {
+            MathExpression::Expression(TheoryExpression::Field(field_expr)) => {
+                // Direct conversion from field expression
+                Ok(field_expr.clone())
+            }
+            MathExpression::Var(var) => {
+                // Handle variables directly
+                match var {
+                    Identifier::E(id) => {
+                        if *id == 21 {
+                            // This is our special zero element
+                            Ok(FieldExpression::Zero(Box::new(field.clone())))
+                        } else if *id == 22 {
+                            // This is our special one element
+                            Ok(FieldExpression::One(Box::new(field.clone())))
+                        } else {
+                            // Other element variables become field variables
+                            Ok(FieldExpression::Variable {
+                                field: Box::new(field.clone()),
+                                name: format!("var_{}", id),
+                            })
+                        }
+                    }
+                    _ => Err(format!("Unsupported variable type: {:?}", var)),
+                }
+            }
+            // Handle other expression types as needed...
+            _ => {
+                // Default case: treat as an element directly
+                Ok(FieldExpression::Element(FieldElement::new(
+                    field.clone(),
+                    FieldElementValue::Symbol("unknown".to_string()),
+                )))
+            }
+        }
+    }
+}
+
+/// A field element with its value
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct FieldElement {
+    /// The field this element belongs to
+    pub field: Box<Field>,
+    /// The underlying representation of the element
+    pub value: FieldElementValue,
+}
+
+impl FieldElement {
+    /// Create a new field element
+    pub fn new(field: Field, value: FieldElementValue) -> Self {
+        Self {
+            field: Box::new(field),
+            value,
+        }
+    }
+}
+
+/// Value types for field elements
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum FieldElementValue {
+    /// A rational element (for characteristic 0 fields)
+    Rational { numerator: i64, denominator: i64 },
+    /// An element of a finite field
+    Finite(u64),
+    /// A polynomial element for function fields
+    Polynomial(Vec<i64>),
+    /// A symbolic element
+    Symbol(String),
 }
 
 // ... more definitions with detailed documentation

@@ -4,18 +4,18 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::subjects::math::theories::analysis::definition::functions::Function;
-use crate::subjects::math::theories::groups::definitions::{
+use super::super::theories::analysis::definition::functions::Function;
+use super::super::theories::groups::definitions::{
     Group, GroupOperation, GroupProperty, GroupRelation, LieGroup, TopologicalGroup,
 };
-use crate::subjects::math::theories::linear_algebra::definitions::VectorSpace;
-use crate::subjects::math::theories::rings::definitions::{
-    Algebra, Field, Module, Ring, RingProperty,
+use super::super::theories::linear_algebra::definitions::VectorSpace;
+use super::super::theories::rings::definitions::{
+    Algebra, Field, Module, Ring, RingExpression, RingProperty,
 };
-use crate::subjects::math::theories::topology::TopologicalSpace;
-use crate::subjects::math::theories::zfc::Set;
+use super::super::theories::topology::TopologicalSpace;
+use super::super::theories::zfc::Set;
 
-use super::expressions::MathExpression;
+use super::expressions::{Identifier, MathExpression};
 // Centralized re-exports for convenient access from other modules
 pub use super::properties::{MathProperty, PropertyRequirement};
 use super::relations::MathRelation;
@@ -62,15 +62,6 @@ pub enum MathObject {
     Function(Function),
 }
 
-/// A unified wrapper for all mathematical operations across theories
-/// This is just a reference to operations defined in their respective theory modules
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum MathOperation {
-    // Group theory operations
-    GroupOperation(GroupOperation),
-    // Additional operations can be added here as needed
-}
-
 /// Types of mathematical objects
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum MathObjectType {
@@ -97,9 +88,10 @@ pub enum MathObjectType {
     // Function types
     Function(Function),
 
-    // Basic types
+    // Basic number types
     Integer,
     Rational,
+    Irrational,
     Real,
     Complex,
 
@@ -112,7 +104,7 @@ pub enum MathObjectType {
     Coproduct(Vec<MathObjectType>),
 
     // Other
-    Custom(String),
+    Todo(String),
 }
 
 /// A unified representation of a mathematical theorem from any domain
@@ -201,9 +193,8 @@ impl ProofState {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ValueBindedVariable {
-    pub variable: String,
+    pub name: Identifier,
     pub value: MathExpression,
-    pub math_type: MathObjectType,
 }
 
 /// A mathematical object with quantification information

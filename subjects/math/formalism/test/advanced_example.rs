@@ -1,20 +1,36 @@
 // Module: src/formalize_v2/subjects/math/theorem/test/advanced_example.rs
 // Advanced examples of using the proof builder for more complex proofs
 
+use super::super::super::formalism::core::{MathObjectType, Theorem};
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::{ProofForest, Tactic, TheoremBuilder};
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::groups::definitions::GroupRelation;
+use super::super::super::theories::rings::definitions::{Ring, RingExpression};
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{ProofForest, Tactic, TheoremBuilder};
-use crate::subjects::math::formalism::relations::MathRelation;
+/// Helper function to create a variable expression
+fn create_var(name: &str) -> MathExpression {
+    MathExpression::Var(Identifier::Name(name.to_string(), 0))
+}
+
+/// Helper function to create a simple ring-based expression
+fn create_expr(expr_str: &str) -> MathExpression {
+    // This is a simplification - in a real implementation, we would parse the expression
+    // For now, we'll just create a variable with the same name
+    let ring = Ring::default();
+    let ring_var = RingExpression::variable(ring, expr_str);
+    MathExpression::Expression(TheoryExpression::Ring(ring_var))
+}
 
 /// Example: Proving the First Isomorphism Theorem for Groups
 ///
 /// This example shows a more complex proof with deep branches
 /// and different strategies.
-pub fn prove_first_isomorphism_theorem() -> crate::subjects::math::formalism::core::Theorem {
+pub fn prove_first_isomorphism_theorem() -> super::super::super::formalism::core::Theorem {
     // Create expressions for the isomorphism theorem
-    let g_ker_phi = MathExpression::string_expr("G/Ker(φ)");
-    let im_phi = MathExpression::string_expr("Im(φ)");
+    let g_ker_phi = create_expr("G/Ker(φ)");
+    let im_phi = create_expr("Im(φ)");
 
     // Create a theorem: G/Ker(φ) ≅ Im(φ)
     let builder = TheoremBuilder::new(
@@ -23,16 +39,10 @@ pub fn prove_first_isomorphism_theorem() -> crate::subjects::math::formalism::co
         MathRelation::equal(g_ker_phi, im_phi),
         vec![
             // Replace Property with custom relations
-            MathRelation::custom(
-                "IsHomomorphism".to_string(),
-                vec![MathExpression::string_expr("φ")],
-            ),
+            MathRelation::custom("IsHomomorphism".to_string(), vec![create_var("φ")]),
             MathRelation::custom(
                 "AreGroups".to_string(),
-                vec![
-                    MathExpression::string_expr("G"),
-                    MathExpression::string_expr("H"),
-                ],
+                vec![create_var("G"), create_var("H")],
             ),
         ],
     );
@@ -79,9 +89,9 @@ pub fn prove_first_isomorphism_theorem() -> crate::subjects::math::formalism::co
 ///
 /// This example shows how you could structure proofs if using an alternative
 /// closure-based API approach.
-pub fn prove_with_closures() -> crate::subjects::math::formalism::core::Theorem {
+pub fn prove_with_closures() -> super::super::super::formalism::core::Theorem {
     // Create a theorem statement
-    let statement = MathExpression::string_expr("P(G, p)");
+    let statement = create_expr("P(G, p)");
 
     // Create a theorem: Sylow's First Theorem
     let builder = TheoremBuilder::new(
@@ -90,16 +100,10 @@ pub fn prove_with_closures() -> crate::subjects::math::formalism::core::Theorem 
         MathRelation::custom("HasSylowSubgroup".to_string(), vec![statement]),
         vec![
             // Replace Property with custom relations
-            MathRelation::custom(
-                "IsFiniteGroup".to_string(),
-                vec![MathExpression::string_expr("G")],
-            ),
+            MathRelation::custom("IsFiniteGroup".to_string(), vec![create_var("G")]),
             MathRelation::custom(
                 "IsPrimeDividingOrder".to_string(),
-                vec![
-                    MathExpression::string_expr("p"),
-                    MathExpression::string_expr("|G|"),
-                ],
+                vec![create_var("p"), create_expr("|G|")],
             ),
         ],
     );
@@ -109,19 +113,28 @@ pub fn prove_with_closures() -> crate::subjects::math::formalism::core::Theorem 
 
     // Use a closure to create a complex proof step
     let p1 = p0.apply_tactic(
-        Tactic::Intro("|G| = p^n * m".to_string(), 1),
+        Tactic::Intro {
+            name: Identifier::Name("|G| = p^n * m".to_string(), 0),
+            expression: create_expr("|G| = p^n * m"),
+            view: None,
+            sequence: 1,
+        },
         "Express |G| as p^n * m where p does not divide m".to_string(),
     );
 
     // Create a helper function for branching
-    let create_case = |parent: &crate::subjects::math::formalism::proof::ProofBranch,
-                       desc: &str,
-                       index: usize| {
-        parent.apply_tactic(
-            Tactic::Intro(format!("Case {}: {}", index, desc), index as usize),
-            format!("Analyzing case: {}", desc),
-        )
-    };
+    let create_case =
+        |parent: &super::super::super::formalism::proof::ProofBranch, desc: &str, index: usize| {
+            parent.apply_tactic(
+                Tactic::Intro {
+                    name: Identifier::Name(format!("Case {}: {}", index, desc), 0),
+                    expression: create_expr(&format!("Case {}: {}", index, desc)),
+                    view: None,
+                    sequence: index,
+                },
+                format!("Analyzing case: {}", desc),
+            )
+        };
 
     // Create multiple branches for the different cases
     let case1 = create_case(&p1, "Direct construction", 1);
@@ -132,7 +145,8 @@ pub fn prove_with_closures() -> crate::subjects::math::formalism::core::Theorem 
     let c1_1 = case1.apply_tactic(
         Tactic::Custom {
             name: "ConstructSylowSubgroup".to_string(),
-            args: vec!["p".to_string(), "n".to_string()],
+            args: vec![create_var("p"), create_var("n")],
+            sequence: 0,
         },
         "Explicitly construct a subgroup of order p^n".to_string(),
     );
@@ -140,33 +154,63 @@ pub fn prove_with_closures() -> crate::subjects::math::formalism::core::Theorem 
 
     // Develop the second case
     let c2_1 = case2.apply_tactic(
-        Tactic::Intro("If G has a normal subgroup N".to_string(), 2),
+        Tactic::Intro {
+            name: Identifier::Name("If G has a normal subgroup N".to_string(), 0),
+            expression: create_expr("If G has a normal subgroup N"),
+            view: None,
+            sequence: 2,
+        },
         "Consider a normal subgroup N".to_string(),
     );
     let c2_2 = c2_1.apply_tactic(
-        Tactic::Intro("Apply induction to G/N".to_string(), 3),
+        Tactic::Intro {
+            name: Identifier::Name("Apply induction to G/N".to_string(), 0),
+            expression: create_expr("Apply induction to G/N"),
+            view: None,
+            sequence: 3,
+        },
         "Use the induction hypothesis on the quotient".to_string(),
     );
     let c2_3 = c2_2.should_complete();
 
     // Develop the third case
     let c3_1 = case3.apply_tactic(
-        Tactic::Intro("Let G act on cosets of a subgroup".to_string(), 2),
+        Tactic::Intro {
+            name: Identifier::Name("Let G act on cosets of a subgroup".to_string(), 0),
+            expression: create_expr("Let G act on cosets of a subgroup"),
+            view: None,
+            sequence: 2,
+        },
         "Consider the action of G on cosets".to_string(),
     );
     let c3_2 = c3_1.apply_tactic(
-        Tactic::Intro("Apply Sylow's lemma".to_string(), 3),
+        Tactic::Intro {
+            name: Identifier::Name("Apply Sylow's lemma".to_string(), 0),
+            expression: create_expr("Apply Sylow's lemma"),
+            view: None,
+            sequence: 3,
+        },
         "Apply Sylow's lemma on the orbit-stabilizer relationship".to_string(),
     );
     let c3_3 = c3_2.apply_tactic(
-        Tactic::Intro("This gives us a p-subgroup of order p^n".to_string(), 4),
+        Tactic::Intro {
+            name: Identifier::Name("This gives us a p-subgroup of order p^n".to_string(), 0),
+            expression: create_expr("This gives us a p-subgroup of order p^n"),
+            view: None,
+            sequence: 4,
+        },
         "Construct the desired Sylow p-subgroup".to_string(),
     );
     let c3_4 = c3_3.should_complete();
 
     // Complete the proof
     let p2 = p1.apply_tactic(
-        Tactic::Intro("Therefore, G has a Sylow p-subgroup".to_string(), 2),
+        Tactic::Intro {
+            name: Identifier::Name("Therefore, G has a Sylow p-subgroup".to_string(), 0),
+            expression: create_expr("Therefore, G has a Sylow p-subgroup"),
+            view: None,
+            sequence: 2,
+        },
         "Combining all cases, we've shown the existence of a Sylow p-subgroup".to_string(),
     );
     let p3 = p2.should_complete();

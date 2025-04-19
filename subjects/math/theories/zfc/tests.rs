@@ -19,17 +19,17 @@
 /// These tests verify that our implementation correctly follows these mathematical rules.
 #[cfg(test)]
 mod zfc_machinery_tests {
-    use super::super::*;
-    use super::*;
-    use crate::subjects::math::theories::zfc::{
+    use super::super::super::super::super::math::theories::VariantSet;
+    use super::super::super::super::super::math::theories::zfc::{
+        ZFCVerifier,
         axioms::{SatisfiesZFC, ZFCAxioms},
         set::{
-            difference_set, empty_set, intersection_set, pair_set, power_set, singleton_set,
-            union_set, ElementCondition, Set, SetMapping, SetProperty,
+            ElementCondition, Set, SetMapping, SetProperty, difference_set, empty_set,
+            intersection_set, pair_set, power_set, singleton_set, union_set,
         },
-        ZFCVerifier,
     };
-    use crate::subjects::math::theories::VariantSet;
+    use super::super::*;
+    use super::*;
 
     /// Creates a standard set of test sets used across multiple tests.
     ///

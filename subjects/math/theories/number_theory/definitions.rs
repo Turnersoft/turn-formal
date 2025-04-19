@@ -1,8 +1,8 @@
 // Module: src/formalize_v2/subjects/math/theories/number_theory/definitions.rs
 // Defines structures for number theory domain
 
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::relations::RelationDetail;
+use super::super::super::super::math::formalism::expressions::MathExpression;
+use super::super::super::super::math::formalism::relations::RelationDetail;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

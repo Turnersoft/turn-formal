@@ -1,20 +1,35 @@
 // Module: src/formalize_v2/subjects/math/theorem/test/declarative_example.rs
 // Examples of using the declarative proof structure
 
-use crate::subjects::math::formalism::core::Theorem;
-use crate::subjects::math::formalism::declarative_proof::tactics::*;
-use crate::subjects::math::formalism::declarative_proof::{
+use super::super::super::formalism::core::Theorem;
+use super::super::super::formalism::declarative_proof::tactics::*;
+use super::super::super::formalism::declarative_proof::{
     Branch, DeclarativeProofBuilder, ProofTree, Step,
 };
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::RewriteDirection;
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::RewriteDirection;
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::rings::definitions::{Ring, RingExpression};
+
+/// Helper function to create a variable expression
+fn create_var(name: &str) -> MathExpression {
+    MathExpression::Var(Identifier::Name(name.to_string(), 0))
+}
+
+/// Helper function to create a simple ring-based expression
+fn create_expr(expr_str: &str) -> MathExpression {
+    // This is a simplification - in a real implementation, we would parse the expression
+    // For now, we'll just create a variable with the same name
+    let ring = Ring::default();
+    let ring_var = RingExpression::variable(ring, expr_str);
+    MathExpression::Expression(TheoryExpression::Ring(ring_var))
+}
 
 /// Prove the group associativity theorem using a declarative structure
 pub fn prove_group_associativity_declarative() -> Theorem {
-    // Create expressions for the theorem
-    let left = MathExpression::string_expr("a * (b * c)");
-    let right = MathExpression::string_expr("(a * b) * c");
+    // Create expressions
+    let left = create_expr("a * (b * c)");
+    let right = create_expr("(a * b) * c");
 
     // Build the proof tree - this is the key difference from the procedural approach!
     // Here we define the entire proof structure upfront, and it gets executed later.
@@ -70,9 +85,9 @@ pub fn prove_group_associativity_declarative() -> Theorem {
 
 /// Prove the absolute value theorem using case analysis
 pub fn prove_absolute_value_declarative() -> Theorem {
-    // Create expressions for the theorem
-    let absolute_value = MathExpression::string_expr("|x|");
-    let zero = MathExpression::string_expr("0");
+    // Create expressions
+    let absolute_value = create_expr("|x|");
+    let zero = create_var("0");
 
     // Define the case branches
     let case_branches = vec![
@@ -123,8 +138,8 @@ pub fn prove_absolute_value_declarative() -> Theorem {
 /// Example of a proof with multiple nested branches and cases
 pub fn prove_complex_theorem_declarative() -> Theorem {
     // Create expressions
-    let expr1 = MathExpression::string_expr("P(x) → Q(x)");
-    let expr2 = MathExpression::string_expr("∀x. (P(x) → Q(x))");
+    let expr1 = create_expr("P(x) → Q(x)");
+    let expr2 = create_expr("∀x. (P(x) → Q(x))");
 
     // Define the first case analysis
     let first_cases = vec![

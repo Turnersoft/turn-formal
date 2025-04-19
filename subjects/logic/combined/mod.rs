@@ -1,4 +1,4 @@
-use crate::subjects::logic::{first_order, modal, temporal};
+use super::super::logic::{first_order, modal, temporal};
 
 use super::propositional::Proposition;
 

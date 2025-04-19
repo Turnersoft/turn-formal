@@ -1,7 +1,7 @@
 [
   {
     "name": "Ring",
-    "docs": "",
+    "docs": "A ring (R,+,·) is a set R with two binary operations + and · satisfying:\n1. (R,+) is an abelian group\n2. (R,·) is associative\n3. Distributivity: a·(b+c) = a·b + a·c and (a+b)·c = a·c + b·c\n\nKey concepts:\n- Ideals: Subsets closed under addition and multiplication by ring elements\n- Units: Elements with multiplicative inverses\n- Prime ideals: P where ab ∈ P implies a ∈ P or b ∈ P\n- Maximal ideals: Proper ideals not contained in any larger proper ideal",
     "kind": "struct",
     "members": [
       {
@@ -18,7 +18,7 @@
   },
   {
     "name": "Field",
-    "docs": "",
+    "docs": "A field is a commutative ring where every non-zero element has a multiplicative inverse.\n\nKey concepts:\n- Characteristic: Smallest n > 0 with n·1 = 0 (or 0 if none exists)\n- Algebraic elements: Roots of polynomials over subfields\n- Transcendental elements: Not algebraic\n- Field extensions: Larger fields containing given field",
     "kind": "struct",
     "members": [
       {
@@ -35,7 +35,7 @@
   },
   {
     "name": "Module",
-    "docs": "",
+    "docs": "A module over a ring R is an abelian group (M,+) with an action R × M → M\nsatisfying distributivity and associativity conditions.\n\nKey concepts:\n- Free modules: Direct sums of copies of R\n- Projective modules: Direct summands of free modules\n- Injective modules: Injective objects in category of modules\n- Flat modules: Tensor product preserves exactness",
     "kind": "struct",
     "members": [
       {
@@ -57,7 +57,7 @@
   },
   {
     "name": "Algebra",
-    "docs": "",
+    "docs": "An algebra over a field k is a ring A that is also a vector space over k,\nwhere multiplication is k-linear.\n\nKey concepts:\n- Dimension: Dimension as vector space over k\n- Simple algebras: No proper two-sided ideals\n- Central simple algebras: Simple with center k\n- Division algebras: Every non-zero element is invertible",
     "kind": "struct",
     "members": [
       {
@@ -79,456 +79,456 @@
   },
   {
     "name": "RingProperty",
-    "docs": "",
+    "docs": "Properties specific to rings",
     "kind": "enum",
     "members": [
       {
         "name": "Commutative",
-        "type": "CommutativeType",
-        "docs": "Commutativity properties"
+        "docs": "Commutativity properties",
+        "type_info": "CommutativeType"
       },
       {
         "name": "Unital",
-        "type": "UnitalType",
-        "docs": "Unity properties"
+        "docs": "Unity properties",
+        "type_info": "UnitalType"
       },
       {
         "name": "Domain",
-        "type": "DomainType",
-        "docs": "Domain properties"
+        "docs": "Domain properties",
+        "type_info": "DomainType"
       },
       {
         "name": "Noetherian",
-        "type": "NoetherianType",
-        "docs": "Noetherian properties"
+        "docs": "Noetherian properties",
+        "type_info": "NoetherianType"
       },
       {
         "name": "Artinian",
-        "type": "ArtinianType",
-        "docs": "Artinian properties"
+        "docs": "Artinian properties",
+        "type_info": "ArtinianType"
       },
       {
         "name": "Regular",
-        "type": "RegularType",
-        "docs": "Regular properties"
+        "docs": "Regular properties",
+        "type_info": "RegularType"
       }
     ]
   },
   {
     "name": "FieldProperty",
-    "docs": "",
+    "docs": "Properties specific to fields",
     "kind": "enum",
     "members": [
       {
         "name": "Characteristic",
-        "type": "CharacteristicType",
-        "docs": "Characteristic properties"
+        "docs": "Characteristic properties",
+        "type_info": "CharacteristicType"
       },
       {
         "name": "Perfect",
-        "type": "PerfectType",
-        "docs": "Perfectness properties"
+        "docs": "Perfectness properties",
+        "type_info": "PerfectType"
       },
       {
         "name": "Complete",
-        "type": "CompletenessType",
-        "docs": "Completeness properties"
+        "docs": "Completeness properties",
+        "type_info": "CompletenessType"
       },
       {
         "name": "AlgebraicallyClosed",
-        "type": "AlgebraicClosureType",
-        "docs": "Algebraic closure properties"
+        "docs": "Algebraic closure properties",
+        "type_info": "AlgebraicClosureType"
       }
     ]
   },
   {
     "name": "ModuleProperty",
-    "docs": "",
+    "docs": "Properties specific to modules",
     "kind": "enum",
     "members": [
       {
         "name": "Free",
-        "type": "FreeType",
-        "docs": "Freeness properties"
+        "docs": "Freeness properties",
+        "type_info": "FreeType"
       },
       {
         "name": "Projective",
-        "type": "ProjectiveType",
-        "docs": "Projectivity properties"
+        "docs": "Projectivity properties",
+        "type_info": "ProjectiveType"
       },
       {
         "name": "Injective",
-        "type": "InjectiveType",
-        "docs": "Injectivity properties"
+        "docs": "Injectivity properties",
+        "type_info": "InjectiveType"
       },
       {
         "name": "Flat",
-        "type": "FlatType",
-        "docs": "Flatness properties"
+        "docs": "Flatness properties",
+        "type_info": "FlatType"
       },
       {
         "name": "Noetherian",
-        "type": "NoetherianType",
-        "docs": "Noetherian properties"
+        "docs": "Noetherian properties",
+        "type_info": "NoetherianType"
       },
       {
         "name": "Artinian",
-        "type": "ArtinianType",
-        "docs": "Artinian properties"
+        "docs": "Artinian properties",
+        "type_info": "ArtinianType"
       }
     ]
   },
   {
     "name": "AlgebraProperty",
-    "docs": "",
+    "docs": "Properties specific to algebras",
     "kind": "enum",
     "members": [
       {
         "name": "FiniteDimensional",
-        "type": "DimensionType",
-        "docs": "Dimension properties"
+        "docs": "Dimension properties",
+        "type_info": "DimensionType"
       },
       {
         "name": "Simple",
-        "type": "SimpleType",
-        "docs": "Simplicity properties"
+        "docs": "Simplicity properties",
+        "type_info": "SimpleType"
       },
       {
         "name": "Central",
-        "type": "CentralType",
-        "docs": "Centrality properties"
+        "docs": "Centrality properties",
+        "type_info": "CentralType"
       },
       {
         "name": "Division",
-        "type": "DivisionType",
-        "docs": "Division properties"
+        "docs": "Division properties",
+        "type_info": "DivisionType"
       }
     ]
   },
   {
     "name": "CommutativeType",
-    "docs": "",
+    "docs": "Types of commutative rings",
     "kind": "enum",
     "members": [
       {
         "name": "Commutative",
-        "type": "Unit",
-        "docs": "Multiplication is commutative"
+        "docs": "Multiplication is commutative",
+        "type_info": null
       },
       {
         "name": "NonCommutative",
-        "type": "Unit",
-        "docs": "Not commutative"
+        "docs": "Not commutative",
+        "type_info": null
       }
     ]
   },
   {
     "name": "UnitalType",
-    "docs": "",
+    "docs": "Types of unital rings",
     "kind": "enum",
     "members": [
       {
         "name": "Unital",
-        "type": "Unit",
-        "docs": "Has multiplicative identity"
+        "docs": "Has multiplicative identity",
+        "type_info": null
       },
       {
         "name": "NonUnital",
-        "type": "Unit",
-        "docs": "No multiplicative identity"
+        "docs": "No multiplicative identity",
+        "type_info": null
       }
     ]
   },
   {
     "name": "DomainType",
-    "docs": "",
+    "docs": "Types of integral domains",
     "kind": "enum",
     "members": [
       {
         "name": "Domain",
-        "type": "Unit",
-        "docs": "No zero divisors"
+        "docs": "No zero divisors",
+        "type_info": null
       },
       {
         "name": "NonDomain",
-        "type": "Unit",
-        "docs": "Has zero divisors"
+        "docs": "Has zero divisors",
+        "type_info": null
       },
       {
         "name": "UFD",
-        "type": "Unit",
-        "docs": "Unique factorization domain"
+        "docs": "Unique factorization domain",
+        "type_info": null
       },
       {
         "name": "PID",
-        "type": "Unit",
-        "docs": "Principal ideal domain"
+        "docs": "Principal ideal domain",
+        "type_info": null
       }
     ]
   },
   {
     "name": "NoetherianType",
-    "docs": "",
+    "docs": "Types of Noetherian rings",
     "kind": "enum",
     "members": [
       {
         "name": "Noetherian",
-        "type": "Unit",
-        "docs": "Ascending chain condition"
+        "docs": "Ascending chain condition",
+        "type_info": null
       },
       {
         "name": "NonNoetherian",
-        "type": "Unit",
-        "docs": "Not Noetherian"
+        "docs": "Not Noetherian",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ArtinianType",
-    "docs": "",
+    "docs": "Types of Artinian rings",
     "kind": "enum",
     "members": [
       {
         "name": "Artinian",
-        "type": "Unit",
-        "docs": "Descending chain condition"
+        "docs": "Descending chain condition",
+        "type_info": null
       },
       {
         "name": "NonArtinian",
-        "type": "Unit",
-        "docs": "Not Artinian"
+        "docs": "Not Artinian",
+        "type_info": null
       }
     ]
   },
   {
     "name": "RegularType",
-    "docs": "",
+    "docs": "Types of regular rings",
     "kind": "enum",
     "members": [
       {
         "name": "Regular",
-        "type": "Unit",
-        "docs": "Regular local ring"
+        "docs": "Regular local ring",
+        "type_info": null
       },
       {
         "name": "NonRegular",
-        "type": "Unit",
-        "docs": "Not regular"
+        "docs": "Not regular",
+        "type_info": null
       }
     ]
   },
   {
     "name": "CharacteristicType",
-    "docs": "",
+    "docs": "Types of field characteristics",
     "kind": "enum",
     "members": [
       {
         "name": "Zero",
-        "type": "Unit",
-        "docs": "Characteristic zero"
+        "docs": "Characteristic zero",
+        "type_info": null
       },
       {
         "name": "Prime",
-        "type": "u32",
-        "docs": "Prime characteristic"
+        "docs": "Prime characteristic",
+        "type_info": "u32"
       }
     ]
   },
   {
     "name": "PerfectType",
-    "docs": "",
+    "docs": "Types of perfect fields",
     "kind": "enum",
     "members": [
       {
         "name": "Perfect",
-        "type": "Unit",
-        "docs": "Every element has p-th root"
+        "docs": "Every element has p-th root",
+        "type_info": null
       },
       {
         "name": "NonPerfect",
-        "type": "Unit",
-        "docs": "Not perfect"
+        "docs": "Not perfect",
+        "type_info": null
       }
     ]
   },
   {
     "name": "CompletenessType",
-    "docs": "",
+    "docs": "Types of complete fields",
     "kind": "enum",
     "members": [
       {
         "name": "Complete",
-        "type": "Unit",
-        "docs": "Complete with respect to valuation"
+        "docs": "Complete with respect to valuation",
+        "type_info": null
       },
       {
         "name": "Incomplete",
-        "type": "Unit",
-        "docs": "Not complete"
+        "docs": "Not complete",
+        "type_info": null
       }
     ]
   },
   {
     "name": "AlgebraicClosureType",
-    "docs": "",
+    "docs": "Types of algebraically closed fields",
     "kind": "enum",
     "members": [
       {
         "name": "AlgebraicallyClosed",
-        "type": "Unit",
-        "docs": "Every polynomial has a root"
+        "docs": "Every polynomial has a root",
+        "type_info": null
       },
       {
         "name": "NonAlgebraicallyClosed",
-        "type": "Unit",
-        "docs": "Not algebraically closed"
+        "docs": "Not algebraically closed",
+        "type_info": null
       }
     ]
   },
   {
     "name": "FreeType",
-    "docs": "",
+    "docs": "Types of free modules",
     "kind": "enum",
     "members": [
       {
         "name": "FiniteRank",
-        "type": "u32",
-        "docs": "Free of finite rank"
+        "docs": "Free of finite rank",
+        "type_info": "u32"
       },
       {
         "name": "InfiniteRank",
-        "type": "Unit",
-        "docs": "Free of infinite rank"
+        "docs": "Free of infinite rank",
+        "type_info": null
       },
       {
         "name": "NonFree",
-        "type": "Unit",
-        "docs": "Not free"
+        "docs": "Not free",
+        "type_info": null
       }
     ]
   },
   {
     "name": "ProjectiveType",
-    "docs": "",
+    "docs": "Types of projective modules",
     "kind": "enum",
     "members": [
       {
         "name": "Projective",
-        "type": "Unit",
-        "docs": "Direct summand of free module"
+        "docs": "Direct summand of free module",
+        "type_info": null
       },
       {
         "name": "NonProjective",
-        "type": "Unit",
-        "docs": "Not projective"
+        "docs": "Not projective",
+        "type_info": null
       }
     ]
   },
   {
     "name": "InjectiveType",
-    "docs": "",
+    "docs": "Types of injective modules",
     "kind": "enum",
     "members": [
       {
         "name": "Injective",
-        "type": "Unit",
-        "docs": "Injective object in module category"
+        "docs": "Injective object in module category",
+        "type_info": null
       },
       {
         "name": "NonInjective",
-        "type": "Unit",
-        "docs": "Not injective"
+        "docs": "Not injective",
+        "type_info": null
       }
     ]
   },
   {
     "name": "FlatType",
-    "docs": "",
+    "docs": "Types of flat modules",
     "kind": "enum",
     "members": [
       {
         "name": "Flat",
-        "type": "Unit",
-        "docs": "Tensor product preserves exactness"
+        "docs": "Tensor product preserves exactness",
+        "type_info": null
       },
       {
         "name": "NonFlat",
-        "type": "Unit",
-        "docs": "Not flat"
+        "docs": "Not flat",
+        "type_info": null
       }
     ]
   },
   {
     "name": "DimensionType",
-    "docs": "",
+    "docs": "Types of dimensions for algebras",
     "kind": "enum",
     "members": [
       {
         "name": "Finite",
-        "type": "u32",
-        "docs": "Finite dimensional"
+        "docs": "Finite dimensional",
+        "type_info": "u32"
       },
       {
         "name": "Infinite",
-        "type": "Unit",
-        "docs": "Infinite dimensional"
+        "docs": "Infinite dimensional",
+        "type_info": null
       }
     ]
   },
   {
     "name": "SimpleType",
-    "docs": "",
+    "docs": "Types of simple algebras",
     "kind": "enum",
     "members": [
       {
         "name": "Simple",
-        "type": "Unit",
-        "docs": "No proper two-sided ideals"
+        "docs": "No proper two-sided ideals",
+        "type_info": null
       },
       {
         "name": "NonSimple",
-        "type": "Unit",
-        "docs": "Not simple"
+        "docs": "Not simple",
+        "type_info": null
       }
     ]
   },
   {
     "name": "CentralType",
-    "docs": "",
+    "docs": "Types of central algebras",
     "kind": "enum",
     "members": [
       {
         "name": "Central",
-        "type": "Unit",
-        "docs": "Center is base field"
+        "docs": "Center is base field",
+        "type_info": null
       },
       {
         "name": "NonCentral",
-        "type": "Unit",
-        "docs": "Not central"
+        "docs": "Not central",
+        "type_info": null
       }
     ]
   },
   {
     "name": "DivisionType",
-    "docs": "",
+    "docs": "Types of division algebras",
     "kind": "enum",
     "members": [
       {
         "name": "Division",
-        "type": "Unit",
-        "docs": "Every non-zero element invertible"
+        "docs": "Every non-zero element invertible",
+        "type_info": null
       },
       {
         "name": "NonDivision",
-        "type": "Unit",
-        "docs": "Not division"
+        "docs": "Not division",
+        "type_info": null
       }
     ]
   },
   {
     "name": "RingRelationEntity",
-    "docs": "",
+    "docs": "Entity information for ring relation operations",
     "kind": "struct",
     "members": [
       {
@@ -550,303 +550,275 @@
   },
   {
     "name": "RingRelation",
-    "docs": "",
+    "docs": "Relations specific to ring theory",
     "kind": "enum",
     "members": [
       {
-        "name": "IsSubringOf {",
-        "type": "Unit",
-        "docs": "One ring is a subring of another"
+        "name": "IsSubringOf",
+        "docs": "One ring is a subring of another",
+        "type_info": "{\n        entity: RingRelationEntity,\n        subring: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsIdealOf",
+        "docs": "One subspace is an ideal of a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ideal: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "subring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsPrimeIdeal",
+        "docs": "One ideal is a prime ideal of a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ideal: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsMaximalIdeal",
+        "docs": "One ideal is a maximal ideal of a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ideal: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "IsIdealOf {",
-        "type": "Unit",
-        "docs": "One subspace is an ideal of a ring"
+        "name": "IsPrincipalIdeal",
+        "docs": "One ideal is a principal ideal of a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ideal: MathExpression,\n        ring: MathExpression,\n        generator: MathExpression,\n    }"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsUnit",
+        "docs": "An element is a unit in a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        element: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "ideal: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsIrreducible",
+        "docs": "An element is irreducible in a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        element: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsPrime",
+        "docs": "An element is prime in a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        element: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "IsPrimeIdeal {",
-        "type": "Unit",
-        "docs": "One ideal is a prime ideal of a ring"
+        "name": "IsField",
+        "docs": "A ring is a field",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsIntegralDomain",
+        "docs": "A ring is an integral domain",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "ideal: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsUFD",
+        "docs": "A ring is a unique factorization domain (UFD)",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "IsPID",
+        "docs": "A ring is a principal ideal domain (PID)",
+        "type_info": "{\n        entity: RingRelationEntity,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "IsMaximalIdeal {",
-        "type": "Unit",
-        "docs": "One ideal is a maximal ideal of a ring"
+        "name": "AreAssociates",
+        "docs": "Two elements are associates in a ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "Divides",
+        "docs": "One polynomial divides another in a polynomial ring",
+        "type_info": "{\n        entity: RingRelationEntity,\n        divisor: MathExpression,\n        dividend: MathExpression,\n        ring: MathExpression,\n    }"
       },
       {
-        "name": "ideal: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Custom",
+        "docs": "Custom ring theory relation",
+        "type_info": "{\n        entity: RingRelationEntity,\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "RingExpression",
+    "docs": "A structured expression within the ring theory domain",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Element",
+        "docs": "An element in a ring",
+        "type_info": "RingElement"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Zero",
+        "docs": "The additive identity element (zero) of a ring",
+        "type_info": "Box<Ring>"
       },
       {
-        "name": "IsPrincipalIdeal {",
-        "type": "Unit",
-        "docs": "One ideal is a principal ideal of a ring"
+        "name": "One",
+        "docs": "The multiplicative identity element (one) of a ring, if it exists",
+        "type_info": "Box<Ring>"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "Addition",
+        "docs": "The right operand",
+        "type_info": "{\n        ring: Box<Ring>,\n        left: Box<RingExpression>,\n        right: Box<RingExpression>,\n    }"
       },
       {
-        "name": "ideal: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Multiplication",
+        "docs": "The right operand",
+        "type_info": "{\n        ring: Box<Ring>,\n        left: Box<RingExpression>,\n        right: Box<RingExpression>,\n    }"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "AdditiveInverse",
+        "docs": "The element to invert",
+        "type_info": "{\n        ring: Box<Ring>,\n        element: Box<RingExpression>,\n    }"
       },
       {
-        "name": "generator: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Variable",
+        "docs": "The name of the variable",
+        "type_info": "{\n        ring: Box<Ring>,\n        name: String,\n    }"
       },
       {
-        "name": "IsUnit {",
-        "type": "Unit",
-        "docs": "An element is a unit in a ring"
+        "name": "Power",
+        "docs": "The exponent (restricted to natural numbers in general rings)",
+        "type_info": "{\n        ring: Box<Ring>,\n        base: Box<RingExpression>,\n        exponent: u32,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "RingElement",
+    "docs": "A ring element with its value",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "ring",
+        "type": "Box<Ring>",
+        "docs": "The ring this element belongs to"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "value",
+        "type": "RingElementValue",
+        "docs": "The underlying representation of the element"
+      }
+    ]
+  },
+  {
+    "name": "RingElementValue",
+    "docs": "Value types for ring elements",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Integer",
+        "docs": "An integer element",
+        "type_info": "i64"
       },
       {
-        "name": "element: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Polynomial",
+        "docs": "A polynomial element",
+        "type_info": "Vec<i64>"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Symbol",
+        "docs": "A symbolic element",
+        "type_info": "String"
       },
       {
-        "name": "IsIrreducible {",
-        "type": "Unit",
-        "docs": "An element is irreducible in a ring"
+        "name": "Matrix",
+        "docs": "A matrix element",
+        "type_info": "Vec<Vec<i64>>"
+      }
+    ]
+  },
+  {
+    "name": "FieldExpression",
+    "docs": "A structured expression within the field theory domain",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Element",
+        "docs": "An element in a field",
+        "type_info": "FieldElement"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "Zero",
+        "docs": "The additive identity element (zero) of a field",
+        "type_info": "Box<Field>"
       },
       {
-        "name": "element: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "One",
+        "docs": "The multiplicative identity element (one) of a field",
+        "type_info": "Box<Field>"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "Addition",
+        "docs": "The right operand",
+        "type_info": "{\n        field: Box<Field>,\n        left: Box<FieldExpression>,\n        right: Box<FieldExpression>,\n    }"
       },
       {
-        "name": "IsPrime {",
-        "type": "Unit",
-        "docs": "An element is prime in a ring"
+        "name": "Multiplication",
+        "docs": "The right operand",
+        "type_info": "{\n        field: Box<Field>,\n        left: Box<FieldExpression>,\n        right: Box<FieldExpression>,\n    }"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "Division",
+        "docs": "The denominator (must be non-zero)",
+        "type_info": "{\n        field: Box<Field>,\n        numerator: Box<FieldExpression>,\n        denominator: Box<FieldExpression>,\n    }"
       },
       {
-        "name": "element: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "AdditiveInverse",
+        "docs": "The element to invert",
+        "type_info": "{\n        field: Box<Field>,\n        element: Box<FieldExpression>,\n    }"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "MultiplicativeInverse",
+        "docs": "The element to invert (must be non-zero)",
+        "type_info": "{\n        field: Box<Field>,\n        element: Box<FieldExpression>,\n    }"
       },
       {
-        "name": "IsField {",
-        "type": "Unit",
-        "docs": "A ring is a field"
+        "name": "Variable",
+        "docs": "The name of the variable",
+        "type_info": "{\n        field: Box<Field>,\n        name: String,\n    }"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "Power",
+        "docs": "The exponent (can be positive or negative in fields)",
+        "type_info": "{\n        field: Box<Field>,\n        base: Box<FieldExpression>,\n        exponent: i32,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "FieldElement",
+    "docs": "A field element with its value",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "field",
+        "type": "Box<Field>",
+        "docs": "The field this element belongs to"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
+        "name": "value",
+        "type": "FieldElementValue",
+        "docs": "The underlying representation of the element"
+      }
+    ]
+  },
+  {
+    "name": "FieldElementValue",
+    "docs": "Value types for field elements",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Rational",
+        "docs": "A rational element (for characteristic 0 fields)",
+        "type_info": "{ numerator: i64, denominator: i64 }"
       },
       {
-        "name": "IsIntegralDomain {",
-        "type": "Unit",
-        "docs": "A ring is an integral domain"
+        "name": "Finite",
+        "docs": "An element of a finite field",
+        "type_info": "u64"
       },
       {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
+        "name": "Polynomial",
+        "docs": "A polynomial element for function fields",
+        "type_info": "Vec<i64>"
       },
       {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "IsUFD {",
-        "type": "Unit",
-        "docs": "A ring is a unique factorization domain (UFD)"
-      },
-      {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "IsPID {",
-        "type": "Unit",
-        "docs": "A ring is a principal ideal domain (PID)"
-      },
-      {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "AreAssociates {",
-        "type": "Unit",
-        "docs": "Two elements are associates in a ring"
-      },
-      {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "first: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "second: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "Divides {",
-        "type": "Unit",
-        "docs": "One polynomial divides another in a polynomial ring"
-      },
-      {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "divisor: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "dividend: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "ring: MathExpression",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "Custom {",
-        "type": "Unit",
-        "docs": "Custom ring theory relation"
-      },
-      {
-        "name": "entity: RingRelationEntity",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "name: String",
-        "type": "Unit",
-        "docs": ""
-      },
-      {
-        "name": "parameters: Vec<MathExpression>",
-        "type": "Unit",
-        "docs": ""
+        "name": "Symbol",
+        "docs": "A symbolic element",
+        "type_info": "String"
       }
     ]
   }

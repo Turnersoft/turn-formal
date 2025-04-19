@@ -3,19 +3,19 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::core::ProofState;
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{
+use super::super::super::formalism::core::ProofState;
+use super::super::super::formalism::expressions::MathExpression;
+use super::super::super::formalism::proof::{
     CaseAnalysisBuilder, ProofBranch, ProofForest, ProofStatus, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::relations::MathRelation;
 
 /// Test the basic case analysis functionality
 #[test]
 fn test_case_analysis() {
     // Create a simple test theorem
-    let expr1 = MathExpression::string_expr("f(x)");
-    let expr2 = MathExpression::string_expr("g(x)");
+    let expr1 = MathExpression::var("f(x)");
+    let expr2 = MathExpression::var("g(x)");
 
     let builder = TheoremBuilder::new("Test Theorem", MathRelation::equal(expr1, expr2), vec![]);
 
@@ -79,8 +79,8 @@ fn test_case_analysis() {
 #[test]
 fn test_nested_case_analysis() {
     // Create a simple test theorem
-    let expr1 = MathExpression::string_expr("f(x)");
-    let expr2 = MathExpression::string_expr("g(x)");
+    let expr1 = MathExpression::var("f(x)");
+    let expr2 = MathExpression::var("g(x)");
 
     let builder = TheoremBuilder::new(
         "Test Nested Cases",
@@ -179,7 +179,7 @@ fn test_nested_case_analysis() {
 #[test]
 fn test_case_with_alternatives() {
     // Create a simple test theorem
-    let expr1 = MathExpression::string_expr("P(x)");
+    let expr1 = MathExpression::var("P(x)");
 
     let builder = TheoremBuilder::new(
         "Test Alternative Approaches",
@@ -236,7 +236,7 @@ fn test_case_with_alternatives() {
 #[test]
 fn test_case_result_usage() {
     // Create a simple test theorem
-    let expr1 = MathExpression::string_expr("P(x)");
+    let expr1 = MathExpression::var("P(x)");
 
     let builder = TheoremBuilder::new(
         "Test Case Result Usage",

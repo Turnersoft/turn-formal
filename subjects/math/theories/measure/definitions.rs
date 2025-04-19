@@ -1,6 +1,6 @@
-use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::analysis::definition::spaces::BanachSpace;
-use crate::subjects::math::theories::zfc::set::Set;
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::analysis::definition::spaces::BanachSpace;
+use super::super::super::super::math::theories::zfc::set::Set;
 use serde::{Deserialize, Serialize};
 
 /// Measure structure

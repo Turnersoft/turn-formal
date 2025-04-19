@@ -1,6 +1,6 @@
-use crate::subjects::math::theories::{
-    common::spaces::{DimensionType, Space},
+use super::super::super::super::math::theories::{
     VariantSet,
+    common::spaces::{DimensionType, Space},
 };
 use serde::{Deserialize, Serialize};
 

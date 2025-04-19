@@ -1,4 +1,4 @@
-use crate::subjects::{
+use super::super::super::super::{
     logic::propositional::{ProofRule, ProofStep, Proposition},
     math::theories::{
         affine_geometry::definitions::{AffineSpace, AffineSpaceProperty, ScalarFieldType},

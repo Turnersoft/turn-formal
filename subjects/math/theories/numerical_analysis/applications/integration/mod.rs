@@ -1,6 +1,6 @@
 pub mod methods;
 
-use crate::subjects::math::theories::{
+use super::super::super::super::math::theories::{
     analysis::definition::functions::Function, zfc::set::Set, VariantSet,
 };
 use serde::{Deserialize, Serialize};

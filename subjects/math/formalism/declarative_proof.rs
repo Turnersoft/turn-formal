@@ -6,9 +6,14 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
+use super::super::formalism::expressions::Identifier;
+use super::super::formalism::interpretation::TypeViewOperator;
 use super::core::{ProofState, Theorem};
 use super::expressions::MathExpression;
-use super::proof::{NodeId, ProofForest, ProofNode, ProofStatus, Tactic};
+use super::proof::{
+    DecompositionMethod, InductionType, NodeId, ProofForest, ProofNode, ProofStatus,
+    RewriteDirection, Tactic,
+};
 use super::relations::MathRelation;
 
 /// Status of a step in the proof process
@@ -303,56 +308,87 @@ pub mod tactics {
     use super::super::proof::{DecompositionMethod, InductionType, RewriteDirection};
     use super::*;
 
+    /// Create a MathExpression from a string (replacement for string_expr)
+    pub fn create_expr(expr: &str) -> MathExpression {
+        MathExpression::var(expr)
+    }
+
     /// Create an 'Intro' tactic
     pub fn intro(var_name: &str, sequence: u32) -> Tactic {
-        Tactic::Intro(var_name.to_string(), sequence as usize)
+        Tactic::Intro {
+            name: Identifier::Name(var_name.to_string(), 0),
+            expression: create_expr(var_name),
+            view: None,
+            sequence: sequence as usize,
+        }
     }
 
     /// Create a 'Substitution' tactic
     pub fn subs(expression: &str, sequence: u32) -> Tactic {
-        Tactic::Substitution(expression.to_string(), sequence as usize)
+        Tactic::Substitution {
+            target: create_expr(expression),
+            replacement: create_expr(expression),
+            location: None,
+            sequence: sequence as usize,
+        }
     }
 
     /// Create a 'TheoremApplication' tactic
     pub fn theorem_app(theorem_id: &str) -> Tactic {
-        Tactic::TheoremApplication(theorem_id.to_string(), HashMap::new())
+        Tactic::TheoremApplication {
+            theorem_id: theorem_id.to_string(),
+            instantiation: HashMap::new(),
+            target_expr: None,
+            sequence: 0,
+        }
     }
 
     /// Create a 'Rewrite' tactic
     pub fn rewrite(target: &str, equation: &str, direction: RewriteDirection) -> Tactic {
         Tactic::Rewrite {
-            target: target.to_string(),
-            equation: equation.to_string(),
+            target_expr: create_expr(target),
+            equation_expr: create_expr(equation),
             direction,
+            location: None,
+            sequence: 0,
         }
     }
 
     /// Create a 'Simplify' tactic
     pub fn simplify(expression: &str) -> Tactic {
-        Tactic::Simplify(expression.to_string())
+        Tactic::Simplify {
+            target: create_expr(expression),
+            hints: None,
+            sequence: 0,
+        }
     }
 
     /// Create a 'Decompose' tactic
     pub fn decompose(target: &str, method: DecompositionMethod) -> Tactic {
         Tactic::Decompose {
-            target: target.to_string(),
+            target: create_expr(target),
             method,
+            sequence: 0,
         }
     }
 
     /// Create a 'CaseAnalysis' tactic
     pub fn case_analysis(target: &str, cases: Vec<String>) -> Tactic {
         Tactic::CaseAnalysis {
-            target: target.to_string(),
-            cases,
+            target_expr: create_expr(target),
+            case_exprs: cases.iter().map(|c| create_expr(c)).collect(),
+            case_names: cases,
+            sequence: 0,
         }
     }
 
     /// Create an 'Induction' tactic
     pub fn induction(variable: &str, induction_type: InductionType) -> Tactic {
         Tactic::Induction {
-            variable: variable.to_string(),
+            name: Identifier::Name(variable.to_string(), 0),
             induction_type,
+            schema: None,
+            sequence: 0,
         }
     }
 }
@@ -479,8 +515,8 @@ mod tests {
     #[test]
     fn test_declarative_proof() {
         // Create a theorem statement
-        let left = MathExpression::string_expr("a * (b * c)");
-        let right = MathExpression::string_expr("(a * b) * c");
+        let left = create_expr("a * (b * c)");
+        let right = create_expr("(a * b) * c");
 
         // Build a complex proof tree
         let main_proof = Branch::new(vec![
@@ -532,8 +568,8 @@ mod tests {
     #[test]
     fn test_case_analysis() {
         // Example of how to use case analysis
-        let absolute_value = MathExpression::string_expr("|x|");
-        let zero = MathExpression::string_expr("0");
+        let absolute_value = create_expr("|x|");
+        let zero = create_expr("0");
 
         // Create case analysis branches
         let cases_branches = vec![

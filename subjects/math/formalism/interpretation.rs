@@ -1,8 +1,8 @@
-use crate::subjects::math::formalism::core::MathObjectType;
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::theories::groups::definitions::Group;
-use crate::subjects::math::theories::rings::Ring;
-use crate::subjects::math::theories::rings::definitions::Field;
+use super::super::formalism::core::MathObjectType;
+use super::super::formalism::expressions::MathExpression;
+use super::super::theories::groups::definitions::Group;
+use super::super::theories::rings::Ring;
+use super::super::theories::rings::definitions::Field;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -287,12 +287,42 @@ impl MathExpression {
 pub fn group_as_category(group: &Group) -> MathExpression {
     // Simplified placeholder implementation
     // In a real system, this would create a proper category representation
-    MathExpression::string_expr("category_with_one_object")
+    MathExpression::var("category_with_one_object")
 }
 
 /// Method to interpret a Group in Type Theory
 pub fn group_as_type_theory(group: &Group) -> MathExpression {
     // Simplified placeholder implementation
     // In a real system, this would create a proper type theory representation
-    MathExpression::string_expr("dependent_type_for_group")
+    MathExpression::var("dependent_type_for_group")
+}
+
+impl TypeViewOperator {
+    /// Create a simple view operator that views an expression as a specific type
+    pub fn simple_view(type_name: &str) -> Self {
+        TypeViewOperator::Custom {
+            name: format!("As{}", type_name),
+            source_type: MathObjectType::Real, // Default source type
+            target_type: MathObjectType::Todo(type_name.to_string()),
+            parameters: Vec::new(),
+        }
+    }
+
+    /// Get the name of this view operator
+    pub fn name(&self) -> String {
+        match self {
+            TypeViewOperator::AsGroupElement { .. } => "AsGroupElement".to_string(),
+            TypeViewOperator::AsRingElement { .. } => "AsRingElement".to_string(),
+            TypeViewOperator::AsFieldElement { .. } => "AsFieldElement".to_string(),
+            TypeViewOperator::AsGroup { .. } => "AsGroup".to_string(),
+            TypeViewOperator::AsRing { .. } => "AsRing".to_string(),
+            TypeViewOperator::AsTopologicalSpace { .. } => "AsTopologicalSpace".to_string(),
+            TypeViewOperator::AsHomomorphism { .. } => "AsHomomorphism".to_string(),
+            TypeViewOperator::AsCyclicGroup => "AsCyclicGroup".to_string(),
+            TypeViewOperator::AsPoint => "AsPoint".to_string(),
+            TypeViewOperator::AsFunction { .. } => "AsFunction".to_string(),
+            TypeViewOperator::AsLinearTransformation => "AsLinearTransformation".to_string(),
+            TypeViewOperator::Custom { name, .. } => name.clone(),
+        }
+    }
 }

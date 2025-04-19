@@ -3,18 +3,33 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::core::{ProofState, Theorem};
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::proof::{
+use super::super::super::formalism::core::{ProofState, Theorem};
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::{
     CaseResult, ProofBranch, ProofStatus, RewriteDirection, Tactic, TheoremBuilder,
 };
-use crate::subjects::math::formalism::relations::MathRelation;
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::rings::definitions::{Ring, RingExpression};
+
+/// Helper function to create a variable expression
+fn create_var(name: &str) -> MathExpression {
+    MathExpression::Var(Identifier::Name(name.to_string(), 0))
+}
+
+/// Helper function to create a simple ring-based expression
+fn create_expr(expr_str: &str) -> MathExpression {
+    // This is a simplification - in a real implementation, we would parse the expression
+    // For now, we'll just create a variable with the same name
+    let ring = Ring::default();
+    let ring_var = RingExpression::variable(ring, expr_str);
+    MathExpression::Expression(TheoryExpression::Ring(ring_var))
+}
 
 /// Demonstrate path-based naming pattern (px_x_x_x) throughout a complex proof
 pub fn prove_with_path_naming() -> Theorem {
     // Create a theorem about associativity
-    let left = MathExpression::string_expr("a * (b * c)");
-    let right = MathExpression::string_expr("(a * b) * c");
+    let left = create_expr("a * (b * c)");
+    let right = create_expr("(a * b) * c");
 
     let builder = TheoremBuilder::new(
         "Associativity with Path Naming",
@@ -128,8 +143,8 @@ pub fn prove_with_path_naming() -> Theorem {
 /// Demonstrate more complex case analysis with a full proof
 pub fn prove_by_cases() -> Theorem {
     // A simple theorem requiring multiple cases (for example, proving |x| ≥ 0 for all real x)
-    let absolute_value = MathExpression::string_expr("|x|");
-    let zero = MathExpression::string_expr("0");
+    let absolute_value = create_expr("|x|");
+    let zero = create_var("0");
 
     let builder = TheoremBuilder::new(
         "Absolute Value Non-Negativity",

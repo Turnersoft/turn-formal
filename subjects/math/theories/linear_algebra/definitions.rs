@@ -1,5 +1,5 @@
-use crate::subjects::math::theories::zfc::set::Set;
-use crate::subjects::math::theories::VariantSet;
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::zfc::set::Set;
 use serde::{Deserialize, Serialize};
 
 /// A vector space is a set V equipped with vector addition and scalar multiplication

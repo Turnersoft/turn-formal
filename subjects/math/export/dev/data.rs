@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::subjects::math::export::common_types::{
-    GroupDefinition, GroupElement, GroupHomomorphism, MathObjectMetadata,
-};
+use super::common_types::{GroupDefinition, GroupElement, GroupHomomorphism, MathObjectMetadata};
 
 /// Provides data for all mathematical theories
 pub struct MathData {

@@ -1,8 +1,8 @@
 use crate::{
+    super::super::super::super::logic::propositional::Proposition,
     crate::foundational_theories::type_theory_v2::calculi::simply_typed::{
         goals::Context, terms::Term, types::Type,
     },
-    crate::subjects::logic::propositional::Proposition,
     parse::entities::Identifier,
 };
 use std::collections::HashSet;

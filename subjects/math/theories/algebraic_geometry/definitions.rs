@@ -1,5 +1,5 @@
-use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::{
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::{
     analysis::definition::functions::SmoothnessPropertyVariant, zfc::Set,
 };
 use serde::{Deserialize, Serialize};

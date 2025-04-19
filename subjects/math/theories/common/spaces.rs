@@ -1,4 +1,4 @@
-use crate::subjects::math::theories::{
+use super::super::super::super::math::theories::{
     affine_geometry::definitions::AffineSpace,
     algebraic_geometry::definitions::{Scheme, Variety},
     analysis::definition::spaces::{

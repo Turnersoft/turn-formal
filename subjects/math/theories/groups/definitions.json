@@ -758,7 +758,7 @@
   },
   {
     "name": "GroupRelation",
-    "docs": "Relations specific to group theory",
+    "docs": "Relations specific to group theory\nthese are the verbs in the language of group theory",
     "kind": "enum",
     "members": [
       {

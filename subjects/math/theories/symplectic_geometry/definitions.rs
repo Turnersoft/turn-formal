@@ -1,5 +1,5 @@
-use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::{
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::{
     differential_geometry::definitions::SmoothManifold, zfc::Set,
 };
 use serde::{Deserialize, Serialize};

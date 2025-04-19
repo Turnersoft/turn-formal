@@ -1,4 +1,4 @@
-use crate::subjects::{
+use super::super::super::super::{
     logic::first_order::{Formula, Term},
     math::theories::{
         order_theory::definitions::{

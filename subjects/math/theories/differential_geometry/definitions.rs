@@ -1,6 +1,6 @@
-use crate::subjects::math::theories::common::spaces::*;
-use crate::subjects::math::theories::zfc::set::Set;
-use crate::subjects::math::theories::VariantSet;
+use super::super::super::super::math::theories::VariantSet;
+use super::super::super::super::math::theories::common::spaces::*;
+use super::super::super::super::math::theories::zfc::set::Set;
 use serde::{Deserialize, Serialize};
 
 /// A smooth manifold is a topological space locally homeomorphic to Euclidean space

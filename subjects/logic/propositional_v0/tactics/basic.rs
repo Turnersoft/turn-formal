@@ -3,15 +3,16 @@ use super::{
     proof_state::{ProofNode, ProofState, TacticProofTerm},
     TacticError,
     TacticResult,
-
 };
-use crate::{formalize_v2::{foundational_theories::type_theory_v2::calculi::simply_typed::{
+use super::super::super::super::super::super::foundational_theories::type_theory_v2::calculi::simply_typed::{
     goals::Context, 
     terms::{Term, SumSide},
     types::Type,
-}, subjects::logic::propositional::{
+};
+use super::super::super::super::propositional::{
     foundations::type_theory::TypeTheoryFoundation, Foundation, GenericProof, Proposition
-}}, parse::{entities::Identifier, Parse}};
+};
+use super::super::super::super::super::super::super::parse::{entities::Identifier, Parse};
 
 /// A tactic that can be applied to a proof state
 pub trait ProofStateTactic {

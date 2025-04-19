@@ -5,15 +5,16 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use super::core::MathObjectType;
-use super::expressions::{MathExpression, Variable};
+use super::expressions::{Identifier, MathExpression};
 use super::properties::PropertyRequirement;
 
 // Import domain-specific relations from their respective modules
-use crate::subjects::math::theories::groups::definitions::GroupRelation;
-use crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation;
-use crate::subjects::math::theories::rings::definitions::RingRelation;
-use crate::subjects::math::theories::topology::relations::TopologyRelation;
-use crate::subjects::math::theories::zfc::relations::SetTheoryRelation;
+use super::super::super::super::foundational_theories::category_theory::definitions::CategoryRelation;
+use super::super::theories::groups::definitions::GroupRelation;
+use super::super::theories::number_theory::definitions::NumberTheoryRelation;
+use super::super::theories::rings::definitions::RingRelation;
+use super::super::theories::topology::relations::TopologyRelation;
+use super::super::theories::zfc::relations::SetTheoryRelation;
 
 /// Quantification of a mathematical object
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -61,6 +62,7 @@ pub enum MathRelation {
     GroupTheory(GroupRelation),
     RingTheory(RingRelation),
     TopologyTheory(TopologyRelation),
+    CategoryTheory(CategoryRelation),
 
     // For basic equality that crosses domains
     Equal {
@@ -70,7 +72,7 @@ pub enum MathRelation {
     },
 
     // For custom relations that don't fit other categories
-    Custom {
+    Todo {
         name: String,
         expressions: Vec<MathExpression>,
     },
@@ -134,6 +136,28 @@ impl MathRelation {
 
     /// Creates a Custom relation
     pub fn custom(name: String, expressions: Vec<MathExpression>) -> Self {
-        MathRelation::Custom { name, expressions }
+        MathRelation::Todo { name, expressions }
+    }
+
+    /// Creates a category theory ObjectInCategory relation
+    pub fn object_in_category(object: MathExpression, category: MathExpression) -> Self {
+        MathRelation::CategoryTheory(CategoryRelation::object_in_category(&object, &category))
+    }
+
+    /// Creates a category theory MorphismBetween relation
+    pub fn morphism_between(
+        morphism: MathExpression,
+        source: MathExpression,
+        target: MathExpression,
+        category: MathExpression,
+    ) -> Self {
+        MathRelation::CategoryTheory(CategoryRelation::morphism_between(
+            &morphism, &source, &target, &category,
+        ))
+    }
+
+    /// Creates a category theory IsIsomorphism relation
+    pub fn is_isomorphism(morphism: MathExpression) -> Self {
+        MathRelation::CategoryTheory(CategoryRelation::is_isomorphism(&morphism))
     }
 }
