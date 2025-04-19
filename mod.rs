@@ -6,5 +6,7 @@ pub mod foundational_theories;
 pub mod leptos;
 pub mod subjects;
 
-#[path = "./frontend/src/pages/MathPage/components/turn-canvas/mod.rs"]
-pub mod turn_math;
+// This module allows access to the parent crate's modules via super
+
+// #[path = "./frontend/src/pages/MathPage/components/turn-canvas/mod.rs"]
+// pub mod turn_canvas;
