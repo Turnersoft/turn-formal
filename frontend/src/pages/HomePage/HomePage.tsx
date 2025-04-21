@@ -46,6 +46,31 @@ const HomePage: React.FC = () => {
           Explore the Roadmap
         </Link>
       </div>
+      <div className={styles.buttonContainer}>
+        <Link to="/math" className={styles.actionButton}>
+          <div className={styles.buttonIcon}>📚</div>
+          <div className={styles.buttonText}>
+            <h3>Mathematics</h3>
+            <p>Explore mathematical concepts and theories</p>
+          </div>
+        </Link>
+        
+        <Link to="/math/theories/groups" className={styles.actionButton}>
+          <div className={styles.buttonIcon}>🧮</div>
+          <div className={styles.buttonText}>
+            <h3>Group Theory</h3>
+            <p>View group theory theorems and definitions</p>
+          </div>
+        </Link>
+        
+        <Link to="/developer" className={styles.actionButton}>
+          <div className={styles.buttonIcon}>👨‍💻</div>
+          <div className={styles.buttonText}>
+            <h3>Developer Tools</h3>
+            <p>Utilities and documentation for developers</p>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 };

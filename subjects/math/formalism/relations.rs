@@ -6,7 +6,6 @@ use std::collections::HashMap;
 
 use super::core::MathObjectType;
 use super::expressions::{Identifier, MathExpression};
-use super::properties::PropertyRequirement;
 
 // Import domain-specific relations from their respective modules
 use super::super::super::super::foundational_theories::category_theory::definitions::CategoryRelation;

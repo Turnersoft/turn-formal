@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import styles from "./math_content.module.scss";
 import { MathContent, Definition, Member, Theorem } from "../../models/math";
-import { formatTheoryName } from "../../utils/formatters";
-
-// Import separate components
-import DebugDisplay from "../debug_display/debug_display";
 import DependencyGraph from "../dependency_graph/dependency_graph";
+import DebugDisplay from "../debug_display/debug_display";
 import DefinitionDetail from "../definition_detail/definition_detail";
 import TheoremDetail from "../theorem_detail/theorem_detail";
 
@@ -55,6 +53,147 @@ interface MathContentComponentProps {
 }
 
 /**
+ * Formats a theory name for display
+ */
+const formatTheoryName = (name: string): string => {
+  return name
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+/**
+ * Component that displays the definitions section
+ */
+const DefinitionsSection = ({ 
+  definitions, 
+  onScroll 
+}: { 
+  definitions: Definition[], 
+  onScroll: (name: string) => void 
+}) => {
+  // Create a map of definitions for quick lookup
+  const definitionMap = new Map<string, Definition>();
+  definitions.forEach((def) => {
+    definitionMap.set(def.name, def);
+  });
+
+  // Order definitions based on dependencies
+  const orderedDefinitions = [...definitions];
+
+  // Build dependency structure for visualization
+  const dependencyStructure = {
+    nodes: definitions.map((def) => ({ id: def.name, label: def.name })),
+    edges: [] as Array<{from: string, to: string}>
+  };
+
+  // Add edges based on member type references
+  definitions.forEach((def) => {
+    def.members?.forEach((member) => {
+      definitions.forEach((targetDef) => {
+        if (member.type?.includes(targetDef.name)) {
+          dependencyStructure.edges.push({
+            from: def.name,
+            to: targetDef.name,
+          });
+        }
+      });
+    });
+  });
+
+  return (
+    <div className={styles.definitionsSection}>
+      <h2 className={styles.sectionHeader}>
+        Definitions
+        <span className={styles.count}>({definitions.length})</span>
+      </h2>
+
+      {/* Definition Structure Overview */}
+      <div className={styles.structureOverview}>
+        <h3>Structure Overview</h3>
+        <div className={styles.definitionList}>
+          {orderedDefinitions.map((definition, index) => (
+            <div
+              key={`overview-${index}`}
+              className={styles.definitionItem}
+              onClick={() => onScroll(definition.name)}
+              onMouseEnter={() => {
+                // When hovering an item in the structure overview,
+                // dispatch event to highlight it in the graph
+                const event = new CustomEvent("overviewHover", {
+                  detail: { nodeId: definition.name },
+                });
+                document.dispatchEvent(event);
+              }}
+              onMouseLeave={() => {
+                // Clear highlight when mouse leaves
+                const event = new CustomEvent("overviewHover", {
+                  detail: { nodeId: null },
+                });
+                document.dispatchEvent(event);
+              }}
+              data-node-id={definition.name}
+            >
+              <span className={styles.definitionKind}>
+                {definition.kind}
+              </span>
+              <span className={styles.definitionName}>
+                {definition.name}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Render the dependency graph if we have definitions */}
+        {dependencyStructure.nodes.length > 0 && (
+          <DependencyGraph definitions={definitions} />
+        )}
+      </div>
+
+      {/* Detailed Definitions with Links */}
+      <div className={styles.detailedDefinitions}>
+        {orderedDefinitions.map((definition, index) => (
+          <DefinitionDetail
+            key={index}
+            definition={definition}
+            definitionMap={definitionMap}
+            onScrollToDefinition={onScroll}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Component that displays the theorems section
+ */
+const TheoremsSection = ({ 
+  theorems,
+  theoremsRef
+}: { 
+  theorems: Theorem[],
+  theoremsRef?: React.RefObject<HTMLDivElement>
+}) => {
+  return (
+    <div className={styles.theoremsSection} ref={theoremsRef}>
+      <h2 className={styles.sectionHeader}>
+        Theorems
+        <span className={styles.count}>({theorems.length})</span>
+        {theorems.length > 0 && 
+          <small className={styles.debugInfo}>
+            <span title="Theorems loaded successfully">✓</span>
+          </small>
+        }
+      </h2>
+      {theorems.map((theorem: Theorem, index: number) => (
+        <TheoremDetail key={index} theorem={theorem} />
+      ))}
+    </div>
+  );
+};
+
+/**
  * Main component to display mathematical content from JSON files
  */
 const MathContentComponent: React.FC<MathContentComponentProps> = ({
@@ -65,6 +204,9 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
   // State hooks - declare all hooks up front
   const [contentReady, setContentReady] = useState(false);
   const [showJsonView] = useState(false);
+  const [showTheorems, setShowTheorems] = useState(false);
+  const theoremsRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   // Function to scroll to a definition when clicked
   const scrollToDefinition = (name: string) => {
@@ -265,9 +407,30 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     return { nodes, links };
   }, [content, definitionMap]);
 
+  // Check if the current URL contains "theorem" to auto-focus on theorems section
+  useEffect(() => {
+    const path = location.pathname;
+    const isTheoremFile = path.toLowerCase().includes('theorem');
+    
+    console.log("Path check for theorem focus:", path, isTheoremFile);
+    setShowTheorems(isTheoremFile);
+    
+    // If it's a theorem file and we have theorems content, scroll to the theorem section
+    if (isTheoremFile && content?.theorems && content.theorems.length > 0 && theoremsRef.current) {
+      setTimeout(() => {
+        theoremsRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 300); // Small delay to ensure the component is rendered
+    }
+  }, [location.pathname, content]);
+
   // Render MathJax whenever the content changes
   useEffect(() => {
     if (!loading && content) {
+      // Log theorem data for debugging
+      if (content.theorems && content.theorems.length > 0) {
+        console.log(`Loaded ${content.theorems.length} theorems for ${content.theory}:`, content.theorems);
+      }
+      
       // Set a small delay to ensure DOM is updated before marking content as ready
       setTimeout(() => {
         setContentReady(true);
@@ -300,7 +463,7 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
   // Main render output
   return (
     <div
-      className={`${styles.contentArea} ${styles.fadeIn} ${
+      className={`${styles.mathContentArea} ${styles.fadeIn} ${
         contentReady ? styles.ready : ""
       }`}
     >
@@ -315,88 +478,23 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
           {/* Only show structured content if not showing JSON view */}
           {!showJsonView && (
             <>
-              {/* Definitions section with dependency visualization */}
-              {content.definitions && content.definitions.length > 0 && (
-                <div className={styles.definitionsSection}>
-                  <h2 className={styles.sectionHeader}>
-                    Definitions
-                    <span className={styles.count}>
-                      ({content.definitions.length})
-                    </span>
-                  </h2>
-
-                  {/* Definition Structure Overview */}
-                  <div className={styles.structureOverview}>
-                    <h3>Structure Overview</h3>
-                    <div className={styles.definitionList}>
-                      {orderedDefinitions.map((definition, index) => (
-                        <div
-                          key={`overview-${index}`}
-                          className={styles.definitionItem}
-                          onClick={() => scrollToDefinition(definition.name)}
-                          onMouseEnter={() => {
-                            // When hovering an item in the structure overview,
-                            // dispatch event to highlight it in the graph
-                            const event = new CustomEvent("overviewHover", {
-                              detail: { nodeId: definition.name },
-                            });
-                            document.dispatchEvent(event);
-                          }}
-                          onMouseLeave={() => {
-                            // Clear highlight when mouse leaves
-                            const event = new CustomEvent("overviewHover", {
-                              detail: { nodeId: null },
-                            });
-                            document.dispatchEvent(event);
-                          }}
-                          data-node-id={definition.name}
-                        >
-                          <span className={styles.definitionKind}>
-                            {definition.kind}
-                          </span>
-                          <span className={styles.definitionName}>
-                            {definition.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Render the dependency graph if we have definitions */}
-                    {dependencyStructure.nodes.length > 0 &&
-                      content.definitions && (
-                        <DependencyGraph definitions={content.definitions} />
-                      )}
-                  </div>
-
-                  {/* Detailed Definitions with Links */}
-                  <div className={styles.detailedDefinitions}>
-                    {orderedDefinitions.map((definition, index) => (
-                      <DefinitionDetail
-                        key={index}
-                        definition={definition}
-                        definitionMap={definitionMap}
-                        onScrollToDefinition={scrollToDefinition}
-                      />
-                    ))}
-                  </div>
-                </div>
+              {/* Definitions Section */}
+              {!showTheorems && content.definitions && content.definitions.length > 0 && (
+                <DefinitionsSection 
+                  definitions={content.definitions} 
+                  onScroll={scrollToDefinition} 
+                />
               )}
 
-              {/* Theorems section */}
+              {/* Theorems Section */}
               {content.theorems && content.theorems.length > 0 && (
-                <div className={styles.theoremsSection}>
-                  <h2 className={styles.sectionHeader}>
-                    Theorems
-                    <span className={styles.count}>
-                      ({content.theorems.length})
-                    </span>
-                  </h2>
-                  {content.theorems.map((theorem: Theorem, index: number) => (
-                    <TheoremDetail key={index} theorem={theorem} />
-                  ))}
-                </div>
+                <TheoremsSection 
+                  theorems={content.theorems} 
+                  theoremsRef={theoremsRef} 
+                />
               )}
 
+              {/* Empty State */}
               {(!content.theorems || content.theorems.length === 0) &&
                 (!content.definitions || content.definitions.length === 0) && (
                   <div className={styles.emptyState}>

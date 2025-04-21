@@ -10,8 +10,9 @@ pub mod declarative_proof;
 pub mod expressions;
 pub mod interpretation;
 pub mod proof;
-pub mod properties;
+
 pub mod relations;
+pub mod render;
 pub mod test;
 
 // pub struct Definition {

@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::foundational_theories::type_theory::calculi::cic::{
+    use super::super::{
         context::{ConstraintKind, Context, InductiveType, UniverseConstraint},
         term::{Constructor, MatchBranch, Pattern, Term},
         type_::Type,
         typing::{TypeChecker, TypeError},
         universe::{Level, Universe},
     };
+    use super::*;
     use std::rc::Rc;
 
     fn setup_context() -> Context {

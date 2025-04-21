@@ -2,6 +2,6 @@
 // Exports for number theory module
 
 pub mod definitions;
-
+pub mod render;
 // Re-export main types
 pub use definitions::NumberTheoryRelation;

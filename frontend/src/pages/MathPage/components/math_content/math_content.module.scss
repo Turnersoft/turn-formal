@@ -1,6 +1,6 @@
 // Math Content Component Styles
 
-.contentArea {
+.mathContentArea {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
@@ -680,5 +680,16 @@
   }
   100% {
     background-color: rgba(74, 144, 226, 0);
+  }
+}
+
+.debugInfo {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  color: #28a745;
+  font-weight: normal;
+  
+  span {
+    cursor: help;
   }
 }

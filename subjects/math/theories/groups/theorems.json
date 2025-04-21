@@ -1,52 +1,177 @@
 [
   {
-    "name": "inverse uniqueness",
-    "id": "prove_inverse_uniqueness",
-    "statement": "inverse uniqueness",
-    "description": "Prove the theorem that in a group, inverses are unique",
-    "proof_steps": [],
-    "tags": [
-      "auto-generated"
-    ]
+    "id": "theorem_0",
+    "content": {
+      "Theorem": {
+        "name": "Group Inverse Uniqueness",
+        "description": "Theorem: Group Inverse Uniqueness",
+        "initial_proof_state": {
+          "id": "theorem_0",
+          "content": {
+            "Theorem": {
+              "name": "Group Inverse Uniqueness",
+              "description": "Theorem: Group Inverse Uniqueness",
+              "initial_proof_state": {
+                "id": "theorem_0:initial_state",
+                "content": {
+                  "ProofState": {
+                    "statement": {
+                      "id": "theorem_0:initial_state:statement",
+                      "content": {
+                        "Text": "For any element g in a group, its inverse is unique."
+                      }
+                    },
+                    "path": "p0",
+                    "justification": null,
+                    "quantifiers": [],
+                    "variables": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "identity uniqueness with syntax trees",
-    "id": "prove_identity_uniqueness_with_syntax_trees",
-    "statement": "identity uniqueness with syntax trees",
-    "description": "Prove that the identity element in a group is unique using syntax trees",
-    "proof_steps": [],
-    "tags": [
-      "auto-generated"
-    ]
+    "id": "theorem_1",
+    "content": {
+      "Theorem": {
+        "name": "Identity Element Uniqueness",
+        "description": "Theorem: Identity Element Uniqueness",
+        "initial_proof_state": {
+          "id": "theorem_1",
+          "content": {
+            "Theorem": {
+              "name": "Identity Element Uniqueness",
+              "description": "Theorem: Identity Element Uniqueness",
+              "initial_proof_state": {
+                "id": "theorem_1:initial_state",
+                "content": {
+                  "ProofState": {
+                    "statement": {
+                      "id": "theorem_1:initial_state:statement",
+                      "content": {
+                        "Text": "In a group, the identity element is unique."
+                      }
+                    },
+                    "path": "p0",
+                    "justification": null,
+                    "quantifiers": [],
+                    "variables": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "inverse product rule",
-    "id": "prove_inverse_product_rule",
-    "statement": "inverse product rule",
-    "description": "Prove that in a group, (ab)⁻¹ = b⁻¹a⁻¹",
-    "proof_steps": [],
-    "tags": [
-      "auto-generated"
-    ]
+    "id": "theorem_2",
+    "content": {
+      "Theorem": {
+        "name": "Group Inverse Product Rule",
+        "description": "Theorem: Group Inverse Product Rule",
+        "initial_proof_state": {
+          "id": "theorem_2",
+          "content": {
+            "Theorem": {
+              "name": "Group Inverse Product Rule",
+              "description": "Theorem: Group Inverse Product Rule",
+              "initial_proof_state": {
+                "id": "theorem_2:initial_state",
+                "content": {
+                  "ProofState": {
+                    "statement": {
+                      "id": "theorem_2:initial_state:statement",
+                      "content": {
+                        "Text": "For elements a and b in a group, (a·b)⁻¹ = b⁻¹·a⁻¹."
+                      }
+                    },
+                    "path": "p0",
+                    "justification": null,
+                    "quantifiers": [],
+                    "variables": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "abelian squared criterion",
-    "id": "prove_abelian_squared_criterion",
-    "statement": "abelian squared criterion",
-    "description": "Prove that a group is abelian if and only if (ab)² = a²b² for all a,b in the group",
-    "proof_steps": [],
-    "tags": [
-      "auto-generated"
-    ]
+    "id": "theorem_3",
+    "content": {
+      "Theorem": {
+        "name": "Abelian Group Squared Criterion",
+        "description": "Theorem: Abelian Group Squared Criterion",
+        "initial_proof_state": {
+          "id": "theorem_3",
+          "content": {
+            "Theorem": {
+              "name": "Abelian Group Squared Criterion",
+              "description": "Theorem: Abelian Group Squared Criterion",
+              "initial_proof_state": {
+                "id": "theorem_3:initial_state",
+                "content": {
+                  "ProofState": {
+                    "statement": {
+                      "id": "theorem_3:initial_state:statement",
+                      "content": {
+                        "Text": "A group is abelian if and only if (a·b)·(a·b) = (a·a)·(b·b) for all a,b in the group."
+                      }
+                    },
+                    "path": "p0",
+                    "justification": null,
+                    "quantifiers": [],
+                    "variables": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "lagrange theorem",
-    "id": "prove_lagrange_theorem",
-    "statement": "lagrange theorem",
-    "description": "Prove Lagrange's Theorem: If H is a subgroup of a finite group G,\nthen the order of H divides the order of G",
-    "proof_steps": [],
-    "tags": [
-      "auto-generated"
-    ]
+    "id": "theorem_4",
+    "content": {
+      "Theorem": {
+        "name": "Lagrange's Theorem",
+        "description": "Theorem: Lagrange's Theorem",
+        "initial_proof_state": {
+          "id": "theorem_4",
+          "content": {
+            "Theorem": {
+              "name": "Lagrange's Theorem",
+              "description": "Theorem: Lagrange's Theorem",
+              "initial_proof_state": {
+                "id": "theorem_4:initial_state",
+                "content": {
+                  "ProofState": {
+                    "statement": {
+                      "id": "theorem_4:initial_state:statement",
+                      "content": {
+                        "Text": "If H is a subgroup of a finite group G, then the order of H divides the order of G."
+                      }
+                    },
+                    "path": "p0",
+                    "justification": null,
+                    "quantifiers": [],
+                    "variables": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 ]

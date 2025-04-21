@@ -6,6 +6,18 @@ use wasm_bindgen::prelude::*;
 // since they're now in main.rs
 use crate::leptos::app::App;
 
+#[cfg(feature = "visualization")]
+pub mod app;
+
+#[cfg(feature = "visualization")]
+pub mod components;
+
+#[cfg(feature = "visualization")]
+pub mod pages;
+
+#[cfg(feature = "visualization")]
+mod adapters;
+
 #[wasm_bindgen]
 pub fn main() {
     _ = console_error_panic_hook::set_once();

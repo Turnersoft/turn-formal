@@ -1,11 +1,11 @@
-use super::*;
-use crate::foundational_theories::type_theory::calculi::cic::{
+use super::super::cic::{
     context::{ConstraintKind, Context, InductiveType, UniverseConstraint},
     term::{Constructor, MatchBranch, Pattern, Term},
     type_::Type,
     typing::{TypeChecker, TypeError},
     universe::{Level, Universe},
 };
+use super::*;
 use std::rc::Rc;
 
 pub(crate) fn setup_context() -> Context {

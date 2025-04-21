@@ -1,0 +1,36 @@
+{
+  "[typescript]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[*.tsx]": {
+    "editor.tabSize": 2
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "better-comments.tags": [
+    {
+      "tag": "turn-math-formatter",
+      "color": "#FF2D00",
+      "strikethrough": false,
+      "backgroundColor": "transparent"
+    }
+  ],
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "frontend/src/pages/MathPage/components/turn-render/turn-math.tsx",
+        "cmd": "npx prettier --write \"${file}\" --tab-width 4"
+      }
+    ]
+  },
+  "prettier.configPath": ".prettierrc.json"
+}

@@ -8,6 +8,7 @@ pub mod checker;
 pub mod definitions;
 pub mod helpers;
 pub mod macros;
+pub mod render;
 pub mod theorems;
 
 #[cfg(test)]

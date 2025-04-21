@@ -1,17 +1,17 @@
-use crate::foundational_theories::type_theory_v2::calculi::simply_typed::terms::Term;
-use crate::subjects::logic::propositional::foundations::TypeTheoryFoundation;
-use crate::subjects::logic::propositional::tactics::basic::{
+use super::super::super::super::logic::propositional::foundations::TypeTheoryFoundation;
+use super::super::super::super::logic::propositional::tactics::TacticError;
+use super::super::super::super::logic::propositional::tactics::basic::{
     AssumptionTactic, ProofStateTactic,
 };
-use crate::subjects::logic::propositional::tactics::proof_state::{
+use super::super::super::super::logic::propositional::tactics::proof_state::{
     ProofState, TacticProofTerm,
 };
-use crate::subjects::logic::propositional::tactics::TacticError;
-use crate::subjects::logic::propositional::{Foundation, ProofTerm};
-use parse::Parse;
+use super::super::super::super::logic::propositional::{Foundation, ProofTerm};
+use crate::foundational_theories::type_theory_v2::calculi::simply_typed::terms::Term;
 use crate::{
-    crate::subjects::logic::propositional::Proposition, parse::entities::Identifier,
+    super::super::super::super::logic::propositional::Proposition, parse::entities::Identifier,
 };
+use parse::Parse;
 
 use super::basic::{
     AndIntroTactic, ConstructiveDilemmaTactic, ContrapositionTactic, DNEtactic,
@@ -305,8 +305,8 @@ fn test_constructive_dilemma() {
 
 #[cfg(test)]
 mod tests {
+    use super::super::super::super::logic::propositional::{Foundation, Proposition};
     use super::*;
-    use crate::subjects::logic::propositional::{Foundation, Proposition};
     use parse::Parse;
 
     #[test]
@@ -510,8 +510,8 @@ mod tests {
 
 #[cfg(test)]
 mod intensive_tests {
+    use super::super::super::super::logic::propositional::{Foundation, Proposition};
     use super::*;
-    use crate::subjects::logic::propositional::{Foundation, Proposition};
     use parse::Parse;
 
     #[test]
@@ -655,9 +655,11 @@ mod intensive_tests {
             _ => panic!("Expected complete term"),
         };
         let ty = result.foundation.convert_proposition_to_type(&simple_and);
-        assert!(result
-            .foundation
-            .verify_proof(result.current_context().stlc_context(), term, &ty));
+        assert!(
+            result
+                .foundation
+                .verify_proof(result.current_context().stlc_context(), term, &ty)
+        );
 
         Ok(())
     }

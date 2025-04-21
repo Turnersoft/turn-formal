@@ -21,6 +21,7 @@
     "@yozora/react-mathjax": "^3.0.0-alpha.14",
     "axios": "^1.8.4",
     "chokidar": "^4.0.3",
+    "classnames": "^2.5.1",
     "cors": "^2.8.5",
     "dagre": "^0.8.5",
     "dotenv": "^16.4.7",

@@ -34,13 +34,17 @@ export async function refreshTheoryCache(): Promise<void> {
       "/subjects/math/theories/**/*.json",
       "../../../subjects/math/theories/**/*.json",
       "./subjects/math/theories/**/*.json",
+      // Add the new turn_render patterns
+      "/subjects/math/theories_turn_render/**/*.json",
+      "../../../subjects/math/theories_turn_render/**/*.json",
+      "./subjects/math/theories_turn_render/**/*.json",
     ];
 
     let foundFiles = false;
 
     // Try each pattern in succession until one works
     for (const pattern of pathPatterns) {
-      if (foundFiles) break;
+      if (foundFiles) continue;
 
       try {
         console.log(`Trying glob pattern: ${pattern}`);
@@ -59,6 +63,29 @@ export async function refreshTheoryCache(): Promise<void> {
         } else if (pattern === "./subjects/math/theories/**/*.json") {
           result = await import.meta.glob(
             "./subjects/math/theories/**/*.json",
+            { eager: true }
+          );
+        }
+        // Add the new patterns for turn_render
+        else if (pattern === "/subjects/math/theories_turn_render/**/*.json") {
+          result = await import.meta.glob(
+            "/subjects/math/theories_turn_render/**/*.json",
+            {
+              eager: true,
+            }
+          );
+        } else if (
+          pattern === "../../../subjects/math/theories_turn_render/**/*.json"
+        ) {
+          result = await import.meta.glob(
+            "../../../subjects/math/theories_turn_render/**/*.json",
+            { eager: true }
+          );
+        } else if (
+          pattern === "./subjects/math/theories_turn_render/**/*.json"
+        ) {
+          result = await import.meta.glob(
+            "./subjects/math/theories_turn_render/**/*.json",
             { eager: true }
           );
         }
@@ -440,230 +467,87 @@ async function loadTheoremsDirectly(theoryName: string): Promise<Theorem[]> {
 }
 
 /**
- * Fetches content for a specific theory
- * @param theoryPath Path to the theory folder
- * @returns Promise with theory content (definitions and theorems)
+ * Selects a single JSON file from theoryCache by path
+ * @param jsonPath Path to the JSON file
+ * @returns Theory content (definitions and theorems)
  */
-export async function fetchTheoryContent(
-  theoryPath: string
-): Promise<MathContent | null> {
-  console.log(`Fetching content for theory: ${theoryPath} from filesystem`);
-
-  try {
-    // Handle both old path format (just the theory name) and new format (theories/name/subpath)
-    let searchPath = theoryPath;
-
-    // If the path uses the new format with 'theories/' prefix, use it directly
-    if (theoryPath.startsWith("theories/")) {
-      searchPath = theoryPath.slice("theories/".length);
+export function selectJsonFromAll(jsonPath: string): MathContent | null {
+  // Extract the theory name for display
+  const theoryName = jsonPath.includes("/") 
+    ? jsonPath.split("/").pop() || jsonPath 
+    : jsonPath;
+  
+  // Find exact match first, then fallback to partial match
+  let matchingPath = Object.keys(theoryCache).find(path => 
+    path.endsWith(jsonPath)
+  );
+  
+  // If no exact match, try partial match
+  if (!matchingPath) {
+    matchingPath = Object.keys(theoryCache).find(path => 
+      path.includes(jsonPath)
+    );
+  }
+  
+  // If no match found, return empty content
+  if (!matchingPath) {
+    return {
+      definitions: [],
+      theorems: [],
+      folder: jsonPath,
+      theory: theoryName
+    };
+  }
+  
+  // Get content from the matching file
+  const content = theoryCache[matchingPath];
+  
+  // Process based on file type
+  const definitions: Definition[] = [];
+  const theorems: Theorem[] = [];
+  
+  if (matchingPath.includes("definition")) {
+    if (Array.isArray(content)) {
+      content.forEach((def: any) => {
+        const parsed = parseDefinition(def, matchingPath as string);
+        if (parsed) definitions.push(parsed);
+      });
+    } else {
+      const parsed = parseDefinition(content, matchingPath);
+      if (parsed) definitions.push(parsed);
     }
-
-    // Extract the theory name from the path for display purposes
-    const theoryName = theoryPath.includes("/")
-      ? theoryPath.split("/").pop() || theoryPath
-      : theoryPath;
-
-    // Get all JSON files for this theory - supporting both paths with and without subfolders
-    const theoryFiles = Object.keys(theoryCache).filter((path) => {
-      // Only include JSON files
-      if (!path.endsWith(".json")) return false;
-
-      // For paths that start with "theories/"
-      if (theoryPath.startsWith("theories/")) {
-        const actualTheoryName = theoryPath.slice("theories/".length);
-        return (
-          path.includes(`/theories/${actualTheoryName}/`) ||
-          path.includes(`/theories/${actualTheoryName}.json`)
-        );
-      }
-
-      // Standard paths without "theories/" prefix
-      return (
-        path.includes(`/theories/${searchPath}/`) ||
-        // Handle subfolders if using the complete path
-        (theoryPath.includes("/") && path.includes(theoryPath))
-      );
-    });
-
-    if (theoryFiles.length > 0) {
-      console.log(
-        `Found ${theoryFiles.length} JSON files for theory ${theoryPath}:`,
-        theoryFiles
-      );
-
-      // Collect all definitions and theorems from the files
-      const definitions: Definition[] = [];
-      const theorems: Theorem[] = [];
-
-      theoryFiles.forEach((filePath) => {
-        console.log(`Processing file: ${filePath}`);
-        const fileContent = theoryCache[filePath];
-        console.log(
-          `File content type: ${typeof fileContent}`,
-          `Is Array: ${Array.isArray(fileContent)}`,
-          `Length: ${Array.isArray(fileContent) ? fileContent.length : "N/A"}`
-        );
-
-        if (fileContent === undefined || fileContent === null) {
-          console.error(`Empty or undefined content for file: ${filePath}`);
-          return;
-        }
-
-        // Handle definition files
-        if (filePath.includes("definition")) {
-          try {
-            // Check if the file content is an array
-            if (Array.isArray(fileContent)) {
-              // Process each definition in the array
-              console.log(
-                `Processing array of ${fileContent.length} definitions`
-              );
-              fileContent.forEach((def, index) => {
-                console.log(
-                  `Processing definition ${index + 1}/${fileContent.length}: ${
-                    def.name || "unnamed"
-                  }`
-                );
-                const parsedDef = parseDefinition(def, filePath);
-                if (parsedDef) definitions.push(parsedDef);
-              });
-            } else {
-              // Process as a single definition
-              console.log(`Processing single definition`);
-              const def = parseDefinition(fileContent, filePath);
-              if (def) definitions.push(def);
-            }
-          } catch (e) {
-            console.error(`Error parsing definition in ${filePath}:`, e);
+  } else if (matchingPath.includes("theorem")) {
+    // Get a proper theory name from the path
+    const pathParts = matchingPath.split('/');
+    const theoryFolder = pathParts[pathParts.length - 2] || ''; // Get the parent folder name
+    
+    if (Array.isArray(content)) {
+      content.forEach((thm: any) => {
+        const parsed = parseTheorem(thm, matchingPath as string);
+        if (parsed) {
+          // Set proper theory name if the theorem is from a theory folder
+          if (theoryFolder && parsed.name === "theorems") {
+            parsed.name = `${theoryFolder} Theorem`;
           }
-        }
-
-        // Handle theorem files
-        if (filePath.includes("theorem")) {
-          try {
-            // Check if the file content is an array
-            if (Array.isArray(fileContent)) {
-              // Process each theorem in the array
-              console.log(`Processing array of ${fileContent.length} theorems`);
-              fileContent.forEach((thm, index) => {
-                console.log(
-                  `Processing theorem ${index + 1}/${fileContent.length}: ${
-                    thm.name || "unnamed"
-                  }`
-                );
-                const parsedThm = parseTheorem(thm, filePath);
-                if (parsedThm) theorems.push(parsedThm);
-              });
-            } else {
-              // Process as a single theorem
-              console.log(`Processing single theorem`);
-              const thm = parseTheorem(fileContent, filePath);
-              if (thm) theorems.push(thm);
-            }
-          } catch (e) {
-            console.error(`Error parsing theorem in ${filePath}:`, e);
-          }
+          theorems.push(parsed);
         }
       });
-
-      // Create the content object
-      const content: MathContent = {
-        definitions,
-        theorems,
-        folder: theoryPath,
-        theory: theoryName,
-      };
-
-      console.log(
-        `Assembled content for ${theoryPath}:`,
-        `${definitions.length} definitions, ${theorems.length} theorems`
-      );
-
-      return content;
     } else {
-      console.warn(
-        `No JSON files found in cache for theory: ${theoryPath}, trying direct loading...`
-      );
-
-      // Try to load the files directly using fetch as a fallback
-      // If searchPath already has the correct value based on our earlier processing
-      let directLoadPath = searchPath;
-
-      // Double-check that we're not trying to load from "theories/theories/..."
-      if (theoryPath.startsWith("theories/")) {
-        directLoadPath = theoryPath.slice("theories/".length);
-        console.log(`Adjusted path for direct loading: ${directLoadPath}`);
-      }
-
-      const definitions = await loadDefinitionsDirectly(directLoadPath);
-      let theorems = await loadTheoremsDirectly(directLoadPath);
-
-      // If we didn't find content and the path doesn't include "theories/",
-      // try adding it to handle case where server expects the full path
-      if (definitions.length === 0 && !theoryPath.startsWith("theories/")) {
-        console.log(`Trying with theories/ prefix: theories/${directLoadPath}`);
-        const altDefinitions = await loadDefinitionsDirectly(
-          `theories/${directLoadPath}`
-        );
-        if (altDefinitions.length > 0) {
-          console.log(`Found definitions using theories/ prefix`);
-          return {
-            definitions: altDefinitions,
-            theorems,
-            folder: theoryPath,
-            theory: theoryName,
-          };
-        }
-      }
-
-      console.log(
-        `Direct loading results - Definitions: ${definitions.length}, Theorems: ${theorems.length}`
-      );
-
-      if (definitions.length > 0 || theorems.length > 0) {
-        const content: MathContent = {
-          definitions,
-          theorems,
-          folder: theoryPath,
-          theory: theoryName,
-        };
-
-        console.log(
-          `Assembled content for ${theoryPath} via direct loading:`,
-          `${definitions.length} definitions, ${theorems.length} theorems`
-        );
-
-        return content;
-      }
-
-      // Create placeholder content if we can't find any real content
-      // This prevents "No theory selected" message but also signals to the user
-      // that content should exist but couldn't be found
-      console.log(`Creating placeholder content for ${theoryName}`);
-      return {
-        definitions: [
-          {
-            name: `${theoryName} Content (Not Found)`,
-            docs: `We couldn't locate the content for the ${theoryName} theory. This could be because the data files are missing or incorrectly formatted. Try selecting another theory from the sidebar.`,
-            kind: "struct",
-            members: [
-              {
-                name: "placeholder",
-                type: "String",
-                docs: "This is a placeholder. Please check that theory content is properly configured.",
-              },
-            ],
-          },
-        ],
-        theorems: [],
-        folder: theoryPath,
-        theory: theoryName,
-      };
+      const parsed = parseTheorem(content, matchingPath);
+      if (parsed) theorems.push(parsed);
     }
-  } catch (error) {
-    console.error(`Error fetching theory content for ${theoryPath}:`, error);
-    return null;
   }
+  
+  // Extract the theory folder name from the path for better display
+  const folderPath = jsonPath.includes("/") ? jsonPath.substring(0, jsonPath.lastIndexOf("/")) : "";
+  const theoryDisplayName = folderPath ? folderPath.split("/").pop() || theoryName : theoryName;
+  
+  return {
+    definitions,
+    theorems,
+    folder: jsonPath,
+    theory: theoryDisplayName
+  };
 }
 
 /**
@@ -705,7 +589,27 @@ function parseTheorem(fileContent: any, filePath: string): Theorem | null {
     const fileName = filePath.split("/").pop() || "";
     const fallbackName = fileName.replace(".json", "").replace("theorem_", "");
 
-    // Create a theorem object from the content
+    // Handle the nested structure in theorems.json
+    if (fileContent.id && fileContent.content && fileContent.content.Theorem) {
+      const theoremData = fileContent.content.Theorem;
+      
+      // Extract statement from the nested structure
+      let statement = "";
+      if (theoremData.initial_proof_state?.content?.Theorem?.initial_proof_state?.content?.ProofState?.statement?.content?.Text) {
+        statement = theoremData.initial_proof_state.content.Theorem.initial_proof_state.content.ProofState.statement.content.Text;
+      }
+      
+      // Create a theorem object from the content
+      return {
+        name: theoremData.name || fallbackName,
+        statement: statement,
+        description: theoremData.description || `Theorem from ${fileName}`,
+        proof_steps: theoremData.proof_steps || [],
+        tags: theoremData.tags || [],
+      };
+    }
+
+    // Create a theorem object from the content (original format)
     return {
       name: fileContent.name || fallbackName,
       statement: fileContent.statement || "",
@@ -1016,7 +920,7 @@ export async function tryLoadWithAlternativePaths(
 
     console.log(`Trying alternative path: ${path}`);
     try {
-      const content = await fetchTheoryContent(path);
+      const content = await selectJsonFromAll(path);
 
       // Check if we got useful content (not just placeholders)
       if (content && content.definitions && content.definitions.length > 0) {

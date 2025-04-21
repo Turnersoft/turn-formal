@@ -17,7 +17,7 @@ use super::super::theories::zfc::Set;
 
 use super::expressions::{Identifier, MathExpression};
 // Centralized re-exports for convenient access from other modules
-pub use super::properties::{MathProperty, PropertyRequirement};
+
 use super::relations::MathRelation;
 
 /// A mathematical theory context that groups related theorems

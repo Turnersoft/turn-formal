@@ -6,7 +6,7 @@ import MathContentComponent from "./components/math_content/math_content";
 import { TheoryFolder, MathContent } from "./models/math";
 import {
   fetchAvailableTheories,
-  fetchTheoryContent,
+  selectJsonFromAll,
   refreshTheoryCache,
   buildCompleteFileTree,
   FolderNode,
@@ -107,7 +107,7 @@ const MathPage: React.FC = () => {
       try {
         // Fetch theory content from filesystem
         console.log("Fetching theory content for:", theoryPath);
-        let content = await fetchTheoryContent(theoryPath);
+        let content = selectJsonFromAll(theoryPath);
 
         console.log("Theory content received:", content);
 
@@ -198,10 +198,8 @@ const MathPage: React.FC = () => {
 
       // Refresh theory cache first
       refreshTheoryCache().then(() => {
-        fetchTheoryContent(theoryPath).then((content) => {
-          console.log("Refreshed theory content received:", content);
-          setMathContent(content);
-        });
+        const selected = selectJsonFromAll(theoryPath);
+        setMathContent(selected);
       });
     }
   };

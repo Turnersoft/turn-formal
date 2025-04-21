@@ -3,21 +3,22 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::super::{
+use super::super::theories::{
     GroupExpression,
     rings::definitions::{FieldExpression, RingExpression},
-    theories::{
-        groups::Group,
-        number_theory::definitions::Number,
-        rings::{Ring, definitions::Field},
-    },
 };
 
+use super::super::theories::{
+    groups::Group,
+    number_theory::definitions::Number,
+    rings::{Ring, definitions::Field},
+};
+
+use super::super::formalism::interpretation::TypeViewOperator;
 use super::{
     core::{MathObject, MathObjectType},
     relations::MathRelation,
 };
-use super::super::formalism::interpretation::TypeViewOperator;
 
 /// Variables for use in expressions
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]

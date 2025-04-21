@@ -1,12 +1,16 @@
 .theorem {
   margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px dashed #ced4da;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 
   &:last-child {
-    border-bottom: none;
     margin-bottom: 0;
-    padding-bottom: 0;
   }
 
   h3 {
@@ -17,13 +21,46 @@
   }
 }
 
+.theoremTitle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  position: relative;
+  
+  &:hover {
+    color: #0056b3;
+  }
+  
+  &:after {
+    content: "▼";
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover:after {
+    transform: translateY(2px);
+  }
+}
+
+.theoremId {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: normal;
+  margin-left: 1rem;
+}
+
 .statement {
   background-color: #f8f9fa;
   padding: 1rem;
-  border-left: 4px solid #6c757d;
+  border-left: 4px solid #007bff;
   font-style: italic;
   margin-bottom: 1rem;
   border-radius: 0 0.25rem 0.25rem 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .description {
@@ -38,6 +75,7 @@
   padding: 1.5rem;
   border-radius: 0.25rem;
   margin-top: 1.5rem;
+  border-left: 4px solid #28a745;
 
   h4 {
     font-size: 1.2rem;
@@ -91,4 +129,25 @@
   color: #495057;
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
+}
+
+.showOriginal {
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.showOriginalButton {
+  background-color: transparent;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+  }
 }
