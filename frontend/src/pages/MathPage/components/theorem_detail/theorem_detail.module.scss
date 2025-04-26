@@ -21,28 +21,97 @@
   }
 }
 
-.theoremTitle {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  position: relative;
+.theoremContainer {
+  margin-bottom: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
   
   &:hover {
-    color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.theoremHeader {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+  
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+.expandIcon {
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+  color: #555;
+}
+
+.theoremTitle {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  
+  strong {
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.theoremDetails {
+  padding: 1.25rem;
+  background-color: #fff;
+}
+
+.theoremDescription {
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.proofSteps {
+  background-color: #f9f9f9;
+  padding: 1.25rem;
+  border-radius: 6px;
+  
+  h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #333;
   }
   
-  &:after {
-    content: "▼";
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-    transition: transform 0.3s ease;
+  ol {
+    margin: 0;
+    padding-left: 1.5rem;
+    
+    li {
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed #e0e0e0;
+      
+      &:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+    }
   }
-  
-  &:hover:after {
-    transform: translateY(2px);
-  }
+}
+
+.noProofSteps {
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  color: #888;
+  font-style: italic;
+  text-align: center;
 }
 
 .theoremId {
@@ -76,6 +145,7 @@
   border-radius: 0.25rem;
   margin-top: 1.5rem;
   border-left: 4px solid #28a745;
+  margin-bottom: 1.5rem;
 
   h4 {
     font-size: 1.2rem;
@@ -84,18 +154,9 @@
   }
 }
 
-.proofSteps {
-  padding-left: 1.5rem;
-  margin-bottom: 0;
-}
-
-.proofStep {
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
-}
-
 .stepDescription {
   margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .stepFormula {
@@ -114,6 +175,69 @@
   font-size: 0.9rem;
   color: #6c757d;
   margin-top: 0.5rem;
+  
+  em {
+    color: #495057;
+    font-style: normal;
+    font-weight: 500;
+  }
+}
+
+.stepPath {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
+  
+  em {
+    color: #495057;
+    font-style: normal;
+    font-weight: 500;
+  }
+}
+
+.stepVariables {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+  background-color: #f0f0f0;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  
+  em {
+    color: #495057;
+    font-style: normal;
+    font-weight: 500;
+  }
+  
+  ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+    
+    li {
+      margin-bottom: 0.25rem;
+      font-family: "Menlo", "Monaco", "Courier New", monospace;
+      font-size: 0.8rem;
+      color: #495057;
+      word-break: break-word;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.debug {
+  font-family: "Menlo", "Monaco", "Courier New", monospace;
+  font-size: 0.8rem;
+  background-color: #f1f1f1;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .tags {

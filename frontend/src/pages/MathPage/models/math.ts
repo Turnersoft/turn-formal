@@ -27,9 +27,45 @@ export interface Definition {
   [key: string]: any; // Allow additional properties
 }
 
+// Nested structures from theorems.json
+export interface MathNodeContent {
+  Text?: string;
+  Theorem?: TheoremContent;
+  ProofState?: ProofStateContent;
+  [key: string]: any;
+}
+
+export interface MathNode {
+  id: string;
+  content: MathNodeContent;
+}
+
+export interface ProofStateContent {
+  statement?: MathNode;
+  path?: string;
+  justification?: string;
+  quantifiers?: MathNode[];
+  variables?: MathNode[];
+  [key: string]: any;
+}
+
+export interface TheoremContent {
+  name: string;
+  description: string;
+  initial_proof_state: MathNode;
+  proof_steps?: MathNode[];
+  theory?: string;
+  [key: string]: any;
+}
+
+export interface TheoremJsonContent {
+  Theorem: TheoremContent;
+  [key: string]: any;
+}
+
 export interface Theorem {
   id?: string;
-  name: string;
+  name?: string;
   statement?: string;
   description?: string;
   proof_steps?: ProofStep[];
@@ -44,6 +80,8 @@ export interface Theorem {
   examples?: string[];
   counterexamples?: string[];
   formulas?: string[];
+  // Nested content structure from theorems.json
+  content?: TheoremJsonContent;
   [key: string]: any; // Allow additional properties
 }
 

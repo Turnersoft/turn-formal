@@ -277,6 +277,8 @@ mod tests {
     fn test_cyclic_group() {
         let z5 = cyclic_group(5);
         assert_eq!(z5.operation.operation_type, GroupOperationVariant::Addition);
+
+        // The cyclic_group function returns the size directly as the input parameter
         assert!(
             z5.properties
                 .iter()
@@ -296,6 +298,8 @@ mod tests {
             s3.operation.operation_type,
             GroupOperationVariant::Composition
         );
+
+        // The symmetric_group function calculates the order as n!, so S3 has order 3! = 6
         assert!(
             s3.properties
                 .iter()

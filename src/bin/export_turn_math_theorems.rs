@@ -16,14 +16,17 @@ fn main() -> Result<()> {
         );
         std::fs::create_dir_all(theories_dir)?;
     } else {
-        println!("📂 Using base directory: {}", theories_dir.display());
+        println!(
+            "📂 Using directory for theorem generation: {}",
+            theories_dir.display()
+        );
     }
 
     // Generate theorem files for all supported theories
     match generate_all_theorem_files(theories_dir) {
         Ok(_) => {
             println!("✅ Generation successful!");
-            println!("🚀 Theorems have been generated in turn_math format");
+            println!("🚀 Theorems have been generated in their respective theory directories");
         }
         Err(e) => {
             println!("❌ Generation failed: {}", e);

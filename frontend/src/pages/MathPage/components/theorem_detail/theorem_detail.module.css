@@ -1,0 +1,107 @@
+/* Theorem detail styles */
+.theoremContainer {
+  margin-bottom: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.theoremContainer:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theoremHeader {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.theoremHeader:hover {
+  background-color: #f0f0f0;
+}
+
+.expandIcon {
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+  color: #555;
+}
+
+.theoremTitle {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.theoremTitle strong {
+  font-weight: 600;
+  color: #333;
+}
+
+.theoremDetails {
+  padding: 1.25rem;
+  background-color: #fff;
+}
+
+.theoremDescription {
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.proofSteps {
+  background-color: #f9f9f9;
+  padding: 1.25rem;
+  border-radius: 6px;
+}
+
+.proofSteps h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.proofSteps ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.proofStep {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.proofStep:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.stepContent {
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+
+.stepJustification {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-style: italic;
+  margin-left: 1rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid #e0e0e0;
+}
+
+.noProofSteps {
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+} 

@@ -6,7 +6,6 @@
 // pub mod counter_example;
 
 pub mod core;
-pub mod declarative_proof;
 pub mod expressions;
 pub mod interpretation;
 pub mod proof;
@@ -14,20 +13,3 @@ pub mod proof;
 pub mod relations;
 pub mod render;
 pub mod test;
-
-// pub struct Definition {
-//     pub name: Identifier,
-//     pub description: String,
-//     pub value: Definition,
-// }
-
-// pub enum definition {
-//     Object(ObjectDefinition),
-//     Relation(RelationDefinition),
-//     Action(ActionDefinition),
-//     Logic(LogicDefinition),
-// }
-
-// pub struct Property {
-//     pub name: Identifier,
-// }

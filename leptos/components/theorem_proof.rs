@@ -2,14 +2,12 @@ use leptos::prelude::*;
 use std::collections::HashMap;
 
 /// Represents a mathematical proof step
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ProofStep {
     /// Step number/identifier
     pub id: String,
     /// Description of the step
     pub description: String,
-    /// Justification or explanation
-    pub justification: Option<String>,
     /// Optional references to previous steps
     pub references: Vec<String>,
 }
@@ -56,7 +54,7 @@ fn ProofStepView(
     #[prop(into)] step_index: usize,
     #[prop(optional)] highlighted: bool,
 ) -> impl IntoView {
-    let highlighted_class = if highlighted { "highlighted-step" } else { "" };
+    let highlighted_class = if highlighted { "highlighted" } else { "" };
     let step_clone = step.clone();
 
     view! {
@@ -64,9 +62,6 @@ fn ProofStepView(
             <div class="step-number">{step_index + 1}</div>
             <div class="step-content">
                 <p class="step-description">{step_clone.description}</p>
-                {step.justification.as_ref().map(|j| view! {
-                    <p class="step-justification">{"Justification: "}{j.clone()}</p>
-                })}
                 {(!step.references.is_empty()).then(|| {
                     let refs = step.references.iter()
                         .map(|r| r.clone())
@@ -282,31 +277,26 @@ pub fn create_example_theorem() -> Theorem {
                 ProofStep {
                     id: "step1".to_string(),
                     description: "Let G be a group and H a subgroup of G.".to_string(),
-                    justification: None,
                     references: vec![],
                 },
                 ProofStep {
                     id: "step2".to_string(),
                     description: "Consider the set of left cosets G/H = {gH : g ∈ G}.".to_string(),
-                    justification: Some("Definition of left cosets".to_string()),
                     references: vec![],
                 },
                 ProofStep {
                     id: "step3".to_string(),
                     description: "These cosets partition the group G, meaning each element of G belongs to exactly one coset.".to_string(),
-                    justification: Some("Properties of equivalence relations".to_string()),
                     references: vec!["step1".to_string()],
                 },
                 ProofStep {
                     id: "step4".to_string(),
                     description: "Each coset has the same number of elements as H.".to_string(),
-                    justification: Some("Bijection between cosets".to_string()),
                     references: vec!["step2".to_string()],
                 },
                 ProofStep {
                     id: "step5".to_string(),
                     description: "Therefore, |G| = |G/H| · |H|, which implies that |H| divides |G|.".to_string(),
-                    justification: Some("Counting elements in the partition".to_string()),
                     references: vec!["step3".to_string(), "step4".to_string()],
                 },
             ],

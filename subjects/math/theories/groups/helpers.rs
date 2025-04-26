@@ -2,12 +2,13 @@
 //!
 //! This module provides helper functions for creating common group types and elements.
 
+use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::groups::definitions::{
-    ElementValue, Group, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
-    GroupOperation, GroupOperationProperty, GroupSymbol,
+    AbelianPropertyVariant, ElementValue, FinitePropertyVariant, Group, GroupIdentity,
+    GroupInverse, GroupInverseApplication, GroupNotation, GroupOperation, GroupOperationProperty,
+    GroupProperty, GroupSymbol,
 };
 use super::super::super::super::math::theories::zfc::Set;
-use super::super::super::super::math::theories::VariantSet;
 use std::collections::HashMap;
 
 use super::GroupOperationVariant;
@@ -43,7 +44,10 @@ pub fn cyclic_group(n: i64) -> Group {
     Group {
         base_set,
         operation,
-        properties: vec![],
+        properties: vec![
+            GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
+            GroupProperty::Finite(FinitePropertyVariant::Finite(n as u32)),
+        ],
     }
 }
 
@@ -52,6 +56,9 @@ pub fn symmetric_group(degree: usize) -> Group {
     // Create parameters for S_n
     let mut parameters = HashMap::new();
     parameters.insert("degree".to_string(), degree.to_string());
+
+    // Calculate the order of the symmetric group: n!
+    let order = (1..=degree).fold(1, |acc, x| acc * x) as u32;
 
     // Create the group set
     let base_set = Set::Parametric {
@@ -74,10 +81,20 @@ pub fn symmetric_group(degree: usize) -> Group {
         ],
     };
 
+    // S_n is non-abelian for n > 2
+    let abelian_property = if degree <= 2 {
+        GroupProperty::Abelian(AbelianPropertyVariant::Abelian)
+    } else {
+        GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
+    };
+
     Group {
         base_set,
         operation,
-        properties: vec![],
+        properties: vec![
+            abelian_property,
+            GroupProperty::Finite(FinitePropertyVariant::Finite(order)),
+        ],
     }
 }
 

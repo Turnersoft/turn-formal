@@ -52,12 +52,13 @@ pub enum TheoryExpression {
 /// A unified mathematical expression
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum MathExpression {
-    /// Variable reference
+    /// Variable reference, not definition
     Var(Identifier),
 
     /// Reference to a mathematical object
     Object(MathObject),
 
+    /// expression that have both value and type
     Expression(TheoryExpression),
 
     /// treating math relationships as first-flass citizens

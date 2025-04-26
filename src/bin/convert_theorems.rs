@@ -7,7 +7,7 @@ fn main() -> Result<()> {
 
     // Default paths
     let theories_dir = Path::new("subjects/math/theories");
-    let output_dir = Path::new("subjects/math/theories_turn_render");
+    let output_dir = None; // Pass None to write in-place
 
     // Check if directories exist
     if !theories_dir.exists() {
@@ -23,8 +23,7 @@ fn main() -> Result<()> {
     match convert_all_theorem_files(theories_dir, output_dir) {
         Ok(_) => {
             println!("✅ Conversion successful!");
-            println!("Output directory: {}", output_dir.display());
-            println!("Converted files are now available in turn_render compatible format");
+            println!("Converted files have been written in-place");
         }
         Err(e) => {
             println!("❌ Conversion failed: {}", e);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import styles from "./math_content.module.scss";
 import { MathContent, Definition, Member, Theorem } from "../../models/math";
 import DependencyGraph from "../dependency_graph/dependency_graph";
@@ -175,6 +176,27 @@ const TheoremsSection = ({
   theorems: Theorem[],
   theoremsRef?: React.RefObject<HTMLDivElement>
 }) => {
+  // Debug log the theorems
+  console.log("TheoremsSection: All theorems:", theorems);
+  
+  // Count theorems with proof steps (either direct or in the complex structure)
+  const theoremsWithProofSteps = theorems.filter(theorem => {
+    console.log(`Checking theorem ${theorem.id || 'unknown'} for proof steps:`, theorem);
+    const hasDirectProofSteps = theorem.proof_steps && theorem.proof_steps.length > 0;
+    const hasNestedProofSteps = (theorem.content?.Theorem?.initial_proof_state?.content?.Theorem?.proof_steps?.length ?? 0) > 0;
+    
+    console.log(`Theorem ${theorem.id || 'unknown'}:`, {
+      hasDirectProofSteps,
+      hasNestedProofSteps,
+      directProofStepsCount: theorem.proof_steps?.length || 0,
+      nestedProofStepsCount: theorem.content?.Theorem?.initial_proof_state?.content?.Theorem?.proof_steps?.length || 0
+    });
+    
+    return hasDirectProofSteps || hasNestedProofSteps;
+  }).length;
+
+  console.log(`TheoremsSection: Found ${theoremsWithProofSteps} theorems with proof steps out of ${theorems.length} total`);
+
   return (
     <div className={styles.theoremsSection} ref={theoremsRef}>
       <h2 className={styles.sectionHeader}>
@@ -182,13 +204,19 @@ const TheoremsSection = ({
         <span className={styles.count}>({theorems.length})</span>
         {theorems.length > 0 && 
           <small className={styles.debugInfo}>
-            <span title="Theorems loaded successfully">✓</span>
+            <span title={`${theoremsWithProofSteps} theorems have formal proof steps`}>
+              ✓ {theoremsWithProofSteps > 0 && 
+                  <span className={styles.proofStepsBadge}>{theoremsWithProofSteps} with proofs</span>}
+            </span>
           </small>
         }
       </h2>
-      {theorems.map((theorem: Theorem, index: number) => (
-        <TheoremDetail key={index} theorem={theorem} />
-      ))}
+      <div className={styles.theoremsGrid}>
+        {theorems.map((theorem: Theorem, index: number) => {
+          console.log(`Rendering theorem at index ${index}:`, theorem.id || 'unknown');
+          return <TheoremDetail key={index} theorem={theorem} index={index} />;
+        })}
+      </div>
     </div>
   );
 };

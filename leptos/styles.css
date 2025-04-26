@@ -620,133 +620,10 @@ li {
 }
 
 .proof-step {
-  display: flex;
-  margin-bottom: 1.5rem;
-}
-
-.step-number {
-  min-width: 30px;
-  height: 30px;
-  background-color: #e74c3c;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 1rem;
-  font-weight: bold;
-}
-
-.step-content {
-  flex: 1;
-}
-
-.proof-qed {
-  text-align: right;
-  font-style: italic;
-  margin-top: 1rem;
-}
-
-.related-theorems {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-}
-
-.related-theorems a {
-  color: #3498db;
-  text-decoration: none;
-}
-
-.related-theorems a:hover {
-  text-decoration: underline;
-}
-
-.loading-theorem {
   padding: 1rem;
-  background-color: #f9f9f9;
-  color: #7f8c8d;
-  font-style: italic;
-  text-align: center;
-}
-
-.theorem-error {
-  padding: 1rem;
-  background-color: #fcefef;
-  color: #e74c3c;
-  border-left: 4px solid #e74c3c;
-}
-
-/* Theorem Proof Styles */
-.theorem-view {
-  margin-bottom: 3rem;
-}
-
-.theorem-proof {
-  margin-top: 1rem;
-}
-
-.proof-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.proof-collapsed {
-  color: #7f8c8d;
-  font-style: italic;
-  padding: 1rem;
-  background-color: #f9f9f9;
+  margin-bottom: 0.5rem;
   border-radius: 4px;
-}
-
-.toggle-proof-btn,
-.nav-btn {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-}
-
-.toggle-proof-btn:hover,
-.nav-btn:hover {
-  background-color: #c0392b;
-}
-
-.nav-btn:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-}
-
-.proof-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: #f0f4f8;
-  border-radius: 4px;
-}
-
-.step-indicator {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.proof-steps {
-  border-left: 2px solid #e74c3c;
-  padding-left: 1rem;
-}
-
-.proof-step {
-  display: flex;
-  margin-bottom: 1.5rem;
-  padding: 0.5rem;
-  border-radius: 4px;
+  border-left: 3px solid #3498db;
   transition: background-color 0.3s;
 }
 
@@ -756,13 +633,6 @@ li {
 
 .step-description {
   margin-bottom: 0.5rem;
-}
-
-.step-justification {
-  font-style: italic;
-  color: #555;
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
 }
 
 .step-references {

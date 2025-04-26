@@ -7,9 +7,11 @@ pub mod theorem;
 
 #[cfg(test)]
 mod tests {
+    use uuid::Uuid;
+
     use crate::{
         subjects::math::formalism::{
-            core::{ProofState, Theorem},
+            core::{ProofGoal, Theorem},
             proof::{ProofForest, ProofNode, ProofStatus},
             relations::MathRelation,
         },
@@ -24,13 +26,12 @@ mod tests {
             id: "test_theorem".to_string(),
             name: "Test Theorem".to_string(),
             description: "A test theorem for rendering".to_string(),
-            initial_proof_state: ProofState {
+            goal: ProofGoal {
                 quantifier: vec![],
                 value_variables: vec![],
                 statement: MathRelation::custom("IsTrue".to_string(), vec![]),
-                path: Some("p0".to_string()),
-                justification: None,
             },
+            proofs: ProofForest::new(),
         };
 
         // Convert to MathNode
@@ -40,7 +41,8 @@ mod tests {
         if let MathNodeContent::Theorem {
             name,
             description,
-            initial_proof_state: _,
+            goal: _,
+            proofs: _,
         } = &*node.content
         {
             assert_eq!(name, "Test Theorem");
@@ -53,28 +55,22 @@ mod tests {
     #[test]
     fn test_proof_state_to_turn_math() {
         // Create a simple proof state
-        let state = ProofState {
+        let state = ProofGoal {
             quantifier: vec![],
             value_variables: vec![],
             statement: MathRelation::custom("IsTrue".to_string(), vec![]),
-            path: Some("p0".to_string()),
-            justification: Some("By assumption".to_string()),
         };
 
         // Convert to MathNode
         let node = state.to_turn_math("test_id".to_string());
 
         // Basic validation
-        if let MathNodeContent::ProofState {
-            path,
-            justification,
+        if let MathNodeContent::ProofGoal {
             statement: _,
             quantifiers,
             variables,
         } = &*node.content
         {
-            assert_eq!(path, &Some("p0".to_string()));
-            assert_eq!(justification, &Some("By assumption".to_string()));
             assert!(quantifiers.is_empty());
             assert!(variables.is_empty());
         } else {
@@ -88,35 +84,27 @@ mod tests {
         let mut forest = ProofForest::new();
 
         // Add a root node
-        let state = ProofState {
+        let state = ProofGoal {
             quantifier: vec![],
             value_variables: vec![],
             statement: MathRelation::custom("IsTrue".to_string(), vec![]),
-            path: Some("p0".to_string()),
-            justification: None,
         };
 
-        forest.add_node(
-            None,
-            state.clone(),
-            None,
-            "Initial state".to_string(),
-            ProofStatus::InProgress,
-        );
+        forest.add_node(ProofNode {
+            id: Uuid::new_v4().to_string(),
+            parent: None,
+            children: vec![],
+            state,
+            tactic: None,
+            status: ProofStatus::InProgress,
+        });
 
         // Convert to MathNode
         let node = forest.to_turn_math("test_id".to_string());
 
         // Basic validation
-        if let MathNodeContent::ProofForest {
-            summary,
-            roots,
-            bookmarks,
-        } = &*node.content
-        {
-            assert!(!summary.is_empty());
+        if let MathNodeContent::ProofForest { roots } = &*node.content {
             assert_eq!(roots.len(), 1); // One root node
-            assert!(bookmarks.is_empty());
         } else {
             panic!("Expected ProofForest content");
         }

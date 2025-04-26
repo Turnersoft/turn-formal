@@ -4,6 +4,7 @@ import type { BracketSize } from "./BracketSize";
 import type { BracketStyle } from "./BracketStyle";
 import type { DivisionStyle } from "./DivisionStyle";
 import type { MathNode } from "./MathNode";
+import type { QuantificationNode } from "./QuantificationNode";
 import type { RefinedMulOrDivOperation } from "./RefinedMulOrDivOperation";
 import type { RelationOperatorNode } from "./RelationOperatorNode";
 import type { SpecialMiddleScriptNode } from "./SpecialMiddleScriptNode";
@@ -94,6 +95,29 @@ export type MathNodeContent =
     "UnaryRelationship": {
       subject: MathNode;
       predicate: UnaryRelationOperatorNode;
+    };
+  }
+  | {
+    "Theorem": {
+      name: string;
+      description: string;
+      goal: MathNode;
+      proofs: Array<MathNode>;
+    };
+  }
+  | {
+    "ProofGoal": {
+      statement: MathNode;
+      quantifiers: Array<MathNode>;
+      variables: Array<MathNode>;
+    };
+  }
+  | { "ProofForest": { roots: Array<MathNode> } }
+  | {
+    "Quantifier": {
+      quantification: QuantificationNode;
+      variable: MathNode;
+      body: MathNode;
     };
   }
   | { "VariableDefinition": { name: MathNode; definition: MathNode | null } }

@@ -161,11 +161,7 @@ impl ToTurnMath for MathRelation {
                 }
             }
             MathRelation::Todo { name, expressions } => {
-                // For now, just display the name and a placeholder for expressions
-                MathNode {
-                    id: master_id,
-                    content: Box::new(MathNodeContent::Text(format!("TODO({}): {{...}}", name))),
-                }
+                panic!("TODO: Implement ToTurnMath for MathRelation::Todo");
             }
         }
     }

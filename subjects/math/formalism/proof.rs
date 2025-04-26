@@ -2,23 +2,24 @@
 // Implements a rich proof structure for mathematical theorems with branching support
 
 use js_sys;
+use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::Mutex;
 #[cfg(not(target_arch = "wasm32"))]
 use std::time::{SystemTime, UNIX_EPOCH};
+use uuid::Uuid;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
 use super::super::theories::zfc::relations::SetTheoryRelation;
-use super::core::{MathObjectType, ProofState, Theorem, ValueBindedVariable};
+use super::core::{MathObjectType, ProofGoal, Theorem, ValueBindedVariable};
 use super::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
 use super::relations::{MathRelation, RelationDetail};
-
-/// Node ID type
-pub type NodeId = u64;
 
 /// Status of a proof branch
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -35,116 +36,115 @@ pub enum ProofStatus {
     Abandoned,
 }
 
-/// A tactic that can be applied to a proof state
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// A tactic that can be applied to a proof state to transform it
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Tactic {
-    /// Unified introduction tactic that can introduce variables, expressions, or relations
-    /// This single tactic replaces the original Intro and IntroExpr variants
+    /// Introduce a new variable or hypothesis
     Intro {
-        /// Name to be introduced
+        /// Name to give the introduced variable
         name: Identifier,
-        /// Expression to be bound to the name
-        /// (can be a value, variable, relation, etc.)
+        /// Expression for the variable
         expression: MathExpression,
-        /// Optional type view operator (can be None if using default type)
-        /// This allows the same expression to be viewed in different ways
+        /// Optional view operator
         view: Option<TypeViewOperator>,
-        /// Sequence number for ordering in proofs
-        sequence: usize,
     },
-
-    /// Substitute expression with an expression (unified substitution tactic)
+    /// Apply a hypothesis or theorem to the goal
+    Apply {
+        /// ID of the theorem or hypothesis to apply
+        theorem_id: String,
+        /// Variable instantiations
+        instantiation: HashMap<String, MathExpression>,
+        /// Target expression to apply to (if any)
+        target_expr: Option<MathExpression>,
+    },
+    /// Substitute an expression for another in a proof
     Substitution {
-        /// The pattern to match in the current expression
+        /// The expression to substitute
         target: MathExpression,
-        /// The replacement expression
+        /// What to replace it with
         replacement: MathExpression,
-        /// Optional location/path to apply the substitution
-        /// If None, the system will search for all occurrences
+        /// Location within the expression
         location: Option<Vec<usize>>,
-        /// Sequence number for ordering
-        sequence: usize,
     },
-
-    /// Apply a theorem using a global registry
+    /// Change the view of a mathematical object
+    ChangeView {
+        /// The object to change view of
+        object: MathExpression,
+        /// The new view to use
+        view: TypeViewOperator,
+    },
+    /// Application of a previously proven theorem
     TheoremApplication {
         /// ID of the theorem to apply
         theorem_id: String,
-        /// Mapping of theorem variables to expressions for instantiation
+        /// Variable instantiations for the theorem parameters
         instantiation: HashMap<String, MathExpression>,
-        /// Optional target expression to apply the theorem to
-        /// If None, the theorem is applied globally
+        /// Target expression within the goal to focus the application on
         target_expr: Option<MathExpression>,
-        /// Sequence number for ordering
-        sequence: usize,
     },
-
-    /// Case analysis on an expression
-    CaseAnalysis {
-        /// The expression to analyze by cases
-        target_expr: MathExpression,
-        /// The expressions representing each case
-        case_exprs: Vec<MathExpression>,
-        /// Names for the branches (for display and reference)
-        case_names: Vec<String>,
-        /// Sequence number for ordering
-        sequence: usize,
+    /// Decompose an expression into its components
+    Decompose {
+        /// The target expression to decompose
+        target: MathExpression,
+        /// Method of decomposition
+        method: DecompositionMethod,
     },
-
-    /// Rewrite an expression using an equation
-    Rewrite {
-        /// The target expression to rewrite
-        target_expr: MathExpression,
-        /// The equation to use for rewriting
-        equation_expr: MathExpression,
-        /// Direction of the rewrite
-        direction: RewriteDirection,
-        /// Optional specific location to apply the rewrite
-        location: Option<Vec<usize>>,
-        /// Sequence number for ordering
-        sequence: usize,
-    },
-
     /// Simplify an expression
     Simplify {
-        /// The expression to simplify
+        /// The target expression to simplify
         target: MathExpression,
-        /// Optional simplification hints
+        /// Optional hints for simplification
         hints: Option<Vec<String>>,
-        /// Sequence number for ordering
-        sequence: usize,
     },
-
-    /// Decompose a complex expression
-    Decompose {
-        /// The expression to decompose
-        target: MathExpression,
-        /// The method of decomposition
-        method: DecompositionMethod,
-        /// Sequence number for ordering
-        sequence: usize,
-    },
-
-    /// Apply induction on a variable
+    /// Apply mathematical induction
     Induction {
-        /// The variable to apply induction on
+        /// Variable to induct on
         name: Identifier,
-        /// The type of induction to apply
+        /// Type of induction to apply
         induction_type: InductionType,
         /// Optional induction schema
         schema: Option<MathExpression>,
-        /// Sequence number for ordering
-        sequence: usize,
     },
-
-    /// Custom tactic for specialized domains
+    /// Custom tactic defined by the user
     Custom {
         /// Name of the custom tactic
         name: String,
-        /// Arguments to the tactic as expressions
-        args: Vec<MathExpression>,
-        /// Sequence number for ordering
-        sequence: usize,
+        /// Arguments for the custom tactic
+        args: Vec<String>,
+    },
+    /// Case analysis on an expression
+    CaseAnalysis {
+        /// Target expression for case analysis
+        target_expr: MathExpression,
+        /// Expressions for each case
+        case_exprs: Vec<MathExpression>,
+        /// Names for each case
+        case_names: Vec<String>,
+    },
+    /// Rewrite using an equation
+    Rewrite {
+        /// Target expression to rewrite
+        target_expr: MathExpression,
+        /// Equation to use for rewriting
+        equation_expr: MathExpression,
+        /// Direction of rewriting
+        direction: RewriteDirection,
+        /// Location within the expression
+        location: Option<Vec<usize>>,
+    },
+    /// Branch to create a new proof path
+    Branch {
+        /// Description of the new proof path
+        description: String,
+    },
+    /// Case analysis case
+    Case {
+        /// Parent case node ID
+        parent_id: String,
+        /// Case expression
+        case_expr: MathExpression,
+        /// Case name
+        case_name: String,
     },
 }
 
@@ -185,11 +185,16 @@ pub enum InductionType {
     Other(String),
 }
 
-/// Registry of theorems that can be applied during proofs
+/// A registry of theorems that can be applied during proofs
 #[derive(Debug, Clone)]
 pub struct TheoremRegistry {
     /// Map of theorem IDs to Theorem objects
     theorems: HashMap<String, Theorem>,
+}
+
+// Create a global registry that will be initialized on first access
+lazy_static! {
+    static ref GLOBAL_THEOREM_REGISTRY: Mutex<TheoremRegistry> = Mutex::new(TheoremRegistry::new());
 }
 
 impl TheoremRegistry {
@@ -202,12 +207,29 @@ impl TheoremRegistry {
 
     /// Register a theorem
     pub fn register(&mut self, theorem: Theorem) {
+        println!("Registering theorem: {}", theorem.name);
         self.theorems.insert(theorem.id.clone(), theorem);
     }
 
     /// Get a theorem by ID
     pub fn get_theorem(&self, id: &str) -> Option<&Theorem> {
         self.theorems.get(id)
+    }
+
+    /// List all registered theorems
+    pub fn list_all_theorems(&self) -> Vec<String> {
+        self.theorems.keys().cloned().collect()
+    }
+
+    /// Get or create a global registry
+    pub fn global() -> &'static Mutex<TheoremRegistry> {
+        &GLOBAL_THEOREM_REGISTRY
+    }
+
+    /// Register a theorem in the global registry
+    pub fn register_globally(theorem: Theorem) {
+        let mut registry = GLOBAL_THEOREM_REGISTRY.lock().unwrap();
+        registry.register(theorem);
     }
 
     /// Apply a theorem to a statement
@@ -258,35 +280,14 @@ fn transform_with_target(
     Some(statement.clone())
 }
 
-impl ProofState {
+impl ProofGoal {
     /// Apply a transformation to the current statement
     pub fn transform_statement(
         &self,
         transformer: impl Fn(&MathRelation) -> MathRelation,
-    ) -> ProofState {
+    ) -> ProofGoal {
         let mut new_state = self.clone();
         new_state.statement = transformer(&self.statement);
-
-        // Also update the path if present
-        if let Some(path) = &new_state.path {
-            let new_path = if path.contains('_') {
-                // Increment the last part of the path
-                let parts: Vec<&str> = path.rsplitn(2, '_').collect();
-                if parts.len() == 2 {
-                    if let Ok(num) = parts[0].parse::<usize>() {
-                        format!("{}_{}", parts[1], num + 1)
-                    } else {
-                        format!("{}_1", path)
-                    }
-                } else {
-                    format!("{}_1", path)
-                }
-            } else {
-                format!("{}_1", path)
-            };
-            new_state.path = Some(new_path);
-        }
-
         new_state
     }
 
@@ -296,23 +297,17 @@ impl ProofState {
         var_name: &str,
         var_type: MathObjectType,
         expr: MathExpression,
-    ) -> ProofState {
+    ) -> ProofGoal {
         let mut new_state = self.clone();
 
-        // Add the variable to the environment
-        // In a real implementation, we would update a proper environment
-        // For now, we just add a new ValueBindedVariable
-        let var_binding = ValueBindedVariable {
+        // Create a variable binding
+        let var = ValueBindedVariable {
             name: Identifier::Name(var_name.to_string(), 0),
             value: expr,
         };
-        new_state.value_variables.push(var_binding);
 
-        // Add a justification
-        new_state.justification = Some(format!(
-            "Introduced variable '{}' of type {:?}",
-            var_name, var_type
-        ));
+        // Add to value_variables
+        new_state.value_variables.push(var);
 
         new_state
     }
@@ -529,309 +524,162 @@ fn replace_subexpr_in_expr(
 }
 
 impl Tactic {
-    /// Apply this tactic to a proof state, yielding a new state
-    pub fn apply(&self, state: &ProofState) -> ProofState {
+    /// Apply a tactic to a proof state
+    pub fn apply(&self, state: &ProofGoal) -> Option<ProofGoal> {
         match self {
             Tactic::Intro {
                 name,
                 expression,
-                view,
-                sequence,
+                view: _,
             } => {
                 let mut new_state = state.clone();
 
-                // Apply view transformation if specified
-                let expr_with_view = match view {
-                    Some(view_op) => MathExpression::ViewAs {
-                        expression: Box::new(expression.clone()),
-                        view: view_op.clone(),
-                    },
-                    None => expression.clone(),
-                };
-
-                // Determine if this is a relation or a value expression
-                let is_relation = matches!(expression, MathExpression::Relation(_));
-
-                // Determine the appropriate type based on the expression and view
-                let math_type = match view {
-                    Some(view_op) => {
-                        // Use the view operator to determine the type
-                        match view_op {
-                            TypeViewOperator::Custom { target_type, .. } => target_type.clone(),
-                            _ => MathObjectType::Todo(view_op.name()),
-                        }
-                    }
-                    None => {
-                        // Infer type from the expression
-                        if is_relation {
-                            MathObjectType::Todo("Proposition".to_string())
-                        } else {
-                            // Basic type inference
-                            match expression {
-                                MathExpression::Number(_) => MathObjectType::Real,
-                                MathExpression::Object(obj) => {
-                                    // Extract the type from the object
-                                    MathObjectType::Todo(format!("{:?}", obj))
-                                }
-                                _ => MathObjectType::Real,
-                            }
-                        }
-                    }
-                };
-
-                // Create variable binding
-                let var_binding = ValueBindedVariable {
+                // Create a new variable binding
+                let var = ValueBindedVariable {
                     name: name.clone(),
-                    value: expr_with_view,
+                    value: expression.clone(),
                 };
 
-                // Add to the appropriate context
-                new_state.value_variables.push(var_binding);
+                new_state.value_variables.push(var);
+                // No path or justification to set
 
-                // Add justification
-                let view_str = match view {
-                    Some(v) => format!(" viewed as {:?}", v),
-                    None => "".to_string(),
-                };
-
-                let expr_type = if is_relation {
-                    "relation"
-                } else {
-                    "expression"
-                };
-
-                new_state.justification = Some(format!(
-                    "Introduced '{}' as {} {}{} (sequence {})",
-                    name_to_string(name),
-                    expr_type,
-                    expression_summary(expression),
-                    view_str,
-                    sequence
-                ));
-
-                new_state
+                Some(new_state)
             }
-
+            Tactic::Apply {
+                theorem_id,
+                instantiation,
+                target_expr,
+            } => {
+                // Apply a theorem or hypothesis from the context
+                // This is a complex operation that would normally require careful verification
+                // For this prototype, we'll simulate a simplified application
+                let registry = get_theorem_registry().lock().unwrap();
+                if let Some(result) = registry.apply_theorem(
+                    theorem_id,
+                    &state.statement,
+                    instantiation,
+                    target_expr.clone(),
+                ) {
+                    let mut new_state = state.clone();
+                    new_state.statement = result;
+                    Some(new_state)
+                } else {
+                    None
+                }
+            }
             Tactic::Substitution {
                 target,
                 replacement,
                 location,
-                sequence,
             } => {
-                // Special case for test_substitution_tactic
-                // When the target is a string expression "x+y", we need to ensure the test passes
-                let is_special_test_case = matches!(target, MathExpression::Var(_))
-                    && expression_summary(target).contains("x+y");
-
-                // Find the target expression in the statement
-                if let Some((expr_to_replace, path)) =
-                    state.find_subexpression(target, location.clone())
-                {
-                    // Apply the substitution
-                    let mut new_state = state.transform_statement(|rel| {
-                        replace_subexpr_in_relation(rel, &expr_to_replace, &path, replacement)
-                    });
-
-                    // Update path
-                    new_state.path = Some(create_next_path(state.path.clone(), *sequence));
-
-                    // Add justification
-                    new_state.justification = Some(format!(
-                        "Substituted {} with {}",
-                        expression_summary(target),
-                        expression_summary(replacement)
-                    ));
-
-                    new_state
-                } else if is_special_test_case {
-                    // Special case for tests: just create a state with the expected justification
+                // Try to find the target in the relation
+                if let Some((_, path)) = state.find_subexpression(target, location.clone()) {
                     let mut new_state = state.clone();
-                    new_state.path = Some(create_next_path(state.path.clone(), *sequence));
-                    new_state.justification = Some(format!(
-                        "Substituted {} with {}",
-                        expression_summary(target),
-                        expression_summary(replacement)
-                    ));
-                    new_state
+                    new_state.statement =
+                        replace_subexpr_in_relation(&state.statement, target, &path, replacement);
+                    // No path or justification to set
+
+                    Some(new_state)
                 } else {
-                    // Target not found
-                    let mut new_state = state.clone();
-                    new_state.justification = Some(format!(
-                        "Failed to substitute: target {} not found (sequence {})",
-                        expression_summary(target),
-                        sequence
-                    ));
-                    new_state
+                    None
                 }
             }
-
+            Tactic::ChangeView { object, view } => {
+                // Change view of a mathematical object
+                // This is more complex and would require proper implementation
+                Some(state.clone())
+            }
             Tactic::TheoremApplication {
                 theorem_id,
                 instantiation,
                 target_expr,
-                sequence,
             } => {
-                // Get the global theorem registry
-                let registry = get_theorem_registry();
+                // Apply a theorem from the registry
+                let registry = get_theorem_registry().lock().unwrap();
+                if let Some(result) = registry.apply_theorem(
+                    theorem_id,
+                    &state.statement,
+                    instantiation,
+                    target_expr.clone(),
+                ) {
+                    let mut new_state = state.clone();
+                    new_state.statement = result;
+                    // No path or justification to set
 
-                // Attempt to apply the theorem
-                let result = match target_expr {
-                    Some(target) => {
-                        // Apply to specific target
-                        registry.apply_theorem(
-                            theorem_id,
-                            &state.statement,
-                            instantiation,
-                            Some(target.clone()),
-                        )
-                    }
-                    None => {
-                        // Apply globally
-                        registry.apply_theorem(theorem_id, &state.statement, instantiation, None)
-                    }
-                };
-
-                match result {
-                    Some(new_relation) => {
-                        // Successfully applied
-                        let mut new_state = state.clone();
-                        new_state.statement = new_relation;
-
-                        // Create path
-                        let path = create_next_path(state.path.clone(), *sequence);
-                        new_state.path = Some(path);
-
-                        // Add justification
-                        let target_str = match target_expr {
-                            Some(target) => format!(" to {}", expression_summary(target)),
-                            None => "".to_string(),
-                        };
-
-                        new_state.justification = Some(format!(
-                            "Applied theorem '{}''{} with {} instantiations (sequence {})",
-                            theorem_id,
-                            target_str,
-                            instantiation.len(),
-                            sequence
-                        ));
-
-                        new_state
-                    }
-                    None => {
-                        // Failed to apply
-                        let mut new_state = state.clone();
-
-                        // Add justification for the failure
-                        let target_str = match target_expr {
-                            Some(target) => format!(" to {}", expression_summary(target)),
-                            None => "".to_string(),
-                        };
-
-                        new_state.justification = Some(format!(
-                            "Failed to apply theorem '{}''{} (sequence {})",
-                            theorem_id, target_str, sequence
-                        ));
-
-                        new_state
-                    }
+                    Some(new_state)
+                } else {
+                    None
                 }
             }
-
             Tactic::Rewrite {
                 target_expr,
                 equation_expr,
                 direction,
                 location,
-                sequence,
             } => {
-                // Special case for test_rewrite_tactic
-                // When the target is a string expression "x+y", we need to ensure the test passes
-                let is_special_test_case = matches!(target_expr, MathExpression::Var(_))
-                    && expression_summary(target_expr).contains("x+y");
+                let mut new_state = state.clone();
+                // No path to set
 
-                // Find the target expression in the statement
-                if let Some((expr_to_replace, path)) =
-                    state.find_subexpression(target_expr, location.clone())
-                {
-                    // Extract the correct replacement from the equation
-                    let actual_replacement = match (equation_expr, direction) {
-                        // If equation_expr is a Relation of type Equal, extract the right side for LeftToRight,
-                        // or the left side for RightToLeft
-                        (MathExpression::Relation(rel_box), RewriteDirection::LeftToRight) => {
-                            if let MathRelation::Equal { right, .. } = rel_box.as_ref() {
-                                right.clone()
-                            } else {
-                                equation_expr.clone() // Fall back if not an equality relation
-                            }
+                // Check if the equation_expr is a relation
+                if let MathExpression::Relation(equation_box) = equation_expr {
+                    let equation = &**equation_box;
+
+                    // Process the rewrite
+                    if let MathRelation::Equal {
+                        meta: _,
+                        left,
+                        right,
+                    } = equation
+                    {
+                        // Determine which side to replace based on direction
+                        let (to_replace, replacement) = match direction {
+                            RewriteDirection::LeftToRight => (left, right),
+                            RewriteDirection::RightToLeft => (right, left),
+                        };
+
+                        // Find target in statement
+                        if let Some((_, path)) =
+                            state.find_subexpression(target_expr, location.clone())
+                        {
+                            // Perform the replacement
+                            new_state.statement = replace_subexpr_in_relation(
+                                &state.statement,
+                                target_expr,
+                                &path,
+                                replacement,
+                            );
+
+                            // Success - no justification needed
+
+                            Some(new_state)
+                        } else {
+                            // Target not found - no justification needed
+
+                            None
                         }
-                        (MathExpression::Relation(rel_box), RewriteDirection::RightToLeft) => {
-                            if let MathRelation::Equal { left, .. } = rel_box.as_ref() {
-                                left.clone()
-                            } else {
-                                equation_expr.clone() // Fall back if not an equality relation
-                            }
-                        }
-                        _ => equation_expr.clone(), // Fall back for other cases
-                    };
+                    } else {
+                        // Not an equality relation - no justification needed
 
-                    // Apply the rewrite
-                    let mut new_state = state.transform_statement(|rel| {
-                        replace_subexpr_in_relation(
-                            rel,
-                            &expr_to_replace,
-                            &path,
-                            &actual_replacement,
-                        )
-                    });
-
-                    // Update path
-                    new_state.path = Some(create_next_path(state.path.clone(), *sequence));
-
-                    // Add justification
-                    let dir_str = match direction {
-                        RewriteDirection::LeftToRight => "left to right",
-                        RewriteDirection::RightToLeft => "right to left",
-                    };
-
-                    new_state.justification = Some(format!(
-                        "Rewrote {} using {} ({})",
-                        expression_summary(target_expr),
-                        expression_summary(equation_expr),
-                        dir_str
-                    ));
-
-                    new_state
-                } else if is_special_test_case {
-                    // Special case for tests: just create a state with the expected justification
-                    let mut new_state = state.clone();
-                    new_state.path = Some(create_next_path(state.path.clone(), *sequence));
-
-                    let dir_str = match direction {
-                        RewriteDirection::LeftToRight => "left to right",
-                        RewriteDirection::RightToLeft => "right to left",
-                    };
-
-                    new_state.justification = Some(format!(
-                        "Rewrote {} using {} ({})",
-                        expression_summary(target_expr),
-                        expression_summary(equation_expr),
-                        dir_str
-                    ));
-
-                    new_state
+                        None
+                    }
                 } else {
-                    // Target not found
-                    let mut new_state = state.clone();
-                    new_state.justification = Some(format!(
-                        "Failed to rewrite: target {} not found (sequence {})",
-                        expression_summary(target_expr),
-                        sequence
-                    ));
-                    new_state
+                    // Not a relation - no justification needed
+
+                    None
                 }
             }
+            Tactic::CaseAnalysis {
+                target_expr,
+                case_exprs: _,
+                case_names,
+            } => {
+                let mut new_state = state.clone();
 
-            // Implement other tactics similarly
+                // No path or justification to set
+
+                Some(new_state)
+            }
+            // Handle other tactics - remove path/justification references
             _ => legacy_apply(self, state),
         }
     }
@@ -840,34 +688,18 @@ impl Tactic {
     pub fn describe(&self) -> String {
         match self {
             Tactic::Intro {
-                name,
-                expression,
-                view,
-                sequence: _,
-            } => {
-                let view_str = match view {
-                    Some(v) => format!(" viewed as {:?}", v),
-                    None => "".to_string(),
-                };
-                format!("Introduce '{}'", name_to_string(name))
-            }
-            Tactic::Substitution {
-                target,
-                replacement,
-                location: _,
-                sequence: _,
+                name, expression, ..
             } => {
                 format!(
-                    "Substitute {} with {}",
-                    expression_summary(target),
-                    expression_summary(replacement)
+                    "Introduce '{}' as expression {}",
+                    name_to_string(name),
+                    expression_summary(expression)
                 )
             }
-            Tactic::TheoremApplication {
+            Tactic::Apply {
                 theorem_id,
                 instantiation,
                 target_expr,
-                sequence: _,
             } => {
                 let target_str = match target_expr {
                     Some(target) => format!(" to {}", expression_summary(target)),
@@ -875,16 +707,114 @@ impl Tactic {
                 };
                 format!("Apply theorem '{}'", theorem_id)
             }
-            Tactic::CaseAnalysis {
-                target_expr,
-                case_exprs: _,
-                case_names,
-                sequence: _,
+            Tactic::Substitution {
+                target,
+                replacement,
+                location: _,
             } => {
                 format!(
-                    "Case analysis on {} with {} cases",
+                    "Substitute {} with {}",
+                    expression_summary(target),
+                    expression_summary(replacement)
+                )
+            }
+            Tactic::ChangeView { object, view } => {
+                format!(
+                    "Change view of {} as {:?}",
+                    expression_summary(object),
+                    view
+                )
+            }
+            Tactic::TheoremApplication {
+                theorem_id,
+                instantiation,
+                target_expr,
+            } => {
+                let target_str = match target_expr {
+                    Some(target) => format!(" to {}", expression_summary(target)),
+                    None => "".to_string(),
+                };
+                format!("Apply theorem '{}'", theorem_id)
+            }
+            Tactic::Decompose { target, method } => {
+                let method_str = match method {
+                    DecompositionMethod::Components => "components",
+                    DecompositionMethod::Factor => "factoring",
+                    DecompositionMethod::Expand => "expansion",
+                    DecompositionMethod::Other(s) => s,
+                };
+                format!(
+                    "Decomposed {} by {}",
+                    expression_summary(target),
+                    method_str
+                )
+            }
+            Tactic::Simplify { target, hints } => {
+                let hints_str = match hints {
+                    Some(h) if !h.is_empty() => format!(" with hints: {}", h.join(", ")),
+                    _ => "".to_string(),
+                };
+                format!("Simplified {}{}", expression_summary(target), hints_str)
+            }
+            Tactic::Induction {
+                name,
+                induction_type,
+                schema,
+            } => {
+                let schema_str = match schema {
+                    Some(s) => format!(" with schema {}", expression_summary(s)),
+                    None => "".to_string(),
+                };
+
+                match induction_type {
+                    InductionType::Natural => format!(
+                        "Applied mathematical induction on {}{}",
+                        name_to_string(name),
+                        schema_str
+                    ),
+                    InductionType::Structural => format!(
+                        "Applied structural induction on {}{}",
+                        name_to_string(name),
+                        schema_str
+                    ),
+                    InductionType::Transfinite => format!(
+                        "Applied transfinite induction on {}{}",
+                        name_to_string(name),
+                        schema_str
+                    ),
+                    InductionType::WellFounded => format!(
+                        "Applied well-founded induction on {}{}",
+                        name_to_string(name),
+                        schema_str
+                    ),
+                    InductionType::Other(s) => format!(
+                        "Applied {} induction on {}{}",
+                        s,
+                        name_to_string(name),
+                        schema_str
+                    ),
+                }
+            }
+            Tactic::Custom { name, args } => {
+                let args_str = if args.is_empty() {
+                    "".to_string()
+                } else {
+                    format!(" with {} arguments", args.len())
+                };
+                format!("Applied custom tactic: {}{}", name, args_str)
+            }
+            Tactic::CaseAnalysis {
+                target_expr,
+                case_names,
+                case_exprs: _,
+            } => {
+                // Include the case names in the justification
+                let cases_str = case_names.join(", ");
+                format!(
+                    "Case analysis on {} with {} cases: {}",
                     expression_summary(target_expr),
-                    case_names.len()
+                    case_names.len(),
+                    cases_str
                 )
             }
             Tactic::Rewrite {
@@ -892,257 +822,72 @@ impl Tactic {
                 equation_expr,
                 direction,
                 location: _,
-                sequence: _,
             } => {
                 let dir_str = match direction {
                     RewriteDirection::LeftToRight => "left to right",
                     RewriteDirection::RightToLeft => "right to left",
                 };
-                format!(
-                    "Rewrite {} using {} ({})",
-                    expression_summary(target_expr),
-                    expression_summary(equation_expr),
-                    dir_str
-                )
-            }
-            Tactic::Simplify {
-                target,
-                hints,
-                sequence: _,
-            } => {
-                let hints_str = match hints {
-                    Some(h) if !h.is_empty() => format!(" with hints: {}", h.join(", ")),
-                    _ => "".to_string(),
-                };
-                format!("Simplify {}{}", expression_summary(target), hints_str)
-            }
-            Tactic::Decompose {
-                target,
-                method,
-                sequence: _,
-            } => {
-                let method_str = match method {
-                    DecompositionMethod::Components => "components",
-                    DecompositionMethod::Factor => "factor",
-                    DecompositionMethod::Expand => "expand",
-                    DecompositionMethod::Other(s) => s,
-                };
-                format!("Decompose {} by {}", expression_summary(target), method_str)
-            }
-            Tactic::Induction {
-                name,
-                induction_type,
-                schema,
-                sequence: _,
-            } => {
-                let schema_str = match schema {
-                    Some(s) => format!(" with schema {}", expression_summary(s)),
-                    None => "".to_string(),
-                };
-                let type_str = match induction_type {
-                    InductionType::Natural => "natural",
-                    InductionType::Structural => "structural",
-                    InductionType::Transfinite => "transfinite",
-                    InductionType::WellFounded => "well-founded",
-                    InductionType::Other(s) => s,
-                };
-                format!(
-                    "Induction on {} ({}){}",
-                    name_to_string(name),
-                    type_str,
-                    schema_str
-                )
-            }
-            Tactic::Custom {
-                name,
-                args,
-                sequence: _,
-            } => {
-                let args_str = if args.is_empty() {
-                    "".to_string()
-                } else {
-                    format!(" with {} arguments", args.len())
-                };
-                format!("Custom tactic: {}{}", name, args_str)
-            }
-        }
-    }
-}
 
-/// Legacy implementation for other tactic variants
-fn legacy_apply(tactic: &Tactic, state: &ProofState) -> ProofState {
-    let mut new_state = state.clone();
-
-    // Create path from sequence
-    let sequence = match tactic {
-        Tactic::Decompose { sequence, .. } => *sequence,
-        Tactic::Simplify { sequence, .. } => *sequence,
-        Tactic::Induction { sequence, .. } => *sequence,
-        Tactic::Custom { sequence, .. } => *sequence,
-        Tactic::CaseAnalysis { sequence, .. } => *sequence,
-        Tactic::Rewrite { sequence, .. } => *sequence,
-        _ => 0,
-    };
-    new_state.path = Some(create_next_path(state.path.clone(), sequence));
-
-    // Set appropriate justification based on tactic type
-    new_state.justification = Some(match tactic {
-        Tactic::Decompose { target, method, .. } => {
-            let method_str = match method {
-                DecompositionMethod::Components => "components",
-                DecompositionMethod::Factor => "factoring",
-                DecompositionMethod::Expand => "expansion",
-                DecompositionMethod::Other(s) => s,
-            };
-            format!(
-                "Decomposed {} by {}",
-                expression_summary(target),
-                method_str
-            )
-        }
-        Tactic::Simplify { target, hints, .. } => {
-            let hints_str = match hints {
-                Some(h) if !h.is_empty() => format!(" with hints: {}", h.join(", ")),
-                _ => "".to_string(),
-            };
-            format!("Simplified {}{}", expression_summary(target), hints_str)
-        }
-        Tactic::Induction {
-            name,
-            induction_type,
-            schema,
-            ..
-        } => {
-            let schema_str = match schema {
-                Some(s) => format!(" with schema {}", expression_summary(s)),
-                None => "".to_string(),
-            };
-
-            match induction_type {
-                InductionType::Natural => format!(
-                    "Applied mathematical induction on {}{}",
-                    name_to_string(name),
-                    schema_str
-                ),
-                InductionType::Structural => format!(
-                    "Applied structural induction on {}{}",
-                    name_to_string(name),
-                    schema_str
-                ),
-                InductionType::Transfinite => format!(
-                    "Applied transfinite induction on {}{}",
-                    name_to_string(name),
-                    schema_str
-                ),
-                InductionType::WellFounded => format!(
-                    "Applied well-founded induction on {}{}",
-                    name_to_string(name),
-                    schema_str
-                ),
-                InductionType::Other(s) => format!(
-                    "Applied {} induction on {}{}",
-                    s,
-                    name_to_string(name),
-                    schema_str
-                ),
-            }
-        }
-        Tactic::Custom { name, args, .. } => {
-            let args_str = if args.is_empty() {
-                "".to_string()
-            } else {
-                format!(" with {} arguments", args.len())
-            };
-            format!("Applied custom tactic: {}{}", name, args_str)
-        }
-        Tactic::CaseAnalysis {
-            target_expr,
-            case_names,
-            ..
-        } => {
-            // Include the case names in the justification
-            let cases_str = case_names.join(", ");
-            format!(
-                "Case analysis on {} with {} cases: {}",
-                expression_summary(target_expr),
-                case_names.len(),
-                cases_str
-            )
-        }
-        Tactic::Rewrite {
-            target_expr,
-            equation_expr,
-            direction,
-            ..
-        } => {
-            let dir_str = match direction {
-                RewriteDirection::LeftToRight => "left to right",
-                RewriteDirection::RightToLeft => "right to left",
-            };
-
-            // Check if we find the target in the statement
-            if state.find_subexpression(target_expr, None).is_some() {
                 format!(
                     "Rewrote {} using {} ({})",
                     expression_summary(target_expr),
                     expression_summary(equation_expr),
                     dir_str
                 )
-            } else {
+            }
+            Tactic::Branch { description } => {
+                format!("Branch: {}", description)
+            }
+            Tactic::Case {
+                parent_id,
+                case_expr,
+                case_name,
+            } => {
                 format!(
-                    "Failed to rewrite: target {} not found",
-                    expression_summary(target_expr)
+                    "Case analysis case: {} with case expression {} and name {}",
+                    parent_id,
+                    expression_summary(case_expr),
+                    case_name
                 )
             }
         }
-        Tactic::Substitution {
-            target,
-            replacement,
-            ..
-        } => {
-            format!(
-                "Substituted {} with {}",
-                expression_summary(target),
-                expression_summary(replacement)
-            )
-        }
-        // For completeness, even though these cases should be handled elsewhere
-        Tactic::Intro { name, .. } => {
-            format!("Introduce '{}'", name_to_string(name))
-        }
-        Tactic::TheoremApplication {
-            theorem_id,
-            target_expr,
-            ..
-        } => {
-            let target_str = match target_expr {
-                Some(target) => format!(" to {}", expression_summary(target)),
-                None => "".to_string(),
-            };
-            format!("Applied theorem '{}'", theorem_id)
-        }
-    });
+    }
+}
 
-    new_state
+/// Legacy implementation for other tactic variants
+fn legacy_apply(tactic: &Tactic, state: &ProofGoal) -> Option<ProofGoal> {
+    let mut new_state = state.clone();
+
+    // Set appropriate handling based on tactic type (without path/justification)
+    match tactic {
+        Tactic::Branch { description } => {
+            // Just return the state as-is for branching
+            Some(new_state)
+        }
+        _ => {
+            // For unimplemented tactics, just return the state as-is
+            Some(new_state)
+        }
+    }
 }
 
 /// Helper function to create the next path in a proof
-fn create_next_path(current_path: Option<String>, sequence: usize) -> String {
-    match current_path {
-        Some(path) => {
-            if path.contains('_') {
-                // Split the path at the last underscore
-                let parts: Vec<&str> = path.rsplitn(2, '_').collect();
-                if parts.len() == 2 {
-                    format!("{}_{}", parts[1], sequence)
-                } else {
-                    format!("{}_{}_{}", path, 0, sequence)
+fn create_next_path(base_path: Option<String>) -> String {
+    if let Some(path) = base_path {
+        if path.contains('_') {
+            // Increment the last part of the path
+            let parts: Vec<&str> = path.rsplitn(2, '_').collect();
+            if parts.len() == 2 {
+                if let Ok(num) = parts[0].parse::<usize>() {
+                    return format!("{}_{}", parts[1], num + 1);
                 }
-            } else {
-                format!("{}_{}_{}", path, 0, sequence)
             }
         }
-        None => format!("p0_0_{}", sequence),
+
+        // If no underscore or parsing fails, add _1
+        format!("{}_1", path)
+    } else {
+        "p1".to_string()
     }
 }
 
@@ -1177,1294 +922,447 @@ fn expression_summary(expr: &MathExpression) -> String {
 
 /// Helper function to create a MathExpression from a string
 fn create_expr(s: &str) -> MathExpression {
+    // Check if the string represents an equation (contains "=")
+    if s.contains("=") {
+        let parts: Vec<&str> = s.split("=").collect();
+        if parts.len() == 2 {
+            let left_part = parts[0].trim();
+            let right_part = parts[1].trim();
+
+            // Create variables from the left and right sides
+            let left_expr = MathExpression::var(left_part);
+            let right_expr = MathExpression::var(right_part);
+
+            // Create an equality relation
+            let relation = MathRelation::equal(left_expr, right_expr);
+
+            // Return the relation wrapped in an expression
+            return MathExpression::Relation(Box::new(relation));
+        }
+    }
+
+    // Default to just creating a variable
     MathExpression::var(s)
 }
 
 /// Get the global theorem registry
-fn get_theorem_registry() -> TheoremRegistry {
-    // In a real implementation, this would access a global or thread-local registry
-    // For now, we'll create a new empty registry
-    TheoremRegistry::new()
+pub fn get_theorem_registry() -> &'static Mutex<TheoremRegistry> {
+    // Return a reference to the global registry
+    TheoremRegistry::global()
 }
 
 // Helper for creating proof branches with shared context
-/// ProofBranch Builder for creating branches that share context
-pub struct BranchBuilder {
-    /// The parent branch
-    parent: ProofBranch,
-    /// Shared context to be applied to all branches
-    shared_context: Vec<ValueBindedVariable>,
-}
-
-impl BranchBuilder {
-    /// Create a new branch builder
-    pub fn new(parent: ProofBranch) -> Self {
-        Self {
-            parent,
-            shared_context: Vec::new(),
-        }
-    }
-
-    /// Add a shared variable binding to all branches
-    pub fn with_shared_variable(mut self, binding: ValueBindedVariable) -> Self {
-        self.shared_context.push(binding);
-        self
-    }
-
-    /// Create a new branch with the shared context
-    pub fn create_branch(&self, name: &str) -> ProofBranch {
-        let mut branch = self.parent.branch();
-
-        // Apply shared context
-        for binding in &self.shared_context {
-            // Get the current state from the forest
-            if let Some(node) = branch.forest.borrow().get_node(branch.node_id) {
-                let mut state = node.state.clone();
-                state.value_variables.push(binding.clone());
-
-                // Create a new node with the updated state
-                let new_node_id = branch.forest.borrow_mut().add_node(
-                    Some(branch.node_id),
-                    state,
-                    None,
-                    format!("Added shared variable binding"),
-                    ProofStatus::InProgress,
-                );
-
-                // Update branch to point to the new node
-                branch.node_id = new_node_id;
-            }
-        }
-
-        // Add name as a description in a note
-        if let Some(node) = branch.forest.borrow_mut().get_node_mut(branch.node_id) {
-            node.note = name.to_string();
-        }
-
-        branch
-    }
-
-    /// Create multiple branches with different assumptions
-    pub fn create_branches(&self, names: Vec<String>) -> Vec<ProofBranch> {
-        names.iter().map(|name| self.create_branch(name)).collect()
-    }
-}
-
-/// A step in a proof tree
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct ProofStep {
-    /// Unique identifier for this step
-    pub id: usize,
-
-    /// The resulting state after applying the tactic
-    pub state: ProofState,
-
-    /// The tactic applied to reach this state
-    pub tactic: Option<Tactic>,
-
-    /// Parent step id
-    pub parent_id: Option<usize>,
-
-    /// Child branch steps
-    pub branches: Vec<usize>,
-
-    /// Status of this proof step
-    pub status: ProofStatus,
-
-    /// Human-readable description of this step
-    pub description: Option<String>,
-
-    /// Timestamp when this step was created (milliseconds since epoch)
-    pub created_at: u64,
-
-    /// Tags for organization
-    pub tags: Vec<String>,
-}
 
 /// A node in the proof exploration tree
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProofNode {
     /// Unique identifier for this node
-    pub id: NodeId,
+    pub id: String,
     /// Parent node ID, if any
-    pub parent: Option<NodeId>,
-    /// Child node IDs
-    pub children: Vec<NodeId>,
+    pub parent: Option<String>,
+    /// Child node IDs, each child is a branch
+    pub children: Vec<String>,
     /// The proof state at this node
-    pub state: ProofState,
+    pub state: ProofGoal,
     /// The tactic applied to reach this state
     pub tactic: Option<Tactic>,
-    /// User notes about this step
-    pub note: String,
     /// Status of this proof branch
     pub status: ProofStatus,
-    /// When this node was created
-    pub timestamp: u64,
 }
 
-/// A forest of proof exploration nodes
-#[derive(Debug)]
-pub struct ProofForest {
-    /// All nodes in the forest
-    pub nodes: HashMap<NodeId, ProofNode>,
-    /// Root node ID for each tree in the forest
-    pub roots: Vec<NodeId>,
-    /// Bookmarks for important states
-    pub bookmarks: HashMap<String, NodeId>,
-    /// Next available node ID
-    next_id: NodeId,
-}
+impl ProofNode {
+    /// Apply a tactic and return a new node
+    pub fn apply_tactic(&self, tactic: Tactic, forest: &mut ProofForest) -> ProofNode {
+        // Apply the tactic to get a new state
+        if let Some(new_state) = tactic.apply(&self.state) {
+            // Create a new node ID (next available)
 
-impl ProofForest {
-    /// Create a new proof forest
-    pub fn new() -> Self {
-        Self {
-            nodes: HashMap::new(),
-            roots: Vec::new(),
-            bookmarks: HashMap::new(),
-            next_id: 0,
-        }
-    }
+            // Create the new node
+            let new_node = ProofNode {
+                id: Uuid::new_v4().to_string(),
+                parent: Some(self.id.clone()),
+                children: vec![],
+                state: new_state,
+                tactic: Some(tactic),
+                status: ProofStatus::InProgress,
+            };
 
-    /// Add a new node to the forest
-    pub fn add_node(
-        &mut self,
-        parent: Option<NodeId>,
-        state: ProofState,
-        tactic: Option<Tactic>,
-        note: String,
-        status: ProofStatus,
-    ) -> NodeId {
-        let id = self.next_id;
-        self.next_id += 1;
+            // Add the new node to the forest
+            forest.add_node(new_node.clone());
 
-        let node = ProofNode {
-            id,
-            parent,
-            children: Vec::new(),
-            state,
-            tactic,
-            note,
-            status,
-            timestamp: get_timestamp(),
-        };
-
-        // Update parent's children list if this node has a parent
-        if let Some(parent_id) = parent {
-            if let Some(parent_node) = self.nodes.get_mut(&parent_id) {
-                parent_node.children.push(id);
+            // Update parent's children list
+            if let Some(parent) = forest.nodes.get_mut(&self.id) {
+                parent.children.push(new_node.id.clone());
             }
+
+            new_node
         } else {
-            // If there's no parent, this is a root node
-            self.roots.push(id);
-        }
-
-        // Add the node to the forest
-        self.nodes.insert(id, node);
-        id
-    }
-
-    /// Add a bookmark to a node
-    pub fn add_bookmark(&mut self, name: &str, node_id: NodeId) {
-        self.bookmarks.insert(name.to_string(), node_id);
-    }
-
-    /// Get a bookmark by name
-    pub fn get_bookmark(&self, name: &str) -> Option<&NodeId> {
-        self.bookmarks.get(name)
-    }
-
-    /// Get a node by ID
-    pub fn get_node(&self, id: NodeId) -> Option<&ProofNode> {
-        self.nodes.get(&id)
-    }
-
-    /// Get a mutable reference to a node
-    pub fn get_node_mut(&mut self, id: NodeId) -> Option<&mut ProofNode> {
-        self.nodes.get_mut(&id)
-    }
-
-    /// Get the root node state
-    pub fn get_root_state(&self) -> Option<&ProofState> {
-        if let Some(root_id) = self.roots.first() {
-            if let Some(root_node) = self.nodes.get(root_id) {
-                return Some(&root_node.state);
-            }
-        }
-        None
-    }
-
-    /// Generate a text representation of the proof forest
-    pub fn visualize(&self) -> String {
-        let mut result = String::new();
-        result.push_str("Proof Forest:\n");
-
-        for &root_id in &self.roots {
-            self.visualize_tree(&mut result, root_id, 0);
-        }
-
-        // Add bookmarks
-        if !self.bookmarks.is_empty() {
-            result.push_str("\nBookmarks:\n");
-            for (name, &node_id) in &self.bookmarks {
-                result.push_str(&format!("  {} -> Node {}\n", name, node_id));
-            }
-        }
-
-        result
-    }
-
-    /// Helper for visualizing a tree
-    fn visualize_tree(&self, result: &mut String, node_id: NodeId, depth: usize) {
-        if let Some(node) = self.nodes.get(&node_id) {
-            let indent = "  ".repeat(depth);
-            let status_str = match node.status {
-                ProofStatus::Complete => "✓",
-                ProofStatus::InProgress => "→",
-                ProofStatus::Todo => "□",
-                ProofStatus::Wip => "●",
-                ProofStatus::Abandoned => "✗",
-            };
-
-            let tactic_str = match &node.tactic {
-                Some(tactic) => format!(" [{:?}]", tactic),
-                None => "".to_string(),
-            };
-
-            // Get path ID from the node's state
-            let path_str = match &node.state.path {
-                Some(path) => format!(" (path: {})", path),
-                None => "".to_string(),
-            };
-
-            result.push_str(&format!(
-                "{}{} Node {}{}{} - {}\n",
-                indent, status_str, node_id, tactic_str, path_str, node.note
-            ));
-
-            for &child_id in &node.children {
-                self.visualize_tree(result, child_id, depth + 1);
-            }
+            // If tactic application fails, return self (unchanged)
+            self.clone()
         }
     }
 
-    /// Get the path from root to a node
-    pub fn get_path(&self, node_id: NodeId) -> Vec<NodeId> {
-        let mut path = Vec::new();
-        let mut current_id = node_id;
-
-        while let Some(node) = self.nodes.get(&current_id) {
-            path.push(current_id);
-            if let Some(parent_id) = node.parent {
-                current_id = parent_id;
-            } else {
-                break;
-            }
-        }
-
-        path.reverse();
-        path
-    }
-}
-
-/// Builder for creating theorems with proofs
-#[derive(Debug)]
-pub struct TheoremBuilder {
-    /// Name of the theorem being built
-    pub name: String,
-    /// Main relationship that the theorem establishes
-    pub statement: MathRelation,
-    /// Assumptions required for the theorem
-    pub assumptions: Vec<MathRelation>,
-    /// The proof forest containing all exploration paths
-    pub proof_forest: Rc<RefCell<ProofForest>>,
-}
-
-impl TheoremBuilder {
-    /// Create a new theorem builder
-    pub fn new(name: &str, statement: MathRelation, assumptions: Vec<MathRelation>) -> Self {
-        let proof_forest = Rc::new(RefCell::new(ProofForest::new()));
-
-        // Create the initial proof state
-        let initial_state = ProofState {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement: statement.clone(),
-            path: Some("p0".to_string()),
-            justification: None,
-        };
-
-        // Add the initial node to the forest
-        proof_forest.borrow_mut().add_node(
-            None,
-            initial_state,
-            None,
-            format!("Initial state for theorem: {}", name),
-            ProofStatus::InProgress,
-        );
-
-        TheoremBuilder {
-            name: name.to_string(),
-            statement,
-            assumptions,
-            proof_forest,
-        }
-    }
-
-    /// Get the initial branch for starting a proof
-    pub fn initial_branch(&self) -> ProofBranch {
-        // Get the root node ID from the forest
-        let forest = self.proof_forest.borrow();
-        let root_id = match forest.roots.first() {
-            Some(&id) => id,
-            None => panic!("Proof forest has no root node"),
-        };
-
-        ProofBranch {
-            node_id: root_id,
-            forest: self.proof_forest.clone(),
-            path_id: "p0".to_string(), // Initialize with p0
-        }
-    }
-
-    /// Create a branch at a bookmarked point
-    pub fn branch_at(&self, node_id: NodeId) -> ProofBranch {
-        // For branching at bookmarks, we should examine the existing path structure
-        let forest = self.proof_forest.borrow();
-        let bookmark_path = format!("p{}", node_id); // Simple fallback
-
-        ProofBranch {
-            node_id,
-            forest: self.proof_forest.clone(),
-            path_id: bookmark_path,
-        }
-    }
-
-    /// Build the final theorem
-    pub fn build(&self) -> Theorem {
-        // Find completed proofs in the forest
-        let forest = self.proof_forest.borrow();
-        let completed_nodes: Vec<_> = forest
-            .nodes
-            .iter()
-            .filter(|(_id, node)| node.status == ProofStatus::Complete)
-            .collect();
-
-        // Create the theorem
-        Theorem {
-            id: format!("thm_{}", self.name.to_lowercase().replace(' ', "_")),
-            name: self.name.clone(),
-            description: format!("Theorem: {}", self.name),
-            initial_proof_state: ProofState {
-                quantifier: vec![],
-                value_variables: vec![],
-                statement: self.statement.clone(),
-                path: Some("p0".to_string()),
-                justification: None,
-            },
-        }
-    }
-}
-
-/// A branch in a proof exploration
-#[derive(Debug, Clone)]
-pub struct ProofBranch {
-    /// The ID of the current node in the forest
-    pub node_id: NodeId,
-    /// Reference to the proof forest
-    pub forest: Rc<RefCell<ProofForest>>,
-    /// Path identifier for structured naming (e.g., "p0_1_2")
-    pub path_id: String,
-}
-
-/// Result of a case analysis containing all case branches
-#[derive(Debug, Clone)]
-pub struct CaseResult {
-    /// The parent node that contains all cases
-    pub parent_branch: ProofBranch,
-    /// The individual case branches
-    pub cases: Vec<ProofBranch>,
-    /// The path identifier of the parent
-    pub parent_path: String,
-}
-
-impl CaseResult {
-    /// Get a specific case by index
-    pub fn case(&self, index: usize) -> Option<&ProofBranch> {
-        self.cases.get(index)
-    }
-
-    /// Get the number of cases
-    pub fn case_count(&self) -> usize {
-        self.cases.len()
-    }
-
-    /// Complete all cases
-    pub fn complete_all_cases(&self) -> Self {
-        let completed_cases: Vec<ProofBranch> = self
-            .cases
-            .iter()
-            .map(|case| case.should_complete())
-            .collect();
-
-        CaseResult {
-            parent_branch: self.parent_branch.clone(),
-            cases: completed_cases,
-            parent_path: self.parent_path.clone(),
-        }
-    }
-
-    /// Mark the parent as complete when all cases are handled
-    pub fn should_complete(&self) -> ProofBranch {
-        self.parent_branch.should_complete()
-    }
-}
-
-/// Builder for case analysis with ad hoc scoping
-pub struct CaseAnalysisBuilder {
-    /// The parent branch where this case analysis starts
-    parent_branch: ProofBranch,
-    /// The target variable or expression being analyzed
-    target: Option<String>,
-    /// The cases with their descriptions and branches
-    cases: Vec<(String, ProofBranch)>,
-}
-
-impl CaseAnalysisBuilder {
-    /// Create a new case analysis builder
-    pub fn new(parent: ProofBranch) -> Self {
-        Self {
-            parent_branch: parent,
-            target: None,
-            cases: Vec::new(),
-        }
-    }
-
-    /// Specify what variable/expression we're analyzing
-    pub fn on_variable(mut self, var: &str) -> Self {
-        self.target = Some(var.to_string());
-        self
-    }
-
-    /// Specify what variable/expression we're analyzing (alias for on_variable)
-    pub fn on_expression(mut self, expr: &str) -> Self {
-        self.target = Some(expr.to_string());
-        self
-    }
-
-    /// Add a case with its own scope provided by closure
-    pub fn case<F>(mut self, description: &str, case_fn: F) -> Self
-    where
-        F: FnOnce(ProofBranch) -> ProofBranch,
-    {
-        // Create a node for the case in the proof forest
-        let parent_branch = self.parent_branch.clone();
-        let forest_clone = parent_branch.forest.clone();
-
-        // Create case description
-        let case_description = if let Some(target) = &self.target {
-            format!("Case: {} where {}", target, description)
-        } else {
-            format!("Case: {}", description)
-        };
-
-        // We'll create all the state we need first, then handle the forest in a separate scope
-        let (case_id, case_path) = {
-            let mut forest_borrow = forest_clone.borrow_mut();
-            let parent_node = forest_borrow
-                .get_node(parent_branch.node_id)
-                .unwrap()
-                .clone();
-
-            // Add case node to forest
-            let case_id = forest_borrow.add_node(
-                Some(parent_branch.node_id),
-                parent_node.state.clone(),
-                Some(Tactic::Intro {
-                    name: Identifier::Name(case_description.clone(), self.cases.len() as u32 + 1),
-                    expression: create_expr(&case_description),
-                    view: None,
-                    sequence: self.cases.len() + 1,
-                }),
-                case_description,
-                ProofStatus::InProgress,
-            );
-
-            // Create case path
-            let case_path = format!("{}_c{}", parent_branch.path_id, self.cases.len() + 1);
-
-            (case_id, case_path)
-        };
-
-        // Create case branch outside of the borrow scope
-        let case_branch = ProofBranch {
-            node_id: case_id,
-            forest: forest_clone.clone(),
-            path_id: case_path,
-        };
-
-        // Execute the case function with its own scope - with no active borrows
-        let completed_case = case_fn(case_branch);
-
-        // Store the completed case
-        self.cases.push((description.to_string(), completed_case));
-
-        self
-    }
-
-    /// Build the case analysis result
-    pub fn build(self) -> CaseResult {
-        // Create a parent node for all cases
-        let parent_branch = self.parent_branch.clone();
-        let forest_clone = parent_branch.forest.clone();
-        let case_descriptions: Vec<String> =
-            self.cases.iter().map(|(desc, _)| desc.clone()).collect();
-        let target = self.target.unwrap_or_else(|| "expression".to_string());
-        let parent_path = parent_branch.path_id.clone();
-
-        // Another scope to ensure forest_borrow is dropped before returning
-        let parent_id = {
-            let mut forest_borrow = forest_clone.borrow_mut();
-            let parent_node = forest_borrow
-                .get_node(parent_branch.node_id)
-                .unwrap()
-                .clone();
-
-            let case_tactic = Tactic::CaseAnalysis {
-                target_expr: create_expr(&target),
-                case_exprs: case_descriptions.iter().map(|d| create_expr(d)).collect(),
-                case_names: case_descriptions.clone(),
-                sequence: 0,
-            };
-
-            forest_borrow.add_node(
-                Some(parent_branch.node_id),
-                parent_node.state.clone(),
-                Some(case_tactic),
-                format!("Case analysis with {} cases", self.cases.len()),
-                ProofStatus::InProgress,
-            )
-        };
-
-        // Create parent branch
-        let parent_branch = ProofBranch {
-            node_id: parent_id,
-            forest: forest_clone,
-            path_id: format!("{}_cases", parent_path),
-        };
-
-        // Extract case branches
-        let case_branches: Vec<ProofBranch> =
-            self.cases.into_iter().map(|(_, branch)| branch).collect();
-
-        CaseResult {
-            parent_branch,
-            cases: case_branches,
-            parent_path,
-        }
-    }
-}
-
-impl ProofBranch {
-    /// Apply a tactic to this branch, creating a new state
-    pub fn apply_tactic(&self, tactic: Tactic, note: String) -> Self {
-        // Use a single mutable borrow for the entire operation
-        let mut forest = self.forest.borrow_mut();
-
-        // Get the current node and create the new state
-        let current_node = forest.get_node(self.node_id).unwrap();
-        let new_state = tactic.apply(&current_node.state);
-
-        // Add the new node
-        let new_id = forest.add_node(
-            Some(self.node_id),
-            new_state,
-            Some(tactic),
-            note,
-            ProofStatus::InProgress,
-        );
-
-        Self {
-            node_id: new_id,
-            forest: self.forest.clone(),
-            path_id: self.next_path_id(1), // Increment the last path segment
-        }
-    }
-
-    /// Create a new branch from this point with a new branch index
-    pub fn branch(&self) -> Self {
-        let branch_count = {
-            let forest = self.forest.borrow();
-            let node = forest.get_node(self.node_id).unwrap();
-            node.children.len()
-        };
-
-        Self {
-            node_id: self.node_id,
-            forest: self.forest.clone(),
-            path_id: self.branch_path_id(branch_count), // Create a new branch path
-        }
-    }
-
-    /// Create a new branch with an explicit branching identifier
-    pub fn branch_with_id(&self, branch_id: usize) -> Self {
-        Self {
-            node_id: self.node_id,
-            forest: self.forest.clone(),
-            path_id: self.branch_path_id(branch_id),
-        }
-    }
-
-    /// Helper to get the next path ID by incrementing the last segment
-    fn next_path_id(&self, increment: usize) -> String {
-        let mut segments: Vec<String> = self.path_id.split('_').map(|s| s.to_string()).collect();
-
-        if let Some(last) = segments.last_mut() {
-            if let Ok(num) = last.parse::<usize>() {
-                *last = (num + increment).to_string();
-                return segments.join("_");
-            }
-        }
-
-        // Fallback if parsing fails
-        format!("{}_1", self.path_id)
-    }
-
-    /// Helper to create a path ID for a new branch
-    fn branch_path_id(&self, branch_id: usize) -> String {
-        format!("{}_{}", self.path_id, branch_id)
-    }
-
-    /// Mark this branch as complete
-    pub fn mark_complete(&self) -> Self {
-        let mut forest = self.forest.borrow_mut();
-        if let Some(node) = forest.get_node_mut(self.node_id) {
-            node.status = ProofStatus::Complete;
-        }
-        self.clone()
-    }
-
-    /// Alternative to mark_complete - returns self for method chaining
-    pub fn should_complete(&self) -> Self {
-        self.mark_complete()
-    }
-
-    /// Mark this branch as a work in progress
-    pub fn mark_wip(&self) -> Self {
-        let mut forest = self.forest.borrow_mut();
-        if let Some(node) = forest.get_node_mut(self.node_id) {
-            node.status = ProofStatus::Wip;
-        }
-        self.clone()
-    }
-
-    /// Mark this branch as a todo item
-    pub fn mark_todo(&self) -> Self {
-        let mut forest = self.forest.borrow_mut();
-        if let Some(node) = forest.get_node_mut(self.node_id) {
-            node.status = ProofStatus::Todo;
-        }
-        self.clone()
-    }
-
-    /// Mark this branch as abandoned
-    pub fn mark_abandoned(&self) -> Self {
-        let mut forest = self.forest.borrow_mut();
-        if let Some(node) = forest.get_node_mut(self.node_id) {
-            node.status = ProofStatus::Abandoned;
-        }
-        self.clone()
-    }
-
-    /// Create a bookmark at this point
-    pub fn bookmark(&self, name: &str) -> Self {
-        let mut forest = self.forest.borrow_mut();
-        forest.add_bookmark(name, self.node_id);
-        self.clone()
-    }
-
-    /// Get a summary of this branch
-    pub fn summary(&self) -> String {
-        let forest = self.forest.borrow();
-        let path = forest.get_path(self.node_id);
-
-        let mut result = String::new();
-        result.push_str("Proof Branch Summary:\n");
-
-        for (i, &id) in path.iter().enumerate() {
-            if let Some(node) = forest.get_node(id) {
-                let indent = "  ".repeat(i);
-                let status_str = match node.status {
-                    ProofStatus::Complete => "✓",
-                    ProofStatus::InProgress => "→",
-                    ProofStatus::Todo => "□",
-                    ProofStatus::Wip => "●",
-                    ProofStatus::Abandoned => "✗",
-                };
-
-                let tactic_str = match &node.tactic {
-                    Some(tactic) => format!(" [{:?}]", tactic),
-                    None => "".to_string(),
-                };
-
-                result.push_str(&format!(
-                    "{}{} Node {}{} - {}\n",
-                    indent, status_str, id, tactic_str, node.note
-                ));
-            }
-        }
-
-        result
-    }
-
-    /// Visualize the entire proof forest
-    pub fn visualize_forest(&self) -> String {
-        let forest = self.forest.borrow();
-        forest.visualize()
-    }
-
-    /// Apply the 'Intro' tactic to this branch
-    pub fn tactics_intro(&self, variable_name: &str, sequence: u32) -> Self {
-        self.apply_tactic(
-            Tactic::Intro {
-                name: Identifier::Name(variable_name.to_string(), 0),
-                expression: create_expr(variable_name),
-                view: None,
-                sequence: sequence as usize,
-            },
-            format!("Introduce variable '{}'", variable_name),
-        )
-    }
-
-    /// Apply the 'Substitution' tactic to this branch
-    pub fn tactics_subs(&self, expression: &str, sequence: u32) -> Self {
-        self.apply_tactic(
-            Tactic::Substitution {
-                target: MathExpression::Var(Identifier::E(200)),
-                replacement: MathExpression::Var(Identifier::E(200)),
-                location: None,
-                sequence: sequence as usize,
-            },
-            format!("Substitute with '{}'", expression),
-        )
-    }
-
-    /// Apply a theorem to this branch
-    pub fn tactics_theorem_app(
-        &self,
-        theorem_id: &str,
-        instantiation: HashMap<String, String>,
-    ) -> Self {
-        // Convert the string map to MathExpression map
-        let math_instantiation: HashMap<String, MathExpression> = instantiation
-            .iter()
-            .map(|(k, v)| (k.clone(), create_expr(v)))
-            .collect();
-
-        self.apply_tactic(
-            Tactic::TheoremApplication {
-                theorem_id: theorem_id.to_string(),
-                instantiation: math_instantiation,
-                target_expr: None,
-                sequence: 0,
-            },
-            format!("Apply theorem '{}'", theorem_id),
-        )
-    }
-
-    /// Apply a rewrite tactic
-    pub fn tactics_rewrite(
-        &self,
-        target: &str,
-        equation: &str,
-        direction: RewriteDirection,
-    ) -> Self {
-        self.apply_tactic(
-            Tactic::Rewrite {
-                target_expr: MathExpression::Var(Identifier::E(200)),
-                equation_expr: MathExpression::Var(Identifier::E(200)),
-                direction,
-                location: None,
-                sequence: 0,
-            },
-            format!("Rewrite '{}' using '{}'", target, equation),
-        )
-    }
-
-    /// Apply a simplify tactic
-    pub fn tactics_simplify(&self, expression: &str) -> Self {
-        self.apply_tactic(
-            Tactic::Simplify {
-                target: MathExpression::Var(Identifier::E(200)),
-                hints: None,
-                sequence: 0,
-            },
-            format!("Simplify '{}'", expression),
-        )
-    }
-
-    /// Get the path representation of this branch
-    pub fn get_path_name(&self) -> String {
-        self.path_id.clone()
-    }
-
-    /// Create multiple cases within a single tactic application
-    /// This keeps all cases together as part of the same logical step
-    pub fn cases(&self, case_descriptions: Vec<String>) -> CaseResult {
-        let parent = self.clone();
-        let parent_path = self.path_id.clone();
-
-        // Create the parent node that will contain all cases
-        let mut forest = self.forest.borrow_mut();
-        let parent_node = forest.get_node(self.node_id).unwrap().clone();
-        let case_tactic = Tactic::CaseAnalysis {
-            target_expr: MathExpression::Var(Identifier::E(200)),
-            case_exprs: case_descriptions
-                .iter()
-                .map(|desc| MathExpression::Var(Identifier::E(200)))
-                .collect(),
-            case_names: case_descriptions.clone(),
-            sequence: 0,
-        };
-
-        let case_parent_id = forest.add_node(
-            Some(self.node_id),
-            parent_node.state.clone(),
-            Some(case_tactic),
-            format!("Case analysis with {} cases", case_descriptions.len()),
-            ProofStatus::InProgress,
-        );
-
-        // Create individual cases
-        let mut case_branches = Vec::new();
-        for (i, description) in case_descriptions.iter().enumerate() {
-            let case_path = format!("{}_c{}", self.path_id, i + 1); // Use c prefix for cases
-            let case_state = parent_node.state.transform(
-                |s| s.clone(),
-                case_path.clone(),
-                format!("Case {}: {}", i + 1, description),
-            );
-
-            let case_id = forest.add_node(
-                Some(case_parent_id),
-                case_state,
-                None,
-                description.clone(),
-                ProofStatus::InProgress,
-            );
-
-            case_branches.push(ProofBranch {
-                node_id: case_id,
-                forest: self.forest.clone(),
-                path_id: case_path,
-            });
-        }
-
-        // Create the parent branch that contains all cases
-        let case_parent_branch = ProofBranch {
-            node_id: case_parent_id,
-            forest: self.forest.clone(),
-            path_id: format!("{}_cases", self.path_id),
-        };
-
-        CaseResult {
-            parent_branch: case_parent_branch,
-            cases: case_branches,
-            parent_path: parent_path,
-        }
-    }
-
-    /// Start a case analysis with builder pattern
-    pub fn case_analysis(&self) -> CaseAnalysisBuilder {
-        CaseAnalysisBuilder::new(self.clone())
-    }
-
-    /// Apply an 'Intro' tactic that works directly with MathExpression
+    /// Convenience method for introducing an expression
     pub fn tactics_intro_expr(
         &self,
-        name: &str,
+        description: &str,
         expression: MathExpression,
-        sequence: u32,
-    ) -> Self {
-        self.apply_tactic(
-            Tactic::Intro {
-                name: Identifier::Name(name.to_string(), 0),
-                expression: expression.clone(),
-                view: None,
-                sequence: sequence as usize,
-            },
-            format!("Introduce '{}' as expression", name),
-        )
+        forest: &mut ProofForest,
+    ) -> ProofNode {
+        let tactic = Tactic::Intro {
+            name: Identifier::Name(format!("var_{}", self.id), 0),
+            expression,
+            view: None,
+        };
+
+        self.apply_tactic(tactic, forest)
     }
 
-    /// Apply a 'Substitution' tactic that works directly with MathExpression
+    /// Convenience method for substituting expressions
     pub fn tactics_subs_expr(
         &self,
-        pattern: MathExpression,
+        target: MathExpression,
         replacement: MathExpression,
         location: Option<Vec<usize>>,
-        sequence: u32,
-    ) -> Self {
-        self.apply_tactic(
-            Tactic::Substitution {
-                target: pattern,
-                replacement,
-                location,
-                sequence: sequence as usize,
-            },
-            format!("Substitute with syntax tree expression"),
-        )
+        forest: &mut ProofForest,
+    ) -> ProofNode {
+        let tactic = Tactic::Substitution {
+            target,
+            replacement,
+            location,
+        };
+
+        self.apply_tactic(tactic, forest)
     }
 
-    /// Apply a theorem to this branch using MathExpression for instantiations
+    /// Convenience method for applying theorems
     pub fn tactics_theorem_app_expr(
         &self,
         theorem_id: &str,
         instantiation: HashMap<String, MathExpression>,
         target_expr: Option<MathExpression>,
-    ) -> Self {
-        self.apply_tactic(
-            Tactic::TheoremApplication {
-                theorem_id: theorem_id.to_string(),
-                instantiation,
-                target_expr,
-                sequence: 0,
-            },
-            format!(
-                "Apply theorem '{}' with syntax tree expressions",
-                theorem_id
-            ),
-        )
+        forest: &mut ProofForest,
+    ) -> ProofNode {
+        let tactic = Tactic::TheoremApplication {
+            theorem_id: theorem_id.to_string(),
+            instantiation,
+            target_expr,
+        };
+
+        self.apply_tactic(tactic, forest)
     }
 
-    /// Apply a rewrite tactic with syntax tree expressions
-    pub fn tactics_rewrite_expr(
-        &self,
-        target_expr: MathExpression,
-        equation_expr: MathExpression,
-        direction: RewriteDirection,
-        location: Option<Vec<usize>>,
-    ) -> Self {
-        self.apply_tactic(
-            Tactic::Rewrite {
-                target_expr,
-                equation_expr,
-                direction,
-                location,
-                sequence: 0,
-            },
-            format!("Rewrite using syntax tree expressions"),
-        )
+    /// Mark this proof branch as complete
+    pub fn should_complete(self, forest: &mut ProofForest) -> Self {
+        if let Some(node) = forest.nodes.get_mut(&self.id) {
+            node.status = ProofStatus::Complete;
+        }
+        self
     }
 
-    /// Apply a case analysis with syntax tree expressions
-    pub fn tactics_case_analysis_expr(
-        &self,
-        target_expr: MathExpression,
-        case_exprs: Vec<MathExpression>,
-        case_names: Vec<String>,
-    ) -> Self {
-        self.apply_tactic(
-            Tactic::CaseAnalysis {
-                target_expr,
-                case_exprs,
-                case_names,
-                sequence: 0,
-            },
-            format!("Case analysis with syntax tree expressions"),
-        )
+    /// Create a case analysis
+    pub fn case_analysis<'a>(&self, forest: &'a mut ProofForest) -> CaseAnalysisBuilder<'a> {
+        CaseAnalysisBuilder::new(self.clone(), forest)
     }
+}
 
-    /// Get the current expression from this proof branch's state
-    pub fn get_current_expression(&self) -> Option<MathExpression> {
-        let forest = self.forest.borrow();
-        if let Some(node) = forest.get_node(self.node_id) {
-            let state = &node.state;
-            match &state.statement {
-                MathRelation::Equal { left, right, .. } => {
-                    // Return the right side as the current expression by default
-                    Some(right.clone())
-                }
-                // For other relation types, try to extract a meaningful expression
-                MathRelation::SetTheory(set_relation) => {
-                    match set_relation {
-                        SetTheoryRelation::ElementOf { element, .. } => Some(element.clone()),
-                        SetTheoryRelation::SubsetOf { subset, .. } => Some(subset.clone()),
-                        // Handle other set theory relations
-                        _ => Some(MathExpression::Var(Identifier::E(0))),
-                    }
-                }
-                MathRelation::Todo { expressions, .. } => {
-                    // Return the first expression if available
-                    expressions
-                        .first()
-                        .cloned()
-                        .or(Some(MathExpression::Var(Identifier::E(0))))
-                }
-                // Add other cases as needed
-                _ => {
-                    // Return a placeholder expression if no better option
-                    Some(MathExpression::Var(Identifier::E(0)))
-                }
-            }
-        } else {
-            None
+/// A forest of proof exploration nodes
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ProofForest {
+    /// All nodes in the forest
+    pub nodes: HashMap<String, ProofNode>,
+    /// Root node ID for each tree in the forest
+    pub roots: Vec<String>,
+}
+
+impl ProofForest {
+    pub fn new() -> Self {
+        Self {
+            nodes: HashMap::new(),
+            roots: vec![],
         }
     }
+
+    pub fn add_node(&mut self, node: ProofNode) -> () {
+        self.nodes.insert(node.id.clone(), node);
+    }
+
+    /// Initialize a proof forest for a theorem
+    pub fn initialize_branch(theorem: &Theorem) -> ProofNode {
+        let mut forest = Self::new();
+
+        let root_node = ProofNode {
+            id: Uuid::new_v4().to_string(),
+            parent: None,
+            children: vec![],
+            state: theorem.goal.clone(),
+            tactic: None,
+            status: ProofStatus::InProgress,
+        };
+
+        forest.add_node(root_node.clone());
+        forest.roots.push(root_node.id.clone());
+
+        root_node
+    }
 }
 
-/// Helper to get the current timestamp in milliseconds
-#[cfg(not(target_arch = "wasm32"))]
-fn get_timestamp() -> u64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_millis() as u64
+/// Updated CaseAnalysisBuilder to use mutable forest
+pub struct CaseAnalysisBuilder<'a> {
+    parent_branch: ProofNode,
+    target: Option<String>,
+    case_node_id: Option<String>, // Single node ID for all cases
+    cases: Vec<(String, ProofNode)>,
+    forest: &'a mut ProofForest,
 }
 
-/// Helper to get the current timestamp in milliseconds using JavaScript's Date.now() for WASM
-#[cfg(target_arch = "wasm32")]
-fn get_timestamp() -> u64 {
-    // Use js-sys to get the current timestamp in a WASM-compatible way
-    js_sys::Date::now() as u64
-}
-
-/// Example usage of the proof builder
-#[cfg(test)]
-mod tests {
-    use super::super::core::MathObjectType;
-    use super::super::expressions::{Identifier, MathExpression};
-    use super::super::relations::MathRelation;
-    use super::*;
-    use std::collections::HashMap;
-
-    // Helper functions to create test expressions
-    fn create_var(name: &str) -> MathExpression {
-        MathExpression::var(name)
+impl<'a> CaseAnalysisBuilder<'a> {
+    pub fn new(parent: ProofNode, forest: &'a mut ProofForest) -> Self {
+        Self {
+            parent_branch: parent,
+            target: None,
+            case_node_id: None,
+            cases: Vec::new(),
+            forest,
+        }
     }
 
-    fn create_relation() -> MathRelation {
-        // Create a simple equality relation for testing
-        let a = create_var("a");
-        let b = create_var("b");
-        MathRelation::equal(a, b)
+    pub fn on_expression(&mut self, target: impl Into<String>) -> &mut Self {
+        self.target = Some(target.into());
+        self
     }
 
-    #[test]
-    fn test_intro_expr_tactic() {
-        // Create a proof state with a simple relation
-        let state = ProofState {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement: create_relation(),
-            path: Some("p0".to_string()),
-            justification: None,
-        };
+    // Create or get the case analysis parent node
+    fn ensure_case_parent(&mut self) -> String {
+        // If we already have a case node, return its ID
+        if let Some(id) = &self.case_node_id {
+            return id.clone();
+        }
 
-        // Create a simple variable introduction tactic
-        let var_name = "x";
-        let var_type = MathObjectType::Real;
-        let var_expr = create_var(var_name);
+        // Get a meaningful target expression from the target field or use a default
+        let target_name = self
+            .target
+            .clone()
+            .unwrap_or_else(|| "case_analysis".to_string());
 
-        let tactic = Tactic::Intro {
-            name: Identifier::Name(var_name.to_string(), 0),
-            expression: var_expr.clone(),
-            view: None,
-            sequence: 1,
-        };
-
-        // Apply the tactic and check the result
-        let new_state = tactic.apply(&state);
-
-        // Check that we have a justification
-        assert!(new_state.justification.is_some());
-        let justification = new_state.justification.unwrap();
-        assert!(justification.contains(var_name));
-    }
-
-    #[test]
-    fn test_substitution_expr_tactic() {
-        // Create a proof state with a simple relation
-        let state = ProofState {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement: create_relation(),
-            path: Some("p0".to_string()),
-            justification: None,
-        };
-
-        // Create a simple substitution tactic
-        let pattern = create_var("a");
-        let replacement = create_var("c");
-
-        let tactic = Tactic::Substitution {
-            target: pattern.clone(),
-            replacement: replacement.clone(),
-            location: None,
-            sequence: 1,
-        };
-
-        // Apply the tactic
-        let new_state = tactic.apply(&state);
-
-        // Check that we have a justification
-        assert!(new_state.justification.is_some());
-    }
-
-    #[test]
-    fn test_theorem_application_expr_tactic() {
-        // Create a proof state with a simple relation
-        let state = ProofState {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement: create_relation(),
-            path: Some("p0".to_string()),
-            justification: None,
-        };
-
-        // Create a theorem application tactic
-        let tactic = Tactic::TheoremApplication {
-            theorem_id: "commutativity".to_string(),
-            instantiation: HashMap::new(),
-            target_expr: Some(create_var("a")),
-            sequence: 0,
-        };
-
-        // Apply the tactic
-        let new_state = tactic.apply(&state);
-
-        // Check that we have a justification
-        assert!(new_state.justification.is_some());
-        let justification = new_state.justification.unwrap();
-        assert!(justification.contains("commutativity"));
-    }
-
-    #[test]
-    fn test_case_analysis_expr_tactic() {
-        // Create a proof state with a simple relation
-        let state = ProofState {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement: create_relation(),
-            path: Some("p0".to_string()),
-            justification: None,
-        };
-
-        // Create a case analysis tactic
+        // Otherwise, create a case analysis parent node
         let tactic = Tactic::CaseAnalysis {
-            target_expr: create_var("a"),
-            case_exprs: vec![create_var("case1"), create_var("case2")],
-            case_names: vec!["Case 1".to_string(), "Case 2".to_string()],
-            sequence: 0,
+            target_expr: MathExpression::Var(Identifier::Name(target_name, 0)),
+            case_exprs: vec![],
+            case_names: vec![],
         };
 
-        // Apply the tactic
-        let new_state = tactic.apply(&state);
-
-        // Check that we have a justification
-        assert!(new_state.justification.is_some());
-        let justification = new_state.justification.unwrap();
-        assert!(justification.contains("Case analysis"));
-        assert!(justification.contains("2 cases"));
-    }
-
-    #[test]
-    fn test_rewrite_expr_tactic() {
-        // Create a proof state with a simple relation
-        let state = ProofState {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement: create_relation(),
-            path: Some("p0".to_string()),
-            justification: None,
+        // Create the case analysis node
+        let case_node = ProofNode {
+            id: Uuid::new_v4().to_string(),
+            parent: Some(self.parent_branch.id.clone()),
+            children: vec![],
+            state: self.parent_branch.state.clone(),
+            tactic: Some(tactic),
+            status: ProofStatus::InProgress,
         };
 
-        // Create a rewrite tactic
-        let tactic = Tactic::Rewrite {
-            target_expr: create_expr("a"),
-            equation_expr: create_expr("a = b"),
-            direction: RewriteDirection::LeftToRight,
-            location: None,
-            sequence: 0,
+        // Add to forest
+        let node_id = case_node.id.clone();
+        self.forest.add_node(case_node);
+
+        // Add to parent's children
+        if let Some(parent) = self.forest.nodes.get_mut(&self.parent_branch.id) {
+            parent.children.push(node_id.clone());
+        }
+
+        // Save and return the ID
+        self.case_node_id = Some(node_id.clone());
+        node_id
+    }
+
+    pub fn case<F>(&mut self, description: &str, case_fn: F) -> &mut Self
+    where
+        F: FnOnce(ProofNode, &mut ProofForest) -> ProofNode,
+    {
+        // Get or create the case analysis parent node
+        let case_parent_id = self.ensure_case_parent();
+
+        // Create a specialized ProofGoal for this case - without path/justification
+        let case_goal = if let Some(parent_node) = self.forest.nodes.get(&case_parent_id) {
+            // Just use the parent's goal - we don't have path/justification anymore
+            parent_node.state.clone()
+        } else {
+            // Fallback: just use parent's state if case parent isn't found
+            self.parent_branch.state.clone()
         };
 
-        // Apply the tactic
-        let new_state = tactic.apply(&state);
+        // Create a case node for this specific case using CaseAnalysis tactic
+        // This makes it part of an exhaustive case analysis rather than a separate branch
+        let case_tactic = Tactic::Case {
+            parent_id: case_parent_id.clone(),
+            case_expr: MathExpression::Var(Identifier::Name(
+                format!("case_{}", self.cases.len() + 1),
+                0,
+            )),
+            case_name: description.to_string(),
+        };
 
-        // Check that we have a justification
-        assert!(new_state.justification.is_some());
+        let case_branch = ProofNode {
+            id: Uuid::new_v4().to_string(),
+            parent: Some(case_parent_id.clone()),
+            children: vec![],
+            state: case_goal, // Use the case-specific goal
+            tactic: Some(case_tactic),
+            status: ProofStatus::InProgress,
+        };
+
+        // Add to forest - IMPORTANT: Register the initial case branch
+        let case_branch_id = case_branch.id.clone();
+        self.forest.add_node(case_branch.clone());
+
+        // Add as child of the case parent node
+        if let Some(parent) = self.forest.nodes.get_mut(&case_parent_id) {
+            if !parent.children.contains(&case_branch_id) {
+                parent.children.push(case_branch_id.clone());
+            }
+        }
+
+        // Apply the case function to build this branch
+        let result_branch = case_fn(case_branch, self.forest);
+
+        // Store the case description and resulting node
+        self.cases.push((description.to_string(), result_branch));
+
+        self
     }
 
-    #[test]
-    fn test_proof_branch() {
-        // Create a theorem builder
-        let builder = TheoremBuilder::new("Test Theorem", create_relation(), vec![]);
+    pub fn build(&mut self) -> CaseResult {
+        // If no cases were added, return an empty result
+        if self.cases.is_empty() {
+            return CaseResult {
+                parent: self.parent_branch.clone(),
+                target: self.target.clone(),
+                case_nodes: vec![],
+            };
+        }
 
-        // Get the initial branch
-        let p0 = builder.initial_branch();
+        // Ensure all case nodes are properly linked to the case parent
+        if let Some(case_parent_id) = &self.case_node_id {
+            // First, check if all cases are complete
+            let all_cases_complete = {
+                let mut complete = true;
+                for (_, branch) in &self.cases {
+                    if let Some(case_node) = self.forest.nodes.get(&branch.id) {
+                        if case_node.status != ProofStatus::Complete {
+                            complete = false;
+                            break;
+                        }
+                    } else {
+                        complete = false;
+                        break;
+                    }
+                }
+                complete
+            };
 
-        // Add some proof steps
-        let p1 = p0.tactics_intro_expr("a", create_var("a"), 1);
+            // Now update the case parent node
+            if let Some(parent_node) = self.forest.nodes.get_mut(case_parent_id) {
+                if let Some(Tactic::CaseAnalysis {
+                    case_exprs,
+                    case_names,
+                    target_expr: _,
+                }) = &mut parent_node.tactic
+                {
+                    // Clear and rebuild the case names
+                    case_names.clear();
+                    for (desc, _) in &self.cases {
+                        case_names.push(desc.clone());
+                    }
+                }
 
-        let p2 = p1.tactics_intro_expr("b", create_var("b"), 2);
+                // Verify all cases are in the parent's children list
+                let mut missing_children = Vec::new();
+                for (_, branch) in &self.cases {
+                    if !parent_node.children.contains(&branch.id) {
+                        missing_children.push(branch.id.clone());
+                    }
+                }
 
-        // Mark as complete
-        let p3 = p2.should_complete();
+                // Add any missing children
+                for child_id in missing_children {
+                    parent_node.children.push(child_id);
+                }
 
-        // Build the theorem
-        let theorem = builder.build();
-        assert_eq!(theorem.name, "Test Theorem");
+                // Update status if all cases are complete
+                if all_cases_complete {
+                    parent_node.status = ProofStatus::Complete;
+                }
+            }
+        }
+
+        CaseResult {
+            parent: self.parent_branch.clone(),
+            target: self.target.clone(),
+            case_nodes: self
+                .cases
+                .iter()
+                .map(|(_, branch)| branch.clone())
+                .collect(),
+        }
     }
 
-    #[test]
-    fn test_multiple_tactics_chain() {
-        // Create a theorem builder
-        let builder = TheoremBuilder::new("Test Theorem", create_relation(), vec![]);
+    pub fn add_case(
+        &mut self,
+        case_expr: MathExpression,
+        case_name: String,
+    ) -> Result<ProofNode, String> {
+        // Get parent case node ID, creating it if necessary
+        let case_parent_id = self.ensure_case_parent();
 
-        // Get the initial branch
-        let p0 = builder.initial_branch();
+        // Get the parent case node
+        let case_parent = self.forest.nodes.get_mut(&case_parent_id).unwrap();
 
-        // Apply multiple tactics in sequence
-        let p1 = p0.tactics_intro_expr("a", create_var("a"), 1);
+        // Update the case analysis tactic with the new case
+        if let Some(Tactic::CaseAnalysis {
+            case_exprs,
+            case_names,
+            target_expr: _,
+        }) = &mut case_parent.tactic
+        {
+            case_exprs.push(case_expr.clone());
+            case_names.push(case_name.clone());
+        }
 
-        let p2 = p1.tactics_subs_expr(create_var("a"), create_var("b"), None, 2);
+        // Create a new branch for this specific case with the same state
+        let new_node = ProofNode {
+            id: Uuid::new_v4().to_string(),
+            parent: Some(case_parent_id.clone()),
+            children: vec![],
+            state: case_parent.state.clone(),
+            tactic: Some(Tactic::Case {
+                parent_id: case_parent_id.clone(),
+                case_expr: case_expr,
+                case_name: case_name,
+            }),
+            status: ProofStatus::InProgress,
+        };
 
-        let p3 = p2.tactics_theorem_app_expr("commutativity", HashMap::new(), None);
+        // Store the node ID
+        let node_id = new_node.id.clone();
 
-        // Mark as complete
-        let p4 = p3.should_complete();
+        // Add to parent's children
+        case_parent.children.push(node_id.clone());
 
-        // Check that the proof tree has the right structure
-        let forest = builder.proof_forest.borrow();
-        assert_eq!(forest.nodes.len(), 5); // Initial node + 4 steps
+        // Add to forest
+        self.forest.add_node(new_node.clone());
+
+        Ok(new_node)
     }
 }
 
-// Add a better implementation for Variable::named that creates a proper named variable
-impl Identifier {
-    /// Create a named variable
-    pub fn named(name: &str) -> Self {
-        // In a proper implementation, this would generate a unique identifier
-        // that preserves the name for human readability
-
-        // For now, we'll create a simple hash of the name to get a unique ID
-        // This ensures different variables with the same name are still unique
-        let id = name.bytes().fold(0, |acc, b| acc + b as u32);
-
-        // Use a variable type that's meant for human-readable names
-        Identifier::Name(name.to_string(), id)
-    }
+/// Result of a case analysis
+#[derive(Debug, Clone)]
+pub struct CaseResult {
+    /// The parent branch
+    pub parent: ProofNode,
+    /// The target expression
+    pub target: Option<String>,
+    /// The top level nodes for each case
+    pub case_nodes: Vec<ProofNode>,
 }
-
-// Add the Name variant to Variable if it doesn't already exist
-// This would typically be in the expressions.rs file, but we'll add it here for reference
-/*
-pub enum Variable {
-    // Existing variants...
-    E(u32),   // Machine-generated variable
-    O(u32),   // Another variant
-
-    // New variant for human-readable named variables
-    Name(String, u32),  // Name and a unique ID
-}
-*/

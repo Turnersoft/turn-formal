@@ -2,7 +2,10 @@
 // Defines core mathematical objects and context for the theorem system
 
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::rc::Rc;
+use uuid::Uuid;
 
 use super::super::theories::analysis::definition::functions::Function;
 use super::super::theories::groups::definitions::{
@@ -18,21 +21,8 @@ use super::super::theories::zfc::Set;
 use super::expressions::{Identifier, MathExpression};
 // Centralized re-exports for convenient access from other modules
 
+use super::proof::{ProofForest, ProofNode, ProofStatus};
 use super::relations::MathRelation;
-
-/// A mathematical theory context that groups related theorems
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum MathContext {
-    GroupTheory,
-    RingTheory,
-    FieldTheory,
-    Topology,
-    LinearAlgebra,
-    Analysis,
-    SetTheory,
-    CategoryTheory,
-    Custom(String),
-}
 
 /// A unified wrapper for all mathematical objects across theories
 /// This is just a reference to objects defined in their respective theory modules
@@ -120,52 +110,51 @@ pub struct Theorem {
     pub description: String,
 
     /// the initial proof state of the theorem as the formal form of the theorem
-    pub initial_proof_state: ProofState,
+    pub goal: ProofGoal,
+
+    /// The complete proof forest containing the structured proof
+    pub proofs: ProofForest,
+}
+
+impl Theorem {
+    /// Register this theorem in the global registry
+    pub fn register_self(&self) {
+        println!("Registering theorem: {}", self.name);
+        let registry = crate::subjects::math::formalism::proof::get_theorem_registry();
+        registry.lock().unwrap().register(self.clone());
+    }
+
+    pub fn initialize_branch(&mut self) -> ProofNode {
+        let node = ProofNode {
+            id: Uuid::new_v4().to_string(),
+            parent: None,
+            children: vec![],
+            state: self.goal.clone(),
+            tactic: None,
+            status: ProofStatus::InProgress,
+        };
+        self.proofs.add_node(node.clone());
+        node
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct ProofState {
+pub struct ProofGoal {
     /// Quantified objects in this state
     pub quantifier: Vec<QuantifiedMathObject>,
     /// Variables with assigned values
     pub value_variables: Vec<ValueBindedVariable>,
     /// The main mathematical relation being proven
     pub statement: MathRelation,
-    /// Path to this state in the proof (optional)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub path: Option<String>,
-    /// Justification for reaching this state
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub justification: Option<String>,
 }
 
-impl ProofState {
+impl ProofGoal {
     /// Create a new proof state for a theorem
     pub fn new(statement: MathRelation) -> Self {
         Self {
             quantifier: vec![],
             value_variables: vec![],
             statement,
-            path: Some("p0".to_string()),
-            justification: None,
-        }
-    }
-
-    /// Apply a transformation to this proof state, creating a new state
-    pub fn transform(
-        &self,
-        transform_fn: impl FnOnce(&MathRelation) -> MathRelation,
-        path: String,
-        justification: String,
-    ) -> Self {
-        let new_statement = transform_fn(&self.statement);
-
-        Self {
-            quantifier: self.quantifier.clone(),
-            value_variables: self.value_variables.clone(),
-            statement: new_statement,
-            path: Some(path),
-            justification: Some(justification),
         }
     }
 
@@ -185,9 +174,7 @@ impl ProofState {
 
     /// Format the state for display
     pub fn format(&self) -> String {
-        let path_str = self.path.as_deref().unwrap_or("no path");
-        let just_str = self.justification.as_deref().unwrap_or("no justification");
-        format!("[{}] {} - {:?}", path_str, just_str, self.statement)
+        format!("Statement: {:?}", self.statement)
     }
 }
 

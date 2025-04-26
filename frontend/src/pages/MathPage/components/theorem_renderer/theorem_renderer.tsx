@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MathNode } from "../turn-render/bindings/MathNode";
+import { MathNode } from "../../../../../../bindings/MathNode";
 import { MathSpan } from "../turn-render/turn-math";
 import styles from "./theorem_renderer.module.scss";
 
@@ -23,7 +23,6 @@ interface TheoremProps {
 interface ProofStep {
   id: string;
   content: MathNode;
-  justification: string;
 }
 
 const TheoremRenderer: React.FC<TheoremProps> = ({
@@ -73,9 +72,6 @@ const TheoremRenderer: React.FC<TheoremProps> = ({
                       <MathSpan
                         spanData={convertNodeForMathSpan(step.content)}
                       />
-                    </div>
-                    <div className={styles.proofStepJustification}>
-                      {step.justification}
                     </div>
                   </div>
                 </div>
@@ -214,7 +210,6 @@ export const TheoremCollection: React.FC = () => {
                   Text: "Consider a right triangle with sides a, b and hypotenuse c.",
                 },
               },
-              justification: "Definition",
             },
             {
               id: "step_2",
@@ -319,7 +314,6 @@ export const TheoremCollection: React.FC = () => {
                   },
                 },
               },
-              justification: "By the Pythagorean theorem in Euclidean geometry",
             },
           ],
         };

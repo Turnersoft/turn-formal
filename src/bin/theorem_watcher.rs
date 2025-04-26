@@ -4,11 +4,11 @@ use turn_formal::subjects::math::export::turn_render::convert_theorems_file;
 
 fn main() -> Result<()> {
     println!("Starting theorem file watcher...");
-    println!("This tool will monitor theorems.json files and convert them to turn_render format");
+    println!("This tool will monitor theorems.json files and update them in-place");
 
     // Default paths
     let theories_dir = Path::new("subjects/math/theories");
-    let output_dir = Path::new("subjects/math/theories_turn_render");
+    let output_dir = None; // Pass None to write in-place
 
     // Initial conversion of all files
     println!("Performing initial conversion of existing files...");

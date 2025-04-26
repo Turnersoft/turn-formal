@@ -1,6 +1,4 @@
-use super::super::super::subjects::math::formalism::core::{
-    MathContext, ProofState, Theorem as CoreTheorem,
-};
+use super::super::super::subjects::math::formalism::core::{ProofGoal, Theorem as CoreTheorem};
 use super::super::super::subjects::math::formalism::proof::{ProofNode, ProofStatus, Tactic};
 use crate::leptos::components::theorem_proof::{Proof, ProofStep, Theorem, TheoremStatement};
 use std::collections::HashMap;
@@ -19,13 +17,11 @@ pub fn core_theorem_to_ui(id: &str, name: &str, description: &str) -> Theorem {
         ProofStep {
             id: "initial".to_string(),
             description: format!("Initial state: {}", description),
-            justification: None,
             references: vec![],
         },
         ProofStep {
             id: "todo".to_string(),
             description: "Proof to be completed...".to_string(),
-            justification: None,
             references: vec!["initial".to_string()],
         },
     ];

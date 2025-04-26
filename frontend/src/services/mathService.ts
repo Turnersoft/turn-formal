@@ -599,13 +599,16 @@ function parseTheorem(fileContent: any, filePath: string): Theorem | null {
         statement = theoremData.initial_proof_state.content.Theorem.initial_proof_state.content.ProofState.statement.content.Text;
       }
       
-      // Create a theorem object from the content
+      // Create a theorem object from the content, preserving the original content property
       return {
+        id: fileContent.id,
         name: theoremData.name || fallbackName,
         statement: statement,
         description: theoremData.description || `Theorem from ${fileName}`,
         proof_steps: theoremData.proof_steps || [],
         tags: theoremData.tags || [],
+        // IMPORTANT: Preserve the original content property to keep the proof steps
+        content: fileContent.content
       };
     }
 
@@ -616,6 +619,8 @@ function parseTheorem(fileContent: any, filePath: string): Theorem | null {
       description: fileContent.description || `Theorem from ${fileName}`,
       proof_steps: fileContent.proof_steps || [],
       tags: fileContent.tags || [],
+      // If the fileContent itself is the content, preserve it
+      content: fileContent.content || undefined
     };
   } catch (e) {
     console.error(`Error parsing theorem:`, e);

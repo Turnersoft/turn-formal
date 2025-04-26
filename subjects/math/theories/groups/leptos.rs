@@ -1,5 +1,5 @@
-use super::super::super::super::math::formalism::core::{ProofState, Theorem};
-use super::super::super::super::math::formalism::proof::ProofStep;
+use super::super::super::super::math::formalism::core::{ProofGoal, Theorem};
+
 use super::super::super::super::math::formalism::relations::MathRelation;
 use leptos::prelude::*;
 
@@ -85,12 +85,12 @@ fn TheoremDetails(theorem: Theorem) -> impl IntoView {
         <div class="theorem-details">
             <div class="theorem-statement">
                 <h4>"Statement"</h4>
-                <MathRelationDisplay relation=theorem.initial_proof_state.statement.clone() />
+                <MathRelationDisplay relation=theorem.goal.statement.clone() />
             </div>
 
             <div class="theorem-proof">
                 <h4>"Proof"</h4>
-                <ProofStateDisplay state=theorem.initial_proof_state />
+                <ProofStateDisplay state=theorem.goal />
             </div>
         </div>
     }
@@ -121,23 +121,13 @@ fn MathRelationDisplay(relation: MathRelation) -> impl IntoView {
 
 /// Component to display a proof state
 #[component]
-fn ProofStateDisplay(state: ProofState) -> impl IntoView {
-    // Get justification text, if any
-    let justification_text = match &state.justification {
-        Some(justification) => format!("Justification: {:?}", justification),
-        None => String::new(),
-    };
-
-    // Determine if we should show the justification
-    let has_justification = !justification_text.is_empty();
+fn ProofStateDisplay(state: ProofGoal) -> impl IntoView {
+    // Get the goal text from the state (no longer using justification)
+    let goal_text = format!("Goal: {:?}", state.statement);
 
     view! {
         <div class="proof-state">
             <MathRelationDisplay relation=state.statement />
-
-            <div class="justification" style:display={if has_justification { "block" } else { "none" }}>
-                <p>{justification_text}</p>
-            </div>
         </div>
     }
 }
@@ -236,14 +226,6 @@ pub fn GroupStyles() -> impl IntoView {
                 padding: 0.5rem;
                 border-left: 3px solid #0056b3;
                 background-color: rgba(0, 86, 179, 0.05);
-            }}
-            
-            .justification {{ 
-                font-style: italic;
-                color: #767676;
-                font-size: 0.9rem;
-                margin-top: 0.8rem;
-                padding-left: 1rem;
             }}
             
             .interactive-theorems {{
