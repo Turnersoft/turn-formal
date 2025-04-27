@@ -17,7 +17,7 @@ impl ToTurnMath for Group {
         // Get the base set representation
         let set_name = match &self.base_set {
             // For parametric sets like Z_n, use their description
-            crate::subjects::math::theories::zfc::Set::Parametric { description, .. } => {
+            super::super::super::theories::zfc::Set::Parametric { description, .. } => {
                 description.clone()
             }
             // For other sets, use a generic representation
@@ -281,14 +281,8 @@ impl ToTurnMath for GroupRelation {
                     id: master_id.clone(),
                     content: Box::new(MathNodeContent::Multiplications {
                         terms: vec![
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                base_relation,
-                            ),
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                group_info,
-                            ),
+                            (RefinedMulOrDivOperation::None, base_relation),
+                            (RefinedMulOrDivOperation::None, group_info),
                         ],
                     }),
                 }
@@ -324,14 +318,8 @@ impl ToTurnMath for GroupRelation {
                     id: master_id.clone(),
                     content: Box::new(MathNodeContent::Multiplications {
                         terms: vec![
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                order_expr,
-                            ),
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                group_info,
-                            ),
+                            (RefinedMulOrDivOperation::None, order_expr),
+                            (RefinedMulOrDivOperation::None, group_info),
                         ],
                     }),
                 }
@@ -393,14 +381,8 @@ impl ToTurnMath for GroupRelation {
                     id: master_id.clone(),
                     content: Box::new(MathNodeContent::Multiplications {
                         terms: vec![
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                base_relation,
-                            ),
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                cyclic_info,
-                            ),
+                            (RefinedMulOrDivOperation::None, base_relation),
+                            (RefinedMulOrDivOperation::None, cyclic_info),
                         ],
                     }),
                 }
@@ -540,14 +522,8 @@ impl ToTurnMath for GroupRelation {
                     id: master_id.clone(),
                     content: Box::new(MathNodeContent::Multiplications {
                         terms: vec![
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                base_relation,
-                            ),
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                group_info,
-                            ),
+                            (RefinedMulOrDivOperation::None, base_relation),
+                            (RefinedMulOrDivOperation::None, group_info),
                         ],
                     }),
                 }
@@ -594,13 +570,13 @@ impl ToTurnMath for GroupRelation {
 
 #[cfg(test)]
 mod tests {
-    use crate::subjects::math::theories::groups::definitions::{
+    use super::super::super::zfc::Set;
+    use super::super::definitions::{
         AbelianPropertyVariant, FinitePropertyVariant, Group, GroupIdentity, GroupInverse,
         GroupInverseApplication, GroupNotation, GroupOperation, GroupOperationProperty,
         GroupOperationVariant, GroupProperty, GroupSymbol,
     };
-    use crate::subjects::math::theories::groups::helpers::cyclic_group;
-    use crate::subjects::math::theories::zfc::Set;
+    use super::super::helpers::cyclic_group;
     use crate::turn_render::{MathNodeContent, ToTurnMath};
 
     #[test]

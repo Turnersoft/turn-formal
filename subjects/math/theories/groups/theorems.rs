@@ -5,19 +5,17 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::subjects::math::formalism::core::ProofGoal;
-use crate::subjects::math::formalism::proof::ProofForest;
-use crate::subjects::math::formalism::proof::ProofStatus;
+use super::super::super::formalism::core::ProofGoal;
+use super::super::super::formalism::proof::ProofForest;
+use super::super::super::formalism::proof::ProofStatus;
 
-use super::super::super::super::math::formalism::core::MathObjectType;
-use super::super::super::super::math::formalism::core::Theorem;
-use super::super::super::super::math::formalism::expressions::{
-    Identifier, MathExpression, TheoryExpression,
-};
-use super::super::super::super::math::formalism::proof::Tactic;
-use super::super::super::super::math::formalism::relations::MathRelation;
-use super::super::super::super::math::theories::VariantSet;
-use super::super::super::super::math::theories::zfc::Set;
+use super::super::super::formalism::core::MathObjectType;
+use super::super::super::formalism::core::Theorem;
+use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::super::super::formalism::proof::Tactic;
+use super::super::super::formalism::relations::MathRelation;
+use super::super::super::theories::VariantSet;
+use super::super::super::theories::zfc::Set;
 
 use super::definitions::{
     AbelianPropertyVariant, ElementValue, FinitePropertyVariant, Group, GroupExpression,

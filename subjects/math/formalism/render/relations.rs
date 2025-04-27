@@ -1,7 +1,5 @@
-use crate::{
-    subjects::math::formalism::relations::MathRelation,
-    turn_render::{MathNode, MathNodeContent, RelationOperatorNode, ToTurnMath},
-};
+use super::super::relations::MathRelation;
+use crate::turn_render::{MathNode, MathNodeContent, RelationOperatorNode, ToTurnMath};
 use std::string::String;
 
 impl ToTurnMath for MathRelation {

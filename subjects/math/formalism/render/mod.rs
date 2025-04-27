@@ -9,7 +9,7 @@ pub mod theorem;
 mod tests {
     use uuid::Uuid;
 
-    use crate::{
+    use super::super::super::super::super::{
         subjects::math::formalism::{
             core::{ProofGoal, Theorem},
             proof::{ProofForest, ProofNode, ProofStatus},

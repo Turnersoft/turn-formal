@@ -120,7 +120,8 @@ impl Theorem {
     /// Register this theorem in the global registry
     pub fn register_self(&self) {
         println!("Registering theorem: {}", self.name);
-        let registry = crate::subjects::math::formalism::proof::get_theorem_registry();
+        let registry =
+            super::super::super::super::subjects::math::formalism::proof::get_theorem_registry();
         registry.lock().unwrap().register(self.clone());
     }
 

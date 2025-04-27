@@ -1,13 +1,13 @@
-use crate::{
-    subjects::math::formalism::{
-        core::{ProofGoal, Theorem},
-        proof::{ProofForest, ProofNode},
-    },
-    turn_render::{MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation, ToTurnMath},
+use super::super::{
+    core::{ProofGoal, Theorem},
+    proof::{ProofForest, ProofNode},
 };
 
+use crate::turn_render::{
+    MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation, ToTurnMath,
+};
 // Importing ProofStatus
-use crate::subjects::math::formalism::proof::ProofStatus;
+use super::super::proof::ProofStatus;
 
 impl ToTurnMath for Theorem {
     fn to_turn_math(&self, master_id: String) -> MathNode {
@@ -180,20 +180,11 @@ impl ProofForest {
             };
 
             // Combine state, status, tactic into a structured node
-            let mut components = vec![(
-                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                state_node,
-            )];
+            let mut components = vec![(RefinedMulOrDivOperation::None, state_node)];
 
-            components.push((
-                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                status_node,
-            ));
+            components.push((RefinedMulOrDivOperation::None, status_node));
 
-            components.push((
-                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                tactic_node,
-            ));
+            components.push((RefinedMulOrDivOperation::None, tactic_node));
 
             // Create the node for this branch
             let branch_node = MathNode {
@@ -223,10 +214,7 @@ impl ProofForest {
                 MathNode {
                     id: branch_id,
                     content: Box::new(MathNodeContent::Multiplications {
-                        terms: vec![(
-                            RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                            branch_node,
-                        )],
+                        terms: vec![(RefinedMulOrDivOperation::None, branch_node)],
                     }),
                 }
             }

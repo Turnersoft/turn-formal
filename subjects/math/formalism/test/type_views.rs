@@ -1,7 +1,7 @@
 // Module: src/formalize_v2/subjects/math/theorem/test/type_views.rs
 // Tests for type view conversions
 
-use crate::subjects::math::formalism::interpretation::TypeViewOperator;
+use super::super::super::super::super::subjects::math::formalism::interpretation::TypeViewOperator;
 
 use super::super::super::formalism::core::MathObjectType;
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TypeViewError};

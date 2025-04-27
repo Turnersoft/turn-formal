@@ -8,9 +8,9 @@ use std::fs::{self, File, create_dir_all};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-use crate::subjects::math::export::dev::export::{export_to_json, get_theory_data_path};
-use crate::subjects::math::export::dev::json::generate_math_json_exports;
-use crate::subjects::math::formalism::core::Theorem;
+use super::super::formalism::core::Theorem;
+use super::dev::export::{export_to_json, get_theory_data_path};
+use super::dev::json::generate_math_json_exports;
 use crate::turn_render::MathNode;
 use crate::turn_render::ToTurnMath;
 
@@ -129,11 +129,11 @@ pub fn generate_all_theorem_files(base_dir: &Path) -> Result<()> {
 
     // Generate group theory theorems
     generate_theory_theorems("groups", &[
-        ("inverse_uniqueness", crate::subjects::math::theories::groups::theorems::prove_inverse_uniqueness),
-        ("identity_uniqueness", crate::subjects::math::theories::groups::theorems::prove_identity_uniqueness_with_syntax_trees),
-        ("inverse_product_rule", crate::subjects::math::theories::groups::theorems::prove_inverse_product_rule),
-        ("abelian_squared_criterion", crate::subjects::math::theories::groups::theorems::prove_abelian_squared_criterion),
-        ("lagrange_theorem", crate::subjects::math::theories::groups::theorems::prove_lagrange_theorem),
+        ("inverse_uniqueness", super::super::theories::groups::theorems::prove_inverse_uniqueness),
+        ("identity_uniqueness", super::super::theories::groups::theorems::prove_identity_uniqueness_with_syntax_trees),
+        ("inverse_product_rule", super::super::theories::groups::theorems::prove_inverse_product_rule),
+        ("abelian_squared_criterion", super::super::theories::groups::theorems::prove_abelian_squared_criterion),
+        ("lagrange_theorem", super::super::theories::groups::theorems::prove_lagrange_theorem),
     ], base_dir)?;
 
     // Generate JSON exports of definitions (also ensure they're available)

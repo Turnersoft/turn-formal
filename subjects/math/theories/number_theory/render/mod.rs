@@ -96,14 +96,8 @@ impl ToTurnMath for NumberTheoryRelation {
                     id: master_id.clone(),
                     content: Box::new(MathNodeContent::Multiplications {
                         terms: vec![
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                base_relation,
-                            ),
-                            (
-                                RefinedMulOrDivOperation::Multiplication(MulSymbol::None),
-                                modulus_note,
-                            ),
+                            (RefinedMulOrDivOperation::None, base_relation),
+                            (RefinedMulOrDivOperation::None, modulus_note),
                         ],
                     }),
                 }

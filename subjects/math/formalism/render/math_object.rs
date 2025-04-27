@@ -1,7 +1,5 @@
-use crate::{
-    subjects::math::formalism::core::MathObject,
-    turn_render::{MathNode, ToTurnMath},
-};
+use super::super::core::MathObject;
+use crate::turn_render::{MathNode, ToTurnMath};
 
 impl ToTurnMath for MathObject {
     fn to_turn_math(&self, master_id: String) -> MathNode {

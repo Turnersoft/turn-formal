@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MathNode } from "../../../../../../bindings/MathNode";
+import { MathNode } from "../turn-render/bindings/MathNode";
 import { MathSpan } from "../turn-render/turn-math";
 import styles from "./theorem_renderer.module.scss";
 

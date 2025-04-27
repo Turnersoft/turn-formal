@@ -1,8 +1,8 @@
-use crate::{
-    subjects::math::formalism::expressions::{Identifier, MathExpression, TheoryExpression},
-    subjects::math::theories::number_theory::definitions::Number,
-    turn_render::{BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath},
+use super::super::super::{
+    formalism::expressions::{Identifier, MathExpression, TheoryExpression},
+    theories::number_theory::definitions::Number,
 };
+use crate::turn_render::{BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath};
 use std::string::String;
 
 impl ToTurnMath for MathExpression {
