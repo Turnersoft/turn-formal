@@ -1,4 +1,4 @@
-use super::super::formalism::core::MathObjectType;
+use super::super::formalism::core::MathObject;
 use super::super::formalism::expressions::MathExpression;
 use super::super::theories::groups::definitions::Group;
 use super::super::theories::rings::Ring;
@@ -73,9 +73,9 @@ pub enum TypeViewOperator {
         /// Name of the custom view
         name: String,
         /// Source mathematical domain
-        source_type: MathObjectType,
+        source_type: MathObject,
         /// Target mathematical domain
-        target_type: MathObjectType,
+        target_type: MathObject,
         /// Additional parameters
         parameters: Vec<MathExpression>,
     },
@@ -302,8 +302,8 @@ impl TypeViewOperator {
     pub fn simple_view(type_name: &str) -> Self {
         TypeViewOperator::Custom {
             name: format!("As{}", type_name),
-            source_type: MathObjectType::Real, // Default source type
-            target_type: MathObjectType::Todo(type_name.to_string()),
+            source_type: MathObject::Real, // Default source type
+            target_type: MathObject::Todo(type_name.to_string()),
             parameters: Vec::new(),
         }
     }

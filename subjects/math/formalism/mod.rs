@@ -9,7 +9,8 @@ pub mod core;
 pub mod expressions;
 pub mod interpretation;
 pub mod proof;
-
+#[macro_use]
+pub mod extract;
 pub mod relations;
 pub mod render;
 pub mod test;

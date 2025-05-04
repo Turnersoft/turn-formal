@@ -1,6 +1,8 @@
 use crate::turn_render::MathNode;
 
 pub mod expressions;
+pub mod extract;
+pub mod interpretation;
 pub mod math_object;
 pub mod relations;
 pub mod theorem;
@@ -29,7 +31,10 @@ mod tests {
             goal: ProofGoal {
                 quantifier: vec![],
                 value_variables: vec![],
-                statement: MathRelation::custom("IsTrue".to_string(), vec![]),
+                statement: MathRelation::Todo {
+                    name: "IsTrue".to_string(),
+                    expressions: vec![],
+                },
             },
             proofs: ProofForest::new(),
         };
@@ -58,7 +63,10 @@ mod tests {
         let state = ProofGoal {
             quantifier: vec![],
             value_variables: vec![],
-            statement: MathRelation::custom("IsTrue".to_string(), vec![]),
+            statement: MathRelation::Todo {
+                name: "IsTrue".to_string(),
+                expressions: vec![],
+            },
         };
 
         // Convert to MathNode
@@ -87,7 +95,10 @@ mod tests {
         let state = ProofGoal {
             quantifier: vec![],
             value_variables: vec![],
-            statement: MathRelation::custom("IsTrue".to_string(), vec![]),
+            statement: MathRelation::Todo {
+                name: "IsTrue".to_string(),
+                expressions: vec![],
+            },
         };
 
         forest.add_node(ProofNode {

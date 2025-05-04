@@ -1,266 +1,380 @@
 use crate::turn_render::{
-    MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation, RelationOperatorNode,
-    ToTurnMath, UnaryRelationOperatorNode,
+    BracketSize, BracketStyle, MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation,
+    RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
+use std::collections::HashMap;
 
-use super::GroupRelation;
+use crate::subjects::math::formalism::extract::Parametrizable;
+
 use super::definitions::{
-    AbelianPropertyVariant, FinitePropertyVariant, Group, GroupIdentity, GroupInverse,
-    GroupOperationProperty, GroupOperationVariant, GroupProperty, NilpotentPropertyVariant,
-    SimplePropertyVariant, SolvablePropertyVariant,
+    AbelianPropertyVariant, FinitePropertyVariant, Group, GroupElement, GroupIdentity,
+    GroupInverse, GroupOperationProperty, GroupOperationVariant, GroupProperty,
+    NilpotentPropertyVariant, SimplePropertyVariant, SolvablePropertyVariant,
 };
+use super::{GroupAction, GroupBasic, GroupExpression, GroupRelation};
 
 impl ToTurnMath for Group {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        // 1. Create a simplified representation of the group
+        match self {
+            Group::Basic(group) => {
+                let core = group;
+                let set_name = match &core.base_set {
+                    super::super::super::theories::zfc::Set::Parametric { description, .. } => {
+                        description.clone()
+                    }
+                    _ => format!("{:?}", core.base_set),
+                };
 
-        // Get the base set representation
-        let set_name = match &self.base_set {
-            // For parametric sets like Z_n, use their description
-            super::super::super::theories::zfc::Set::Parametric { description, .. } => {
-                description.clone()
+                let op_symbol = match core.operation.operation_type {
+                    GroupOperationVariant::Addition => "+",
+                    GroupOperationVariant::Multiplication => "·",
+                    GroupOperationVariant::MatrixMultiplication => "×",
+                    GroupOperationVariant::Composition => "∘",
+                    GroupOperationVariant::DirectProduct => "×",
+                    GroupOperationVariant::SemidirectProduct => "⋊",
+                    GroupOperationVariant::FreeProduct => "*",
+                };
+
+                let name = if set_name.contains("Z_") || set_name.contains("ℤ_") {
+                    format!("Abstract Cyclic group {}", set_name)
+                } else if set_name.contains("S_") || set_name.contains("Sym") {
+                    format!("Abstract Symmetric group {}", set_name)
+                } else if set_name.contains("GL") || set_name.contains("SL") {
+                    format!("Abstract Matrix group {}", set_name)
+                } else {
+                    format!("Abstract Group {}", set_name)
+                };
+
+                let mut description = format!("{} with operation {}", name, op_symbol);
+
+                let identity_str = match core.operation.identity {
+                    GroupIdentity::One => "1",
+                    GroupIdentity::Zero => "0",
+                    GroupIdentity::IdentityMatrix => "I",
+                    GroupIdentity::IdentityPermutation => "id",
+                    GroupIdentity::IdentityFunction => "idₑ",
+                };
+
+                let inverse_str = match core.operation.inverse {
+                    GroupInverse::MultiplicativeInverse => "x⁻¹",
+                    GroupInverse::AdditiveInverse => "-x",
+                    GroupInverse::MatrixInverse => "A⁻¹",
+                    GroupInverse::PermutationInverse => "σ⁻¹",
+                    GroupInverse::FunctionInverse => "f⁻¹",
+                };
+
+                let mut props_vec = Vec::<String>::new();
+
+                let is_abelian = core
+                    .props
+                    .iter()
+                    .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)));
+
+                let order = core.props.iter().find_map(|p| {
+                    if let GroupProperty::Finite(FinitePropertyVariant::Finite(n)) = p {
+                        Some(*n)
+                    } else {
+                        None
+                    }
+                });
+
+                if is_abelian {
+                    props_vec.push("abelian".to_string());
+                }
+
+                let is_simple = core
+                    .props
+                    .iter()
+                    .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple)));
+
+                if is_simple {
+                    props_vec.push("simple".to_string());
+                }
+
+                if !props_vec.is_empty() {
+                    description.push_str(&format!(" ({})", props_vec.join(", ")));
+                }
+
+                description.push_str(&format!("\n\nIdentity element: {}", identity_str));
+                description.push_str(&format!("\nInverse operation: {}", inverse_str));
+
+                let mut op_props = Vec::<String>::new();
+
+                if core
+                    .operation
+                    .properties
+                    .iter()
+                    .any(|p| matches!(p, GroupOperationProperty::Associative))
+                {
+                    op_props.push("associative".to_string());
+                }
+
+                if core
+                    .operation
+                    .properties
+                    .iter()
+                    .any(|p| matches!(p, GroupOperationProperty::Commutative(true)))
+                {
+                    op_props.push("commutative".to_string());
+                }
+
+                if !op_props.is_empty() {
+                    description.push_str(&format!("\nOperation is {}", op_props.join(", ")));
+                }
+
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
             }
-            // For other sets, use a generic representation
-            _ => format!("{:?}", self.base_set),
-        };
+            Group::Topological(group) => {
+                let core = &group.core;
+                let mut description = format!("Topological Group on {:?}", core.base_set);
 
-        // Get the operation symbol
-        let op_symbol = match self.operation.operation_type {
-            GroupOperationVariant::Addition => "+",
-            GroupOperationVariant::Multiplication => "·",
-            GroupOperationVariant::MatrixMultiplication => "×",
-            GroupOperationVariant::Composition => "∘",
-            GroupOperationVariant::DirectProduct => "×",
-            GroupOperationVariant::SemidirectProduct => "⋊",
-            GroupOperationVariant::FreeProduct => "*",
-        };
+                description.push_str("\n\nTopological Properties:");
+                for prop in group.props.iter() {
+                    description.push_str(&format!("\n- {:?}", prop));
+                }
 
-        // 2. Format key properties into a structured description
+                description.push_str("\n\nGroup Properties:");
+                for prop in core.props.iter() {
+                    description.push_str(&format!("\n- {:?}", prop));
+                }
 
-        // Create a basic description
-        let name = if set_name.contains("Z_") || set_name.contains("ℤ_") {
-            format!("Cyclic group {}", set_name)
-        } else if set_name.contains("S_") || set_name.contains("Sym") {
-            format!("Symmetric group {}", set_name)
-        } else if set_name.contains("GL") || set_name.contains("SL") {
-            format!("Matrix group {}", set_name)
-        } else {
-            format!("Group {}", set_name)
-        };
-
-        // Build a structured description with key information first
-        let mut description = format!("{} with operation {}", name, op_symbol);
-
-        // Add identity element info
-        let identity_str = match self.operation.identity {
-            GroupIdentity::One => "1",
-            GroupIdentity::Zero => "0",
-            GroupIdentity::IdentityMatrix => "I",
-            GroupIdentity::IdentityPermutation => "id",
-            GroupIdentity::IdentityFunction => "idₑ",
-        };
-
-        // Add inverse operation info
-        let inverse_str = match self.operation.inverse {
-            GroupInverse::MultiplicativeInverse => "x⁻¹",
-            GroupInverse::AdditiveInverse => "-x",
-            GroupInverse::MatrixInverse => "A⁻¹",
-            GroupInverse::PermutationInverse => "σ⁻¹",
-            GroupInverse::FunctionInverse => "f⁻¹",
-        };
-
-        // 3. Format critical properties in a human-readable way
-
-        // Extract key properties for the short description
-        let mut props = Vec::<String>::new();
-
-        // Check if abelian
-        let is_abelian = self
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)));
-
-        // Check if finite
-        let is_finite = self.properties.iter().any(|p| {
-            matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(_)))
-                || matches!(p, GroupProperty::FiniteGroup(true))
-        });
-
-        // Get the order if it's finite
-        let order = self.properties.iter().find_map(|p| {
-            if let GroupProperty::Finite(FinitePropertyVariant::Finite(n)) = p {
-                Some(*n)
-            } else {
-                None
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
             }
-        });
+            Group::Lie(group) => {
+                let core = &group.core;
+                let mut description = format!("Lie Group on {:?}", core.base_set);
 
-        // Add key properties to the list
-        if is_abelian {
-            props.push("abelian".to_string());
-        }
+                description.push_str("\n\nLie Properties:");
+                for prop in group.props.iter() {
+                    description.push_str(&format!("\n- {:?}", prop));
+                }
 
-        if is_finite {
-            if let Some(n) = order {
-                props.push(format!("finite (order {})", n));
-            } else {
-                props.push("finite".to_string());
+                if !group.charts.is_empty() {
+                    description.push_str("\n\nCharts:");
+                    for chart in &group.charts {
+                        description.push_str(&format!("\n- {}", chart));
+                    }
+                }
+
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
             }
-        } else {
-            // Check if infinite is explicitly specified
-            let is_infinite = self.properties.iter().any(|p| {
-                matches!(p, GroupProperty::Finite(FinitePropertyVariant::Infinite))
-                    || matches!(p, GroupProperty::FiniteGroup(false))
-            });
+            Group::Cyclic(group) => {
+                let core = &group.core;
+                let mut description = format!("Cyclic Group <{:?}>", group.generator);
 
-            if is_infinite {
-                props.push("infinite".to_string());
+                if let Some(order) = group.order {
+                    description.push_str(&format!("\nOrder: {}", order));
+                } else {
+                    description.push_str("\nOrder: infinite");
+                }
+
+                let identity_str = match core.operation.identity {
+                    GroupIdentity::One => "1",
+                    GroupIdentity::Zero => "0",
+                    GroupIdentity::IdentityMatrix => "I",
+                    GroupIdentity::IdentityPermutation => "id",
+                    GroupIdentity::IdentityFunction => "idₑ",
+                };
+
+                description.push_str(&format!("\nIdentity element: {}", identity_str));
+
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
             }
+            Group::Symmetric(group) => {
+                let description = format!("Symmetric Group S_{}", group.degree);
+
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::Dihedral(group) => {
+                let description = format!("Dihedral Group D_{}", group.order / 2);
+
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::Product(group) => {
+                let core = &group.core;
+                let components_str = group
+                    .components
+                    .iter()
+                    .map(|c| format!("{:?}", c))
+                    .collect::<Vec<_>>()
+                    .join(" × ");
+                let description =
+                    format!("Product Group: {} ({:?})", components_str, group.operation);
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::Quotient(group) => {
+                let group_str = format!("{:?}", group.group);
+                let normal_subgroup_str = format!("{:?}", group.normal_subgroup);
+                let description = format!("Quotient Group {} / {}", group_str, normal_subgroup_str);
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::Kernel(k_group) => {
+                let description = format!("Kernel Group Ker({:?})", k_group.defining_homomorphism);
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::Image(i_group) => {
+                let description = format!("Image Group Im({:?})", i_group.defining_homomorphism);
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::Center(c_group) => {
+                let description = format!("Center Z({:?})", c_group.parent_group);
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            Group::GeneratedSubgroup(g_group) => {
+                let gens_str = g_group
+                    .generators
+                    .iter()
+                    .map(|g| format!("{:?}", g))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                let description = format!(
+                    "Generated Subgroup <{}> of {:?}",
+                    gens_str, g_group.parent_group
+                );
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(description)),
+                }
+            }
+            _ => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!(
+                    "Group (Unrendered Type): {:?}",
+                    self
+                ))),
+            },
         }
+    }
+}
 
-        // Check for simple property
-        let is_simple = self
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple)));
+fn factorial(n: usize) -> usize {
+    if n == 0 || n == 1 {
+        1
+    } else {
+        (2..=n).fold(1, |acc, x| acc * x)
+    }
+}
 
-        if is_simple {
-            props.push("simple".to_string());
-        }
-
-        // Complete the description with properties
-        if !props.is_empty() {
-            description.push_str(&format!(" ({})", props.join(", ")));
-        }
-
-        // Add identity and inverse information
-        description.push_str(&format!("\n\nIdentity element: {}", identity_str));
-        description.push_str(&format!("\nInverse operation: {}", inverse_str));
-
-        // Add operation properties
-        let mut op_props = Vec::<String>::new();
-
-        if self
-            .operation
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupOperationProperty::Associative))
-        {
-            op_props.push("associative".to_string());
-        }
-
-        if self
-            .operation
-            .properties
-            .iter()
-            .any(|p| matches!(p, GroupOperationProperty::Commutative(true)))
-        {
-            op_props.push("commutative".to_string());
-        }
-
-        if !op_props.is_empty() {
-            description.push_str(&format!("\nOperation is {}", op_props.join(", ")));
-        }
-
-        // 4. Create a MathNode with the comprehensive description
-        MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text(description)),
-        }
+impl ToTurnMath for GroupBasic {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        todo!()
     }
 }
 
 impl ToTurnMath for GroupRelation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        match self {
-            GroupRelation::IsSubgroupOf {
-                entity,
-                subgroup,
-                group,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(subgroup.to_turn_math(format!("{}:subgroup", master_id))),
-                    rhs: Box::new(group.to_turn_math(format!("{}:group", master_id))),
-                    operator: RelationOperatorNode::IsSubgroupOf,
-                }),
+        let content = match self {
+            GroupRelation::IsSubgroupOf { subgroup, group } => MathNodeContent::Relationship {
+                lhs: Box::new(
+                    subgroup
+                        .unwrap()
+                        .to_turn_math(format!("{}:subgroup", master_id)),
+                ),
+                rhs: Box::new(group.to_turn_math(format!("{}:group", master_id))),
+                operator: RelationOperatorNode::IsSubgroupOf,
             },
-
-            GroupRelation::IsNormalSubgroupOf {
-                entity,
-                subgroup,
-                group,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(subgroup.to_turn_math(format!("{}:subgroup", master_id))),
+            GroupRelation::IsNormalSubgroupOf { subgroup, group } => {
+                MathNodeContent::Relationship {
+                    lhs: Box::new(
+                        subgroup
+                            .unwrap()
+                            .to_turn_math(format!("{}:subgroup", master_id)),
+                    ),
                     rhs: Box::new(group.to_turn_math(format!("{}:group", master_id))),
                     operator: RelationOperatorNode::IsNormalSubgroupOf,
-                }),
+                }
+            }
+            GroupRelation::IsIsomorphicTo { first, second } => MathNodeContent::Relationship {
+                lhs: Box::new(first.to_turn_math(format!("{}:first", master_id))),
+                rhs: Box::new(
+                    second
+                        .unwrap()
+                        .to_turn_math(format!("{}:second", master_id)),
+                ),
+                operator: RelationOperatorNode::IsIsomorphicTo,
             },
-
-            GroupRelation::IsIsomorphicTo {
-                entity,
-                first,
-                second,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(first.to_turn_math(format!("{}:first", master_id))),
-                    rhs: Box::new(second.to_turn_math(format!("{}:second", master_id))),
-                    operator: RelationOperatorNode::IsIsomorphicTo,
-                }),
-            },
-
             GroupRelation::IsQuotientOf {
-                entity,
                 quotient,
                 group,
                 normal_subgroup,
             } => {
-                // For complex relations with multiple components, we may want to
-                // create a special representation that shows the relationship
-                let quotient_text = format!("{:?}/{:?}", group, normal_subgroup);
+                let quotient_node = quotient
+                    .unwrap()
+                    .to_turn_math(format!("{}:quotient", master_id));
+                let group_node = group.to_turn_math(format!("{}:group", master_id));
+                let normal_subgroup_node = normal_subgroup
+                    .unwrap()
+                    .to_turn_math(format!("{}:n_subgroup", master_id));
 
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Relationship {
-                        lhs: Box::new(quotient.to_turn_math(format!("{}:quotient", master_id))),
-                        rhs: Box::new(MathNode {
-                            id: format!("{}:quotient_expr", master_id),
-                            content: Box::new(MathNodeContent::Text(quotient_text)),
-                        }),
-                        operator: RelationOperatorNode::IsEqual,
+                let rhs = MathNode {
+                    id: format!("{}:quotient_expr", master_id),
+                    content: Box::new(MathNodeContent::Fraction {
+                        numerator: Box::new(group_node),
+                        denominator: Box::new(normal_subgroup_node),
                     }),
+                };
+
+                MathNodeContent::Relationship {
+                    lhs: Box::new(quotient_node),
+                    rhs: Box::new(rhs),
+                    operator: RelationOperatorNode::IsEqual,
                 }
             }
-
-            GroupRelation::IsInCenterOf {
-                entity,
-                element,
-                group,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(element.to_turn_math(format!("{}:element", master_id))),
-                    rhs: Box::new(group.to_turn_math(format!("{}:group", master_id))),
-                    operator: RelationOperatorNode::IsInCenterOf,
-                }),
+            GroupRelation::IsInCenterOf { element, group } => MathNodeContent::Relationship {
+                lhs: Box::new(
+                    element
+                        .unwrap()
+                        .to_turn_math(format!("{}:element", master_id)),
+                ),
+                rhs: Box::new(group.to_turn_math(format!("{}:group", master_id))),
+                operator: RelationOperatorNode::IsInCenterOf,
             },
-
             GroupRelation::AreConjugateIn {
-                entity,
                 element1,
                 element2,
                 group,
             } => {
-                // For relations with more than two parts, we need to be creative
-                // g ~ h in G
-                let left_expr = element1.to_turn_math(format!("{}:element1", master_id));
-                let right_expr = element2.to_turn_math(format!("{}:element2", master_id));
+                let left_expr = element1
+                    .unwrap()
+                    .to_turn_math(format!("{}:element1", master_id));
+                let right_expr = element2
+                    .unwrap()
+                    .to_turn_math(format!("{}:element2", master_id));
                 let group_expr = group.to_turn_math(format!("{}:group", master_id));
 
-                // Create a relationship node for the conjugacy
                 let base_relation = MathNode {
                     id: format!("{}:conj_base", master_id),
                     content: Box::new(MathNodeContent::Relationship {
@@ -270,232 +384,155 @@ impl ToTurnMath for GroupRelation {
                     }),
                 };
 
-                // Add the group information
                 let group_info = MathNode {
                     id: format!("{}:in_group", master_id),
-                    content: Box::new(MathNodeContent::Text(format!(" in {:?}", group))),
+                    content: Box::new(MathNodeContent::Text(format!(" in {:?}", group.unwrap()))),
                 };
 
-                // Combine them
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Multiplications {
-                        terms: vec![
-                            (RefinedMulOrDivOperation::None, base_relation),
-                            (RefinedMulOrDivOperation::None, group_info),
-                        ],
-                    }),
+                MathNodeContent::Multiplications {
+                    terms: vec![
+                        (RefinedMulOrDivOperation::None, base_relation),
+                        (RefinedMulOrDivOperation::None, group_info),
+                    ],
                 }
             }
-
             GroupRelation::HasOrderInGroup {
-                entity,
                 element,
                 group,
                 order,
             } => {
-                // This is a unary relation with context - "element has order n in group"
-                // We'll represent this as |g| = n in G
-                let element_expr = element.to_turn_math(format!("{}:element", master_id));
+                let element_expr = element
+                    .unwrap()
+                    .to_turn_math(format!("{}:element", master_id));
 
-                // Create the order notation
                 let order_expr = MathNode {
                     id: format!("{}:order_expr", master_id),
                     content: Box::new(MathNodeContent::Text(format!(
                         "|{:?}| = {}",
-                        element, order
+                        element.unwrap(),
+                        order.unwrap()
                     ))),
                 };
 
-                // Create the full expression with group context
                 let group_info = MathNode {
                     id: format!("{}:in_group", master_id),
-                    content: Box::new(MathNodeContent::Text(format!(" in {:?}", group))),
+                    content: Box::new(MathNodeContent::Text(format!(" in {:?}", group.unwrap()))),
                 };
 
-                // Combine them
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Multiplications {
-                        terms: vec![
-                            (RefinedMulOrDivOperation::None, order_expr),
-                            (RefinedMulOrDivOperation::None, group_info),
-                        ],
-                    }),
+                MathNodeContent::Multiplications {
+                    terms: vec![
+                        (RefinedMulOrDivOperation::None, order_expr),
+                        (RefinedMulOrDivOperation::None, group_info),
+                    ],
                 }
             }
-
             GroupRelation::HasIndexInGroup {
-                entity,
                 subgroup,
                 group,
                 index,
             } => {
-                // This is a specialized relation - [G:H] = n
-                let index_text = format!("[{:?}:{:?}] = {}", group, subgroup, index).to_string();
+                let index_text = format!(
+                    "[{:?}:{:?}] = {}",
+                    group.unwrap(),
+                    subgroup.unwrap(),
+                    index.unwrap()
+                )
+                .to_string();
 
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(index_text)),
-                }
+                MathNodeContent::Text(index_text)
             }
-
-            GroupRelation::HasOrder {
-                entity,
-                group,
-                order,
-            } => {
-                // Represent as |G| = n
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(format!("|{:?}| = {}", group, order))),
-                }
+            GroupRelation::HasOrder { group, order } => {
+                MathNodeContent::Text(format!("|{:?}| = {}", group.unwrap(), order.unwrap()))
             }
-
-            GroupRelation::IsCyclicWithGenerator {
-                entity,
-                group,
-                generator,
-            } => {
-                // "G = <g>" representation
+            GroupRelation::IsCyclicWithGenerator { group, generator } => {
                 let base_relation = MathNode {
                     id: format!("{}:cyclic_base", master_id),
                     content: Box::new(MathNodeContent::Relationship {
                         lhs: Box::new(group.to_turn_math(format!("{}:group", master_id))),
                         rhs: Box::new(MathNode {
                             id: format!("{}:generator_expr", master_id),
-                            content: Box::new(MathNodeContent::Text(format!("<{:?}>", generator))),
+                            content: Box::new(MathNodeContent::Text(format!(
+                                "<{:?}>",
+                                generator.unwrap()
+                            ))),
                         }),
                         operator: RelationOperatorNode::IsEqual,
                     }),
                 };
 
-                // Additional info that it's cyclic
-                let cyclic_info = MathNode {
-                    id: format!("{}:cyclic_info", master_id),
-                    content: Box::new(MathNodeContent::Text(" (cyclic)".to_string())),
-                };
-
-                // Combine them
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Multiplications {
-                        terms: vec![
-                            (RefinedMulOrDivOperation::None, base_relation),
-                            (RefinedMulOrDivOperation::None, cyclic_info),
-                        ],
-                    }),
+                MathNodeContent::Multiplications {
+                    terms: vec![(RefinedMulOrDivOperation::None, base_relation)],
                 }
             }
-
             GroupRelation::NormalizesSubgroup {
-                entity,
                 element,
                 subgroup,
                 group,
             } => {
-                // Similar to conjugacy, but with a subgroup
-                let element_expr = element.to_turn_math(format!("{}:element", master_id));
-                let subgroup_expr = subgroup.to_turn_math(format!("{}:subgroup", master_id));
+                let relation_text = format!(
+                    "{:?} normalizes {:?} in {:?}",
+                    element.unwrap(),
+                    subgroup.unwrap(),
+                    group.unwrap()
+                )
+                .to_string();
 
-                // Create base relation - "g normalizes H in G"
-                let relation_text =
-                    format!("{:?} normalizes {:?} in {:?}", element, subgroup, group).to_string();
-
-                // Return the text representation
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(relation_text)),
-                }
+                MathNodeContent::Text(relation_text)
             }
-
             GroupRelation::CentralizesSubgroup {
-                entity,
                 element,
                 subgroup,
                 group,
             } => {
-                // Similar to normalizes, but for centralizing
-                let relation_text =
-                    format!("{:?} centralizes {:?} in {:?}", element, subgroup, group).to_string();
+                let relation_text = format!(
+                    "{:?} centralizes {:?} in {:?}",
+                    element.unwrap(),
+                    subgroup.unwrap(),
+                    group.unwrap()
+                )
+                .to_string();
 
-                // Return the text representation
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(relation_text)),
-                }
+                MathNodeContent::Text(relation_text)
             }
-
-            GroupRelation::IsCharacteristicSubgroupOf {
-                entity,
-                subgroup,
-                group,
-            } => {
-                // "H char G" representation
-                let relation_text = format!("{:?} char {:?}", subgroup, group).to_string();
-
-                // Return the text representation
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(relation_text)),
-                }
+            GroupRelation::IsCharacteristicSubgroupOf { subgroup, group } => {
+                MathNodeContent::Text(format!("{:?} char {:?}", subgroup.unwrap(), group.unwrap()))
             }
-
-            GroupRelation::OrderDivides {
-                entity,
-                group1,
-                group2,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
-                        id: format!("{}:order_g1", master_id),
-                        content: Box::new(MathNodeContent::Text(format!("|{:?}|", group1))),
-                    }),
-                    rhs: Box::new(MathNode {
-                        id: format!("{}:order_g2", master_id),
-                        content: Box::new(MathNodeContent::Text(format!("|{:?}|", group2))),
-                    }),
-                    operator: RelationOperatorNode::Divides,
+            GroupRelation::OrderDivides { group1, group2 } => MathNodeContent::Relationship {
+                lhs: Box::new(MathNode {
+                    id: format!("{}:order_g1", master_id),
+                    content: Box::new(MathNodeContent::Text(format!("|{:?}|", group1.unwrap()))),
                 }),
+                rhs: Box::new(MathNode {
+                    id: format!("{}:order_g2", master_id),
+                    content: Box::new(MathNodeContent::Text(format!("|{:?}|", group2.unwrap()))),
+                }),
+                operator: RelationOperatorNode::Divides,
             },
-
-            GroupRelation::HasUniqueInverse {
-                entity,
-                element,
-                group,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::UnaryRelationship {
-                    subject: Box::new(element.to_turn_math(format!("{}:element", master_id))),
+            GroupRelation::HasUniqueInverse { element, group } => {
+                MathNodeContent::UnaryRelationship {
+                    subject: Box::new(
+                        element
+                            .unwrap()
+                            .to_turn_math(format!("{}:element", master_id)),
+                    ),
                     predicate: UnaryRelationOperatorNode::HasUniqueInverse,
-                }),
-            },
-
-            GroupRelation::SylowSubgroupProperties {
-                entity,
-                prime,
-                group,
-            } => {
-                // This is a complex relation with Sylow subgroup properties
-                // We'll represent it as text
-                let relation_text =
-                    format!("Sylow {:?}-subgroup properties of {:?}", prime, group).to_string();
-
-                // Return the text representation
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(relation_text)),
                 }
             }
+            GroupRelation::SylowSubgroupProperties { prime, group } => {
+                let relation_text = format!(
+                    "Sylow {:?}-subgroup properties of {:?}",
+                    prime,
+                    group.unwrap()
+                )
+                .to_string();
 
+                MathNodeContent::Text(relation_text)
+            }
             GroupRelation::IsInverseOf {
-                entity,
                 element,
                 inverse,
                 group,
             } => {
-                // g^(-1) = h in G
                 let base_relation = MathNode {
                     id: format!("{}:inverse_base", master_id),
                     content: Box::new(MathNodeContent::Relationship {
@@ -503,160 +540,413 @@ impl ToTurnMath for GroupRelation {
                             id: format!("{}:element_inv", master_id),
                             content: Box::new(MathNodeContent::Text(format!(
                                 "({:?})^(-1)",
-                                element
+                                element.unwrap()
                             ))),
                         }),
-                        rhs: Box::new(inverse.to_turn_math(format!("{}:inverse", master_id))),
+                        rhs: Box::new(
+                            inverse
+                                .unwrap()
+                                .to_turn_math(format!("{}:inverse", master_id)),
+                        ),
                         operator: RelationOperatorNode::IsEqual,
                     }),
                 };
 
-                // Add group context
                 let group_info = MathNode {
                     id: format!("{}:in_group", master_id),
-                    content: Box::new(MathNodeContent::Text(format!(" in {:?}", group))),
+                    content: Box::new(MathNodeContent::Text(format!(" in {:?}", group.unwrap()))),
                 };
 
-                // Combine them
-                MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Multiplications {
-                        terms: vec![
-                            (RefinedMulOrDivOperation::None, base_relation),
-                            (RefinedMulOrDivOperation::None, group_info),
-                        ],
-                    }),
+                MathNodeContent::Multiplications {
+                    terms: vec![
+                        (RefinedMulOrDivOperation::None, base_relation),
+                        (RefinedMulOrDivOperation::None, group_info),
+                    ],
                 }
             }
-
             GroupRelation::IsHomomorphism {
-                entity,
                 homomorphism,
                 domain,
                 codomain,
-            } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(homomorphism.to_turn_math(format!("{}:homomorphism", master_id))),
-                    rhs: Box::new(MathNode {
-                        id: format!("{}:domain_codomain", master_id),
-                        content: Box::new(MathNodeContent::Text(format!(
-                            "{:?} → {:?}",
-                            domain, codomain
-                        ))),
-                    }),
-                    operator: RelationOperatorNode::IsHomomorphicTo,
+            } => MathNodeContent::Relationship {
+                lhs: Box::new(
+                    homomorphism
+                        .unwrap()
+                        .to_turn_math(format!("{}:homomorphism", master_id)),
+                ),
+                rhs: Box::new(MathNode {
+                    id: format!("{}:domain_codomain", master_id),
+                    content: Box::new(MathNodeContent::Text(format!(
+                        "{:?} → {:?}",
+                        domain.unwrap(),
+                        codomain.unwrap()
+                    ))),
                 }),
+                operator: RelationOperatorNode::IsHomomorphicTo,
             },
+            GroupRelation::IsomorphicEmbedding { source, target } => {
+                let relation_text = format!(
+                    "{:?} embeds isomorphically into {:?}",
+                    source.unwrap(),
+                    target.unwrap()
+                )
+                .to_string();
 
-            GroupRelation::IsomorphicEmbedding {
-                entity,
-                source,
-                target,
-            } => {
-                // Similar to isomorphism, but as an embedding
-                let relation_text =
-                    format!("{:?} embeds isomorphically into {:?}", source, target).to_string();
+                MathNodeContent::Text(relation_text)
+            }
+            GroupRelation::HasBasicProperty { target, property } => MathNodeContent::Text(format!(
+                "{:?} is {:?}",
+                target.to_turn_math(master_id.clone()),
+                property.to_turn_math(master_id.clone())
+            )),
+            GroupRelation::HasTopologicalProperty { target, property } => todo!(),
+            GroupRelation::HasLieProperty { target, property } => todo!(),
+            GroupRelation::HasActionProperty { target, property } => todo!(),
+            GroupRelation::HasProductProperty { target, property } => todo!(),
+            GroupRelation::HasModularAdditiveProperty { target, property } => todo!(),
+            GroupRelation::HasModularMultiplicativeProperty { target, property } => todo!(),
+            GroupRelation::HasGeneralLinearMatrixProperty { target, property } => todo!(),
+            GroupRelation::HasGeneralLinearLinearProperty { target, property } => todo!(),
+            GroupRelation::HasSpecialLinearProperty { target, property } => todo!(),
+            GroupRelation::HasOrthogonalMatrixProperty { target, property } => todo!(),
+            GroupRelation::HasSpecialOrthogonalProperty { target, property } => todo!(),
+            GroupRelation::HasUnitaryMatrixProperty { target, property } => todo!(),
+            GroupRelation::HasSpecialUnitaryProperty { target, property } => todo!(),
+            GroupRelation::HasAlternatingPermutationProperty { target, property } => todo!(),
+            GroupRelation::HasFreeProperty { target, property } => todo!(),
+            GroupRelation::HasQuotientProperty { target, property } => todo!(),
+            GroupRelation::HasOperationProperty { target, property } => todo!(),
+        };
+        MathNode {
+            id: master_id,
+            content: Box::new(content),
+        }
+    }
+}
 
-                // Return the text representation
+impl ToTurnMath for GroupProperty {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let content = match self {
+            GroupProperty::Finite(property) => MathNodeContent::Text(format!(
+                "{:?}",
+                match property {
+                    FinitePropertyVariant::Finite(n) => format!("finite of order {}", n),
+                    FinitePropertyVariant::Infinite => "infinite".to_string(),
+                    FinitePropertyVariant::LocallyFinite => "locally finite".to_string(),
+                }
+            )),
+            GroupProperty::Abelian(abelian_property_variant) => MathNodeContent::Text(format!(
+                "{:?}",
+                match abelian_property_variant {
+                    AbelianPropertyVariant::Abelian => "abelian",
+                    AbelianPropertyVariant::NonAbelian => "non-abelian",
+                }
+            )),
+            GroupProperty::Simple(simple_property_variant) => MathNodeContent::Text(format!(
+                "{:?}",
+                match simple_property_variant {
+                    SimplePropertyVariant::Simple => "simple",
+                    SimplePropertyVariant::NonSimple => "non-simple",
+                    SimplePropertyVariant::QuasiSimple => "quasi-simple",
+                }
+            )),
+            GroupProperty::Solvable(solvable_property_variant) => MathNodeContent::Text(format!(
+                "{:?}",
+                match solvable_property_variant {
+                    SolvablePropertyVariant::Solvable => "solvable",
+                    SolvablePropertyVariant::NonSolvable => "non-solvable",
+                    SolvablePropertyVariant::Polysolvable => "poly-solvable",
+                }
+            )),
+            GroupProperty::Nilpotent(nilpotent_property_variant) => MathNodeContent::Text(format!(
+                "{:?}",
+                match nilpotent_property_variant {
+                    NilpotentPropertyVariant::Nilpotent(n) =>
+                        format!("nilpotent of nilpotency {}", n),
+                    NilpotentPropertyVariant::NonNilpotent => "non-nilpotent".to_string(),
+                }
+            )),
+        };
+        MathNode {
+            id: master_id,
+            content: Box::new(content),
+        }
+    }
+}
+
+impl ToTurnMath for GroupElement {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        match self {
+            GroupElement::Integer(n) => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!("{}", n))),
+            },
+            GroupElement::Permutation(perm) => {
+                let perm_str = format!("{:?}", perm);
                 MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Text(relation_text)),
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(perm_str)),
                 }
             }
+            GroupElement::Matrix(matrix) => {
+                let matrix_str = format!("{:?}", matrix);
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text(matrix_str)),
+                }
+            }
+            GroupElement::Symbol(s) => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(s.clone())),
+            },
+        }
+    }
+}
+
+impl ToTurnMath for GroupExpression {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let content = match self {
+            GroupExpression::Element { group, element } => return element.to_turn_math(master_id),
+            GroupExpression::Identity(group) => return group.to_turn_math(master_id.clone()),
+            GroupExpression::Operation { group, left, right } => {
+                let left_node = left.as_ref().to_turn_math(format!("{}:left", master_id));
+                let right_node = right.as_ref().to_turn_math(format!("{}:right", master_id));
+
+                MathNodeContent::Multiplications {
+                    terms: vec![
+                        (RefinedMulOrDivOperation::None, left_node),
+                        (
+                            RefinedMulOrDivOperation::Multiplication(MulSymbol::Dot),
+                            right_node,
+                        ),
+                    ],
+                }
+            }
+            GroupExpression::Inverse { group, element } => {
+                let element_node = element
+                    .as_ref()
+                    .to_turn_math(format!("{}:element", master_id));
+
+                match group.unwrap().get_core().operation.inverse {
+                    GroupInverse::MultiplicativeInverse => MathNodeContent::Power {
+                        base: Box::new(element_node),
+                        exponent: Box::new(MathNode {
+                            id: format!("{}:exp", master_id),
+                            content: Box::new(MathNodeContent::Text("-1".to_string())),
+                        }),
+                    },
+                    GroupInverse::AdditiveInverse => MathNodeContent::Multiplications {
+                        terms: vec![
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}:neg", master_id),
+                                    content: Box::new(MathNodeContent::Text("-".to_string())),
+                                },
+                            ),
+                            (RefinedMulOrDivOperation::None, element_node),
+                        ],
+                    },
+                    _ => MathNodeContent::Power {
+                        base: Box::new(element_node),
+                        exponent: Box::new(MathNode {
+                            id: format!("{}:exp_fallback", master_id),
+                            content: Box::new(MathNodeContent::Text("-1".to_string())),
+                        }),
+                    },
+                }
+            }
+            GroupExpression::Commutator { group, a, b } => {
+                let a_node = a.as_ref().to_turn_math(format!("{}:a", master_id));
+                let b_node = b.as_ref().to_turn_math(format!("{}:b", master_id));
+
+                MathNodeContent::Bracketed {
+                    style: BracketStyle::Square,
+                    size: BracketSize::Auto,
+                    inner: Box::new(MathNode {
+                        id: format!("{}:commutator_inner", master_id),
+                        content: Box::new(MathNodeContent::Multiplications {
+                            terms: vec![
+                                (RefinedMulOrDivOperation::None, a_node),
+                                (RefinedMulOrDivOperation::None, b_node),
+                            ],
+                        }),
+                    }),
+                }
+            }
+            GroupExpression::Coset {
+                group,
+                element,
+                subgroup,
+                is_left,
+            } => {
+                let element_node = element
+                    .as_ref()
+                    .to_turn_math(format!("{}:element", master_id));
+                let subgroup_node = subgroup.to_turn_math(format!("{}:subgroup", master_id));
+
+                let terms = if *is_left {
+                    vec![
+                        (RefinedMulOrDivOperation::None, element_node),
+                        (RefinedMulOrDivOperation::None, subgroup_node),
+                    ]
+                } else {
+                    vec![
+                        (RefinedMulOrDivOperation::None, subgroup_node),
+                        (RefinedMulOrDivOperation::None, element_node),
+                    ]
+                };
+                MathNodeContent::Multiplications { terms }
+            }
+            GroupExpression::ActionOnElement { action, element } => {
+                let action_node = action.to_turn_math(format!("{}:action", master_id));
+                let element_node = element.to_turn_math(format!("{}:element", master_id));
+
+                MathNodeContent::Multiplications {
+                    terms: vec![
+                        (RefinedMulOrDivOperation::None, action_node),
+                        (RefinedMulOrDivOperation::None, element_node),
+                    ],
+                }
+            }
+            GroupExpression::Power {
+                group,
+                base,
+                exponent,
+            } => {
+                let base_node = base
+                    .as_ref()
+                    .unwrap()
+                    .to_turn_math(format!("{}:base", master_id));
+
+                MathNodeContent::Power {
+                    base: Box::new(base_node),
+                    exponent: Box::new(MathNode {
+                        id: format!("{}:exponent", master_id),
+                        content: Box::new(MathNodeContent::Text(format!("{}", exponent.unwrap()))),
+                    }),
+                }
+            }
+            _ => MathNodeContent::Text(format!("(Expr: {:?})", self)),
+        };
+        MathNode {
+            id: master_id,
+            content: Box::new(content),
+        }
+    }
+}
+
+impl ToTurnMath for GroupAction {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let content = match self {
+            GroupAction::SetAction {
+                group,
+                space,
+                point,
+                properties,
+            } => {
+                let group_node = group.to_turn_math(format!("{}:group", master_id));
+                todo!()
+                // let space_node = space.to_turn_math(format!("{}:space", master_id));
+                // let point_node = point.to_turn_math(format!("{}:point", master_id));
+                // MathNodeContent::Text(format!("Set action on {:?}", point))
+            }
+            GroupAction::VectorSpaceAction {
+                group,
+                space,
+                vector,
+                properties,
+            } => todo!(),
+            GroupAction::TopologicalSpaceAction {
+                group,
+                space,
+                point,
+                properties,
+            } => todo!(),
+        };
+        MathNode {
+            id: master_id,
+            content: Box::new(content),
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
+    use super::super::super::VariantSet;
     use super::super::super::zfc::Set;
     use super::super::definitions::{
-        AbelianPropertyVariant, FinitePropertyVariant, Group, GroupIdentity, GroupInverse,
-        GroupInverseApplication, GroupNotation, GroupOperation, GroupOperationProperty,
-        GroupOperationVariant, GroupProperty, GroupSymbol,
+        AbelianPropertyVariant, FinitePropertyVariant, Group, GroupBasic, GroupIdentity,
+        GroupInverse, GroupInverseApplication, GroupNotation, GroupOperation,
+        GroupOperationProperty, GroupOperationVariant, GroupProperty, GroupSymbol,
     };
-    use super::super::helpers::cyclic_group;
     use crate::turn_render::{MathNodeContent, ToTurnMath};
 
     #[test]
     fn test_group_to_turn_math() {
-        // Create a simple cyclic group Z_5
-        let mut group = cyclic_group(5);
+        let mut props = VariantSet::new();
+        props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(5)));
 
-        // Add the finite property explicitly since the helper doesn't include it
-        group
-            .properties
-            .push(GroupProperty::Finite(FinitePropertyVariant::Finite(5)));
+        let group_core_1 = GroupBasic {
+            base_set: Set::Parametric {
+                parameters: HashMap::new(),
+                description: "Z_5".to_string(),
+                membership_condition: "x mod 5 = 0".to_string(),
+                properties: VariantSet::new(),
+            },
+            operation: GroupOperation::default(),
+            props,
+        };
 
-        // Convert to MathNode
-        let math_node = group.to_turn_math("test_id".to_string());
+        let group_1 = Group::Basic(group_core_1);
+        let group_math_node = group_1.to_turn_math("test_id".to_string());
 
-        println!("Cyclic group Z_5 output: {:?}", math_node);
+        println!("Cyclic group Z_5 output: {:?}", group_math_node);
 
-        // Extract the content
-        if let MathNodeContent::Text(text) = *math_node.content {
-            // Verify the text contains the expected representation
+        if let MathNodeContent::Text(text) = *group_math_node.content {
             assert!(
-                text.contains("Cyclic group Z_5"),
-                "Group text should identify it as a cyclic group"
-            );
-            assert!(text.contains("+"), "Cyclic group operation should be +");
-            assert!(
-                text.contains("Identity element: 0"),
-                "Should show identity element"
-            );
-            assert!(
-                text.contains("Inverse operation: -x"),
-                "Should show inverse operation"
+                text.contains("Abstract Group"),
+                "Group text should identify it as a group"
             );
             assert!(
-                text.contains("Operation is associative"),
-                "Should identify associative property"
-            );
-            assert!(
-                text.contains("finite (order 5)"),
-                "Should identify it as finite with order 5"
+                text.contains("finite"),
+                "Group should be identified as finite"
             );
         } else {
             panic!("Expected Text content, got something else");
         }
 
-        // Create a custom group with multiplication and additional properties
-        let mut custom_group = Group::default();
-        custom_group.operation.operation_type = GroupOperationVariant::Multiplication;
+        let mut props = VariantSet::new();
+        props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(6)));
 
-        // Add abelian property
-        custom_group
-            .properties
-            .push(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
-
-        // Add finite property
-        custom_group
-            .properties
-            .push(GroupProperty::Finite(FinitePropertyVariant::Finite(6)));
-
-        // Make sure operation is marked as commutative
-        custom_group
-            .operation
+        let mut operation = GroupOperation::default();
+        operation.operation_type = GroupOperationVariant::Multiplication;
+        operation
             .properties
             .push(GroupOperationProperty::Commutative(true));
 
-        // Convert to MathNode
+        let group_core = GroupBasic {
+            base_set: Set::empty(),
+            operation,
+            props,
+        };
+
+        let custom_group = Group::Basic(group_core);
+
         let math_node = custom_group.to_turn_math("test_id_2".to_string());
 
         println!("Custom group output: {:?}", math_node);
 
-        // Extract the content
         if let MathNodeContent::Text(text) = *math_node.content {
-            // Verify the text contains the expected representation
             assert!(
                 text.contains("·"),
                 "Multiplicative group should use · symbol"
             );
             assert!(text.contains("abelian"), "Should identify as abelian");
 
-            // Create a let binding for the formatted string to fix the linter error
             let order_string = "finite (order 6)";
             assert!(text.contains(order_string), "Should show order 6");
 

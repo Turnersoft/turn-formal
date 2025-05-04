@@ -1,10 +1,10 @@
+use super::super::core::{Quantification, QuantifiedMathObject};
 use super::super::{
     core::{ProofGoal, Theorem},
     proof::{ProofForest, ProofNode},
 };
-
 use crate::turn_render::{
-    MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation, ToTurnMath,
+    MathNode, MathNodeContent, MulSymbol, QuantificationNode, RefinedMulOrDivOperation, ToTurnMath,
 };
 // Importing ProofStatus
 use super::super::proof::ProofStatus;
@@ -12,9 +12,7 @@ use super::super::proof::ProofStatus;
 impl ToTurnMath for Theorem {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         // Create the initial proof state node
-        let initial_state_node = self
-            .goal
-            .to_turn_math(format!("{}:initial_state", master_id));
+        let initial_state_node = self.goal.to_turn_math(master_id.clone());
 
         // Convert proof steps to MathNodes
         let proof_step_nodes = {
@@ -65,10 +63,7 @@ impl ToTurnMath for ProofGoal {
             .quantifier
             .iter()
             .enumerate()
-            .map(|(i, q)| MathNode {
-                id: format!("{}:quantifier_{}", master_id, i),
-                content: Box::new(MathNodeContent::Text(format!("{:?}", q))),
-            })
+            .map(|(i, q)| q.to_turn_math(format!("{}:quantifier_{}", master_id, i)))
             .collect::<Vec<_>>();
 
         // Convert variable bindings to MathNodes
@@ -90,6 +85,35 @@ impl ToTurnMath for ProofGoal {
                 quantifiers: quantifier_nodes,
                 variables: variable_nodes,
             }),
+        }
+    }
+}
+
+impl ToTurnMath for QuantifiedMathObject {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        // Implement the logic to convert QuantifiedMathObject to MathNode
+        // This is a placeholder implementation
+        MathNode {
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Quantifier {
+                quantification: self.quantification.to_turn_math(),
+                variable: Box::new(MathNode::identifier(self.variable.clone())),
+                var_type: Box::new(self.object_type.to_turn_math(format!("{}:body", master_id))),
+            }),
+        }
+    }
+}
+
+impl Quantification {
+    fn to_turn_math(&self) -> QuantificationNode {
+        // Implement the logic to convert Quantification to MathNode
+        // This is a placeholder implementation
+        match self {
+            Quantification::Universal => QuantificationNode::Universal,
+            Quantification::Existential => QuantificationNode::Existential,
+            Quantification::UniqueExistential => QuantificationNode::UniqueExistential,
+            Quantification::Defined => QuantificationNode::Defined,
+            Quantification::Fixed => QuantificationNode::Fixed,
         }
     }
 }
@@ -225,5 +249,20 @@ impl ProofForest {
                 content: Box::new(MathNodeContent::Text(format!("Missing node {}", node_id))),
             }
         }
+    }
+}
+
+mod tests {
+    use serde_json::to_value;
+
+    use super::super::super::super::theories::prove_abelian_squared_criterion;
+
+    use super::*;
+
+    #[test]
+    fn test_theorem_render() {
+        let theorem = prove_abelian_squared_criterion();
+        let rendered = theorem.to_turn_math("theorem_id".to_string());
+        println!("{:#?}", to_value(&rendered));
     }
 }

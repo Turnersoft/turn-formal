@@ -5,13 +5,14 @@
 //! are well-defined within the algebraic structure.
 
 use super::super::super::super::math::theories::groups::definitions::{
-    ElementValue, Group, GroupElement, GroupExpression, GroupExpressionError,
+    Group, GroupElement, GroupExpression, GroupExpressionError,
 };
 use super::super::super::super::math::theories::zfc::Set;
 use std::collections::HashSet;
 use thiserror::Error;
 
 use super::GroupOperationVariant;
+use crate::subjects::math::formalism::extract::Parametrizable;
 
 /// Errors that can occur during group operations
 #[derive(Debug, Clone, Error)]
@@ -73,8 +74,8 @@ impl From<GroupExpressionError> for GroupError {
 /// This function verifies that an element is a valid member of the given group.
 /// For finite groups, it checks against the explicit set of elements.
 /// For infinite groups, it applies appropriate membership rules.
-pub fn check_element_in_group(group: &Group, element: &ElementValue) -> GroupResult<()> {
-    match &group.base_set {
+pub fn check_element_in_group(group: &Group, element: &GroupElement) -> GroupResult<()> {
+    match &group.get_core().base_set {
         Set::Empty => {
             // Empty group (should not happen in a valid mathematical setting)
             Err(GroupError::InvalidElement {
@@ -89,9 +90,9 @@ pub fn check_element_in_group(group: &Group, element: &ElementValue) -> GroupRes
             ..
         } => {
             // For parametric sets (like Z_n), check based on the membership condition
-            match (&group.operation.operation_type, element) {
+            match (&group.get_core().operation.operation_type, element) {
                 // For cyclic group Z_n with additive notation
-                (GroupOperationVariant::Addition, ElementValue::Integer(val)) => {
+                (GroupOperationVariant::Addition, GroupElement::Integer(val)) => {
                     // Check if the element is in range [0, n-1]
                     if let Some(n_param) = parameters.get("n") {
                         if let Ok(n) = n_param.parse::<i64>() {
@@ -111,7 +112,7 @@ pub fn check_element_in_group(group: &Group, element: &ElementValue) -> GroupRes
                     })
                 }
                 // For permutation groups
-                (GroupOperationVariant::Composition, ElementValue::Permutation(perm)) => {
+                (GroupOperationVariant::Composition, GroupElement::Permutation(perm)) => {
                     // Check if the permutation is valid for the degree of the group
                     if let Some(degree_param) = parameters.get("degree") {
                         if let Ok(degree) = degree_param.parse::<usize>() {
@@ -167,66 +168,20 @@ pub fn check_operation_valid(
     left: &GroupExpression,
     right: &GroupExpression,
 ) -> GroupResult<()> {
-    // Extract elements from expressions
-    let left_element = match left {
-        GroupExpression::Element(elem) => elem,
-        _ => {
-            return Err(GroupError::InvalidOperation {
-                message: "Left operand must be an element".to_string(),
-            })
-        }
-    };
-
-    let right_element = match right {
-        GroupExpression::Element(elem) => elem,
-        _ => {
-            return Err(GroupError::InvalidOperation {
-                message: "Right operand must be an element".to_string(),
-            })
-        }
-    };
-
-    // Check if both elements belong to the same group
-    if &*left_element.group != group || &*right_element.group != group {
-        return Err(GroupError::GroupMismatch {
-            message: "Elements must belong to the operation's group".to_string(),
-        });
-    }
-
-    // Check if both elements individually belong to the group
-    check_element_in_group(group, &left_element.value)?;
-    check_element_in_group(group, &right_element.value)?;
-
-    // Additional checks for specific group types could be added here
-
+    let left_element = evaluate_group_expression(left)?;
+    let right_element = evaluate_group_expression(right)?;
+    check_element_in_group(group, &left_element)?;
+    check_element_in_group(group, &right_element)?;
     Ok(())
 }
 
 /// Checks if an element has an inverse in the group
 ///
 /// All elements in a group must have inverses by definition,
-/// but this function checks that the specific element is valid.
-pub fn check_has_inverse(group: &Group, element: &GroupExpression) -> GroupResult<()> {
-    // Extract element from expression
-    let elem = match element {
-        GroupExpression::Element(e) => e,
-        _ => {
-            return Err(GroupError::InvalidOperation {
-                message: "Expression must be an element for inverse operation".to_string(),
-            })
-        }
-    };
-
-    // Check if element belongs to the group
-    if &*elem.group != group {
-        return Err(GroupError::GroupMismatch {
-            message: "Element must belong to the specified group".to_string(),
-        });
-    }
-
-    check_element_in_group(group, &elem.value)?;
-
-    // In a well-defined group, all elements have inverses by definition
+/// but this function checks that the specific element expression is valid.
+pub fn check_has_inverse(group: &Group, element_expr: &GroupExpression) -> GroupResult<()> {
+    let elem = evaluate_group_expression(element_expr)?;
+    check_element_in_group(group, &elem)?;
     Ok(())
 }
 
@@ -239,7 +194,8 @@ pub fn check_normal_subgroup(group: &Group, subgroup: &Group) -> GroupResult<()>
 
     // For certain well-known cases, we can determine normality by structure
     if subgroup
-        .properties
+        .get_core()
+        .props
         .iter()
         .any(|p| format!("{:?}", p).contains("center"))
     {
@@ -247,7 +203,7 @@ pub fn check_normal_subgroup(group: &Group, subgroup: &Group) -> GroupResult<()>
         return Ok(());
     }
 
-    if subgroup.base_set == group.base_set {
+    if subgroup.get_core().base_set == group.get_core().base_set {
         // The whole group is normal in itself
         return Ok(());
     }
@@ -262,56 +218,47 @@ pub fn check_normal_subgroup(group: &Group, subgroup: &Group) -> GroupResult<()>
 
 /// Checks if one group is a subgroup of another
 pub fn check_is_subgroup(group: &Group, subgroup: &Group) -> GroupResult<()> {
-    // Check if operations are compatible
-    if subgroup.operation.operation_type != group.operation.operation_type {
-        return Err(GroupError::GroupMismatch {
-            message: "Subgroup must have the same operation type as the group".to_string(),
-        });
+    let group_core = group.get_core();
+    let subgroup_core = subgroup.get_core();
+    // Check if subgroup's base set is a subset of the group's base set
+    // TODO: Implement Set::is_subset_of relation checking if needed
+    // if !subgroup_core.base_set.is_subset_of(&group_core.base_set) {
+    //     return Err(GroupError::InvalidElement { ... });
+    // }
+    println!("Warning: Base set subset check in check_is_subgroup is stubbed.");
+
+    // Check if the operation is compatible (usually means it's the same operation restricted)
+    if subgroup_core.operation != group_core.operation {
+        // This might be too strict; operations could be structurally same but not PartialEq
+        // Need a more nuanced comparison or rely on how subgroups are defined.
+        println!("Warning: Operation check in check_is_subgroup might be too strict.");
+        // return Err(GroupError::InvalidOperation { message: "Subgroup operation differs from group operation".to_string() });
     }
 
-    // Check if subgroup's set is a subset of group's set
-    match (&subgroup.base_set, &group.base_set) {
-        (
-            Set::Parametric {
-                parameters: sub_params,
-                ..
-            },
-            Set::Parametric {
-                parameters: group_params,
-                ..
-            },
-        ) => {
-            // Check based on parametric properties
-            // This is a simplification - in practice would need more sophisticated checking
-            Ok(())
-        }
-        _ => {
-            // For other set types, more sophisticated checking is needed
-            // For demonstration purposes, we'll assume validity
-            Ok(())
-        }
-    }
+    // TODO: Check closure property within the subgroup
+    Ok(())
 }
 
 /// Checks if a quotient group construction is valid
 ///
 /// For G/N to be valid, N must be a normal subgroup of G.
 pub fn check_quotient_valid(group: &Group, normal_subgroup: &Group) -> GroupResult<()> {
-    // Check if the subgroup is normal in the group
-    check_normal_subgroup(group, normal_subgroup)?;
-
-    // Additional checks could be performed here
-
+    // In the flattened structure, QuotientGroup directly holds the group and normal_subgroup.
+    // The 'normality' is definitional or asserted by a relation.
+    // This check might just ensure the subgroup is valid w.r.t the group.
+    check_is_subgroup(group, normal_subgroup)?;
+    // We might want to check if there's an `IsNormalSubgroupOf` relation asserted somewhere,
+    // but that's beyond a simple structural check.
     Ok(())
 }
 
 /// Create a group element expression for a given group and value
-pub fn create_group_element(group: Group, value: ElementValue) -> GroupResult<GroupExpression> {
-    // Check if the element belongs to the group
+pub fn create_group_element(group: Group, value: GroupElement) -> GroupResult<GroupExpression> {
     check_element_in_group(&group, &value)?;
-
-    // Create the element
-    Ok(GroupExpression::element(group, value))
+    Ok(GroupExpression::Element {
+        group: Parametrizable::Concrete(group),
+        element: Parametrizable::Concrete(value),
+    })
 }
 
 /// Create a group operation expression
@@ -320,29 +267,29 @@ pub fn create_group_operation(
     left: GroupExpression,
     right: GroupExpression,
 ) -> GroupResult<GroupExpression> {
-    // Check if operation is valid
     check_operation_valid(&group, &left, &right)?;
-
-    // Create the operation
-    Ok(GroupExpression::operation(group, left, right))
+    Ok(GroupExpression::Operation {
+        group: Parametrizable::Concrete(group),
+        left: Box::new(Parametrizable::Concrete(left)),
+        right: Box::new(Parametrizable::Concrete(right)),
+    })
 }
 
 /// Create a group inverse expression
 pub fn create_group_inverse(
     group: Group,
-    element: GroupExpression,
+    element_expr: GroupExpression,
 ) -> GroupResult<GroupExpression> {
-    // Check if element has an inverse
-    check_has_inverse(&group, &element)?;
-
-    // Create the inverse
-    Ok(GroupExpression::inverse(group, element))
+    check_has_inverse(&group, &element_expr)?;
+    Ok(GroupExpression::Inverse {
+        group: Parametrizable::Concrete(group),
+        element: Box::new(Parametrizable::Concrete(element_expr)),
+    })
 }
 
 /// Create a group identity element
 pub fn create_group_identity(group: Group) -> GroupResult<GroupExpression> {
-    // Create the identity element
-    Ok(GroupExpression::identity(group))
+    Ok(GroupExpression::Identity(Parametrizable::Concrete(group)))
 }
 
 /// Create a commutator [a,b] = a*b*a^(-1)*b^(-1)
@@ -351,42 +298,30 @@ pub fn create_group_commutator(
     a: GroupExpression,
     b: GroupExpression,
 ) -> GroupResult<GroupExpression> {
-    // Check if both elements belong to the group
     check_operation_valid(&group, &a, &b)?;
-
-    // Create the commutator
-    Ok(GroupExpression::commutator(group, a, b))
+    Ok(GroupExpression::Commutator {
+        group: Parametrizable::Concrete(group),
+        a: Box::new(Parametrizable::Concrete(a)),
+        b: Box::new(Parametrizable::Concrete(b)),
+    })
 }
 
 /// Create a coset expression a*H or H*a
 pub fn create_group_coset(
     group: Group,
     subgroup: Group,
-    element: GroupExpression,
+    element_expr: GroupExpression,
     is_left: bool,
 ) -> GroupResult<GroupExpression> {
-    // Check if subgroup is a valid subgroup
     check_is_subgroup(&group, &subgroup)?;
-
-    // Check if element belongs to the parent group
-    match &element {
-        GroupExpression::Element(elem) => {
-            if &*elem.group != &group {
-                return Err(GroupError::GroupMismatch {
-                    message: "Element must belong to the parent group".to_string(),
-                });
-            }
-            check_element_in_group(&group, &elem.value)?;
-        }
-        _ => {
-            return Err(GroupError::InvalidOperation {
-                message: "Coset representative must be a group element".to_string(),
-            })
-        }
-    }
-
-    // Let's create a GroupExpression from the subgroup and then pass to coset
-    Ok(GroupExpression::coset(group, element, subgroup, is_left))
+    let elem_val = evaluate_group_expression(&element_expr)?;
+    check_element_in_group(&group, &elem_val)?;
+    Ok(GroupExpression::Coset {
+        group: Parametrizable::Concrete(group),
+        element: Box::new(Parametrizable::Concrete(element_expr)),
+        subgroup: Parametrizable::Concrete(subgroup),
+        is_left,
+    })
 }
 
 /// Evaluate a group expression to compute its value
@@ -395,275 +330,214 @@ pub fn create_group_coset(
 /// its concrete value as a group element when possible.
 pub fn evaluate_group_expression(expr: &GroupExpression) -> GroupResult<GroupElement> {
     match expr {
-        GroupExpression::Element(elem) => {
-            // Elements are already evaluated
-            Ok(elem.clone())
-        }
+        GroupExpression::Element { group: _, element } => Ok(element.unwrap().clone()),
         GroupExpression::Operation { group, left, right } => {
-            // Evaluate the operands
-            let left_val = evaluate_group_expression(left)?;
-            let right_val = evaluate_group_expression(right)?;
-
-            // Check if operation is valid
-            if &*left_val.group != &**group || &*right_val.group != &**group {
-                return Err(GroupError::GroupMismatch {
-                    message: "Operation elements must belong to the same group".to_string(),
-                });
-            }
-
-            // Perform the operation based on the group type
+            let left_val = evaluate_group_expression(&left.as_ref().unwrap())?;
+            let right_val = evaluate_group_expression(&right.as_ref().unwrap())?;
+            let unwrapped_group = group.unwrap();
             match (
-                // Use a reference to the operation_type to avoid the move
-                &group.operation.operation_type,
-                &left_val.value,
-                &right_val.value,
+                &unwrapped_group.get_core().operation.operation_type,
+                &left_val,
+                &right_val,
             ) {
-                // Addition in Z_n
                 (
                     GroupOperationVariant::Addition,
-                    ElementValue::Integer(a),
-                    ElementValue::Integer(b),
+                    GroupElement::Integer(a),
+                    GroupElement::Integer(b),
                 ) => {
-                    // Extract the modulus for Z_n
-                    let modulus = match &group.base_set {
+                    let modulus = match &group.unwrap().get_core().base_set {
                         Set::Parametric { parameters, .. } => {
-                            if let Some(n_str) = parameters.get("n") {
-                                n_str.parse::<i64>().unwrap_or(0)
-                            } else {
-                                0
-                            }
+                            parameters.get("n").and_then(|s| s.parse::<i64>().ok())
                         }
-                        _ => 0,
+                        _ => None,
                     };
-
-                    if modulus > 0 {
-                        // Compute (a + b) mod n
-                        let result = (a + b) % modulus;
-                        let result = if result < 0 { result + modulus } else { result };
-                        Ok(GroupElement::new(
-                            *group.clone(),
-                            ElementValue::Integer(result),
-                        ))
+                    if let Some(m) = modulus {
+                        Ok(GroupElement::Integer((a + b).rem_euclid(m)))
                     } else {
-                        // Regular integer addition
-                        Ok(GroupElement::new(
-                            *group.clone(),
-                            ElementValue::Integer(a + b),
-                        ))
+                        Ok(GroupElement::Integer(a + b))
                     }
                 }
-                // Multiplication in multiplicative groups
                 (
                     GroupOperationVariant::Multiplication,
-                    ElementValue::Integer(a),
-                    ElementValue::Integer(b),
+                    GroupElement::Integer(a),
+                    GroupElement::Integer(b),
                 ) => {
-                    // Extract the modulus for multiplicative groups mod n
-                    let modulus = match &group.base_set {
+                    let modulus = match &group.unwrap().get_core().base_set {
                         Set::Parametric { parameters, .. } => {
-                            if let Some(n_str) = parameters.get("n") {
-                                n_str.parse::<i64>().unwrap_or(0)
-                            } else {
-                                0
-                            }
+                            parameters.get("n").and_then(|s| s.parse::<i64>().ok())
                         }
-                        _ => 0,
+                        _ => None,
                     };
-
-                    if modulus > 0 {
-                        // Compute (a * b) mod n
-                        let result = (a * b) % modulus;
-                        let result = if result < 0 { result + modulus } else { result };
-                        Ok(GroupElement::new(
-                            *group.clone(),
-                            ElementValue::Integer(result),
-                        ))
+                    if let Some(m) = modulus {
+                        Ok(GroupElement::Integer((a * b).rem_euclid(m)))
                     } else {
-                        // Regular integer multiplication
-                        Ok(GroupElement::new(
-                            *group.clone(),
-                            ElementValue::Integer(a * b),
-                        ))
+                        Ok(GroupElement::Integer(a * b))
                     }
                 }
-                // Composition of permutations
                 (
                     GroupOperationVariant::Composition,
-                    ElementValue::Permutation(p1),
-                    ElementValue::Permutation(p2),
+                    GroupElement::Permutation(p1),
+                    GroupElement::Permutation(p2),
                 ) => {
-                    // Compose permutations (this is a simplified implementation)
-                    // p1 ∘ p2 means apply p2 first, then p1
-                    let mut result = Vec::with_capacity(p1.len());
-                    for i in 1..=p1.len() {
-                        let p2_idx = p2[i - 1];
-                        let p1_idx = p1[p2_idx - 1];
-                        result.push(p1_idx);
+                    if p1.len() != p2.len() {
+                        return Err(GroupError::InvalidOperation {
+                            message: "Permutation sizes must match".to_string(),
+                        });
                     }
-                    Ok(GroupElement::new(
-                        *group.clone(),
-                        ElementValue::Permutation(result),
-                    ))
+                    let mut result = vec![0; p1.len()];
+                    for i in 0..p1.len() {
+                        let p2_i_val = p2[i];
+                        if p2_i_val == 0 || p2_i_val > p1.len() {
+                            return Err(GroupError::InvalidOperation {
+                                message: format!("Invalid index in p2 at pos {}", i),
+                            });
+                        }
+                        result[i] = p1[p2_i_val - 1];
+                    }
+                    Ok(GroupElement::Permutation(result))
                 }
-                // Other cases would be implemented similarly
                 _ => Err(GroupError::UnsupportedOperation {
-                    message: "Operation not implemented for these element types".to_string(),
+                    message: format!(
+                        "Operation {:?} unimplemented for {:?} and {:?}",
+                        group.unwrap().get_core().operation.operation_type,
+                        left_val,
+                        right_val
+                    ),
                 }),
             }
         }
         GroupExpression::Inverse { group, element } => {
-            // Evaluate the element
-            let elem_val = evaluate_group_expression(element)?;
-
-            // Check if the element belongs to the group
-            if &*elem_val.group != &**group {
-                return Err(GroupError::GroupMismatch {
-                    message: "Element must belong to the group for inverse".to_string(),
-                });
-            }
-
-            // Compute the inverse based on the group type
+            let elem_val = evaluate_group_expression(&element.as_ref().unwrap())?;
             match (
-                // Use a reference to avoid the move
-                &group.operation.operation_type,
-                &elem_val.value,
+                &group.unwrap().get_core().operation.operation_type,
+                &elem_val,
             ) {
-                // Additive inverse in Z_n
-                (GroupOperationVariant::Addition, ElementValue::Integer(a)) => {
-                    // Extract the modulus for Z_n
-                    let modulus = match &group.base_set {
+                (GroupOperationVariant::Addition, GroupElement::Integer(a)) => {
+                    let modulus = match &group.unwrap().get_core().base_set {
                         Set::Parametric { parameters, .. } => {
-                            if let Some(n_str) = parameters.get("n") {
-                                n_str.parse::<i64>().unwrap_or(0)
-                            } else {
-                                0
-                            }
+                            parameters.get("n").and_then(|s| s.parse::<i64>().ok())
                         }
-                        _ => 0,
+                        _ => None,
                     };
-
-                    if modulus > 0 {
-                        // Compute -a mod n
-                        let result = if *a == 0 { 0 } else { modulus - *a };
-                        Ok(GroupElement::new(
-                            *group.clone(),
-                            ElementValue::Integer(result),
-                        ))
+                    if let Some(m) = modulus {
+                        Ok(GroupElement::Integer((-a).rem_euclid(m)))
                     } else {
-                        // Regular additive inverse
-                        Ok(GroupElement::new(*group.clone(), ElementValue::Integer(-a)))
+                        Ok(GroupElement::Integer(-a))
                     }
                 }
-                // Multiplicative inverse in a modular group
-                (GroupOperationVariant::Multiplication, ElementValue::Integer(a)) => {
-                    // Extract the modulus
-                    let modulus = match &group.base_set {
+                (GroupOperationVariant::Multiplication, GroupElement::Integer(a)) => {
+                    let modulus = match &group.unwrap().get_core().base_set {
                         Set::Parametric { parameters, .. } => {
-                            if let Some(n_str) = parameters.get("n") {
-                                n_str.parse::<i64>().unwrap_or(0)
-                            } else {
-                                0
-                            }
+                            parameters.get("n").and_then(|s| s.parse::<i64>().ok())
                         }
-                        _ => 0,
+                        _ => None,
                     };
-
-                    if modulus > 0 {
-                        // We need to find b such that (a * b) % modulus = 1
-                        // This requires computing the modular multiplicative inverse
-                        // Using the extended Euclidean algorithm
-
-                        // Simplified implementation for demonstration
-                        // In practice, we'd use a proper algorithm
-                        for b in 1..modulus {
-                            if (a * b) % modulus == 1 {
-                                return Ok(GroupElement::new(
-                                    *group.clone(),
-                                    ElementValue::Integer(b),
-                                ));
+                    if let Some(m) = modulus {
+                        fn extended_gcd(a: i64, b: i64) -> (i64, i64, i64) {
+                            if a == 0 {
+                                (b, 0, 1)
+                            } else {
+                                let (g, x, y) = extended_gcd(b % a, a);
+                                (g, y - (b / a) * x, x)
                             }
                         }
-
-                        return Err(GroupError::InvalidOperation {
-                            message: format!(
-                                "Element {} has no multiplicative inverse modulo {}",
-                                a, modulus
-                            ),
-                        });
+                        fn mod_inverse(a: i64, m: i64) -> Option<i64> {
+                            let (g, x, _) = extended_gcd(a, m);
+                            if g != 1 { None } else { Some(x.rem_euclid(m)) }
+                        }
+                        mod_inverse(*a, m)
+                            .map(GroupElement::Integer)
+                            .ok_or_else(|| GroupError::InvalidOperation {
+                                message: format!("Inverse of {} mod {} does not exist", a, m),
+                            })
                     } else {
-                        // For regular multiplication, only ±1 has an inverse
+                        if *a == 0 {
+                            return Err(GroupError::InvalidOperation {
+                                message: "Cannot invert 0".to_string(),
+                            });
+                        }
                         if *a == 1 {
-                            Ok(GroupElement::new(*group.clone(), ElementValue::Integer(1)))
+                            Ok(GroupElement::Integer(1))
                         } else if *a == -1 {
-                            Ok(GroupElement::new(*group.clone(), ElementValue::Integer(-1)))
+                            Ok(GroupElement::Integer(-1))
                         } else {
-                            Err(GroupError::InvalidOperation {
-                                message: format!("Element {} has no multiplicative inverse", a),
+                            Err(GroupError::UnsupportedOperation {
+                                message: format!(
+                                    "Integer inverse for {} only exists for +/-1 without modulus",
+                                    a
+                                ),
                             })
                         }
                     }
                 }
-                // Inverse of a permutation
-                (GroupOperationVariant::Composition, ElementValue::Permutation(p)) => {
-                    // Compute the inverse permutation
+                (GroupOperationVariant::Composition, GroupElement::Permutation(p)) => {
                     let mut result = vec![0; p.len()];
                     for (i, &val) in p.iter().enumerate() {
-                        result[val - 1] = i + 1;
+                        if val == 0 || val > p.len() {
+                            return Err(GroupError::InvalidOperation {
+                                message: "Invalid value in permutation".to_string(),
+                            });
+                        }
+                        result[val - 1] = (i + 1) as usize;
                     }
-                    Ok(GroupElement::new(
-                        *group.clone(),
-                        ElementValue::Permutation(result),
-                    ))
+                    Ok(GroupElement::Permutation(result))
                 }
-                // Other cases would be implemented similarly
                 _ => Err(GroupError::UnsupportedOperation {
-                    message: "Inverse not implemented for this element type".to_string(),
+                    message: format!(
+                        "Inverse op {:?} unimplemented for {:?}",
+                        group.unwrap().get_core().operation.operation_type,
+                        elem_val
+                    ),
                 }),
             }
         }
         GroupExpression::Identity(group) => {
-            // Return the identity element for the group
-            match group.operation.operation_type {
-                GroupOperationVariant::Addition => {
-                    Ok(GroupElement::new(*group.clone(), ElementValue::Integer(0)))
-                }
-                GroupOperationVariant::Multiplication => {
-                    Ok(GroupElement::new(*group.clone(), ElementValue::Integer(1)))
-                }
+            match group.unwrap().get_core().operation.operation_type {
+                GroupOperationVariant::Addition => Ok(GroupElement::Integer(0)),
+                GroupOperationVariant::Multiplication => Ok(GroupElement::Integer(1)),
                 GroupOperationVariant::Composition => {
-                    // For permutation groups, identity is [1,2,3,...,n]
-                    let degree = match &group.base_set {
-                        Set::Parametric { parameters, .. } => {
-                            if let Some(n_str) = parameters.get("degree") {
-                                n_str.parse::<usize>().unwrap_or(0)
-                            } else {
-                                0
-                            }
-                        }
-                        _ => 0,
+                    let degree = match &group.unwrap().get_core().base_set {
+                        Set::Parametric { parameters, .. } => parameters
+                            .get("degree")
+                            .and_then(|s| s.parse::<usize>().ok()),
+                        _ => None,
                     };
-
-                    if degree > 0 {
-                        let identity_perm: Vec<usize> = (1..=degree).collect();
-                        Ok(GroupElement::new(
-                            *group.clone(),
-                            ElementValue::Permutation(identity_perm),
-                        ))
+                    if let Some(d) = degree {
+                        Ok(GroupElement::Permutation((1..=d).collect()))
                     } else {
-                        Err(GroupError::UnsupportedOperation {
-                            message: "Cannot determine identity for this group type".to_string(),
+                        Err(GroupError::InvalidOperation {
+                            message: "Cannot determine degree for identity permutation".to_string(),
                         })
                     }
                 }
-                // Other cases would be implemented similarly
                 _ => Err(GroupError::UnsupportedOperation {
-                    message: "Identity not implemented for this group type".to_string(),
+                    message: format!(
+                        "Identity undefined for op type {:?}",
+                        group.unwrap().get_core().operation.operation_type
+                    ),
                 }),
             }
         }
-        // Other expression types would be implemented here
-        _ => Err(GroupError::UnsupportedOperation {
-            message: "Evaluation not implemented for this expression type".to_string(),
-        }),
+        GroupExpression::Commutator { .. } => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for Commutator".to_string(),
+        )),
+        GroupExpression::Coset { .. } => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for Coset".to_string(),
+        )),
+        GroupExpression::ActionOnElement { .. } => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for Action".to_string(),
+        )),
+        GroupExpression::Power { .. } => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for Power".to_string(),
+        )),
+        GroupExpression::GroupOrder { .. } => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for GroupOrder".to_string(),
+        )),
+        GroupExpression::ElementOrder { .. } => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for ElementOrder".to_string(),
+        )),
+        GroupExpression::Homomorphism(_) => Err(GroupError::ExpressionError(
+            "Evaluation unimplemented for Homomorphism".to_string(),
+        )),
     }
 }

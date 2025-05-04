@@ -41,7 +41,10 @@ pub fn prove_quadratic_formula() -> Theorem {
     let name = "Quadratic Formula";
     let statement = MathRelation::implies(
         MathRelation::equal(polynomial, create_var("0")),
-        MathRelation::custom("SolutionFor".to_string(), vec![solution, equation]),
+        MathRelation::Todo {
+            name: "SolutionFor".to_string(),
+            expressions: vec![solution, equation],
+        },
     );
 
     let goal = ProofGoal::new(statement);
@@ -356,7 +359,10 @@ pub fn prove_fermats_little_theorem() -> Theorem {
     // Create the theorem: If p is prime and p doesn't divide a, then a^p ≡ a (mod p)
     let theorem_id = "fermats_little_theorem";
     let name = "Fermat's Little Theorem";
-    let statement = MathRelation::custom("Congruent".to_string(), vec![expr1, expr2, p]);
+    let statement = MathRelation::Todo {
+        name: "Congruent".to_string(),
+        expressions: vec![expr1, expr2, p],
+    };
 
     let goal = ProofGoal::new(statement);
 

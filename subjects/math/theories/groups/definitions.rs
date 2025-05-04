@@ -1,17 +1,24 @@
-use super::super::super::super::math::formalism::expressions::MathExpression;
-use super::super::super::super::math::formalism::relations::MathRelation;
-use super::super::super::super::math::theories::VariantSet;
-use super::super::super::super::math::theories::topology::definitions::TopologicalSpace;
-use super::super::super::super::math::theories::zfc::set::{Set, SetProperty};
+use crate::subjects::math::formalism::core::MathObject;
+use crate::subjects::math::formalism::expressions::Identifier;
+use crate::subjects::math::formalism::extract::Parametrizable;
+
+use super::super::super::formalism::expressions::{MathExpression, TheoryExpression};
+use super::super::super::formalism::relations::MathRelation;
+use super::super::VariantSet;
+use super::super::fields::definitions::Field;
+use super::super::topology::definitions::TopologicalSpace;
+use super::super::zfc::set::{Set, SetProperty};
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::hash::Hash;
+use std::hash::Hasher;
 use thiserror::Error;
 
 //==== GROUP-SPECIFIC OPERATION TYPES ====//
 
 /// Types of operations specific to group theory
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupOperationVariant {
     /// Standard multiplication (used in most abstract groups)
     Multiplication,
@@ -30,7 +37,7 @@ pub enum GroupOperationVariant {
 }
 
 /// Notation used for group operations
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupNotation {
     /// Infix notation: a * b
     Infix(GroupSymbol),
@@ -41,7 +48,7 @@ pub enum GroupNotation {
 }
 
 /// Common symbols used in group theory
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupSymbol {
     /// Multiplication: ×
     Times,
@@ -62,7 +69,7 @@ pub enum GroupSymbol {
 }
 
 /// Identity element for group operations
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupIdentity {
     /// Multiplicative identity: 1
     One,
@@ -77,7 +84,7 @@ pub enum GroupIdentity {
 }
 
 /// Inverse operation types in group theory
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupInverse {
     /// Multiplicative inverse: x⁻¹
     MultiplicativeInverse,
@@ -92,7 +99,7 @@ pub enum GroupInverse {
 }
 
 /// How inverses are applied in groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupInverseApplication {
     /// Left inverse: b*a = e
     Left,
@@ -103,7 +110,7 @@ pub enum GroupInverseApplication {
 }
 
 /// Properties specific to group operations
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupOperationProperty {
     /// Whether the operation is associative (required for groups)
     Associative,
@@ -114,7 +121,7 @@ pub enum GroupOperationProperty {
 }
 
 /// Complete binary operation structure specific to group theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GroupOperation {
     /// Type of operation
     pub operation_type: GroupOperationVariant,
@@ -133,6 +140,25 @@ pub struct GroupOperation {
 
     /// Properties of this operation
     pub properties: Vec<GroupOperationProperty>,
+
+    /// For product operations, contains information about the product structure
+    pub product_info: Option<ProductInfo>,
+}
+
+/// Information about product operations
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ProductInfo {
+    /// The type of product operation
+    pub operation: ProductOperation,
+
+    /// For semidirect products, the action mapping
+    pub action: Option<String>,
+
+    /// For fibered products, the homomorphism
+    pub homomorphism: Option<String>,
+
+    /// Properties specific to this product operation
+    pub properties: VariantSet<ProductProperty>,
 }
 
 impl Default for GroupOperation {
@@ -144,83 +170,164 @@ impl Default for GroupOperation {
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::TwoSided,
             properties: vec![GroupOperationProperty::Associative],
+            product_info: None,
         }
     }
 }
 
-/// A group (G,·) is a set G with a binary operation · satisfying:
-/// 1. Associativity: (a·b)·c = a·(b·c)
-/// 2. Identity: ∃e ∈ G: e·a = a·e = a
-/// 3. Inverses: ∀a ∈ G, ∃b ∈ G: a·b = b·a = e
-///
-/// Key concepts:
-/// - Subgroups: Subsets closed under operation
-/// - Cosets: Translations of subgroups
-/// - Normal subgroups: Invariant under conjugation
-/// - Quotient groups: G/N for normal N
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub struct Group {
+/// Core algebraic structure of a group, containing the minimal data needed to satisfy group axioms
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct GroupBasic {
     /// The underlying set
     pub base_set: Set,
     /// The binary operation with its properties
     pub operation: GroupOperation,
     /// Properties specific to the group structure
-    pub properties: Vec<GroupProperty>,
+    pub props: VariantSet<GroupProperty>,
 }
 
-impl Default for Group {
+impl Default for GroupBasic {
     fn default() -> Self {
-        Group {
+        GroupBasic {
             base_set: Set::empty(),
             operation: GroupOperation::default(),
-            properties: Vec::new(),
+            props: VariantSet::new(),
         }
     }
 }
 
-/// A topological group is a group that is also a topological space,
-/// where the group operations are continuous.
-///
-/// Key concepts:
-/// - Continuous multiplication: G × G → G
-/// - Continuous inversion: G → G
-/// - Local structure: Neighborhoods of identity
-/// - Haar measure: Invariant measure
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct TopologicalGroup {
-    /// The underlying group
-    pub group: Group,
-    /// Properties specific to the topological structure
-    pub properties: Vec<TopologicalGroupProperty>,
+/// Type of product operation used to form a product group
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum ProductOperation {
+    /// Direct product (×): Cartesian product with componentwise operation
+    Direct,
+
+    /// Semidirect product (⋊): Normal subgroup with an action
+    Semidirect {
+        /// The action defining the semidirect product
+        action: Box<GroupAction>,
+    },
+
+    /// Free product (*): No relations between the groups
+    Free,
+
+    /// Wreath product (≀): Special semidirect product with permutation action
+    Wreath,
+
+    /// Central product: Quotient of direct product
+    Central,
+
+    /// Fibered product: Pullback along a homomorphism
+    Fibered {
+        /// The homomorphism defining the fibered product
+        homomorphism: Box<GroupHomomorphism>,
+    },
 }
 
-/// A Lie group is a smooth manifold that is also a group,
-/// where the group operations are smooth maps.
-///
-/// Key concepts:
-/// - Lie algebra: Tangent space at identity
-/// - Exponential map: Lie algebra → Lie group
-/// - One-parameter subgroups
-/// - Adjoint representation
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct LieGroup {
-    /// The underlying topological group
-    pub topological_group: TopologicalGroup,
-    /// Properties specific to the Lie structure
-    pub properties: Vec<LieGroupProperty>,
+/// A product group combining two or more groups with a specific operation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ProductGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+
+    /// The type of product operation used
+    pub operation: ProductOperation,
+
+    /// The component groups
+    pub components: Vec<Box<Group>>,
+
+    /// For semidirect products, identifies which component is normal
+    pub normal_component: Option<usize>,
+
+    /// Product specific properties
+    pub product_props: VariantSet<ProductProperty>,
+}
+
+/// A unified wrapper for all group-like structures
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum Group {
+    /// Basic abstract group
+    Basic(GroupBasic),
+
+    // Groups with additional structure (axiomatically defined)
+    Topological(TopologicalGroup),
+    Lie(LieGroup),
+    Cyclic(CyclicGroup),
+    Symmetric(SymmetricGroup),
+    Dihedral(DihedralGroup),
+    GeneralLinear(GeneralLinearGroup),
+    SpecialLinear(SpecialLinearGroup),
+    Orthogonal(OrthogonalGroup),
+    SpecialOrthogonal(SpecialOrthogonalGroup),
+    Unitary(UnitaryGroup),
+    SpecialUnitary(SpecialUnitaryGroup),
+    Alternating(AlternatingGroup),
+    ModularAdditive(ModularAdditiveGroup),
+    ModularMultiplicative(ModularMultiplicativeGroup),
+    Free(FreeGroup),
+    Trivial(TrivialGroup),
+
+    // Groups defined by operations on other groups
+    Product(ProductGroup),
+    Quotient(QuotientGroup),
+
+    // Groups defined by other explicit constructions (flattened)
+    Kernel(KernelGroup),
+    Image(ImageGroup),
+    Center(CenterGroup),
+    GeneratedSubgroup(GeneratedSubgroup),
+    Normalizer(NormalizerGroup),
+    Centralizer(CentralizerGroup),
+    CommutatorSubgroup(CommutatorSubgroup),
+    SylowSubgroup(SylowSubgroup),
+    WreathProduct(WreathProductGroup),
+    CentralProduct(CentralProductGroup),
+    Pullback(PullbackGroup),
+    Restriction(RestrictionGroup),
+}
+
+/// Variants for property preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum PreservationVariant {
+    /// Preserves finiteness
+    PreservesFiniteness,
+    /// Preserves commutativity
+    PreservesCommutativity,
+    /// Preserves other properties
+    PreservesOther(String),
+}
+
+/// Variants for construction complexity
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ComplexityVariant {
+    /// Simple construction
+    Simple,
+    /// Moderate complexity
+    Moderate,
+    /// Complex construction
+    Complex,
+}
+
+/// Variants for construction canonicity
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum CanonicityVariant {
+    /// The construction method yields a canonically defined object,
+    /// independent of specific choices within the variant data.
+    Canonical,
+    /// The construction method is either inherently non-canonical, or its
+    /// resulting object's canonicity depends on the specific choices
+    /// (e.g., generators, homomorphisms) provided in the variant's data fields.
+    NonCanonical,
 }
 
 /// Properties specific to groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
 pub enum GroupProperty {
     /// Commutativity properties
     Abelian(AbelianPropertyVariant),
 
     /// Finiteness properties
     Finite(FinitePropertyVariant),
-
-    /// Simple finite group
-    FiniteGroup(bool),
 
     /// Simplicity properties
     Simple(SimplePropertyVariant),
@@ -233,7 +340,7 @@ pub enum GroupProperty {
 }
 
 /// Properties specific to topological groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum TopologicalGroupProperty {
     /// Compactness properties
     Compact(CompactPropertyVariant),
@@ -246,7 +353,7 @@ pub enum TopologicalGroupProperty {
 }
 
 /// Properties specific to Lie groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum LieGroupProperty {
     /// Semisimplicity properties
     Semisimple(SemisimplePropertyVariant),
@@ -256,7 +363,7 @@ pub enum LieGroupProperty {
 }
 
 /// Types of abelian groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
 pub enum AbelianPropertyVariant {
     /// Commutative
     Abelian,
@@ -266,7 +373,7 @@ pub enum AbelianPropertyVariant {
 }
 
 /// Types of finite groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
 pub enum FinitePropertyVariant {
     /// Finite order
     Finite(u32),
@@ -279,7 +386,7 @@ pub enum FinitePropertyVariant {
 }
 
 /// Types of simple groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
 pub enum SimplePropertyVariant {
     /// No proper normal subgroups
     Simple,
@@ -292,7 +399,7 @@ pub enum SimplePropertyVariant {
 }
 
 /// Types of solvable groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
 pub enum SolvablePropertyVariant {
     /// Has solvable series
     Solvable,
@@ -305,7 +412,7 @@ pub enum SolvablePropertyVariant {
 }
 
 /// Types of nilpotent groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
 pub enum NilpotentPropertyVariant {
     /// Has nilpotent series
     Nilpotent(u32),
@@ -315,7 +422,7 @@ pub enum NilpotentPropertyVariant {
 }
 
 /// Types of compact groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum CompactPropertyVariant {
     /// Compact
     Compact,
@@ -328,7 +435,7 @@ pub enum CompactPropertyVariant {
 }
 
 /// Types of connected groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum ConnectedPropertyVariant {
     /// Connected
     Connected,
@@ -347,7 +454,7 @@ pub enum ConnectedPropertyVariant {
 }
 
 /// Types of metrizable groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum MetrizablePropertyVariant {
     /// Admits compatible metric
     Metrizable,
@@ -357,7 +464,7 @@ pub enum MetrizablePropertyVariant {
 }
 
 /// Types of semisimple Lie groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum SemisimplePropertyVariant {
     /// No abelian ideals
     Semisimple,
@@ -370,7 +477,7 @@ pub enum SemisimplePropertyVariant {
 }
 
 /// Types of reductive Lie groups
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum ReductivePropertyVariant {
     /// Reductive
     Reductive,
@@ -391,7 +498,7 @@ pub enum GroupAction {
         /// The space being acted on
         space: Set,
         /// The specific point in the space (if any)
-        point: Option<Box<MathExpression>>,
+        point: Option<Box<GroupExpression>>,
         /// Properties of the action
         properties: VariantSet<GroupActionProperty>,
     },
@@ -419,33 +526,8 @@ pub enum GroupAction {
     },
 }
 
-// Fix the GroupAction Hash implementation to not use Set::Named
-impl std::hash::Hash for GroupAction {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        // Hash just the discriminant and minimal data to avoid recursion issues
-        match self {
-            GroupAction::SetAction { space, .. } => {
-                std::mem::discriminant(self).hash(state);
-                // Hash just the description/name of the space if available
-                match space {
-                    Set::Parametric { description, .. } => description.hash(state),
-                    _ => "unknown_set".hash(state),
-                }
-            }
-            GroupAction::VectorSpaceAction { space, .. } => {
-                std::mem::discriminant(self).hash(state);
-                space.hash(state);
-            }
-            GroupAction::TopologicalSpaceAction { space, .. } => {
-                std::mem::discriminant(self).hash(state);
-                space.hash(state);
-            }
-        }
-    }
-}
-
 /// Properties specific to group actions
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GroupActionProperty {
     /// Transitive: Single orbit
     Transitive(TransitivityPropertyVariant),
@@ -458,7 +540,7 @@ pub enum GroupActionProperty {
 }
 
 /// Properties for transitivity of group actions
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum TransitivityPropertyVariant {
     /// Single orbit
     Transitive,
@@ -469,7 +551,7 @@ pub enum TransitivityPropertyVariant {
 }
 
 /// Properties for properness of group actions
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum PropernessPropertyVariant {
     /// Proper action
     Proper,
@@ -482,7 +564,7 @@ pub enum PropernessPropertyVariant {
 }
 
 /// Properties for faithfulness of group actions
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum FaithfulnessPropertyVariant {
     /// Trivial kernel
     Faithful,
@@ -495,7 +577,7 @@ pub enum FaithfulnessPropertyVariant {
 }
 
 /// Properties for freeness of group actions
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
 pub enum FreenessPropertyVariant {
     /// Trivial stabilizers
     Free,
@@ -507,776 +589,351 @@ pub enum FreenessPropertyVariant {
     LocallyFree,
 }
 
-/// Entity information for group relation operations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct GroupRelationEntity {
-    /// Optional ID for referencing this relation
-    pub id: Option<String>,
-
-    /// Optional description explaining this relation instance
-    pub description: Option<String>,
-
-    /// Optional key-value pairs for additional context
-    pub tags: Vec<(String, String)>,
-}
-
 /// Relations specific to group theory
 /// these are the verbs in the language of group theory
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum GroupRelation {
     /// One group is a subgroup of another
     IsSubgroupOf {
-        entity: GroupRelationEntity,
-        subgroup: MathExpression,
-        group: MathExpression,
+        subgroup: Parametrizable<Group>,
+        group: Parametrizable<Group>,
     },
 
     /// One group is a normal subgroup of another
     IsNormalSubgroupOf {
-        entity: GroupRelationEntity,
-        subgroup: MathExpression,
-        group: MathExpression,
+        subgroup: Parametrizable<Group>,
+        group: Parametrizable<Group>,
     },
 
     /// Two groups are isomorphic
     IsIsomorphicTo {
-        entity: GroupRelationEntity,
-        first: MathExpression,
-        second: MathExpression,
+        first: Parametrizable<Group>,
+        second: Parametrizable<Group>,
     },
 
     /// One group is a quotient of another
     IsQuotientOf {
-        entity: GroupRelationEntity,
-        quotient: MathExpression,
-        group: MathExpression,
-        normal_subgroup: MathExpression,
+        quotient: Parametrizable<Group>,
+        group: Parametrizable<Group>,
+        normal_subgroup: Parametrizable<Group>,
     },
 
     /// Element is in the center of a group
     IsInCenterOf {
-        entity: GroupRelationEntity,
-        element: MathExpression,
-        group: MathExpression,
+        element: Parametrizable<GroupExpression>,
+        group: Parametrizable<Group>,
     },
 
     /// Two elements are conjugate in a group
     AreConjugateIn {
-        entity: GroupRelationEntity,
-        element1: MathExpression,
-        element2: MathExpression,
-        group: MathExpression,
+        element1: Parametrizable<GroupElement>,
+        element2: Parametrizable<GroupElement>,
+        group: Parametrizable<Group>,
     },
 
     /// An element has a specified order in a group
     HasOrderInGroup {
-        entity: GroupRelationEntity,
-        element: MathExpression,
-        group: MathExpression,
-        order: usize,
+        element: Parametrizable<GroupExpression>,
+        group: Parametrizable<Group>,
+        order: Parametrizable<usize>,
     },
 
     /// A subgroup is of a specific index in a group
     HasIndexInGroup {
-        entity: GroupRelationEntity,
-        subgroup: MathExpression,
-        group: MathExpression,
-        index: usize,
+        subgroup: Parametrizable<Group>,
+        group: Parametrizable<Group>,
+        index: Parametrizable<usize>,
     },
 
     /// A group has a specific number of elements
     HasOrder {
-        entity: GroupRelationEntity,
-        group: MathExpression,
-        order: usize,
+        group: Parametrizable<Group>,
+        order: Parametrizable<usize>,
     },
 
     /// A group is cyclic with a specific generator
     IsCyclicWithGenerator {
-        entity: GroupRelationEntity,
-        group: MathExpression,
-        generator: MathExpression,
+        group: Parametrizable<Group>,
+        generator: Parametrizable<GroupExpression>,
     },
 
     /// An element normalizes a subgroup
     NormalizesSubgroup {
-        entity: GroupRelationEntity,
-        element: MathExpression,
-        subgroup: MathExpression,
-        group: MathExpression,
+        element: Parametrizable<GroupExpression>,
+        subgroup: Parametrizable<Group>,
+        group: Parametrizable<Group>,
     },
 
     /// An element centralizes a subgroup
     CentralizesSubgroup {
-        entity: GroupRelationEntity,
-        element: MathExpression,
-        subgroup: MathExpression,
-        group: MathExpression,
+        element: Parametrizable<GroupExpression>,
+        subgroup: Parametrizable<Group>,
+        group: Parametrizable<Group>,
     },
 
     /// A subgroup is characteristic
     IsCharacteristicSubgroupOf {
-        entity: GroupRelationEntity,
-        subgroup: MathExpression,
-        group: MathExpression,
+        subgroup: Parametrizable<Group>,
+        group: Parametrizable<Group>,
     },
 
     /// The order of one group divides the order of another
     OrderDivides {
-        entity: GroupRelationEntity,
-        group1: MathExpression,
-        group2: MathExpression,
+        group1: Parametrizable<Group>,
+        group2: Parametrizable<Group>,
     },
 
     /// An element has a unique inverse in a group
     HasUniqueInverse {
-        entity: GroupRelationEntity,
-        element: MathExpression,
-        group: MathExpression,
+        element: Parametrizable<GroupExpression>,
+        group: Parametrizable<Group>,
     },
 
     /// Sylow p-subgroup properties
     SylowSubgroupProperties {
-        entity: GroupRelationEntity,
-        prime: MathExpression,
-        group: MathExpression,
+        prime: Parametrizable<GroupExpression>, // Assuming prime expression can be variable
+        group: Parametrizable<Group>,
     },
 
     /// One element is the inverse of another
     IsInverseOf {
-        entity: GroupRelationEntity,
-        element: MathExpression,
-        inverse: MathExpression,
-        group: MathExpression,
+        element: Parametrizable<GroupExpression>,
+        inverse: Parametrizable<GroupExpression>,
+        group: Parametrizable<Group>,
     },
 
     /// A homomorphism between groups
     IsHomomorphism {
-        entity: GroupRelationEntity,
-        homomorphism: MathExpression,
-        domain: MathExpression,
-        codomain: MathExpression,
+        homomorphism: Parametrizable<GroupExpression>,
+        domain: Parametrizable<Group>,
+        codomain: Parametrizable<Group>,
     },
 
     /// An isomorphic embedding of one group into another
     IsomorphicEmbedding {
-        entity: GroupRelationEntity,
-        source: MathExpression,
-        target: MathExpression,
+        source: Parametrizable<Group>,
+        target: Parametrizable<Group>,
+    },
+
+    /// Asserts a basic group property on a Group.
+    HasBasicProperty {
+        target: Parametrizable<Group>,
+        property: GroupProperty,
+    },
+
+    HasTopologicalProperty {
+        target: Parametrizable<TopologicalGroup>,
+        property: TopologicalGroupProperty,
+    },
+
+    HasLieProperty {
+        target: Parametrizable<LieGroup>,
+        property: LieGroupProperty,
+    },
+
+    /// Asserts a property on a Group Action.
+    HasActionProperty {
+        target: Parametrizable<GroupAction>,
+        property: GroupActionProperty,
+    },
+
+    /// Asserts a property on a Product Group.
+    HasProductProperty {
+        target: Parametrizable<ProductGroup>,
+        property: ProductProperty,
+    },
+
+    /// Asserts a property on a Modular Additive Group.
+    HasModularAdditiveProperty {
+        target: Parametrizable<ModularAdditiveGroup>,
+        property: ModularProperty,
+    },
+
+    /// Asserts a property on a Modular Multiplicative Group.
+    HasModularMultiplicativeProperty {
+        target: Parametrizable<ModularMultiplicativeGroup>,
+        property: ModularProperty,
+    },
+
+    /// Asserts a Matrix property on a General Linear Group.
+    HasGeneralLinearMatrixProperty {
+        target: Parametrizable<GeneralLinearGroup>,
+        property: MatrixProperty,
+    },
+
+    /// Asserts a Linear property on a General Linear Group.
+    HasGeneralLinearLinearProperty {
+        target: Parametrizable<GeneralLinearGroup>,
+        property: LinearProperty,
+    },
+
+    /// Asserts a property on a Special Linear Group.
+    HasSpecialLinearProperty {
+        target: Parametrizable<SpecialLinearGroup>,
+        property: SpecialLinearProperty,
+    },
+
+    /// Asserts a Matrix property on an Orthogonal Group.
+    HasOrthogonalMatrixProperty {
+        target: Parametrizable<OrthogonalGroup>,
+        property: MatrixProperty,
+    },
+
+    /// Asserts a property on a Special Orthogonal Group.
+    HasSpecialOrthogonalProperty {
+        target: Parametrizable<SpecialOrthogonalGroup>,
+        property: SpecialOrthogonalProperty,
+    },
+
+    /// Asserts a Matrix property on a Unitary Group.
+    HasUnitaryMatrixProperty {
+        target: Parametrizable<UnitaryGroup>,
+        property: MatrixProperty,
+    },
+
+    /// Asserts a property on a Special Unitary Group.
+    HasSpecialUnitaryProperty {
+        target: Parametrizable<SpecialUnitaryGroup>,
+        property: SpecialUnitaryProperty,
+    },
+
+    /// Asserts a Permutation property on an Alternating Group.
+    HasAlternatingPermutationProperty {
+        target: Parametrizable<AlternatingGroup>,
+        property: PermutationProperty,
+    },
+
+    /// Asserts a property on a Free Group.
+    HasFreeProperty {
+        target: Parametrizable<FreeGroup>,
+        property: FreeProperty,
+    },
+
+    /// Asserts a property on a Quotient Group.
+    HasQuotientProperty {
+        target: Parametrizable<QuotientGroup>,
+        property: QuotientProperty,
+    },
+
+    /// Asserts a property on a Group Operation.
+    HasOperationProperty {
+        target: Parametrizable<GroupOperation>,
+        property: GroupOperationProperty,
     },
 }
 
 // Helper methods for backward compatibility
 impl GroupRelation {
-    /// Create a new IsSubgroupOf relation
-    pub fn is_subgroup_of(subgroup: &MathExpression, group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
+    /// Create a new IsSubgroupOf relation with concrete groups
+    pub fn is_subgroup_of(subgroup: &Group, group: &Group) -> Self {
         GroupRelation::IsSubgroupOf {
-            entity,
-            subgroup: subgroup.clone(),
-            group: group.clone(),
+            subgroup: Parametrizable::Concrete(subgroup.clone()),
+            group: Parametrizable::Concrete(group.clone()),
         }
     }
 
-    /// Create a new IsNormalSubgroupOf relation
-    pub fn is_normal_subgroup_of(subgroup: &MathExpression, group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
+    /// Create a new IsNormalSubgroupOf relation with concrete groups
+    pub fn is_normal_subgroup_of(subgroup: &Group, group: &Group) -> Self {
         GroupRelation::IsNormalSubgroupOf {
-            entity,
-            subgroup: subgroup.clone(),
-            group: group.clone(),
+            subgroup: Parametrizable::Concrete(subgroup.clone()),
+            group: Parametrizable::Concrete(group.clone()),
         }
     }
 
-    /// Create a new IsIsomorphicTo relation
-    pub fn is_isomorphic_to(first: &MathExpression, second: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
+    /// Create a new IsIsomorphicTo relation with concrete groups
+    pub fn is_isomorphic_to(first: &Group, second: &Group) -> Self {
         GroupRelation::IsIsomorphicTo {
-            entity,
-            first: first.clone(),
-            second: second.clone(),
+            first: Parametrizable::Concrete(first.clone()),
+            second: Parametrizable::Concrete(second.clone()),
         }
     }
 
-    /// Create a new HasOrder relation
-    pub fn has_order(group: &MathExpression, order: usize) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
+    /// Create a new HasOrder relation with concrete group and order
+    pub fn has_order(group: &Group, order: usize) -> Self {
         GroupRelation::HasOrder {
-            entity,
-            group: group.clone(),
-            order,
+            group: Parametrizable::Concrete(group.clone()),
+            order: Parametrizable::Concrete(order), // Keep usize unboxed unless needed
         }
     }
 
-    /// Create a new OrderDivides relation
-    pub fn order_divides(group1: &MathExpression, group2: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
+    /// Create a new OrderDivides relation with concrete groups
+    pub fn order_divides(group1: &Group, group2: &Group) -> Self {
         GroupRelation::OrderDivides {
-            entity,
-            group1: group1.clone(),
-            group2: group2.clone(),
+            group1: Parametrizable::Concrete(group1.clone()),
+            group2: Parametrizable::Concrete(group2.clone()),
         }
     }
 }
 
-// Add constructors for proper mathematical expressions
-impl GroupRelation {
-    // Create a structured representation of a kernel
-    pub fn kernel(homomorphism: &MathExpression) -> GroupExpression {
-        // Create a variable representing the kernel operation
-        let variable_name = "kernel_func";
-
-        // Create a proper Set instead of using Set::default()
-        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
-            parameters: std::collections::HashMap::new(),
-            description: "Kernel set".to_string(),
-            membership_condition: "x ∈ ker(ϕ)".to_string(),
-            properties: super::super::super::super::math::theories::VariantSet::new(),
-        };
-
-        let group = Group {
-            base_set,
-            operation: GroupOperation {
-                operation_type: GroupOperationVariant::Multiplication,
-                notation: GroupNotation::Infix(GroupSymbol::Times),
-                identity: GroupIdentity::One,
-                inverse: GroupInverse::MultiplicativeInverse,
-                inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![GroupOperationProperty::Associative],
-            },
-            properties: Vec::new(),
-        };
-
-        // Use variable to represent the kernel function
-        GroupExpression::variable(group, variable_name)
-    }
-
-    // Create a structured representation of an image
-    pub fn image(homomorphism: &MathExpression) -> GroupExpression {
-        // Create a variable representing the image operation
-        let variable_name = "image_func";
-
-        // Create a proper Set instead of using Set::default()
-        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
-            parameters: std::collections::HashMap::new(),
-            description: "Image set".to_string(),
-            membership_condition: "x ∈ Im(ϕ)".to_string(),
-            properties: super::super::super::super::math::theories::VariantSet::new(),
-        };
-
-        let group = Group {
-            base_set,
-            operation: GroupOperation {
-                operation_type: GroupOperationVariant::Multiplication,
-                notation: GroupNotation::Infix(GroupSymbol::Times),
-                identity: GroupIdentity::One,
-                inverse: GroupInverse::MultiplicativeInverse,
-                inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![GroupOperationProperty::Associative],
-            },
-            properties: Vec::new(),
-        };
-
-        // Use variable to represent the image function
-        GroupExpression::variable(group, variable_name)
-    }
-
-    // Create a structured representation of a quotient group
-    pub fn quotient_group(
-        group: &MathExpression,
-        normal_subgroup: &MathExpression,
-    ) -> GroupExpression {
-        // Create a placeholder group for the quotient with a proper Set
-        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
-            parameters: std::collections::HashMap::new(),
-            description: "Quotient group set".to_string(),
-            membership_condition: "x ∈ G/N".to_string(),
-            properties: super::super::super::super::math::theories::VariantSet::new(),
-        };
-
-        let quotient_group = Group {
-            base_set,
-            operation: GroupOperation {
-                operation_type: GroupOperationVariant::Multiplication,
-                notation: GroupNotation::Infix(GroupSymbol::Times),
-                identity: GroupIdentity::One,
-                inverse: GroupInverse::MultiplicativeInverse,
-                inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![GroupOperationProperty::Associative],
-            },
-            properties: Vec::new(),
-        };
-
-        // Use a variable to represent the quotient group
-        GroupExpression::variable(quotient_group, "quotient_group")
-    }
-
-    // Create a structured representation of a symmetric group on a set
-    pub fn symmetric_group(base_set: &MathExpression) -> GroupExpression {
-        // Create a placeholder group for the symmetric group
-        let sym_set = super::super::super::super::math::theories::zfc::Set::Parametric {
-            parameters: std::collections::HashMap::new(),
-            description: "Symmetric group set".to_string(),
-            membership_condition: "x is a permutation".to_string(),
-            properties: super::super::super::super::math::theories::VariantSet::new(),
-        };
-
-        let sym_group = Group {
-            base_set: sym_set,
-            operation: GroupOperation {
-                operation_type: GroupOperationVariant::Composition,
-                notation: GroupNotation::Infix(GroupSymbol::Circle),
-                identity: GroupIdentity::IdentityPermutation,
-                inverse: GroupInverse::PermutationInverse,
-                inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![GroupOperationProperty::Associative],
-            },
-            properties: Vec::new(),
-        };
-
-        // Use a variable to represent the symmetric group
-        GroupExpression::variable(sym_group, "symmetric_group")
-    }
-
-    // Create an "element of" expression for group membership
-    pub fn element_of_expr(element: &MathExpression, group: &MathExpression) -> MathRelation {
-        // Create a SetTheoryRelation::ElementOf and wrap it in MathRelation::SetTheory
-        let set_entity =
-            super::super::super::super::math::theories::zfc::relations::SetTheoryRelationEntity {
-                id: None,
-                description: None,
-                tags: Vec::new(),
-            };
-
-        MathRelation::SetTheory(
-            super::super::super::super::math::theories::zfc::relations::SetTheoryRelation::ElementOf {
-                entity: set_entity,
-                element: element.clone(),
-                set: group.clone(),
-            },
-        )
-    }
-
-    // Define a structured representation for "p divides n" where p and n are integers
-    pub fn integer_divides(divisor: &MathExpression, dividend: &MathExpression) -> MathRelation {
-        // Create a NumberTheoryRelation::Divides and wrap it in MathRelation::NumberTheory
-        let num_entity = super::super::super::super::math::theories::number_theory::definitions::NumberTheoryRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
-
-        MathRelation::NumberTheory(
-            super::super::super::super::math::theories::number_theory::definitions::NumberTheoryRelation::Divides {
-                entity: num_entity,
-                divisor: divisor.clone(),
-                dividend: dividend.clone(),
-            }
-        )
-    }
-
-    // Add a structured representation for Sylow p-subgroups
-    pub fn sylow_p_subgroup(prime: &MathExpression, group: &MathExpression) -> GroupExpression {
-        // Create a placeholder group for the Sylow subgroup
-        let sylow_set = super::super::super::super::math::theories::zfc::Set::Parametric {
-            parameters: std::collections::HashMap::new(),
-            description: "Sylow p-subgroup set".to_string(),
-            membership_condition: "x ∈ Syl_p(G)".to_string(),
-            properties: super::super::super::super::math::theories::VariantSet::new(),
-        };
-
-        let sylow_group = Group {
-            base_set: sylow_set,
-            operation: GroupOperation {
-                operation_type: GroupOperationVariant::Multiplication,
-                notation: GroupNotation::Infix(GroupSymbol::Times),
-                identity: GroupIdentity::One,
-                inverse: GroupInverse::MultiplicativeInverse,
-                inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![GroupOperationProperty::Associative],
-            },
-            properties: Vec::new(),
-        };
-
-        // Use a variable to represent the Sylow subgroup
-        GroupExpression::variable(sylow_group, "sylow_p_subgroup")
-    }
-
-    // Add a structured representation for conjugate elements
-    pub fn are_conjugate(
-        x: &MathExpression,
-        y: &MathExpression,
-        group: &MathExpression,
-    ) -> GroupRelation {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Elements are conjugate in the group".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupRelation::AreConjugateIn {
-            entity,
-            element1: x.clone(),
-            element2: y.clone(),
-            group: group.clone(),
-        }
-    }
-
-    // Create a structured representation for "is an inverse of" relation using MathRelation
-    pub fn is_inverse_relation(x: &MathExpression, y: &MathExpression) -> MathRelation {
-        // This should create a representation that x is the inverse of y in the group
-        // First create the identity element
-        let identity = MathExpression::Var(
-            super::super::super::super::math::formalism::expressions::Identifier::O(111),
-        );
-
-        // Since BinaryOp is removed, we need to use GroupExpression and convert
-        // Create a placeholder group
-        let base_set = super::super::super::super::math::theories::zfc::Set::Parametric {
-            parameters: std::collections::HashMap::new(),
-            description: "Group set".to_string(),
-            membership_condition: "x ∈ G".to_string(),
-            properties: super::super::super::super::math::theories::VariantSet::new(),
-        };
-
-        let group = Group {
-            base_set,
-            operation: GroupOperation {
-                operation_type: GroupOperationVariant::Multiplication,
-                notation: GroupNotation::Infix(GroupSymbol::Times),
-                identity: GroupIdentity::One,
-                inverse: GroupInverse::MultiplicativeInverse,
-                inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![GroupOperationProperty::Associative],
-            },
-            properties: Vec::new(),
-        };
-
-        // Create x * y as GroupExpression
-        let x_expr = GroupExpression::from_math_expression(x, &group)
-            .unwrap_or_else(|_| GroupExpression::variable(group.clone(), "x"));
-        let y_expr = GroupExpression::from_math_expression(y, &group)
-            .unwrap_or_else(|_| GroupExpression::variable(group.clone(), "y"));
-
-        let product = GroupExpression::operation(group, x_expr, y_expr);
-        let product_math = product.to_math_expression();
-
-        MathRelation::equal(product_math, identity)
-    }
-
-    // Add a structured representation for "is in the center of" relation
-    pub fn is_in_center_of(element: &MathExpression, group: &MathExpression) -> GroupRelation {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Element is in the center of the group".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupRelation::IsInCenterOf {
-            entity,
-            element: element.clone(),
-            group: group.clone(),
-        }
-    }
-}
-
-/// Important abstract mathematical objects in group theory
+// Modify the GroupExpression enum to include a ProductOperation
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum GroupObject {
-    /// The kernel of a homomorphism: Ker(φ)
-    Kernel {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The homomorphism
-        homomorphism: Box<MathExpression>,
+pub enum GroupExpression {
+    /// A concrete element in a group
+    Element {
+        group: Parametrizable<Group>,          // Group can be variable
+        element: Parametrizable<GroupElement>, // Element can be variable
     },
-
-    /// The image of a homomorphism: Im(φ)
-    Image {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The homomorphism
-        homomorphism: Box<MathExpression>,
+    /// The identity element of a group
+    Identity(Parametrizable<Group>), // Group can be variable
+    /// A group operation between two element expressions
+    Operation {
+        group: Parametrizable<Group>, // Group can be variable
+        left: Box<Parametrizable<GroupExpression>>,
+        right: Box<Parametrizable<GroupExpression>>,
     },
-
-    /// A quotient group: G/N
-    QuotientGroup {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The group
-        group: Box<MathExpression>,
-        /// The normal subgroup
-        normal_subgroup: Box<MathExpression>,
+    /// The inverse of an expression
+    Inverse {
+        group: Parametrizable<Group>, // Group can be variable
+        element: Box<Parametrizable<GroupExpression>>,
     },
-
-    /// A symmetric group: Sym(G)
-    SymmetricGroup {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The base set
-        base_set: Box<MathExpression>,
+    /// A commutator of two elements
+    Commutator {
+        group: Parametrizable<Group>, // Group can be variable
+        a: Box<Parametrizable<GroupExpression>>,
+        b: Box<Parametrizable<GroupExpression>>,
     },
-
-    /// A Sylow p-subgroup: Syl_p(G)
-    SylowSubgroup {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The prime
-        prime: Box<MathExpression>,
-        /// The group
-        group: Box<MathExpression>,
+    /// A coset of a subgroup
+    Coset {
+        group: Parametrizable<Group>, // Group can be variable
+        element: Box<Parametrizable<GroupExpression>>,
+        subgroup: Parametrizable<Group>, // Subgroup can be variable
+        is_left: bool,
     },
-
-    /// The center of a group: Z(G)
-    Center {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The group
-        group: Box<MathExpression>,
+    /// A group action applied to an element
+    ActionOnElement {
+        action: Parametrizable<GroupAction>, // Action can be variable
+        element: Box<Parametrizable<GroupExpression>>,
     },
-
-    /// A centralizer: C_G(x)
-    Centralizer {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The element being centralized
-        element: Box<MathExpression>,
-        /// The group
-        group: Box<MathExpression>,
+    /// Represents a power (exponentiation) of an element
+    Power {
+        group: Parametrizable<Group>, // Group can be variable
+        base: Box<Parametrizable<GroupExpression>>,
+        exponent: Parametrizable<i32>, // Exponent can be variable
     },
-
-    /// A normalizer: N_G(H)
-    Normalizer {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The subgroup being normalized
-        subgroup: Box<MathExpression>,
-        /// The group
-        group: Box<MathExpression>,
-    },
-
-    /// The commutator subgroup: [G,G]
-    CommutatorSubgroup {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The group
-        group: Box<MathExpression>,
-    },
-
     /// The order of a group: |G|
     GroupOrder {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The group
-        group: Box<MathExpression>,
+        group: Parametrizable<Group>, // Group can be variable
     },
-
     /// The order of an element: |g|
     ElementOrder {
-        /// Entity information
-        entity: GroupRelationEntity,
-        /// The element
-        element: Box<MathExpression>,
-        /// The group
-        group: Box<MathExpression>,
+        element: Box<Parametrizable<GroupExpression>>,
+        group: Parametrizable<Group>, // Group can be variable
     },
+    /// A homomorphism between groups: φ : G → H
+    Homomorphism(Parametrizable<GroupHomomorphism>), // Homomorphism itself can be variable
 }
 
-// Implementation for GroupObject
-impl GroupObject {
-    /// Create a kernel object
-    pub fn kernel(homomorphism: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Kernel of a homomorphism".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::Kernel {
-            entity,
-            homomorphism: Box::new(homomorphism.clone()),
-        }
-    }
-
-    /// Create an image object
-    pub fn image(homomorphism: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Image of a homomorphism".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::Image {
-            entity,
-            homomorphism: Box::new(homomorphism.clone()),
-        }
-    }
-
-    /// Create a quotient group object
-    pub fn quotient_group(group: &MathExpression, normal_subgroup: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Quotient group".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::QuotientGroup {
-            entity,
-            group: Box::new(group.clone()),
-            normal_subgroup: Box::new(normal_subgroup.clone()),
-        }
-    }
-
-    /// Create a symmetric group object
-    pub fn symmetric_group(base_set: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Symmetric group".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::SymmetricGroup {
-            entity,
-            base_set: Box::new(base_set.clone()),
-        }
-    }
-
-    /// Create a Sylow p-subgroup object
-    pub fn sylow_subgroup(prime: &MathExpression, group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Sylow p-subgroup".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::SylowSubgroup {
-            entity,
-            prime: Box::new(prime.clone()),
-            group: Box::new(group.clone()),
-        }
-    }
-
-    /// Create a group order object |G|
-    pub fn group_order(group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Order of a group".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::GroupOrder {
-            entity,
-            group: Box::new(group.clone()),
-        }
-    }
-
-    /// Create a element order object |g|
-    pub fn element_order(element: &MathExpression, group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Order of an element".to_string()),
-            tags: Vec::new(),
-        };
-
-        GroupObject::ElementOrder {
-            entity,
-            element: Box::new(element.clone()),
-            group: Box::new(group.clone()),
-        }
-    }
-
-    /// Convert a GroupObject to a MathExpression
-    pub fn to_expression(&self) -> MathExpression {
-        use super::super::super::super::math::formalism::expressions::Identifier;
-
-        // Create a simplified expression for each group object type
-        match self {
-            GroupObject::Kernel { homomorphism, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(100))
-            }
-            GroupObject::Image { homomorphism, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(101))
-            }
-            GroupObject::QuotientGroup {
-                group,
-                normal_subgroup,
-                ..
-            } => {
-                // Using Variable instead of BinaryOp
-                MathExpression::Var(Identifier::O(102))
-            }
-            GroupObject::SymmetricGroup { base_set, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(103))
-            }
-            GroupObject::SylowSubgroup { prime, group, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(104))
-            }
-            GroupObject::GroupOrder { group, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(105))
-            }
-            GroupObject::ElementOrder { element, group, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(106))
-            }
-            GroupObject::Center { group, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(107))
-            }
-            GroupObject::Centralizer { element, group, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(108))
-            }
-            GroupObject::Normalizer {
-                subgroup, group, ..
-            } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(109))
-            }
-            GroupObject::CommutatorSubgroup { group, .. } => {
-                // Using Variable instead of Apply
-                MathExpression::Var(Identifier::O(110))
-            }
-        }
-    }
-}
-
-/// A representation of a group element for type-safe operations
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct GroupElement {
-    /// The group this element belongs to
-    pub group: Box<Group>,
-    /// The underlying representation of the element (depends on the group's structure)
-    pub value: ElementValue,
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GroupHomomorphism {
+    /// The domain group
+    domain: Group,
+    /// The codomain group
+    codomain: Group,
 }
 
 /// Different types of element values depending on the group structure
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum ElementValue {
+#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+pub enum GroupElement {
     /// A numeric element (useful for Z/nZ, etc.)
     Integer(i64),
     /// A permutation (for symmetric groups)
@@ -1287,275 +944,8 @@ pub enum ElementValue {
     Symbol(String),
 }
 
-/// Represents operations in a group theory context
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum GroupExpression {
-    /// An element in a group
-    Element(GroupElement),
-    /// The identity element of a group
-    Identity(Box<Group>),
-    /// A group operation between two expressions
-    Operation {
-        /// The group this operation belongs to
-        group: Box<Group>,
-        /// The left operand
-        left: Box<GroupExpression>,
-        /// The right operand
-        right: Box<GroupExpression>,
-    },
-    /// The inverse of an expression
-    Inverse {
-        /// The group this inverse belongs to
-        group: Box<Group>,
-        /// The element to invert
-        element: Box<GroupExpression>,
-    },
-    /// A commutator of two elements
-    Commutator {
-        /// The group this commutator belongs to
-        group: Box<Group>,
-        /// The first element
-        a: Box<GroupExpression>,
-        /// The second element
-        b: Box<GroupExpression>,
-    },
-    /// A coset of a subgroup
-    Coset {
-        /// The group this coset belongs to
-        group: Box<Group>,
-        /// The element for the coset
-        element: Box<GroupExpression>,
-        /// The subgroup
-        subgroup: Box<Group>,
-        /// Whether this is a left or right coset
-        is_left: bool,
-    },
-    /// A variable referencing a group element
-    Variable {
-        /// The group this variable belongs to
-        group: Box<Group>,
-        /// The name of the variable
-        name: String,
-    },
-    /// A group action
-    Action {
-        /// The element being acted on
-        element: Box<GroupExpression>,
-        /// The action being applied
-        action: Box<GroupAction>,
-    },
-    /// Represents a power (exponentiation)
-    Power {
-        /// The base group
-        group: Box<Group>,
-        /// The base expression
-        base: Box<GroupExpression>,
-        /// The exponent
-        exponent: i32,
-    },
-}
-
-// GroupExpression methods
-impl GroupExpression {
-    /// Create a new element expression
-    pub fn element(group: Group, value: ElementValue) -> Self {
-        GroupExpression::Element(GroupElement::new(group, value))
-    }
-
-    /// Create a group operation
-    pub fn operation(group: Group, left: GroupExpression, right: GroupExpression) -> Self {
-        GroupExpression::Operation {
-            group: Box::new(group),
-            left: Box::new(left),
-            right: Box::new(right),
-        }
-    }
-
-    /// Create an inverse expression
-    pub fn inverse(group: Group, element: GroupExpression) -> Self {
-        GroupExpression::Inverse {
-            group: Box::new(group),
-            element: Box::new(element),
-        }
-    }
-
-    /// Create an identity element
-    pub fn identity(group: Group) -> Self {
-        GroupExpression::Identity(Box::new(group))
-    }
-
-    /// Create a commutator expression
-    pub fn commutator(group: Group, a: GroupExpression, b: GroupExpression) -> Self {
-        GroupExpression::Commutator {
-            group: Box::new(group),
-            a: Box::new(a),
-            b: Box::new(b),
-        }
-    }
-
-    /// Create a coset expression
-    pub fn coset(group: Group, element: GroupExpression, subgroup: Group, is_left: bool) -> Self {
-        GroupExpression::Coset {
-            group: Box::new(group),
-            element: Box::new(element),
-            subgroup: Box::new(subgroup),
-            is_left,
-        }
-    }
-
-    /// Create a variable expression
-    pub fn variable(group: Group, name: impl Into<String>) -> Self {
-        GroupExpression::Variable {
-            group: Box::new(group),
-            name: name.into(),
-        }
-    }
-
-    /// Create a group action expression
-    pub fn action(element: GroupExpression, action: GroupAction) -> Self {
-        GroupExpression::Action {
-            element: Box::new(element),
-            action: Box::new(action),
-        }
-    }
-
-    /// Create a power expression
-    pub fn power(group: Group, base: GroupExpression, exponent: i32) -> Self {
-        GroupExpression::Power {
-            group: Box::new(group),
-            base: Box::new(base),
-            exponent,
-        }
-    }
-
-    /// Convert GroupExpression to MathExpression
-    pub fn to_math_expression(&self) -> MathExpression {
-        use super::super::super::super::math::formalism::expressions::{
-            MathExpression, TheoryExpression,
-        };
-        MathExpression::Expression(TheoryExpression::Group(self.clone()))
-    }
-
-    /// Convert MathExpression to GroupExpression
-    pub fn from_math_expression(expr: &MathExpression, group: &Group) -> Result<Self, String> {
-        use super::super::super::super::math::formalism::expressions::{
-            Identifier, TheoryExpression,
-        };
-
-        match expr {
-            MathExpression::Expression(TheoryExpression::Group(group_expr)) => {
-                // Direct conversion from group expression
-                Ok(group_expr.clone())
-            }
-            MathExpression::Var(var) => {
-                // Handle variables directly
-                match var {
-                    Identifier::O(id) => {
-                        // Object variable with special handling
-                        if *id == 200 {
-                            // This is our special identity element
-                            Ok(GroupExpression::Identity(Box::new(group.clone())))
-                        } else {
-                            // Other object variables become group variables
-                            Ok(GroupExpression::Variable {
-                                group: Box::new(group.clone()),
-                                name: format!("var_{}", id),
-                            })
-                        }
-                    }
-                    _ => Err(format!("Unsupported variable type: {:?}", var)),
-                }
-            }
-            // Handle other expression types as needed...
-            _ => {
-                // Default case: treat as an element directly
-                Ok(GroupExpression::Element(GroupElement::new(
-                    group.clone(),
-                    ElementValue::Symbol("unknown".to_string()),
-                )))
-            }
-        }
-    }
-}
-
-/// Implement Eq trait for GroupExpression
-impl Eq for GroupExpression {}
-
-/// Implement Hash trait for GroupExpression
-impl std::hash::Hash for GroupExpression {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        match self {
-            GroupExpression::Element(elem) => {
-                // Hash the element's value
-                std::mem::discriminant(self).hash(state);
-                elem.value.hash(state);
-            }
-            GroupExpression::Operation { group, left, right } => {
-                // Hash operation components
-                std::mem::discriminant(self).hash(state);
-                left.hash(state);
-                right.hash(state);
-                // We don't hash the group to avoid deep recursion
-            }
-            GroupExpression::Inverse { group, element } => {
-                // Hash inverse components
-                std::mem::discriminant(self).hash(state);
-                element.hash(state);
-                // We don't hash the group to avoid deep recursion
-            }
-            GroupExpression::Identity(group) => {
-                // Hash identity discriminant
-                std::mem::discriminant(self).hash(state);
-                // We don't hash the group to avoid deep recursion
-            }
-            GroupExpression::Commutator { group, a, b } => {
-                // Hash commutator components
-                std::mem::discriminant(self).hash(state);
-                a.hash(state);
-                b.hash(state);
-                // We don't hash the group to avoid deep recursion
-            }
-            GroupExpression::Coset {
-                group,
-                subgroup,
-                element,
-                is_left,
-            } => {
-                // Hash coset components
-                std::mem::discriminant(self).hash(state);
-                element.hash(state);
-                is_left.hash(state);
-                // We don't hash the groups to avoid deep recursion
-            }
-            GroupExpression::Action { element, action } => {
-                // Hash action components
-                std::mem::discriminant(self).hash(state);
-                element.hash(state);
-                // We don't hash the action to avoid deep recursion
-            }
-            GroupExpression::Power {
-                group,
-                base,
-                exponent,
-            } => {
-                // Hash power components
-                std::mem::discriminant(self).hash(state);
-                base.hash(state);
-                exponent.hash(state);
-                // We don't hash the group to avoid deep recursion
-            }
-            GroupExpression::Variable { group, name } => {
-                // Hash variable components
-                std::mem::discriminant(self).hash(state);
-                name.hash(state);
-                // We don't hash the group to avoid deep recursion
-            }
-        }
-    }
-}
-
 /// Error type for group expression evaluation
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Hash)]
 pub enum GroupExpressionError {
     /// Element is not in the group
     InvalidElement(String),
@@ -1596,7 +986,7 @@ impl GroupAction {
     pub fn set_action_with_point(
         group: Group,
         space: Set,
-        point: MathExpression,
+        point: GroupExpression,
         properties: VariantSet<GroupActionProperty>,
     ) -> Self {
         GroupAction::SetAction {
@@ -1686,132 +1076,909 @@ impl GroupAction {
 
 // Restore the GroupRelation helper methods that were removed
 impl GroupRelation {
-    /// Create a relation for element has unique inverse
-    pub fn has_unique_inverse(element: &MathExpression, group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Element has a unique inverse".to_string()),
-            tags: Vec::new(),
-        };
-
+    /// Create a relation for element has unique inverse (simplified, concrete inputs)
+    pub fn has_unique_inverse(element: &GroupExpression, group: &Group) -> Self {
         GroupRelation::HasUniqueInverse {
-            entity,
-            element: element.clone(),
-            group: group.clone(),
+            element: Parametrizable::Concrete(element.clone()), // Keep Expr unboxed for now
+            group: Parametrizable::Concrete(group.clone()),
         }
     }
 
-    /// Create a relation for Sylow p-subgroup properties
-    pub fn sylow_subgroup_properties(prime: &MathExpression, group: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Sylow p-subgroup properties".to_string()),
-            tags: Vec::new(),
-        };
-
+    /// Create a relation for Sylow p-subgroup properties (simplified, concrete inputs)
+    pub fn sylow_subgroup_properties(prime: &GroupExpression, group: &Group) -> Self {
         GroupRelation::SylowSubgroupProperties {
-            entity,
-            prime: prime.clone(),
-            group: group.clone(),
+            prime: Parametrizable::Concrete(prime.clone()), // Keep Expr unboxed for now
+            group: Parametrizable::Concrete(group.clone()),
         }
     }
 
     /// Create a relation for "p divides |G|" using general integer division
-    /// This returns a generic MathRelation rather than a GroupRelation
-    pub fn divides_order_of(prime: &MathExpression, group: &MathExpression) -> MathRelation {
-        // First get the group order as a MathExpression
-        let group_order_obj = GroupObject::group_order(group);
-        let group_order_expr = group_order_obj.to_expression();
+    // This returns a generic MathRelation rather than a GroupRelation
+    // Needs update to handle Parametrizable group/prime potentially
+    pub fn divides_order_of(prime: &GroupExpression, group: &Group) -> MathRelation {
+        // TODO: Update this function carefully. How to get order of a potentially
+        //       Parametrizable::Variable group? How to handle a Parametrizable prime expr?
+        //       For now, assuming concrete inputs for demonstration.
+        let concrete_prime = MathExpression::Expression(TheoryExpression::Group(prime.clone()));
+        let concrete_group_boxed = Box::new(MathObject::Group(group.clone()));
 
-        // Now use the general integer_divides relation from number theory
-        Self::integer_divides(prime, &group_order_expr)
+        // Or ideally, use a representation that works with Parametrizable
+        let group_order_expr =
+            MathExpression::Expression(TheoryExpression::Group(GroupExpression::GroupOrder {
+                group: Parametrizable::Concrete(group.clone()),
+            }));
+
+        let num_entity = super::super::number_theory::definitions::NumberTheoryRelationEntity {
+            id: None,
+            description: None,
+            tags: Vec::new(),
+        };
+
+        MathRelation::NumberTheory(
+            super::super::number_theory::definitions::NumberTheoryRelation::Divides {
+                entity: num_entity,
+                divisor: concrete_prime,
+                dividend: group_order_expr,
+            },
+        )
     }
 
-    /// Create a relation for one element is the inverse of another
+    /// Create a relation for one element is the inverse of another (simplified, concrete)
     pub fn is_inverse_of(
-        element: &MathExpression,
-        inverse: &MathExpression,
-        group: &MathExpression,
+        element: &GroupExpression,
+        inverse: &GroupExpression,
+        group: &Group,
     ) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Element is the inverse of another".to_string()),
-            tags: Vec::new(),
-        };
-
         GroupRelation::IsInverseOf {
-            entity,
-            element: element.clone(),
-            inverse: inverse.clone(),
-            group: group.clone(),
+            element: Parametrizable::Concrete(element.clone()),
+            inverse: Parametrizable::Concrete(inverse.clone()),
+            group: Parametrizable::Concrete(group.clone()),
         }
     }
 
-    /// Create a relation for a homomorphism between groups
+    /// Create a relation for a homomorphism between groups (simplified, concrete)
     pub fn is_homomorphism(
-        homomorphism: &MathExpression,
-        domain: &MathExpression,
-        codomain: &MathExpression,
+        homomorphism: &GroupExpression,
+        domain: &Group,
+        codomain: &Group,
     ) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Homomorphism between groups".to_string()),
-            tags: Vec::new(),
-        };
-
         GroupRelation::IsHomomorphism {
-            entity,
-            homomorphism: homomorphism.clone(),
-            domain: domain.clone(),
-            codomain: codomain.clone(),
+            homomorphism: Parametrizable::Concrete(homomorphism.clone()),
+            domain: Parametrizable::Concrete(domain.clone()),
+            codomain: Parametrizable::Concrete(codomain.clone()),
         }
     }
 
-    /// Create a relation for an isomorphic embedding
-    pub fn isomorphic_embedding(source: &MathExpression, target: &MathExpression) -> Self {
-        let entity = GroupRelationEntity {
-            id: None,
-            description: Some("Isomorphic embedding".to_string()),
-            tags: Vec::new(),
-        };
-
+    // Restore the isomorphic_embedding method (concrete)
+    /// Create a relation for an isomorphic embedding (simplified, concrete)
+    pub fn isomorphic_embedding(source: &Group, target: &Group) -> Self {
         GroupRelation::IsomorphicEmbedding {
-            entity,
-            source: source.clone(),
-            target: target.clone(),
+            source: Parametrizable::Concrete(source.clone()),
+            target: Parametrizable::Concrete(target.clone()),
         }
     }
 }
 
-impl GroupElement {
-    /// Create a new group element
-    pub fn new(group: Group, value: ElementValue) -> Self {
-        GroupElement {
+/// A group with topological structure
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TopologicalGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The topology on the group
+    pub topology: TopologicalSpace,
+    /// Properties specific to the topological structure
+    pub props: VariantSet<TopologicalGroupProperty>,
+}
+
+/// A Lie group with smooth structure
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct LieGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The topology on the group
+    pub topology: TopologicalSpace,
+    /// Smooth manifold structure (represented with charts)
+    pub charts: Vec<String>, // Simplified; would be a real Charts type in production
+    /// Properties specific to the Lie structure
+    pub props: VariantSet<LieGroupProperty>,
+}
+
+/// A cyclic group generated by a single element
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CyclicGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The generator element
+    pub generator: GroupElement,
+    /// The order of the group (can be infinite)
+    pub order: Option<usize>, // None means infinite
+}
+
+/// A symmetric group (permutation group) on n elements
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct SymmetricGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The number of elements being permuted
+    pub degree: usize,
+}
+
+/// A dihedral group representing the symmetries of a regular polygon
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DihedralGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The order of the group (twice the number of sides of the polygon)
+    pub order: usize,
+}
+
+/// Properties specific to matrix groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum MatrixProperty {
+    /// Determinant property
+    Determinant(DeterminantPropertyVariant),
+    /// Inner product preservation property
+    InnerProductPreservation(InnerProductPreservationVariant),
+    /// Orientation preservation property
+    OrientationPreservation(OrientationPreservationVariant),
+    /// Hermitian form preservation property
+    HermitianFormPreservation(HermitianFormPreservationVariant),
+    /// Dimension property
+    Dimension(u32),
+}
+
+/// Property variants for determinant property
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum DeterminantPropertyVariant {
+    /// Determinant is always one
+    AlwaysOne,
+    /// Determinant is non-zero
+    NonZero,
+    /// Determinant has a specific value
+    SpecificValue(String),
+}
+
+/// Property variants for inner product preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum InnerProductPreservationVariant {
+    /// Preserves inner product
+    Preserves,
+    /// Scales inner product
+    Scales,
+    /// Does not preserve inner product
+    DoesNotPreserve,
+}
+
+/// Property variants for orientation preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum OrientationPreservationVariant {
+    /// Preserves orientation
+    Preserves,
+    /// Reverses orientation
+    Reverses,
+    /// May preserve or reverse (mixed)
+    Mixed,
+}
+
+/// Property variants for Hermitian form preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum HermitianFormPreservationVariant {
+    /// Preserves Hermitian form
+    Preserves,
+    /// Does not preserve Hermitian form
+    DoesNotPreserve,
+}
+
+/// Properties specific to linear groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum LinearProperty {
+    /// Volume preservation property
+    VolumePreservation(VolumePreservationVariant),
+    /// Unimodularity property
+    Unimodularity(UnimodularityVariant),
+}
+
+/// Property variants for volume preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum VolumePreservationVariant {
+    /// Preserves volume
+    Preserves,
+    /// Scales volume
+    Scales,
+    /// Does not preserve volume
+    DoesNotPreserve,
+}
+
+/// Property variants for unimodularity
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum UnimodularityVariant {
+    /// Is unimodular
+    Unimodular,
+    /// Is not unimodular
+    NonUnimodular,
+}
+
+/// Properties specific to modular groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ModularProperty {
+    /// Representatives style property
+    Representatives(RepresentativesVariant),
+    /// The modulus value
+    Modulus(u32),
+    /// Full multiplicative group property
+    FullMultiplicative(FullMultiplicativeVariant),
+    /// Coprime to modulus property
+    CoprimeToModulus(CoprimeToModulusVariant),
+}
+
+/// Property variants for representatives
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum RepresentativesVariant {
+    /// Uses standard representatives
+    Standard,
+    /// Uses canonical representatives
+    Canonical,
+    /// Uses minimal representatives
+    Minimal,
+}
+
+/// Property variants for full multiplicative status
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum FullMultiplicativeVariant {
+    /// Is the full multiplicative group
+    Full,
+    /// Is a subgroup of the full multiplicative group
+    Subgroup,
+}
+
+/// Property variants for coprime to modulus
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum CoprimeToModulusVariant {
+    /// All elements are coprime to modulus
+    All,
+    /// Some elements are coprime to modulus
+    Some,
+    /// No elements are coprime to modulus
+    None,
+}
+
+/// Properties specific to product groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ProductProperty {
+    /// Projection maps property
+    Projections(ProjectionsVariant),
+    /// Embeddings property
+    Embeddings(EmbeddingsVariant),
+    /// Product type property
+    ProductType(ProductTypeVariant),
+    /// Action property (for semidirect products)
+    Action(ActionVariant),
+}
+
+/// Property variants for projections
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ProjectionsVariant {
+    /// Has projection maps
+    HasProjections,
+    /// Has no projection maps
+    HasNoProjections,
+}
+
+/// Property variants for embeddings
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum EmbeddingsVariant {
+    /// Has canonical embeddings
+    HasCanonical,
+    /// Has non-canonical embeddings
+    HasNonCanonical,
+    /// Has no embeddings
+    HasNoEmbeddings,
+}
+
+/// Property variants for product type
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ProductTypeVariant {
+    /// Is a direct product
+    Direct,
+    /// Is a semidirect product
+    Semidirect,
+    /// Is a free product
+    Free,
+    /// Is a fibered product
+    Fibered,
+}
+
+/// Property variants for action
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ActionVariant {
+    /// Has trivial action
+    Trivial,
+    /// Has non-trivial action
+    NonTrivial,
+    /// Has faithful action
+    Faithful,
+}
+
+/// Properties specific to free groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum FreeProperty {
+    /// Rank property (number of generators)
+    Rank(u32),
+    /// Generation property
+    Generation(GenerationVariant),
+    /// Generators property
+    Generators(GeneratorsVariant),
+}
+
+/// Property variants for generation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum GenerationVariant {
+    /// Is freely generated
+    Freely,
+    /// Is not freely generated
+    NonFreely,
+}
+
+/// Property variants for generators
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum GeneratorsVariant {
+    /// Has standard generators
+    Standard,
+    /// Has non-standard generators
+    NonStandard,
+}
+
+/// Properties specific to permutation groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum PermutationProperty {
+    /// Parity property
+    Parity(ParityVariant),
+    /// Degree property (size of the set being permuted)
+    Degree(u32),
+    /// Symmetric property
+    Symmetric(SymmetricVariant),
+    /// Primitivity property
+    Primitivity(PrimitivityVariant),
+}
+
+/// Property variants for parity
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ParityVariant {
+    /// Contains only even permutations
+    Even,
+    /// Contains only odd permutations
+    Odd,
+    /// Contains both even and odd permutations
+    Mixed,
+}
+
+/// Property variants for symmetric status
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SymmetricVariant {
+    /// Is the full symmetric group
+    Full,
+    /// Is a proper subgroup of the symmetric group
+    ProperSubgroup,
+}
+
+/// Property variants for primitivity
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum PrimitivityVariant {
+    /// Is primitive
+    Primitive,
+    /// Is imprimitive
+    Imprimitive,
+}
+
+/// Properties specific to quotient groups
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum QuotientProperty {
+    /// Projection property
+    Projection(ProjectionVariant),
+    /// Simplicity property
+    Simplicity(SimplicityVariant),
+}
+
+/// Property variants for projection
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum ProjectionVariant {
+    /// Has projection homomorphism
+    HasProjection,
+    /// Has no projection homomorphism
+    HasNoProjection,
+}
+
+/// Property variants for simplicity
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SimplicityVariant {
+    /// Is a simple group
+    Simple,
+    /// Is not a simple group
+    NonSimple,
+}
+
+/// Properties specific to special linear groups (SL)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialLinearProperty {
+    /// Determinant property
+    Determinant(SpecialLinearDeterminantVariant),
+    /// Volume preservation property
+    VolumePreservation(SpecialLinearVolumeVariant),
+    /// Connectedness property
+    Connectedness(SpecialLinearConnectednessVariant),
+    /// Commutator subgroup property
+    CommutatorSubgroup(SpecialLinearCommutatorVariant),
+}
+
+/// Property variants for special linear determinant
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialLinearDeterminantVariant {
+    /// Determinant is always 1
+    AlwaysOne,
+}
+
+/// Property variants for special linear volume preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialLinearVolumeVariant {
+    /// Preserves volume forms
+    Preserves,
+}
+
+/// Property variants for special linear connectedness
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialLinearConnectednessVariant {
+    /// Is connected
+    Connected,
+    /// Is not connected
+    Disconnected,
+}
+
+/// Property variants for special linear commutator subgroup
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialLinearCommutatorVariant {
+    /// Is the commutator subgroup of GL(n,F)
+    IsCommutator,
+    /// Is not the commutator subgroup of GL(n,F)
+    IsNotCommutator,
+}
+
+/// Properties specific to special orthogonal groups (SO)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialOrthogonalProperty {
+    /// Orientation preservation property
+    OrientationPreservation(SpecialOrthogonalOrientationVariant),
+    /// Spin cover property
+    SpinCover(SpecialOrthogonalSpinVariant),
+    /// Connected component property
+    ConnectedComponent(SpecialOrthogonalComponentVariant),
+    /// Determinant property
+    Determinant(SpecialOrthogonalDeterminantVariant),
+}
+
+/// Property variants for special orthogonal orientation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialOrthogonalOrientationVariant {
+    /// Preserves orientation
+    Preserves,
+}
+
+/// Property variants for special orthogonal spin cover
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialOrthogonalSpinVariant {
+    /// Has a double cover (spin group)
+    HasSpinCover,
+    /// Has no spin cover
+    NoSpinCover,
+}
+
+/// Property variants for special orthogonal component
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialOrthogonalComponentVariant {
+    /// Is the connected component of O(n)
+    IsConnectedComponent,
+    /// Is not the connected component of O(n)
+    IsNotConnectedComponent,
+}
+
+/// Property variants for special orthogonal determinant
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialOrthogonalDeterminantVariant {
+    /// Determinant is always 1
+    AlwaysOne,
+}
+
+/// Properties specific to special unitary groups (SU)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialUnitaryProperty {
+    /// Determinant property
+    Determinant(SpecialUnitaryDeterminantVariant),
+    /// Compactness property
+    Compactness(SpecialUnitaryCompactnessVariant),
+    /// Connectedness property
+    Connectedness(SpecialUnitaryConnectednessVariant),
+    /// Volume preservation property
+    VolumePreservation(SpecialUnitaryVolumeVariant),
+}
+
+/// Property variants for special unitary determinant
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialUnitaryDeterminantVariant {
+    /// Determinant is always 1
+    AlwaysOne,
+}
+
+/// Property variants for special unitary compactness
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialUnitaryCompactnessVariant {
+    /// Always compact
+    AlwaysCompact,
+}
+
+/// Property variants for special unitary connectedness
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialUnitaryConnectednessVariant {
+    /// Simply connected
+    SimplyConnected,
+    /// Not simply connected
+    NotSimplyConnected,
+}
+
+/// Property variants for special unitary volume preservation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SpecialUnitaryVolumeVariant {
+    /// Preserves complex volume form
+    PreservesComplexVolume,
+    /// Does not preserve complex volume form
+    DoesNotPreserveComplexVolume,
+}
+
+/// General linear group GL(n,F)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct GeneralLinearGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The dimension
+    pub dimension: u32,
+    /// The field over which the group is defined
+    pub field: Field,
+    /// Matrix specific properties
+    pub matrix_props: VariantSet<MatrixProperty>,
+    /// Linear specific properties
+    pub linear_props: VariantSet<LinearProperty>,
+}
+
+/// Special linear group SL(n,F)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct SpecialLinearGroup {
+    /// The underlying general linear group
+    pub general_linear: GeneralLinearGroup,
+    /// Properties specific to special linear groups
+    pub special_linear_props: VariantSet<SpecialLinearProperty>,
+}
+
+/// Orthogonal group O(n)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct OrthogonalGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The dimension
+    pub dimension: u32,
+    /// Matrix specific properties
+    pub matrix_props: VariantSet<MatrixProperty>,
+}
+
+/// Special orthogonal group SO(n)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct SpecialOrthogonalGroup {
+    /// The underlying orthogonal group
+    pub orthogonal: OrthogonalGroup,
+    /// Properties specific to special orthogonal groups
+    pub special_orthogonal_props: VariantSet<SpecialOrthogonalProperty>,
+}
+
+/// Unitary group U(n)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct UnitaryGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The dimension
+    pub dimension: u32,
+    /// Matrix specific properties
+    pub matrix_props: VariantSet<MatrixProperty>,
+}
+
+/// Special unitary group SU(n)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct SpecialUnitaryGroup {
+    /// The underlying unitary group
+    pub unitary: UnitaryGroup,
+    /// Properties specific to special unitary groups
+    pub special_unitary_props: VariantSet<SpecialUnitaryProperty>,
+}
+
+/// Alternating group A_n
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AlternatingGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The degree (n in A_n)
+    pub degree: u32,
+    /// Permutation specific properties
+    pub perm_props: VariantSet<PermutationProperty>,
+}
+
+/// Modular additive group Z/nZ
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ModularAdditiveGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The modulus
+    pub modulus: u32,
+    /// Modular specific properties
+    pub modular_props: VariantSet<ModularProperty>,
+}
+
+/// Multiplicative group of integers modulo n
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ModularMultiplicativeGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The modulus
+    pub modulus: u32,
+    /// Modular specific properties
+    pub modular_props: VariantSet<ModularProperty>,
+}
+
+/// Free group F_n
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FreeGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The rank (number of generators)
+    pub rank: u32,
+    /// Free group specific properties
+    pub free_props: VariantSet<FreeProperty>,
+}
+
+/// Quotient group G/N
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct QuotientGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+    /// The group
+    pub group: Box<Group>,
+    /// The normal subgroup
+    pub normal_subgroup: Box<Group>,
+    /// Quotient specific properties
+    pub quotient_props: VariantSet<QuotientProperty>,
+}
+
+impl QuotientGroup {
+    /// Creates a new quotient group from a group and a normal subgroup
+    pub fn new(group: Group, normal_subgroup: Group, is_maximal: bool) -> Self {
+        QuotientGroup {
+            core: GroupBasic::default(),
             group: Box::new(group),
-            value,
+            normal_subgroup: Box::new(normal_subgroup),
+            quotient_props: VariantSet::new(),
+        }
+    }
+}
+
+/// The trivial group
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TrivialGroup {
+    /// The core algebraic group structure
+    pub core: GroupBasic,
+}
+
+// --- Structs for Flattened Group Constructions ---
+
+/// A group defined as the kernel of a homomorphism
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct KernelGroup {
+    pub core: GroupBasic,
+    pub defining_homomorphism: Box<GroupHomomorphism>,
+    // Potentially add domain_group: Box<Group> if needed for context
+}
+
+/// A group defined as the image of a homomorphism
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ImageGroup {
+    pub core: GroupBasic,
+    pub defining_homomorphism: Box<GroupHomomorphism>,
+    // Potentially add codomain_group: Box<Group> if needed for context
+}
+
+/// A group defined as the center of another group: Z(G)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CenterGroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+}
+
+/// A group defined as a subgroup generated by a set of elements
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct GeneratedSubgroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+    pub generators: Vec<GroupElement>, // Or GroupExpression?
+}
+
+/// A group defined as the normalizer of a subgroup: N_G(H)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct NormalizerGroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+    pub subgroup_normalized: Box<Group>,
+}
+
+/// A group defined as the centralizer of an element: C_G(x)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CentralizerGroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+    pub element_centralized: GroupElement, // Or GroupExpression?
+}
+
+/// A group defined as the commutator subgroup: [G,G]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CommutatorSubgroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+}
+
+/// A group defined as a Sylow p-subgroup: Syl_p(G)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct SylowSubgroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+    pub prime: u64, // Assuming prime is a number
+}
+
+/// A group defined as a wreath product
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct WreathProductGroup {
+    pub core: GroupBasic,
+    pub base_group: Box<Group>,
+    pub acting_group: Box<Group>,
+    // Add action details if needed
+}
+
+/// A group defined as a central product
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CentralProductGroup {
+    pub core: GroupBasic,
+    pub component_groups: Vec<Box<Group>>,
+    pub center_identification_map: String, // Details on how centers are identified
+}
+
+/// A group defined as a pullback (fibered product)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PullbackGroup {
+    pub core: GroupBasic,
+    pub source_groups: Vec<Box<Group>>, // Groups being mapped from
+    pub target_group: Box<Group>,       // Group being mapped to
+    pub defining_homomorphisms: Vec<GroupHomomorphism>,
+}
+
+/// A group constructed by restricting to a specific subset satisfying group properties
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct RestrictionGroup {
+    pub core: GroupBasic,
+    pub parent_group: Box<Group>,
+    pub restriction_description: String, // How the restriction is defined
+}
+
+impl Group {
+    /// Gets the properties of the group
+    pub fn get_properties(&self) -> &VariantSet<GroupProperty> {
+        match self {
+            Group::Basic(g) => &g.props,
+            Group::Topological(g) => &g.core.props,
+            Group::Lie(g) => &g.core.props,
+            Group::Cyclic(g) => &g.core.props,
+            Group::Symmetric(g) => &g.core.props,
+            Group::Dihedral(g) => &g.core.props,
+            Group::GeneralLinear(g) => &g.core.props,
+            Group::SpecialLinear(g) => &g.general_linear.core.props,
+            Group::Orthogonal(g) => &g.core.props,
+            Group::SpecialOrthogonal(g) => &g.orthogonal.core.props,
+            Group::Unitary(g) => &g.core.props,
+            Group::SpecialUnitary(g) => &g.unitary.core.props,
+            Group::Alternating(g) => &g.core.props,
+            Group::ModularAdditive(g) => &g.core.props,
+            Group::ModularMultiplicative(g) => &g.core.props,
+            Group::Free(g) => &g.core.props,
+            Group::Trivial(g) => &g.core.props,
+            Group::Product(g) => &g.core.props,
+            Group::Quotient(g) => &g.core.props,
+            Group::Kernel(g) => &g.core.props,
+            Group::Image(g) => &g.core.props,
+            Group::Center(g) => &g.core.props,
+            Group::GeneratedSubgroup(g) => &g.core.props,
+            Group::Normalizer(g) => &g.core.props,
+            Group::Centralizer(g) => &g.core.props,
+            Group::CommutatorSubgroup(g) => &g.core.props,
+            Group::SylowSubgroup(g) => &g.core.props,
+            Group::WreathProduct(g) => &g.core.props,
+            Group::CentralProduct(g) => &g.core.props,
+            Group::Pullback(g) => &g.core.props,
+            Group::Restriction(g) => &g.core.props,
         }
     }
 
-    /// Check if this element is the identity
-    pub fn is_identity(&self) -> bool {
-        match &self.value {
-            ElementValue::Integer(n) => {
-                // For Z/nZ-like groups
-                if self.group.operation.operation_type == GroupOperationVariant::Addition {
-                    *n == 0
-                } else {
-                    *n == 1
-                }
-            }
-            ElementValue::Permutation(p) => {
-                // For permutation groups, identity is [1,2,3,...,n]
-                p.iter().enumerate().all(|(i, &val)| val == i + 1)
-            }
-            ElementValue::Symbol(s) => {
-                // For symbolic groups
-                s == "e" || s == "1" || s == "id"
-            }
-            _ => false, // More complex cases would need group-specific logic
+    /// Sets the properties of the group
+    pub fn set_properties(&mut self, props: VariantSet<GroupProperty>) {
+        match self {
+            Group::Basic(g) => g.props = props,
+            Group::Topological(g) => g.core.props = props,
+            Group::Lie(g) => g.core.props = props,
+            Group::Cyclic(g) => g.core.props = props,
+            Group::Symmetric(g) => g.core.props = props,
+            Group::Dihedral(g) => g.core.props = props,
+            Group::GeneralLinear(g) => g.core.props = props,
+            Group::SpecialLinear(g) => g.general_linear.core.props = props,
+            Group::Orthogonal(g) => g.core.props = props,
+            Group::SpecialOrthogonal(g) => g.orthogonal.core.props = props,
+            Group::Unitary(g) => g.core.props = props,
+            Group::SpecialUnitary(g) => g.unitary.core.props = props,
+            Group::Alternating(g) => g.core.props = props,
+            Group::ModularAdditive(g) => g.core.props = props,
+            Group::ModularMultiplicative(g) => g.core.props = props,
+            Group::Free(g) => g.core.props = props,
+            Group::Trivial(g) => g.core.props = props,
+            Group::Product(g) => g.core.props = props,
+            Group::Quotient(g) => g.core.props = props,
+            Group::Kernel(g) => g.core.props = props,
+            Group::Image(g) => g.core.props = props,
+            Group::Center(g) => g.core.props = props,
+            Group::GeneratedSubgroup(g) => g.core.props = props,
+            Group::Normalizer(g) => g.core.props = props,
+            Group::Centralizer(g) => g.core.props = props,
+            Group::CommutatorSubgroup(g) => g.core.props = props,
+            Group::SylowSubgroup(g) => g.core.props = props,
+            Group::WreathProduct(g) => g.core.props = props,
+            Group::CentralProduct(g) => g.core.props = props,
+            Group::Pullback(g) => g.core.props = props,
+            Group::Restriction(g) => g.core.props = props,
+        }
+    }
+
+    /// Gets a reference to the core of the group
+    pub fn get_core(&self) -> &GroupBasic {
+        match self {
+            Group::Basic(g) => &g,
+            Group::Topological(g) => &g.core,
+            Group::Lie(g) => &g.core,
+            Group::Cyclic(g) => &g.core,
+            Group::Symmetric(g) => &g.core,
+            Group::Dihedral(g) => &g.core,
+            Group::GeneralLinear(g) => &g.core,
+            Group::SpecialLinear(g) => &g.general_linear.core,
+            Group::Orthogonal(g) => &g.core,
+            Group::SpecialOrthogonal(g) => &g.orthogonal.core,
+            Group::Unitary(g) => &g.core,
+            Group::SpecialUnitary(g) => &g.unitary.core,
+            Group::Alternating(g) => &g.core,
+            Group::ModularAdditive(g) => &g.core,
+            Group::ModularMultiplicative(g) => &g.core,
+            Group::Free(g) => &g.core,
+            Group::Trivial(g) => &g.core,
+            Group::Product(g) => &g.core,
+            Group::Quotient(g) => &g.core,
+            Group::Kernel(g) => &g.core,
+            Group::Image(g) => &g.core,
+            Group::Center(g) => &g.core,
+            Group::GeneratedSubgroup(g) => &g.core,
+            Group::Normalizer(g) => &g.core,
+            Group::Centralizer(g) => &g.core,
+            Group::CommutatorSubgroup(g) => &g.core,
+            Group::SylowSubgroup(g) => &g.core,
+            Group::WreathProduct(g) => &g.core,
+            Group::CentralProduct(g) => &g.core,
+            Group::Pullback(g) => &g.core,
+            Group::Restriction(g) => &g.core,
         }
     }
 }

@@ -1,11 +1,13 @@
 // Module: src/formalize_v2/subjects/math/theorem/test/tactics_tests.rs
 // Comprehensive tests for all available tactics in the theorem proving system
 
+use std::any::Any;
 use std::collections::HashMap;
+use std::rc::Rc;
 
-use super::super::super::formalism::core::{
-    MathObjectType, ProofGoal, Theorem, ValueBindedVariable,
-};
+use crate::subjects::math::formalism::extract::Parametrizable;
+
+use super::super::super::formalism::core::{MathObject, ProofGoal, Theorem, ValueBindedVariable};
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::super::super::formalism::interpretation::TypeViewOperator;
 use super::super::super::formalism::proof::{
@@ -13,7 +15,9 @@ use super::super::super::formalism::proof::{
     RewriteDirection, Tactic,
 };
 use super::super::super::formalism::relations::MathRelation;
-use super::super::super::theories::groups::definitions::{Group, GroupExpression, GroupOperation};
+use super::super::super::theories::groups::definitions::{
+    Group, GroupBasic, GroupElement, GroupExpression, GroupOperation,
+};
 use super::super::super::theories::number_theory::definitions::NumberTheoryRelation;
 use super::super::super::theories::rings::definitions::{Ring, RingElementValue, RingExpression};
 
@@ -78,7 +82,7 @@ fn test_intro_expr_tactic() {
     let state = ProofGoal::new(statement);
 
     // Apply the Intro tactic with expression
-    let var_type = MathObjectType::Real;
+    let var_type = MathObject::Real;
     let expression = MathExpression::Var(Identifier::E(3));
     let tactic = Tactic::Intro {
         name: Identifier::Name("y".to_string(), 0),
@@ -111,16 +115,31 @@ fn test_substitution_tactic() {
     let var_c = MathExpression::Var(Identifier::Name("c".to_string(), 0));
 
     // Create a statement with a+b = c (we'll replace a+b with d)
-    let group = Group::default();
+    let group = Group::Basic(GroupBasic::default());
 
-    // Create a group operation expression for a+b
-    let a_plus_b = GroupExpression::operation(
-        group.clone(),
-        GroupExpression::variable(group.clone(), "a"),
-        GroupExpression::variable(group.clone(), "b"),
-    );
+    // Create dummy GroupExpression elements for a and b using a valid enum variant
+    // Assuming GroupElement::Symbol exists and takes a String
+    let dummy_a_elem = GroupElement::Symbol("a".to_string());
+    let dummy_b_elem = GroupElement::Symbol("b".to_string());
+
+    let a_group_expr = GroupExpression::Element {
+        group: Parametrizable::Concrete(group.clone()),
+        element: Parametrizable::Concrete(dummy_a_elem),
+    };
+    let b_group_expr = GroupExpression::Element {
+        group: Parametrizable::Concrete(group.clone()),
+        element: Parametrizable::Concrete(dummy_b_elem),
+    };
+
+    // Create a group operation expression for a+b, wrapping fields
+    let a_plus_b = GroupExpression::Operation {
+        group: Parametrizable::Concrete(group.clone()),
+        left: Box::new(Parametrizable::Concrete(a_group_expr.clone())),
+        right: Box::new(Parametrizable::Concrete(b_group_expr.clone())),
+    };
 
     // Create the math expression for a+b
+    // Assuming TheoryExpression still exists and is used
     let a_plus_b_expr = MathExpression::Expression(TheoryExpression::Group(a_plus_b.clone()));
 
     // Create the initial statement: a+b = c
@@ -141,10 +160,7 @@ fn test_substitution_tactic() {
     // Check that the substitution was applied correctly
     match &new_state.statement {
         MathRelation::Equal { left, right, .. } => {
-            // Check left side has been substituted
             assert_eq!(left, &var_d, "Left side should be 'd' after substitution");
-
-            // Check right side remains unchanged
             assert_eq!(right, &var_c, "Right side should remain as 'c'");
         }
         _ => panic!("Expected an equality relation"),
@@ -962,31 +978,39 @@ fn test_domain_specific_operations() {
     let state = ProofGoal::new(statement.clone());
 
     // Create a group for our operations
-    let group = super::super::super::theories::groups::definitions::Group::default();
-
-    // Create group variables
-    let g_var = super::super::super::theories::groups::definitions::GroupExpression::variable(
-        group.clone(),
-        "g",
-    );
-    let h_var = super::super::super::theories::groups::definitions::GroupExpression::variable(
-        group.clone(),
-        "h",
+    let group = super::super::super::theories::groups::definitions::Group::Basic(
+        super::super::super::theories::groups::definitions::GroupBasic::default(),
     );
 
-    // Create a group operation expression (g * h)
-    let g_times_h = super::super::super::theories::groups::definitions::GroupExpression::operation(
-        group.clone(),
-        g_var.clone(),
-        h_var.clone(),
-    );
+    // Create dummy GroupExpression elements for g and h using a valid enum variant
+    // Assuming GroupElement::Symbol exists
+    let dummy_g_elem = GroupElement::Symbol("g".to_string());
+    let dummy_h_elem = GroupElement::Symbol("h".to_string());
 
-    // Convert to MathExpression using the direct theory expression approach
-    let group_expr = MathExpression::Expression(TheoryExpression::Group(g_times_h.clone()));
+    let g_expr = GroupExpression::Element {
+        group: Parametrizable::Concrete(group.clone()),
+        element: Parametrizable::Concrete(dummy_g_elem),
+    };
+    let h_expr = GroupExpression::Element {
+        group: Parametrizable::Concrete(group.clone()),
+        element: Parametrizable::Concrete(dummy_h_elem),
+    };
+
+    // Create a group operation expression (g * h), wrapping fields
+    let g_times_h =
+        super::super::super::theories::groups::definitions::GroupExpression::Operation {
+            group: Parametrizable::Concrete(group.clone()),
+            left: Box::new(Parametrizable::Concrete(g_expr.clone())),
+            right: Box::new(Parametrizable::Concrete(h_expr.clone())),
+        };
+
+    // Convert to MathExpression
+    // Assuming TheoryExpression still exists
+    let group_math_expr = MathExpression::Expression(TheoryExpression::Group(g_times_h.clone()));
 
     // Apply the Simplify tactic with domain-specific operation
     let tactic = Tactic::Simplify {
-        target: group_expr,
+        target: group_math_expr,
         hints: None,
     };
     let new_state = tactic.apply(&state).unwrap();

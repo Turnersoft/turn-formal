@@ -4,7 +4,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::core::MathObjectType;
+use super::core::MathObject;
 use super::expressions::{Identifier, MathExpression};
 
 // Import domain-specific relations from their respective modules
@@ -134,7 +134,7 @@ impl MathRelation {
     }
 
     /// Creates a Custom relation
-    pub fn custom(name: String, expressions: Vec<MathExpression>) -> Self {
+    pub fn todo(name: String, expressions: Vec<MathExpression>) -> Self {
         MathRelation::Todo { name, expressions }
     }
 

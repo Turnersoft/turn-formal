@@ -15,10 +15,7 @@ use super::super::theories::{
 };
 
 use super::super::formalism::interpretation::TypeViewOperator;
-use super::{
-    core::{MathObject, MathObjectType},
-    relations::MathRelation,
-};
+use super::{core::MathObject, relations::MathRelation};
 
 /// Variables for use in expressions
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -56,7 +53,7 @@ pub enum MathExpression {
     Var(Identifier),
 
     /// Reference to a mathematical object
-    Object(MathObject),
+    Object(Box<MathObject>),
 
     /// expression that have both value and type
     Expression(TheoryExpression),
@@ -70,6 +67,7 @@ pub enum MathExpression {
     Number(Number),
 
     /// An expression with a specific type view
+    /// this is a central transit for all math theories
     ViewAs {
         /// The original expression
         expression: Box<MathExpression>,
@@ -83,7 +81,7 @@ pub enum MathExpression {
 pub enum TypeViewError {
     /// Error when trying to view an expression as an incompatible type
     InvalidView {
-        expression_type: MathObjectType,
+        expression_type: MathObject,
         view_type: String,
         message: String,
     },
@@ -145,7 +143,7 @@ impl MathExpression {
     pub fn with_view(self, view: TypeViewOperator) -> Self {
         MathExpression::ViewAs {
             expression: Box::new(self),
-            view,
+            view: view,
         }
     }
 
@@ -198,6 +196,13 @@ impl MathExpression {
             MathExpression::Var(Identifier::Name(var_name, _)) => var_name == name,
             _ => false,
         }
+    }
+}
+
+// Implementation to convert GroupExpression into MathExpression
+impl From<GroupExpression> for MathExpression {
+    fn from(group_expr: GroupExpression) -> Self {
+        MathExpression::Expression(TheoryExpression::Group(group_expr))
     }
 }
 

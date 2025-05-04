@@ -16,7 +16,7 @@ use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 use super::super::theories::zfc::relations::SetTheoryRelation;
-use super::core::{MathObjectType, ProofGoal, Theorem, ValueBindedVariable};
+use super::core::{MathObject, ProofGoal, Theorem, ValueBindedVariable};
 use super::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
 use super::relations::{MathRelation, RelationDetail};
@@ -295,7 +295,7 @@ impl ProofGoal {
     pub fn add_variable(
         &self,
         var_name: &str,
-        var_type: MathObjectType,
+        var_type: MathObject,
         expr: MathExpression,
     ) -> ProofGoal {
         let mut new_state = self.clone();

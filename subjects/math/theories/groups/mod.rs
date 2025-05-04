@@ -6,8 +6,7 @@
 
 pub mod checker;
 pub mod definitions;
-pub mod helpers;
-pub mod macros;
+pub mod extract;
 pub mod render;
 pub mod theorems;
 
@@ -19,6 +18,4 @@ pub mod leptos;
 
 pub use checker::*;
 pub use definitions::*;
-pub use helpers::*;
-pub use macros::*;
 pub use theorems::*;

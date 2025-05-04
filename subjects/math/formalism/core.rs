@@ -1,7 +1,9 @@
 // Module: src/formalize_v2/subjects/math/theorem/core.rs
 // Defines core mathematical objects and context for the theorem system
 
+use leptos::math::Math;
 use serde::{Deserialize, Serialize};
+use std::any::{Any, TypeId};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -18,7 +20,7 @@ use super::super::theories::rings::definitions::{
 use super::super::theories::topology::TopologicalSpace;
 use super::super::theories::zfc::Set;
 
-use super::expressions::{Identifier, MathExpression};
+use super::expressions::{Identifier, MathExpression, TheoryExpression};
 // Centralized re-exports for convenient access from other modules
 
 use super::proof::{ProofForest, ProofNode, ProofStatus};
@@ -30,8 +32,6 @@ use super::relations::MathRelation;
 pub enum MathObject {
     // Group theory objects
     Group(Group),
-    TopologicalGroup(TopologicalGroup),
-    LieGroup(LieGroup),
 
     // Ring theory objects
     Ring(Ring),
@@ -50,33 +50,6 @@ pub enum MathObject {
 
     // Analysis objects
     Function(Function),
-}
-
-/// Types of mathematical objects
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum MathObjectType {
-    // Group theory types
-    Group(Group),
-    TopologicalGroup(TopologicalGroup),
-    LieGroup(LieGroup),
-
-    // Ring theory types
-    Ring(Ring),
-    Field(Field),
-    Module(Module),
-    Algebra(Algebra),
-
-    // Topology types
-    TopologicalSpace(TopologicalSpace),
-
-    // Linear algebra types
-    VectorSpace(VectorSpace),
-
-    // Set theory types
-    Set(Set),
-
-    // Function types
-    Function(Function),
 
     // Basic number types
     Integer,
@@ -86,14 +59,21 @@ pub enum MathObjectType {
     Complex,
 
     // General types
-    Element(Box<MathObjectType>), // Element of a given type
-    Morphism(Box<MathObjectType>, Box<MathObjectType>), // Morphism between types
+    Element(Box<MathObject>),                   // Element of a given type
+    Morphism(Box<MathObject>, Box<MathObject>), // Morphism between types
 
     // Type constructors
-    Product(Vec<MathObjectType>),
-    Coproduct(Vec<MathObjectType>),
+    Product(Vec<MathObject>),
+    Coproduct(Vec<MathObject>),
 
     // Other
+    // The standard way to address this in systems aiming for
+    // HOL/HoTT compatibility is not typically by changing
+    // the quantifier structure to directly take a MathRelation or MathExpression.
+    // Instead, the MathObject (or a parallel "Type" system) is extended to include variants representing these higher-order concepts:
+    // Prop,
+    // Type(UnverseLevel),
+    // FunctionType(FunctionType),
     Todo(String),
 }
 
@@ -192,7 +172,7 @@ pub struct QuantifiedMathObject {
     pub variable: String,
 
     /// The type of object
-    pub object_type: MathObjectType,
+    pub object_type: MathObject,
 
     /// How this object is quantified
     pub quantification: Quantification,
@@ -280,4 +260,119 @@ pub struct ProofStep {
 
     /// Previous steps this step depends on
     pub depends_on: Vec<usize>,
+}
+
+// Helper trait for inspecting theorem state (useful for testing)
+pub trait TheoremExt {
+    fn is_complete(&self) -> bool;
+    fn has_step_using_theorem(&self, theorem_name: &str) -> bool;
+    fn get_case_count(&self) -> usize;
+    fn get_step_count(&self) -> usize;
+    fn all_proof_steps_finished(&self) -> bool;
+    fn proof_tree_is_valid(&self) -> bool;
+    fn has_proper_justifications(&self) -> bool;
+}
+
+impl TheoremExt for Theorem {
+    /// Checks if the main goal of the theorem is marked as proven in the proof forest.
+    fn is_complete(&self) -> bool {
+        self.proofs.roots.iter().any(|root_id| {
+            self.proofs.nodes.get(root_id).map_or(false, |node| {
+                node.state == self.goal && matches!(node.status, ProofStatus::Complete)
+            })
+        })
+    }
+
+    /// Recursively checks if any proof step uses a justification referencing a specific theorem name.
+    fn has_step_using_theorem(&self, theorem_name: &str) -> bool {
+        fn check_node(node: &ProofNode, forest: &ProofForest, theorem_name: &str) -> bool {
+            if let Some(tactic) = &node.tactic {
+                if format!("{:?}", tactic).contains(theorem_name) {
+                    return true;
+                }
+            }
+            node.children.iter().any(|child_id| {
+                forest.nodes.get(child_id).map_or(false, |child_node| {
+                    check_node(child_node, forest, theorem_name)
+                })
+            })
+        }
+
+        self.proofs.roots.iter().any(|root_id| {
+            self.proofs.nodes.get(root_id).map_or(false, |root_node| {
+                check_node(root_node, &self.proofs, theorem_name)
+            })
+        })
+    }
+
+    /// Counts the number of distinct proof branches (cases) originating from the root.
+    fn get_case_count(&self) -> usize {
+        self.proofs.roots.len()
+    }
+
+    /// Counts the total number of proof steps (nodes) in the entire proof forest.
+    fn get_step_count(&self) -> usize {
+        fn count_nodes(node: &ProofNode, forest: &ProofForest) -> usize {
+            1 + node
+                .children
+                .iter()
+                .filter_map(|child_id| forest.nodes.get(child_id))
+                .map(|child_node| count_nodes(child_node, forest))
+                .sum::<usize>()
+        }
+
+        self.proofs
+            .roots
+            .iter()
+            .filter_map(|root_id| self.proofs.nodes.get(root_id))
+            .map(|root_node| count_nodes(root_node, &self.proofs))
+            .sum()
+    }
+
+    /// Checks if all nodes in the proof forest are marked as finished/complete.
+    fn all_proof_steps_finished(&self) -> bool {
+        fn check_node_finished(node: &ProofNode, forest: &ProofForest) -> bool {
+            let current_complete = matches!(node.status, ProofStatus::Complete);
+            current_complete
+                && node
+                    .children
+                    .iter()
+                    .filter_map(|child_id| forest.nodes.get(child_id))
+                    .all(|child_node| check_node_finished(child_node, forest))
+        }
+        self.proofs
+            .roots
+            .iter()
+            .filter_map(|root_id| self.proofs.nodes.get(root_id))
+            .all(|root_node| check_node_finished(root_node, &self.proofs))
+    }
+
+    /// Basic validation of the proof tree structure (e.g., no cycles, parent pointers okay).
+    fn proof_tree_is_valid(&self) -> bool {
+        let roots_valid = self
+            .proofs
+            .roots
+            .iter()
+            .filter_map(|root_id| self.proofs.nodes.get(root_id))
+            .all(|root_node| root_node.parent.is_none());
+
+        roots_valid
+    }
+
+    /// Checks if all proof steps have some form of justification provided.
+    fn has_proper_justifications(&self) -> bool {
+        fn check_node_justification(node: &ProofNode, forest: &ProofForest) -> bool {
+            node.tactic.is_some()
+                && node
+                    .children
+                    .iter()
+                    .filter_map(|child_id| forest.nodes.get(child_id))
+                    .all(|child_node| check_node_justification(child_node, forest))
+        }
+        self.proofs
+            .roots
+            .iter()
+            .filter_map(|root_id| self.proofs.nodes.get(root_id))
+            .all(|root_node| check_node_justification(root_node, &self.proofs))
+    }
 }

@@ -3,12 +3,21 @@
 //! This file contains tests that verify the creation, manipulation, and properties
 //! of all mathematical objects defined in the group theory module.
 
-use super::super::super::super::math::theories::VariantSet;
-use super::super::super::super::math::theories::groups::definitions::*;
-use super::super::super::super::math::theories::zfc::set::CardinalityPropertyVariant;
-use super::super::super::super::math::theories::zfc::set::{Set, SetProperty};
+use super::super::VariantSet;
+use super::definitions::*;
+use crate::subjects::math::theories::MetrizablePropertyVariant;
+use crate::subjects::math::theories::groups::definitions::{
+    LieGroupProperty, ReductivePropertyVariant, SemisimplePropertyVariant, TopologicalGroupProperty,
+};
+use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
+use crate::subjects::math::theories::topology::{
+    CompactnessPropertyVariant, ConnectednessPropertyVariant,
+};
+use crate::subjects::math::theories::zfc::set::CardinalityPropertyVariant;
+use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
 use serde_json::{from_str, to_string};
 use std::cmp::PartialEq;
+use std::collections::HashMap;
 
 // Helper function to create a test Set
 fn create_test_set(name: &str, size: Option<u32>) -> Set {
@@ -18,9 +27,27 @@ fn create_test_set(name: &str, size: Option<u32>) -> Set {
             CardinalityPropertyVariant::Finite(size as usize),
         ));
     }
-    Set::Singleton {
-        element: Box::new(Set::Empty),
+    Set::Parametric {
+        parameters: HashMap::new(),
+        description: name.to_string(),
+        membership_condition: format!("Element of {}", name),
         properties,
+    }
+}
+
+// Helper function to create a default Topology
+fn default_topology() -> Topology {
+    Topology {
+        properties: VariantSet::new(),
+    }
+}
+
+// Helper function to create a default TopologicalSpace
+fn default_topological_space(set_name: &str) -> TopologicalSpace {
+    TopologicalSpace {
+        base_set: create_test_set(set_name, None),
+        topology: default_topology(),
+        properties: vec![],
     }
 }
 
@@ -42,6 +69,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(true),
             ],
+            product_info: None,
         };
 
         let addition = GroupOperation {
@@ -55,6 +83,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(true),
             ],
+            product_info: None,
         };
 
         let composition = GroupOperation {
@@ -68,6 +97,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(false),
             ],
+            product_info: None,
         };
 
         // Verify operations have correct types
@@ -149,6 +179,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(false),
             ],
+            product_info: None,
         };
 
         // Verify using standard variants now
@@ -183,6 +214,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Associative,
                 GroupOperationProperty::Closed,
             ],
+            product_info: None,
         };
 
         let right_inverse_op = GroupOperation {
@@ -195,6 +227,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Associative,
                 GroupOperationProperty::Closed,
             ],
+            product_info: None,
         };
 
         let two_sided_inverse_op = GroupOperation {
@@ -207,6 +240,7 @@ mod group_operation_tests {
                 GroupOperationProperty::Associative,
                 GroupOperationProperty::Closed,
             ],
+            product_info: None,
         };
 
         // Verify inverse application types
@@ -242,38 +276,42 @@ mod group_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(true),
             ],
+            product_info: None,
         };
 
-        Group {
+        // Use VariantSet::new() and insert
+        let mut props = VariantSet::new();
+        props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
+        props.insert(GroupProperty::Simple(SimplePropertyVariant::NonSimple));
+
+        Group::Basic(GroupBasic {
             base_set,
             operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-                GroupProperty::Simple(SimplePropertyVariant::NonSimple),
-            ],
-        }
+            props,
+        })
     }
 
     #[test]
     fn test_group_creation() {
         let group = create_test_group();
 
-        // Verify group components
-        assert!(group.base_set.get_properties().inner.is_empty());
+        // Use get_core() to access GroupBasic fields
+        let core = group.get_core();
+        assert!(core.base_set.get_properties().inner.is_empty());
         assert!(matches!(
-            group.operation.operation_type,
+            core.operation.operation_type,
             GroupOperationVariant::Addition
         ));
 
-        // Check group properties
-        let is_abelian = group
-            .properties
+        // Access properties through core
+        let is_abelian = core
+            .props
             .iter()
             .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)));
 
-        let is_infinite = group
-            .properties
+        let is_infinite = core
+            .props
             .iter()
             .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Infinite)));
 
@@ -284,6 +322,7 @@ mod group_tests {
     #[test]
     fn test_group_serialization() {
         let group = create_test_group();
+        let core = group.get_core(); // Get core for comparison
 
         // Test serialization
         let serialized = to_string(&group).expect("Failed to serialize group");
@@ -291,24 +330,21 @@ mod group_tests {
 
         // Test deserialization
         let deserialized: Group = from_str(&serialized).expect("Failed to deserialize group");
+        let des_core = deserialized.get_core(); // Get core of deserialized
 
-        // Verify that deserialized group matches original
+        // Verify deserialized core matches original core
         assert!(
-            deserialized.base_set.get_properties().inner.is_empty()
-                == group.base_set.get_properties().inner.is_empty()
+            des_core.base_set.get_properties().inner.is_empty()
+                == core.base_set.get_properties().inner.is_empty()
         );
         assert!(matches!(
-            deserialized.operation.operation_type,
+            des_core.operation.operation_type,
             GroupOperationVariant::Addition
         ));
-        assert!(matches!(
-            deserialized.operation.identity,
-            GroupIdentity::Zero
-        ));
+        assert!(matches!(des_core.operation.identity, GroupIdentity::Zero));
 
-        // Check that properties are preserved
-        let is_abelian = deserialized
-            .properties
+        let is_abelian = des_core
+            .props
             .iter()
             .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)));
         assert!(is_abelian);
@@ -316,92 +352,106 @@ mod group_tests {
 
     #[test]
     fn test_various_group_types() {
-        // Symmetric group S3
-        let s3_set = create_test_set("S3", Some(6));
-        let s3_operation = GroupOperation {
-            operation_type: GroupOperationVariant::Composition,
-            notation: GroupNotation::Infix(GroupSymbol::Circle),
-            identity: GroupIdentity::IdentityPermutation,
-            inverse: GroupInverse::PermutationInverse,
-            inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
+        // Construct specific Group variants, e.g., Group::Symmetric
+        let mut s3_props = VariantSet::new();
+        s3_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
+        s3_props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(6)));
+        s3_props.insert(GroupProperty::Simple(SimplePropertyVariant::NonSimple));
+        let s3_core = GroupBasic {
+            base_set: create_test_set("S3", Some(6)),
+            operation: GroupOperation {
+                operation_type: GroupOperationVariant::Composition,
+                notation: GroupNotation::Infix(GroupSymbol::Circle),
+                identity: GroupIdentity::IdentityPermutation,
+                inverse: GroupInverse::PermutationInverse,
+                inverse_application: GroupInverseApplication::TwoSided,
+                properties: vec![
+                    GroupOperationProperty::Associative,
+                    GroupOperationProperty::Closed,
+                    GroupOperationProperty::Commutative(false),
+                ],
+                product_info: None,
+            },
+            props: s3_props,
         };
+        let symmetric_group = Group::Symmetric(SymmetricGroup {
+            core: s3_core,
+            degree: 3,
+        });
 
-        let symmetric_group = Group {
-            base_set: s3_set,
-            operation: s3_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian),
-                GroupProperty::Finite(FinitePropertyVariant::Finite(6)),
-                GroupProperty::Simple(SimplePropertyVariant::NonSimple),
-            ],
+        let mut z2_props = VariantSet::new();
+        z2_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        z2_props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(2)));
+        z2_props.insert(GroupProperty::Simple(SimplePropertyVariant::Simple));
+        let z2_core = GroupBasic {
+            base_set: create_test_set("Z/2Z", Some(2)),
+            operation: GroupOperation {
+                operation_type: GroupOperationVariant::Addition,
+                notation: GroupNotation::Infix(GroupSymbol::Plus),
+                identity: GroupIdentity::Zero,
+                inverse: GroupInverse::AdditiveInverse,
+                inverse_application: GroupInverseApplication::TwoSided,
+                properties: vec![
+                    GroupOperationProperty::Associative,
+                    GroupOperationProperty::Closed,
+                    GroupOperationProperty::Commutative(true),
+                ],
+                product_info: None,
+            },
+            props: z2_props,
         };
+        let mut mod_props = VariantSet::new();
+        mod_props.insert(ModularProperty::Modulus(2));
+        mod_props.insert(ModularProperty::Representatives(
+            RepresentativesVariant::Standard,
+        ));
 
-        // Cyclic group Z/2Z
-        let z2_set = create_test_set("Z/2Z", Some(2));
-        let z2_operation = GroupOperation {
-            operation_type: GroupOperationVariant::Addition,
-            notation: GroupNotation::Infix(GroupSymbol::Plus),
-            identity: GroupIdentity::Zero,
-            inverse: GroupInverse::AdditiveInverse,
-            inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-        };
+        let cyclic_group = Group::ModularAdditive(ModularAdditiveGroup {
+            core: z2_core,
+            modulus: 2,
+            modular_props: mod_props,
+        });
 
-        let cyclic_group = Group {
-            base_set: z2_set,
-            operation: z2_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
-                GroupProperty::Finite(FinitePropertyVariant::Finite(2)),
-                GroupProperty::Simple(SimplePropertyVariant::Simple),
-            ],
-        };
-
-        // Verify S3 properties
+        // Verify S3 properties (accessing through get_core)
         assert!(matches!(
-            symmetric_group.operation.operation_type,
+            symmetric_group.get_core().operation.operation_type,
             GroupOperationVariant::Composition
         ));
-        assert!(symmetric_group.properties.iter().any(|p| matches!(
+        assert!(symmetric_group.get_core().props.iter().any(|p| matches!(
             p,
             GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
         )));
         assert!(
             symmetric_group
-                .properties
+                .get_core()
+                .props
                 .iter()
                 .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(6))))
         );
 
-        // Verify Z/2Z properties
+        // Verify Z/2Z properties (accessing through get_core)
         assert!(matches!(
-            cyclic_group.operation.operation_type,
+            cyclic_group.get_core().operation.operation_type,
             GroupOperationVariant::Addition
         ));
         assert!(
             cyclic_group
-                .properties
+                .get_core()
+                .props
                 .iter()
                 .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)))
         );
         assert!(
             cyclic_group
-                .properties
+                .get_core()
+                .props
                 .iter()
                 .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Finite(2))))
         );
         assert!(
             cyclic_group
-                .properties
+                .get_core()
+                .props
                 .iter()
                 .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple)))
         );
@@ -411,74 +461,86 @@ mod group_tests {
 #[cfg(test)]
 mod topological_group_tests {
     use super::*;
+    use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 
     #[test]
     fn test_topological_group_creation() {
-        // Create a base group
-        let base_set = create_test_set("R", None);
-        let operation = GroupOperation {
-            operation_type: GroupOperationVariant::Addition,
-            notation: GroupNotation::Infix(GroupSymbol::Plus),
-            identity: GroupIdentity::Zero,
-            inverse: GroupInverse::AdditiveInverse,
-            inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
+        // Create a base GroupBasic
+        let mut group_props = VariantSet::new();
+        group_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        group_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
+        let group_core = GroupBasic {
+            base_set: create_test_set("R", None),
+            operation: GroupOperation {
+                operation_type: GroupOperationVariant::Addition,
+                notation: GroupNotation::Infix(GroupSymbol::Plus),
+                identity: GroupIdentity::Zero,
+                inverse: GroupInverse::AdditiveInverse,
+                inverse_application: GroupInverseApplication::TwoSided,
+                properties: vec![
+                    GroupOperationProperty::Associative,
+                    GroupOperationProperty::Closed,
+                    GroupOperationProperty::Commutative(true),
+                ],
+                product_info: None,
+            },
+            props: group_props,
         };
 
-        let group = Group {
-            base_set,
-            operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-            ],
-        };
+        // Use default_topological_space helper
+        let topology = default_topological_space("R_topology");
 
-        // Create a topological group
-        let topological_group = TopologicalGroup {
-            group,
-            properties: vec![
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected),
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::LocallyConnected),
-            ],
-        };
+        // Create a topological group variant
+        let mut topo_props = VariantSet::new();
+        topo_props.insert(TopologicalGroupProperty::Connected(
+            ConnectedPropertyVariant::Connected,
+        ));
+        topo_props.insert(TopologicalGroupProperty::Connected(
+            ConnectedPropertyVariant::LocallyConnected,
+        ));
+        let topological_group = Group::Topological(TopologicalGroup {
+            core: group_core,
+            topology,
+            props: topo_props,
+        });
 
-        // Verify topological group properties
-        assert!(topological_group.properties.iter().any(|p| matches!(
-            p,
-            TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected)
-        )));
+        // Match on the Group enum to test
+        if let Group::Topological(tg) = &topological_group {
+            // Verify topological group properties
+            assert!(tg.props.iter().any(|p| matches!(
+                p,
+                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected)
+            )));
+            assert!(tg.props.iter().any(|p| matches!(
+                p,
+                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::LocallyConnected)
+            )));
 
-        assert!(topological_group.properties.iter().any(|p| matches!(
-            p,
-            TopologicalGroupProperty::Connected(ConnectedPropertyVariant::LocallyConnected)
-        )));
-
-        // Verify that the underlying group is abelian and infinite
-        assert!(
-            topological_group
-                .group
-                .properties
-                .iter()
-                .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)))
-        );
-
-        assert!(
-            topological_group
-                .group
-                .properties
-                .iter()
-                .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Infinite)))
-        );
+            // Verify underlying group properties
+            assert!(
+                tg.core
+                    .props
+                    .iter()
+                    .any(|p| matches!(p, GroupProperty::Abelian(AbelianPropertyVariant::Abelian)))
+            );
+            assert!(
+                tg.core
+                    .props
+                    .iter()
+                    .any(|p| matches!(p, GroupProperty::Finite(FinitePropertyVariant::Infinite)))
+            );
+        } else {
+            panic!("Expected Group::Topological variant");
+        }
     }
 
     #[test]
     fn test_various_topological_groups() {
         // Create circle group S¹
+        let mut circle_props = VariantSet::new();
+        circle_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        circle_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
+        circle_props.insert(GroupProperty::Simple(SimplePropertyVariant::NonSimple));
         let circle_set = create_test_set("S¹", None);
         let circle_operation = GroupOperation {
             operation_type: GroupOperationVariant::Multiplication,
@@ -491,27 +553,36 @@ mod topological_group_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(true),
             ],
+            product_info: None,
         };
 
-        let circle_group = Group {
+        let circle_core = GroupBasic {
             base_set: circle_set,
             operation: circle_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-                GroupProperty::Simple(SimplePropertyVariant::NonSimple),
-            ],
+            props: circle_props,
         };
 
-        let circle_topological_group = TopologicalGroup {
-            group: circle_group,
-            properties: vec![
-                TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact),
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected),
-            ],
-        };
+        // Use default_topological_space helper
+        let circle_topology = default_topological_space("S1_topology");
+
+        let mut circle_topo_props = VariantSet::new();
+        circle_topo_props.insert(TopologicalGroupProperty::Compact(
+            CompactPropertyVariant::Compact,
+        ));
+        circle_topo_props.insert(TopologicalGroupProperty::Connected(
+            ConnectedPropertyVariant::Connected,
+        ));
+
+        let circle_topological_group = Group::Topological(TopologicalGroup {
+            core: circle_core,
+            topology: circle_topology,
+            props: circle_topo_props,
+        });
 
         // Create discrete group Z with discrete topology
+        let mut integer_props = VariantSet::new();
+        integer_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        integer_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
         let integer_set = create_test_set("Z", None);
         let integer_operation = GroupOperation {
             operation_type: GroupOperationVariant::Addition,
@@ -524,154 +595,150 @@ mod topological_group_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(true),
             ],
+            product_info: None,
         };
 
-        let integer_group = Group {
+        let integer_core = GroupBasic {
             base_set: integer_set,
             operation: integer_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-            ],
+            props: integer_props,
         };
 
-        let discrete_topological_group = TopologicalGroup {
-            group: integer_group,
-            properties: vec![
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::TotallyDisconnected),
-                TopologicalGroupProperty::Metrizable(MetrizablePropertyVariant::Metrizable),
-            ],
-        };
+        // Use default_topological_space helper (representing discrete implicitly)
+        let discrete_topology = default_topological_space("Z_topology");
+
+        let mut discrete_topo_props = VariantSet::new();
+        discrete_topo_props.insert(TopologicalGroupProperty::Connected(
+            ConnectedPropertyVariant::TotallyDisconnected,
+        ));
+        discrete_topo_props.insert(TopologicalGroupProperty::Metrizable(
+            MetrizablePropertyVariant::Metrizable,
+        ));
+
+        let discrete_topological_group = Group::Topological(TopologicalGroup {
+            core: integer_core,
+            topology: discrete_topology,
+            props: discrete_topo_props,
+        });
 
         // Verify circle group properties
-        assert!(circle_topological_group.properties.iter().any(|p| matches!(
-            p,
-            TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact)
-        )));
-
-        assert!(circle_topological_group.properties.iter().any(|p| matches!(
-            p,
-            TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected)
-        )));
+        if let Group::Topological(tg) = &circle_topological_group {
+            assert!(
+                tg.props
+                    .contains_variant(&TopologicalGroupProperty::Compact(
+                        CompactPropertyVariant::Compact
+                    ))
+            );
+            assert!(
+                tg.props
+                    .contains_variant(&TopologicalGroupProperty::Connected(
+                        ConnectedPropertyVariant::Connected
+                    ))
+            );
+        } else {
+            panic!("Expected Topological Group");
+        }
 
         // Verify discrete group properties
-        assert!(
-            discrete_topological_group
-                .properties
-                .iter()
-                .any(|p| matches!(
-                    p,
-                    TopologicalGroupProperty::Connected(
+        if let Group::Topological(tg) = &discrete_topological_group {
+            assert!(
+                tg.props
+                    .contains_variant(&TopologicalGroupProperty::Connected(
                         ConnectedPropertyVariant::TotallyDisconnected
-                    )
-                ))
-        );
-
-        assert!(
-            discrete_topological_group
-                .properties
-                .iter()
-                .any(|p| matches!(
-                    p,
-                    TopologicalGroupProperty::Metrizable(MetrizablePropertyVariant::Metrizable)
-                ))
-        );
+                    ))
+            );
+            assert!(
+                tg.props
+                    .contains_variant(&TopologicalGroupProperty::Metrizable(
+                        MetrizablePropertyVariant::Metrizable
+                    ))
+            );
+        } else {
+            panic!("Expected Topological Group");
+        }
     }
 }
 
 #[cfg(test)]
 mod lie_group_tests {
     use super::*;
+    use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 
     #[test]
     fn test_lie_group_creation() {
-        // First create a base group
-        let base_set = create_test_set("GL(n,R)", None);
-        let operation = GroupOperation {
-            operation_type: GroupOperationVariant::MatrixMultiplication,
-            notation: GroupNotation::Infix(GroupSymbol::Times),
-            identity: GroupIdentity::IdentityMatrix,
-            inverse: GroupInverse::MatrixInverse,
-            inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
+        // Create a base GroupBasic for GL(n,R)
+        let mut glnr_props = VariantSet::new();
+        glnr_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
+        glnr_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
+        let glnr_core = GroupBasic {
+            base_set: create_test_set("GL(n,R)", None),
+            operation: GroupOperation {
+                operation_type: GroupOperationVariant::MatrixMultiplication,
+                notation: GroupNotation::Infix(GroupSymbol::Times),
+                identity: GroupIdentity::IdentityMatrix,
+                inverse: GroupInverse::MatrixInverse,
+                inverse_application: GroupInverseApplication::TwoSided,
+                properties: vec![
+                    GroupOperationProperty::Associative,
+                    GroupOperationProperty::Closed,
+                    GroupOperationProperty::Commutative(false),
+                ],
+                product_info: None,
+            },
+            props: glnr_props,
         };
 
-        let group = Group {
-            base_set,
-            operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-            ],
-        };
+        // Use default_topological_space helper
+        let topology = default_topological_space("GLnR_topology");
 
-        // Create a topological group
-        let topological_group = TopologicalGroup {
-            group,
-            properties: vec![
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected),
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::LocallyConnected),
-            ],
-        };
-
-        // Create a Lie group
-        let lie_group = LieGroup {
-            topological_group,
-            properties: vec![
-                LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple),
-                LieGroupProperty::Reductive(ReductivePropertyVariant::Reductive),
-            ],
-        };
-
-        // Verify Lie group properties
-        assert!(lie_group.properties.iter().any(|p| matches!(
-            p,
-            LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple)
-        )));
-
-        assert!(lie_group.properties.iter().any(|p| matches!(
-            p,
-            LieGroupProperty::Reductive(ReductivePropertyVariant::Reductive)
-        )));
-
-        // Verify topological properties
-        assert!(
-            lie_group
-                .topological_group
-                .properties
-                .iter()
-                .any(|p| matches!(
-                    p,
-                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected)
-                ))
-        );
-
-        // Verify group properties
-        assert!(
-            lie_group
-                .topological_group
-                .group
-                .properties
-                .iter()
-                .any(|p| matches!(
-                    p,
-                    GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
-                ))
-        );
-
-        assert!(matches!(
-            lie_group.topological_group.group.operation.operation_type,
-            GroupOperationVariant::MatrixMultiplication
+        // Create a Lie group variant
+        let mut lie_props = VariantSet::new();
+        lie_props.insert(LieGroupProperty::Semisimple(
+            SemisimplePropertyVariant::Semisimple,
         ));
+        lie_props.insert(LieGroupProperty::Reductive(
+            ReductivePropertyVariant::Reductive,
+        ));
+        let lie_group = Group::Lie(LieGroup {
+            core: glnr_core,
+            topology,
+            charts: vec!["chart1".to_string()],
+            props: lie_props,
+        });
+
+        // Match on the Group enum to test
+        if let Group::Lie(lg) = &lie_group {
+            // Verify Lie group properties
+            assert!(lg.props.iter().any(|p| matches!(
+                p,
+                LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple)
+            )));
+            assert!(lg.props.iter().any(|p| matches!(
+                p,
+                LieGroupProperty::Reductive(ReductivePropertyVariant::Reductive)
+            )));
+
+            // Verify underlying group properties
+            assert!(lg.core.props.iter().any(|p| matches!(
+                p,
+                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian)
+            )));
+            assert!(matches!(
+                lg.core.operation.operation_type,
+                GroupOperationVariant::MatrixMultiplication
+            ));
+        } else {
+            panic!("Expected Group::Lie variant");
+        }
     }
 
     #[test]
     fn test_various_lie_groups() {
         // Create SO(3) - Special Orthogonal Group
+        let mut so3_group_props = VariantSet::new();
+        so3_group_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
+        so3_group_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
+        so3_group_props.insert(GroupProperty::Simple(SimplePropertyVariant::Simple));
         let so3_set = create_test_set("SO(3)", None);
         let so3_operation = GroupOperation {
             operation_type: GroupOperationVariant::MatrixMultiplication,
@@ -684,35 +751,38 @@ mod lie_group_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(false),
             ],
+            product_info: None,
         };
 
-        let so3_group = Group {
+        let so3_core = GroupBasic {
             base_set: so3_set,
             operation: so3_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-                GroupProperty::Simple(SimplePropertyVariant::Simple),
-            ],
+            props: so3_group_props,
         };
 
-        let so3_topological_group = TopologicalGroup {
-            group: so3_group,
-            properties: vec![
-                TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact),
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected),
-            ],
-        };
+        // Use default_topological_space helper
+        let so3_topology = default_topological_space("SO3_topology");
 
-        let so3_lie_group = LieGroup {
-            topological_group: so3_topological_group,
-            properties: vec![
-                LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple),
-                LieGroupProperty::Reductive(ReductivePropertyVariant::Reductive),
-            ],
-        };
+        let mut so3_lie_props = VariantSet::new();
+        so3_lie_props.insert(LieGroupProperty::Semisimple(
+            SemisimplePropertyVariant::Semisimple,
+        ));
+        so3_lie_props.insert(LieGroupProperty::Reductive(
+            ReductivePropertyVariant::Reductive,
+        ));
+
+        let so3_lie_group = Group::Lie(LieGroup {
+            core: so3_core,
+            topology: so3_topology,
+            charts: vec![],
+            props: so3_lie_props,
+        });
 
         // Create SL(2,R) - Special Linear Group
+        let mut sl2r_group_props = VariantSet::new();
+        sl2r_group_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
+        sl2r_group_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
+        sl2r_group_props.insert(GroupProperty::Simple(SimplePropertyVariant::Simple));
         let sl2r_set = create_test_set("SL(2,R)", None);
         let sl2r_operation = GroupOperation {
             operation_type: GroupOperationVariant::MatrixMultiplication,
@@ -725,76 +795,60 @@ mod lie_group_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(false),
             ],
+            product_info: None,
         };
 
-        let sl2r_group = Group {
+        let sl2r_core = GroupBasic {
             base_set: sl2r_set,
             operation: sl2r_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian),
-                GroupProperty::Finite(FinitePropertyVariant::Infinite),
-                GroupProperty::Simple(SimplePropertyVariant::Simple),
-            ],
+            props: sl2r_group_props,
         };
 
-        let sl2r_topological_group = TopologicalGroup {
-            group: sl2r_group,
-            properties: vec![
-                TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected),
-                TopologicalGroupProperty::Compact(CompactPropertyVariant::NonCompact),
-            ],
-        };
+        // Use default_topological_space helper
+        let sl2r_topology = default_topological_space("SL2R_topology");
 
-        let sl2r_lie_group = LieGroup {
-            topological_group: sl2r_topological_group,
-            properties: vec![
-                LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple),
-                LieGroupProperty::Reductive(ReductivePropertyVariant::Reductive),
-            ],
-        };
+        let mut sl2r_lie_props = VariantSet::new();
+        sl2r_lie_props.insert(LieGroupProperty::Semisimple(
+            SemisimplePropertyVariant::Semisimple,
+        ));
+        sl2r_lie_props.insert(LieGroupProperty::Reductive(
+            ReductivePropertyVariant::Reductive,
+        ));
 
-        // Verify SO(3) properties
-        assert!(so3_lie_group.properties.iter().any(|p| matches!(
-            p,
-            LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple)
-        )));
+        let sl2r_lie_group = Group::Lie(LieGroup {
+            core: sl2r_core,
+            topology: sl2r_topology,
+            charts: vec![],
+            props: sl2r_lie_props,
+        });
 
-        assert!(
-            so3_lie_group
-                .topological_group
-                .properties
-                .iter()
-                .any(|p| matches!(
-                    p,
-                    TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact)
-                ))
-        );
+        // Verify SO(3) properties (match on Group::Lie)
+        if let Group::Lie(lg) = &so3_lie_group {
+            assert!(lg.props.contains_variant(&LieGroupProperty::Semisimple(
+                SemisimplePropertyVariant::Semisimple
+            )));
+            assert!(
+                lg.core
+                    .props
+                    .contains_variant(&GroupProperty::Simple(SimplePropertyVariant::Simple))
+            );
+        } else {
+            panic!("Expected Lie Group");
+        }
 
-        // Verify SL(2,R) properties
-        assert!(sl2r_lie_group.properties.iter().any(|p| matches!(
-            p,
-            LieGroupProperty::Semisimple(SemisimplePropertyVariant::Semisimple)
-        )));
-
-        assert!(
-            sl2r_lie_group
-                .topological_group
-                .properties
-                .iter()
-                .any(|p| matches!(
-                    p,
-                    TopologicalGroupProperty::Compact(CompactPropertyVariant::NonCompact)
-                ))
-        );
-
-        assert!(
-            sl2r_lie_group
-                .topological_group
-                .group
-                .properties
-                .iter()
-                .any(|p| matches!(p, GroupProperty::Simple(SimplePropertyVariant::Simple)))
-        );
+        // Verify SL(2,R) properties (match on Group::Lie)
+        if let Group::Lie(lg) = &sl2r_lie_group {
+            assert!(lg.props.contains_variant(&LieGroupProperty::Semisimple(
+                SemisimplePropertyVariant::Semisimple
+            )));
+            assert!(
+                lg.core
+                    .props
+                    .contains_variant(&GroupProperty::Simple(SimplePropertyVariant::Simple))
+            );
+        } else {
+            panic!("Expected Lie Group");
+        }
     }
 }
 
@@ -807,6 +861,9 @@ mod group_action_tests {
     #[test]
     fn test_group_action_creation() {
         // Create a group
+        let mut s4_group_props = VariantSet::new();
+        s4_group_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
+        s4_group_props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(24)));
         let group_set = create_test_set("S4", None);
         let group_operation = GroupOperation {
             operation_type: GroupOperationVariant::Composition,
@@ -819,16 +876,17 @@ mod group_action_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(false),
             ],
+            product_info: None,
         };
 
-        let group = Group {
-            base_set: group_set,
-            operation: group_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian),
-                GroupProperty::Finite(FinitePropertyVariant::Finite(24)),
-            ],
-        };
+        let group = Group::Symmetric(SymmetricGroup {
+            core: GroupBasic {
+                base_set: group_set,
+                operation: group_operation,
+                props: s4_group_props,
+            },
+            degree: 4,
+        });
 
         // Create a set to act on
         let space = create_test_set("X", Some(4));
@@ -859,6 +917,7 @@ mod group_action_tests {
         assert!(
             action
                 .get_group()
+                .get_core()
                 .base_set
                 .get_properties()
                 .inner
@@ -869,6 +928,9 @@ mod group_action_tests {
     #[test]
     fn test_various_group_actions() {
         // Create Z/2Z group
+        let mut z2_group_props = VariantSet::new();
+        z2_group_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
+        z2_group_props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(2)));
         let z2_set = create_test_set("Z/2Z", Some(2));
         let z2_operation = GroupOperation {
             operation_type: GroupOperationVariant::Addition,
@@ -881,16 +943,22 @@ mod group_action_tests {
                 GroupOperationProperty::Closed,
                 GroupOperationProperty::Commutative(true),
             ],
+            product_info: None,
         };
 
-        let z2_group = Group {
-            base_set: z2_set,
-            operation: z2_operation,
-            properties: vec![
-                GroupProperty::Abelian(AbelianPropertyVariant::Abelian),
-                GroupProperty::Finite(FinitePropertyVariant::Finite(2)),
-            ],
-        };
+        // Use ModularAdditive variant
+        let mut z2_mod_props = VariantSet::new();
+        z2_mod_props.insert(ModularProperty::Modulus(2));
+
+        let z2_group = Group::ModularAdditive(ModularAdditiveGroup {
+            core: GroupBasic {
+                base_set: z2_set,
+                operation: z2_operation,
+                props: z2_group_props,
+            },
+            modulus: 2,
+            modular_props: z2_mod_props,
+        });
 
         // Create a space to act on
         let space = create_test_set("R², {0}", None);
