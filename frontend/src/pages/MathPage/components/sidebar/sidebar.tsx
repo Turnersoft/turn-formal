@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import styles from "./Sidebar.module.scss";
-import TreeView from "../treeview/treeview";
+import styles from "./sidebar.module.scss";
+import TreeView from "../Treeview/treeview";
 import { TheoryFolder } from "../../models/math";
 import { FolderNode } from "../../../../services/mathService";
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "./TreeView.module.scss";
+import styles from "./treeview.module.scss";
 import { FolderNode } from "../../../../services/mathService";
 
 // Props for the TreeView component
