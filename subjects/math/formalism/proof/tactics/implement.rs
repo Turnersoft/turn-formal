@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
 use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+use crate::subjects::math::formalism::proof::DecompositionMethod;
 use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::formalism::theorem::ProofGoal;
 
-use super::get_theorem_registry;
-use super::tactic_types::*;
-use super::utils::*;
+use super::RewriteDirection;
+use super::{InductionType, utils::*};
+use super::{Tactic, get_theorem_registry};
 
 impl Tactic {
     /// Apply a tactic to a proof state
