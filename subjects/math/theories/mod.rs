@@ -95,3 +95,60 @@ pub trait HasProperties<T> {
 
 pub use groups::*;
 pub use zfc::*;
+
+#[cfg(test)]
+mod tests {
+    use crate::subjects::math::formalism::theorem::TheoremExt;
+    use crate::subjects::math::theories::groups::theorems::{
+        prove_abelian_squared_criterion, prove_example_chaining_theorems,
+        prove_identity_uniqueness_with_syntax_trees, prove_inverse_product_rule,
+        prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
+    };
+
+    #[test]
+    fn test_all_theorems_complete() {
+        // Group theory theorems
+        let inverse_uniqueness = prove_inverse_uniqueness();
+        assert!(
+            inverse_uniqueness.is_complete(),
+            "Inverse uniqueness theorem incomplete"
+        );
+
+        let identity_uniqueness = prove_identity_uniqueness_with_syntax_trees();
+        assert!(
+            identity_uniqueness.is_complete(),
+            "Identity uniqueness theorem incomplete"
+        );
+
+        let inverse_product_rule = prove_inverse_product_rule();
+        assert!(
+            inverse_product_rule.is_complete(),
+            "Inverse product rule theorem incomplete"
+        );
+
+        let abelian_squared_criterion = prove_abelian_squared_criterion();
+        assert!(
+            abelian_squared_criterion.is_complete(),
+            "Abelian squared criterion theorem incomplete"
+        );
+
+        let lagrange_theorem = prove_lagrange_theorem();
+        assert!(
+            lagrange_theorem.is_complete(),
+            "Lagrange's theorem incomplete"
+        );
+
+        // Theorem application examples
+        let example_chaining = prove_example_chaining_theorems();
+        assert!(
+            example_chaining.is_complete(),
+            "Example chaining theorem incomplete"
+        );
+
+        let extraction_example = prove_theorem_extraction_example();
+        assert!(
+            extraction_example.is_complete(),
+            "Theorem extraction example incomplete"
+        );
+    }
+}

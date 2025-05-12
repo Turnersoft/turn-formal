@@ -1,5 +1,5 @@
-use super::super::super::subjects::math::formalism::core::{ProofGoal, Theorem as CoreTheorem};
 use super::super::super::subjects::math::formalism::proof::{ProofNode, ProofStatus, Tactic};
+use super::super::super::subjects::math::formalism::theorem::{ProofGoal, Theorem as CoreTheorem};
 use crate::leptos::components::theorem_proof::{Proof, ProofStep, Theorem, TheoremStatement};
 use std::collections::HashMap;
 

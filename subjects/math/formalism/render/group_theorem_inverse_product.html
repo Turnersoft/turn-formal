@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Proof: Inverse of a Product (Manim-Inspired Animation v3)</title>
+    <style>
+        body {
+            font-family: 'Charter', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            margin: 0 auto;
+            max-width: 700px;
+            padding: 20px 15px;
+            line-height: 1.5;
+            background-color: #FFFFFF;
+            color: #111111;
+            font-size: 15px;
+        }
+        .theorem-environment, .proof-environment {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            border: none;
+            background-color: #ffffff;
+        }
+        .theorem-header, .proof-header {
+            font-weight: bold;
+            font-variant: small-caps;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .theorem-statement-text, .proof-step {
+            margin-bottom: 15px;
+        }
+        .math-expr, .math-var {
+            font-family: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #000;
+            white-space: nowrap;
+        }
+        .math-expr {
+            display: block;
+            text-align: center;
+            margin: 12px auto;
+            line-height: 1.7;
+            font-size: 1.05em;
+            letter-spacing: 0.5px;
+        }
+        .math-expr sup {
+            position: relative;
+            font-size: 0.75em;
+            top: -0.5em;
+        }
+        /* Math operators like * should be upright, not italic */
+        [data-id="op-star"] {
+            font-style: normal;
+            padding: 0 2px;
+        }
+        /* Reduce whitespace in list items containing math-expr */
+        li.math-expr {
+            margin: 3px auto 6px;
+            padding-left: 8px;
+            text-align: center;
+            list-style-type: none;
+        }
+        .term {
+            cursor: pointer;
+            padding: 1px 2px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease-out, outline 0.2s ease-out;
+            display: inline-block;
+        }
+        .term-highlight {
+            background-color: #f8f9fa;
+            outline: 1px solid #dee2e6;
+            color: #495057;
+        }
+        .context-definition, .proof-goal-initial, .proof-hypothesis, .derived-fact, 
+        .proof-state-before, .proof-state-after, .tactic-block {
+            margin: 8px 0;
+            padding: 8px 15px;
+            border-left: 2px solid #adb5bd; 
+            background-color: #ffffff;
+            border-radius: 0;
+            font-size: 0.95em;
+        }
+        .tactic-block { border-left-color: #adb5bd; }
+        .proof-state-before { border-left-color: #adb5bd; background-color: #ffffff; }
+        .proof-state-after { border-left-color: #adb5bd; background-color: #ffffff; }
+
+        .context-definition .label, .proof-goal-initial .label, .proof-hypothesis .label, .derived-fact .label {
+            font-weight: bold;
+            font-style: italic;
+            color: #212529;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .group-description, .quantifier-info {
+            padding-left: 12px;
+            font-size: 0.95em;
+            color: #212529;
+            margin-top: 2px;
+        }
+        .group-description li, .quantifier-info li { margin-bottom: 5px; list-style-type: none; padding-left: 0;}
+        .code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+        .narrative-text { 
+            margin-bottom: 10px; 
+            text-indent: 1.5em;
+            text-align: justify;
+            hyphens: auto;
+        }
+        .qed { 
+            text-align: right; 
+            margin-top: 15px; 
+            color: #212529; 
+            font-size: 1em; 
+        }
+        .qed:after {
+            content: "□";
+            display: inline-block;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        /* Proof state styling */
+        .proof-state {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-left: 2px solid #adb5bd;
+            background-color: #ffffff;
+            border-radius: 0;
+        }
+        .proof-state .label {
+            font-weight: bold;
+            font-style: italic;
+            color: #212529;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.95em;
+        }
+        .proof-arrow {
+            margin: 0 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        /* Animation trigger styling */
+        .animation-trigger {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 0;
+            padding: 2px 4px;
+            position: relative;
+            display: block;
+            text-align: center;
+            margin: 10px auto;
+        }
+        .animation-trigger::after {
+            content: "▶";
+            position: absolute;
+            right: -15px;
+            color: #6c757d;
+            font-size: 10px;
+            opacity: 0.5;
+        }
+        .animation-trigger:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        .animation-trigger:hover::after {
+            opacity: 1;
+        }
+        
+        /* State progression styling */
+        .proof-sequence {
+            margin: 15px 0;
+            padding: 0;
+            list-style-type: none;
+        }
+        .proof-state {
+            margin: 12px 0;
+            padding: 10px 15px;
+            border-left: 2px solid #adb5bd;
+            background-color: #ffffff;
+            border-radius: 0;
+            position: relative;
+        }
+        .state-connector {
+            position: absolute;
+            left: 8px;
+            bottom: -12px;
+            height: 12px;
+            border-left: 1px solid #adb5bd;
+            z-index: 1;
+        }
+        
+        /* Animation stage */
+        #animation-stage {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; 
+            z-index: 10000;
+            overflow: hidden; 
+            background-color: rgba(0,0,0,0.01);
+        }
+        .anim-token {
+            position: absolute;
+            display: inline-block;
+            padding: 1px 2px;
+            font-family: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #000; 
+            background-color: transparent;
+            border: none;
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.6s ease-in-out;
+            will-change: transform, opacity;
+            white-space: nowrap;
+            box-sizing: border-box;
+            box-shadow: none;
+        }
+        
+        /* Debug aid for animation */
+        .debug-animation .anim-token {
+            background-color: rgba(255, 255, 0, 0.1);
+            outline: 1px dashed #dee2e6;
+        }
+        .anim-token.tactic-name-clone {
+             background-color: rgba(206, 212, 218, 0.5);
+             border-color: #dee2e6;
+             color: #212529;
+        }
+        .anim-token.newly-formed {
+            background-color: transparent;
+            border: none;
+            transform: scale(0.5);
+            opacity: 0;
+        }
+        .anim-token.fade-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease-in, transform 0.5s ease-out;
+        }
+        .anim-token.fade-in-new {
+            background-color: transparent;
+            border: none;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease-in, transform 0.5s ease-out;
+        }
+        .anim-token.fade-out {
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        /* New token animation classes */
+        .anim-token.moved-token {
+            background-color: transparent;
+            border: none;
+            will-change: transform;
+        }
+        .anim-token.new-token {
+            background-color: transparent;
+            border: none;
+            will-change: opacity, transform;
+        }
+        .anim-token.removed-token {
+            background-color: transparent;
+            border: none;
+            will-change: opacity;
+        }
+        
+        /* Animation states for crossfade */
+        .initial-state {
+            will-change: opacity, transform;
+        }
+        .final-state {
+            will-change: opacity, transform;
+        }
+        .final-element {
+            will-change: transform;
+        }
+        .rearrange-container {
+            will-change: opacity;
+        }
+        .dimmed-during-animation .math-expr span[data-token-id],
+        .dimmed-during-animation span[data-token-id] {
+            opacity: 0.1 !important; 
+            transition: opacity 0.2s ease-out;
+        }
+        
+        /* Additional textbook styling */
+        h1 {
+            font-size: 1.6em;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: normal;
+            color: #000;
+        }
+        
+        /* Source character spans in morphing animation */
+        .source-char, .added-char {
+            display: inline-block;
+            margin: 0;
+            padding: 0 1px;
+        }
+        
+        /* Specific alignment for theorem statement */
+        #theorem-goal-statement {
+            text-align: center;
+            font-style: italic;
+            margin: 15px 0 10px;
+        }
+        
+        /* Indentation for proof steps */
+        .proof-environment {
+            padding-left: 20px;
+        }
+        
+        /* Improve visual spacing in proof steps */
+        .proof-sequence .math-expr {
+            margin: 8px 0;
+            padding: 3px 0;
+        }
+        
+        /* Compact spacing for proof steps */
+        .proof-sequence li:not(:last-child) {
+            margin-bottom: 0;
+        }
+        
+        /* Circle transition animation styling */
+        .transition-circle {
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            transform-origin: center center;
+            z-index: 100;
+        }
+        
+        .source-display, .target-display {
+            font-family: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.05em;
+        }
+    </style>
+</head>
+<body>
+    <div id="animation-stage"></div> 
+
+    <h1>Theorem: Inverse of a Product in a Group (Manim-Inspired Animation v3)</h1>
+
+    <div class="theorem-environment">
+        <div class="theorem-header" id="theorem-name">Theorem: Group Inverse Product Rule</div>
+        <div class="theorem-statement-text" id="theorem-description">
+            In any group, the inverse of a product of two elements is the product of their inverses in reverse order.
+        </div>
+        <div class="theorem-statement-text" id="theorem-goal-statement">
+            Formally: For any group <span class="term math-var" data-id="group-G">G</span>, and for any elements <span class="term math-var" data-id="element-a">a</span>, <span class="term math-var" data-id="element-b">b</span> in <span class="term math-var" data-id="group-G">G</span>, 
+        </div>
+        <div class="math-expr">
+            (<span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-b">b</span>)<sup><span class="term" data-id="op-inv">-1</span></sup> = 
+            <span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>
+        </div>
+
+        <div class="context-definition">
+            <span class="label">Context:</span>
+            <ul class="quantifier-info" id="quantifiers">
+                <li>Let <span class="term math-var" data-id="group-G">G</span> be an <span class="term" data-id="group-type">Abstract Group</span>.
+                    <ul class="group-description">
+                        <li>Operation: <span class="term math-expr" data-id="op-star">*</span> (binary, associative)</li>
+                        <li>Identity element: <span class="term math-var" data-id="identity-e">e</span> such that for all x &isin; G:</li>
+                        <li class="math-expr">x * e = e * x = x</li>
+                        <li>Inverse operation: For each <span class="term math-var" data-id="var-x">x</span> &isin; <span class="term math-var" data-id="group-G">G</span>, there exists <span class="term math-var" data-id="var-x">x</span><sup><span class="term" data-id="op-inv">-1</span></sup> such that:</li>
+                        <li class="math-expr">x * x<sup>-1</sup> = x<sup>-1</sup> * x = e</li>
+                    </ul>
+                </li>
+                <li>Let <span class="term math-var" data-id="element-a">a</span>, <span class="term math-var" data-id="element-b">b</span> be elements of <span class="term math-var" data-id="group-G">G</span>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="proof-environment">
+        <div class="proof-header">Proof.</div>
+        
+        <div class="narrative-text">
+            <strong>Click on an expression to see the transformation to the next step.</strong> We will prove that <span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup> is the inverse of 
+            <span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-b">b</span> by showing their product equals the identity element <span class="term math-var" data-id="identity-e">e</span>.
+        </div>
+        
+        <ol class="proof-sequence">
+            <!-- Step 0: Initial expression -->
+            <li class="proof-state" id="state0">
+                <span class="label">Initial expression</span>
+                <div class="math-expr animation-trigger" id="expr0" data-prev-state="state1">
+                    (<span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-b">b</span>) <span class="term" data-id="op-star">*</span> (<span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>)
+                </div>
+                <div class="state-connector"></div>
+            </li>
+            
+            <!-- Step 1: Apply associativity -->
+            <li class="proof-state" id="state1">
+                <span class="label">Apply associativity: (xy)z = x(yz)</span>
+                <div class="math-expr animation-trigger" id="expr1" data-prev-state="state0" data-next-state="state2">
+                    <span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> (<span class="term math-var" data-id="element-b">b</span> <span class="term" data-id="op-star">*</span> (<span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>))
+                </div>
+                <div class="state-connector"></div>
+            </li>
+            
+            <!-- Step 2: Apply associativity again -->
+            <li class="proof-state" id="state2">
+                <span class="label">Apply associativity: x(yz) = (xy)z</span>
+                <div class="math-expr animation-trigger" id="expr2" data-prev-state="state1" data-next-state="state3">
+                    <span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> ((<span class="term math-var" data-id="element-b">b</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup>) <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>)
+                </div>
+                <div class="state-connector"></div>
+            </li>
+            
+            <!-- Step 3: Apply inverse -->
+            <li class="proof-state" id="state3">
+                <span class="label">Apply inverse: b * b<sup>-1</sup> = e</span>
+                <div class="math-expr animation-trigger" id="expr3" data-prev-state="state2" data-next-state="state4">
+                    <span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> (<span class="term math-var" data-id="identity-e">e</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>)
+                </div>
+                <div class="state-connector"></div>
+            </li>
+            
+            <!-- Step 4: Apply identity -->
+            <li class="proof-state" id="state4">
+                <span class="label">Apply identity: e * x = x</span>
+                <div class="math-expr animation-trigger" id="expr4" data-prev-state="state3" data-next-state="state5">
+                    <span class="term math-var" data-id="element-a">a</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>
+                </div>
+                <div class="state-connector"></div>
+            </li>
+            
+            <!-- Step 5: Apply inverse -->
+            <li class="proof-state" id="state5">
+                <span class="label">Apply inverse: a * a<sup>-1</sup> = e</span>
+                <div class="math-expr" id="expr5" data-prev-state="state4">
+                    <span class="term math-var" data-id="identity-e">e</span>
+                </div>
+            </li>
+        </ol>
+
+        <div class="narrative-text">
+            Thus, we have shown 
+        </div>
+        <div class="math-expr">
+            (<span class="term math-var" data-id="element-a">a</span><span class="term" data-id="op-star">*</span><span class="term math-var" data-id="element-b">b</span>) <span class="term" data-id="op-star">*</span> (<span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup><span class="term" data-id="op-star">*</span><span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>) = <span class="term math-var" data-id="identity-e">e</span>
+        </div>
+        <div class="narrative-text">
+            By the definition of an inverse, 
+        </div>
+        <div class="math-expr">
+            (<span class="term math-var" data-id="element-a">a</span><span class="term" data-id="op-star">*</span><span class="term math-var" data-id="element-b">b</span>)<sup><span class="term" data-id="op-inv">-1</span></sup> = <span class="term math-var" data-id="element-b">b</span><sup><span class="term" data-id="op-inv">-1</span></sup><span class="term" data-id="op-star">*</span><span class="term math-var" data-id="element-a">a</span><sup><span class="term" data-id="op-inv">-1</span></sup>
+        </div>
+
+        <div class="qed"></div>
+    </div>
+
+    <script>
+        // Debug mode to show animation elements
+        const DEBUG_ANIMATION = true;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Term highlighting
+            const terms = document.querySelectorAll('.term');
+            terms.forEach(term => {
+                term.addEventListener('mouseenter', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => t.classList.add('term-highlight'));
+                });
+                term.addEventListener('mouseleave', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => t.classList.remove('term-highlight'));
+                });
+            });
+            
+            // Set up animation triggers
+            setupStateAnimations();
+        });
+        
+        // Global variables to track animation state
+        let isAnimating = false;
+        let animationTimeout = null;
+        
+        function setupStateAnimations() {
+            // Find all expressions that can trigger animations
+            const animationTriggers = document.querySelectorAll('.animation-trigger');
+            
+            animationTriggers.forEach(trigger => {
+                // Set up click event handler
+                trigger.addEventListener('click', function(event) {
+                    if (isAnimating) return; // Prevent overlapping animations
+                    
+                    const currentStateId = trigger.closest('.proof-state').id;
+                    const prevStateId = trigger.dataset.prevState;
+                    const nextStateId = trigger.dataset.nextState;
+                    
+                    if (prevStateId) {
+                        // Show how the current state was produced from previous state
+                        animateStateTransition(prevStateId, currentStateId);
+                    } else if (nextStateId) {
+                        // Show transition to the next state
+                        animateStateTransition(currentStateId, nextStateId);
+                    }
+                });
+                
+                // Add visual cue on hover
+                trigger.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                    this.style.cursor = 'pointer';
+                });
+                
+                trigger.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'transparent';
+                });
+            });
+            
+            console.log(`Set up animations for ${animationTriggers.length} states`);
+        }
+        
+        function animateStateTransition(fromStateId, toStateId) {
+            console.log(`Animating from ${fromStateId} to ${toStateId}`);
+            isAnimating = true;
+            
+            // Get the source and target elements
+            const fromExpr = document.querySelector(`#${fromStateId} .math-expr`);
+            const toExpr = document.querySelector(`#${toStateId} .math-expr`);
+            
+            if (!fromExpr || !toExpr) {
+                console.error('Could not find expressions for animation');
+                isAnimating = false;
+                return;
+            }
+            
+            // Create animation overlay
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.zIndex = '9999';
+            
+            // Add debug class if enabled
+            if (DEBUG_ANIMATION) {
+                overlay.classList.add('debug-animation');
+            }
+            
+            document.body.appendChild(overlay);
+            
+            // Get positions for the animation
+            const fromRect = fromExpr.getBoundingClientRect();
+            const toRect = toExpr.getBoundingClientRect();
+            
+            // Simple animation that always works
+            simpleAnimationWithHighlight(fromExpr, toExpr, overlay, fromRect, toRect);
+            
+            // Highlight destination state
+            const toState = document.getElementById(toStateId);
+            toState.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+            toState.style.transition = 'background-color 0.5s ease';
+            
+            // Set a timeout to complete the animation and clean up
+            animationTimeout = setTimeout(() => {
+                overlay.remove();
+                toState.style.backgroundColor = '';
+                isAnimating = false;
+            }, 2500);
+        }
+        
+        // Simple reliable animation that highlights changed parts
+        function simpleAnimationWithHighlight(fromExpr, toExpr, overlay, fromRect, toRect) {
+            // Center position for the animation
+            const midX = window.innerWidth / 2 - 120;
+            const midY = (fromRect.top + toRect.top) / 2;
+            
+            // Set flag to track animation state
+            let animationComplete = false;
+            
+            // Create source clone for initial position
+            const sourceClone = document.createElement('div');
+            sourceClone.innerHTML = fromExpr.innerHTML;
+            sourceClone.classList.add('math-expr');
+            sourceClone.style.position = 'absolute';
+            sourceClone.style.left = `${fromRect.left}px`;
+            sourceClone.style.top = `${fromRect.top}px`;
+            sourceClone.style.transition = 'all 0.7s ease';
+            sourceClone.style.fontSize = '16px'; // Ensure visibility
+            
+            // Add debug background if debugging
+            if (DEBUG_ANIMATION) {
+                sourceClone.style.background = 'rgba(173, 216, 230, 0.3)';
+                sourceClone.style.padding = '5px';
+                sourceClone.style.border = '1px solid blue';
+            }
+            
+            overlay.appendChild(sourceClone);
+            
+            console.log("Animation started");
+            
+            // PHASE 1: Move to center
+            setTimeout(() => {
+                console.log("Phase 1: Moving to center");
+                sourceClone.style.transform = `translate(${midX - fromRect.left}px, 0)`;
+                
+                // PHASE 2: After centered, perform the circle transition animation
+                setTimeout(() => {
+                    console.log("Phase 2: Starting circle transition");
+                    circleTransitionAnimation(sourceClone, toExpr.innerHTML, midX, fromRect.top, overlay, toRect);
+                }, 800); // Wait for centering to complete
+            }, 100);
+        }
+        
+        // Simplified circle transition animation
+        function circleTransitionAnimation(sourceElement, targetHTML, centerX, centerY, overlay, finalRect) {
+            // Hide the source element
+            sourceElement.style.opacity = '0';
+            
+            // Create container for the animation
+            const animContainer = document.createElement('div');
+            animContainer.classList.add('circle-transition-container');
+            animContainer.style.position = 'absolute';
+            animContainer.style.left = `${centerX}px`;
+            animContainer.style.top = `${centerY}px`;
+            animContainer.style.width = '400px';
+            animContainer.style.minHeight = '100px';
+            
+            if (DEBUG_ANIMATION) {
+                animContainer.style.background = 'rgba(200, 200, 200, 0.2)';
+                animContainer.style.border = '1px dashed green';
+            }
+            
+            overlay.appendChild(animContainer);
+            
+            // STEP 1: Show source expression
+            const sourceDisplay = document.createElement('div');
+            sourceDisplay.innerHTML = sourceElement.innerHTML;
+            sourceDisplay.classList.add('source-display');
+            sourceDisplay.style.position = 'relative';
+            sourceDisplay.style.textAlign = 'center';
+            sourceDisplay.style.transition = 'all 0.5s ease';
+            animContainer.appendChild(sourceDisplay);
+            
+            // STEP 2: Transform into circles
+            setTimeout(() => {
+                // Create circles to represent the transformation
+                const numCircles = 5; // Use a fixed number of circles for simplicity
+                const circles = [];
+                
+                // Hide source display
+                sourceDisplay.style.opacity = '0';
+                sourceDisplay.style.transform = 'scale(0.8)';
+                
+                // Create and animate circles
+                for (let i = 0; i < numCircles; i++) {
+                    const circle = document.createElement('div');
+                    circle.classList.add('transition-circle');
+                    circle.style.position = 'absolute';
+                    circle.style.width = '20px';
+                    circle.style.height = '20px';
+                    circle.style.borderRadius = '50%';
+                    circle.style.backgroundColor = 'rgba(52, 152, 219, 0.7)';
+                    circle.style.left = `${(i - numCircles/2) * 30 + 200}px`; // Distribute horizontally
+                    circle.style.top = '30px';
+                    circle.style.transform = 'scale(0)';
+                    circle.style.opacity = '0';
+                    circle.style.transition = 'all 0.4s ease';
+                    
+                    animContainer.appendChild(circle);
+                    circles.push(circle);
+                    
+                    // Animate circle appearance with a slight delay based on position
+                    setTimeout(() => {
+                        circle.style.transform = 'scale(1)';
+                        circle.style.opacity = '1';
+                    }, i * 80); // Stagger the animations
+                }
+                
+                // STEP 3: Transform circles into target expression
+                setTimeout(() => {
+                    // Fade out circles
+                    circles.forEach((circle, i) => {
+                        setTimeout(() => {
+                            circle.style.transform = 'scale(0)';
+                            circle.style.opacity = '0';
+                        }, i * 50); // Stagger the fade out
+                    });
+                    
+                    // Create and show target expression
+                    const targetDisplay = document.createElement('div');
+                    targetDisplay.innerHTML = targetHTML;
+                    targetDisplay.classList.add('target-display');
+                    targetDisplay.style.position = 'relative';
+                    targetDisplay.style.textAlign = 'center';
+                    targetDisplay.style.opacity = '0';
+                    targetDisplay.style.transform = 'scale(0.8)';
+                    targetDisplay.style.transition = 'all 0.5s ease';
+                    
+                    animContainer.appendChild(targetDisplay);
+                    
+                    // Show target after circles fade
+                    setTimeout(() => {
+                        targetDisplay.style.opacity = '1';
+                        targetDisplay.style.transform = 'scale(1)';
+                        
+                        // STEP 4: Move to final position
+                        setTimeout(() => {
+                            // Hide the animation container
+                            animContainer.style.opacity = '0';
+                            
+                            // Create final element that will move to destination
+                            const finalElement = document.createElement('div');
+                            finalElement.innerHTML = targetHTML;
+                            finalElement.classList.add('math-expr', 'final-element');
+                            finalElement.style.position = 'absolute';
+                            finalElement.style.left = `${centerX}px`;
+                            finalElement.style.top = `${centerY}px`;
+                            finalElement.style.transition = 'all 0.7s ease';
+                            finalElement.style.fontSize = '16px';
+                            
+                            if (DEBUG_ANIMATION) {
+                                finalElement.style.background = 'rgba(144, 238, 144, 0.3)';
+                                finalElement.style.padding = '5px';
+                                finalElement.style.border = '1px solid green';
+                            }
+                            
+                            overlay.appendChild(finalElement);
+                            
+                            // Move to final destination
+                            setTimeout(() => {
+                                finalElement.style.transform = `translate(${finalRect.left - centerX}px, ${finalRect.top - centerY}px)`;
+                            }, 100);
+                        }, 600);
+                    }, numCircles * 50 + 200); // Wait for circles to fade
+                }, numCircles * 80 + 400); // Wait for all circles to appear
+            }, 500);
+        }
+        
+        // Character-by-character morphing animation - removed since we're using the simpler circle transition now
+        function morphCharsAnimation(sourceElement, targetHTML, centerX, centerY, overlay, finalRect) {
+            // This function is kept for reference but no longer used
+            console.log("Using circle transition instead of character morphing");
+            circleTransitionAnimation(sourceElement, targetHTML, centerX, centerY, overlay, finalRect);
+        }
+        
+        // Helper functions - simplified for the new animation approach
+        function stripHTML(html) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            return tempDiv.textContent || tempDiv.innerText || '';
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Math Textbook Style Example</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0 auto;
+            max-width: 800px;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #fdfdfd;
+            color: #333;
+        }
+        .theorem-environment, .proof-environment {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .theorem-header, .proof-header {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50; /* Dark blue for headers */
+            margin-bottom: 10px;
+        }
+        .theorem-statement-text, .proof-step-description {
+            margin-bottom: 15px;
+        }
+        .math-expr {
+            font-family: 'Times New Roman', Times, serif; /* Consistent with body for textbook feel */
+            font-style: italic; 
+            color: #444; /* Slightly darker math text */
+        }
+        .term {
+            cursor: pointer;
+            padding: 0px 2px;
+            border-radius: 3px;
+            transition: background-color 0.2s, outline 0.2s;
+            display: inline-block; /* Ensures padding and outline work well */
+        }
+        .term-highlight {
+            background-color: #e0f7fa; /* Lighter blue highlight */
+            outline: 1px solid #007bff; /* Clearer blue outline */
+            color: #0056b3;
+        }
+        .context-section, .tactic-section, .proof-state-section {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px dashed #e0e0e0;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .context-section h4, .tactic-section h4, .proof-state-section h4 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: #34495e;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .context-item, .hypothesis, .goal {
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        .context-item .name, .hypothesis .name, .goal .name {
+            font-weight: bold;
+            color: #d35400; /* Orange for variable/term names */
+        }
+        .context-item .type, .hypothesis .type, .goal .type {
+            font-style: italic;
+            color: #2980b9; /* Blue for types */
+        }
+        .group-properties {
+            padding-left: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .group-properties div { margin-bottom: 3px; }
+        .code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #eef; /* Light blue/purple for code */
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .tactic-label { font-weight: bold; color: #8e44ad; }
+        .goal-label { font-weight: bold; color: #27ae60; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Formal Mathematics Example (Textbook Style)</h1>
+
+    <div class="theorem-environment">
+        <div class="theorem-header">
+            Theorem 1 (Left Identity)
+        </div>
+        <div class="theorem-statement-text">
+            For any group <span class="term" data-id="group-G">G</span>, 
+            and for any element <span class="term" data-id="element-a">a</span> in <span class="term" data-id="group-G">G</span>, 
+            the equation <span class="math-expr">
+                <span class="term" data-id="identity-e">identity</span>(<span class="term" data-id="group-G">G</span>) 
+                <span class="term" data-id="op-star">*</span><sub><span class="term" data-id="group-G">G</span></sub> 
+                <span class="term" data-id="element-a">a</span> = <span class="term" data-id="element-a">a</span>
+            </span> holds.
+        </div>
+
+        <div class="context-section">
+            <h4>Context</h4>
+            <div class="context-item">
+                <span class="term name" data-id="group-G">G</span>: <span class="type">Group</span>.
+                <div class="group-properties">
+                    <div>- Operation: <span class="term math-expr" data-id="op-star">*</span><sub><span class="term" data-id="group-G">G</span></sub></div>
+                    <div>- Identity Element: <span class="term math-expr" data-id="identity-e">identity</span>(<span class="term" data-id="group-G">G</span>)</div>
+                    <div>- Inverse: <span class="term math-expr" data-id="op-inv">inv</span>(x, <span class="term" data-id="group-G">G</span>) for <span class="math-expr">x</span> &#8712; <span class="term" data-id="group-G">G</span></div>
+                    <div>- Property: <span class="term" data-id="prop-abelian">Abelian</span> = <span class="math-expr">False</span> (example)</div>
+                    <div>- Property: <span class="term" data-id="prop-order">Order</span> = <span class="math-expr">Infinite</span> (example)</div>
+                    <div>- Axiom Set: <span class="code">StandardGroupAxioms</span></div>
+                </div>
+            </div>
+            <div class="context-item">
+                <span class="term name" data-id="element-a">a</span>: <span class="type">Element</span> of <span class="term" data-id="group-G">G</span>.
+            </div>
+            <div class="context-item">
+                <span class="name">Axiom_LeftIdentity</span> (<span class="term" data-id="axiom-LIA">LIA</span>): 
+                <span class="math-expr">
+                &forall; <span class="term" data-id="axiom-group-var">H</span>: Group, &forall; <span class="term" data-id="axiom-el-var">x</span> &#8712; <span class="term" data-id="axiom-group-var">H</span>, 
+                <span class="term" data-id="axiom-lhs">
+                    <span class="term" data-id="identity-e">identity</span>(<span class="term" data-id="axiom-group-var">H</span>) 
+                    <span class="term" data-id="op-star">*</span><sub><span class="term" data-id="axiom-group-var">H</span></sub> 
+                    <span class="term" data-id="axiom-el-var">x</span>
+                </span> = <span class="term data-id="axiom-rhs" data-id="axiom-el-var">x</span>.
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="proof-environment">
+        <div class="proof-header">Proof.</div>
+        
+        <div class="proof-state-section">
+            <h4>Initial Proof State</h4>
+            <div class="goal">
+                <span class="goal-label">Goal 0</span> (<span class="term code" data-id="goal-0">G0</span>): 
+                <span class="math-expr">
+                    <span class="term" data-id="identity-e">identity</span>(<span class="term" data-id="group-G">G</span>) 
+                    <span class="term" data-id="op-star">*</span><sub><span class="term" data-id="group-G">G</span></sub> 
+                    <span class="term" data-id="element-a">a</span> 
+                    = 
+                    <span class="term" data-id="element-a">a</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="proof-step-description">
+            We apply the axiom of left identity.
+        </div>
+        
+        <div class="tactic-section">
+            <h4>Step 1: Apply Left Identity Axiom</h4>
+            <div class="tactic-label">
+                Tactic: <span class="code">apply</span> <span class="term" data-id="axiom-LIA">LIA</span> 
+                <span class="code">with</span> 
+                <span class="math-expr">(<span class="term" data-id="axiom-group-var">H</span> := <span class="term" data-id="group-G">G</span>, <span class="term" data-id="axiom-el-var">x</span> := <span class="term" data-id="element-a">a</span>)</span>
+            </div>
+        </div>
+
+        <div class="proof-state-section">
+            <h4>Proof State After Step 1</h4>
+            <p style="font-size:0.9em; color: #666;">The tactic <span class="code">apply</span> matches the conclusion of <span class="term" data-id="axiom-LIA">LIA</span> 
+            with the current goal <code class="term" data-id="goal-0">G0</code>. 
+            With the provided substitutions, the goal is directly resolved by the axiom.
+            </p>
+            <div class="goal">
+                <span class="goal-label">All goals solved.</span>
+            </div>
+        </div>
+        <div style="text-align: right; font-weight: bold; margin-top: 15px;">Q.E.D.</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const terms = document.querySelectorAll('.term');
+            
+            terms.forEach(term => {
+                term.addEventListener('mouseenter', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => {
+                        t.classList.add('term-highlight');
+                    });
+                });
+                
+                term.addEventListener('mouseleave', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                     document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => {
+                        t.classList.remove('term-highlight');
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

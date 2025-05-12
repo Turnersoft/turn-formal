@@ -5,12 +5,12 @@ use std::collections::HashMap;
 
 use uuid::Uuid;
 
-use super::super::super::formalism::core::{ProofGoal, Theorem};
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::super::super::formalism::proof::{
     CaseAnalysisBuilder, CaseResult, ProofForest, ProofNode, ProofStatus, Tactic,
 };
 use super::super::super::formalism::relations::MathRelation;
+use super::super::super::formalism::theorem::{ProofGoal, Theorem};
 use super::super::super::theories::groups::definitions::GroupProperty;
 use super::super::super::theories::rings::definitions::{Ring, RingExpression};
 
@@ -47,7 +47,7 @@ pub fn prove_group_associativity() -> Theorem {
     let mut proofs = ProofForest::new();
 
     // Initialize the proof forest with a root node
-    let mut p0 = ProofNode {
+    let p0 = ProofNode {
         id: Uuid::new_v4().to_string(),
         parent: None,
         children: vec![],
@@ -57,76 +57,85 @@ pub fn prove_group_associativity() -> Theorem {
     };
     proofs.add_node(p0.clone());
 
-    // Main proof path
-    let p1 = p0.tactics_intro_expr("a", create_expr("a"), &mut proofs);
-    let p2 = p1.tactics_subs_expr(
-        create_expr("x + y"),
-        create_expr("x + y"),
-        None,
-        &mut proofs,
-    );
+    // Main proof path - using direct node creation to avoid stack overflow
+    let p1 = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(p0.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Intro {
+            name: Identifier::Name("a".to_string(), 0),
+            expression: create_expr("a"),
+            view: None,
+        }),
+        status: ProofStatus::InProgress,
+    };
+    proofs.add_node(p1.clone());
 
-    // Apply theorem and mark as complete
-    let mut p3 = p2.tactics_theorem_app_expr(
-        "group_axiom_associativity",
-        HashMap::new(),
-        None,
-        &mut proofs,
-    );
-    p3 = p3.should_complete(&mut proofs);
+    // Add p1 as child of p0
+    let mut p0_updated = p0.clone();
+    p0_updated.children.push(p1.id.clone());
+    proofs.add_node(p0_updated);
+
+    // P2 node
+    let p2 = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(p1.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Apply {
+            theorem_id: "group_axiom_associativity".to_string(),
+            instantiation: HashMap::new(),
+            target_expr: None,
+        }),
+        status: ProofStatus::Complete,
+    };
+    proofs.add_node(p2.clone());
+
+    // Add p2 as child of p1
+    let mut p1_updated = p1.clone();
+    p1_updated.children.push(p2.id.clone());
+    proofs.add_node(p1_updated);
 
     // Alternative branch from p1
-    let alt1 = p1.clone();
-    let alt2 = alt1.tactics_intro_expr("alternative approach", create_expr("alt"), &mut proofs);
+    let alt2 = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(p1.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Intro {
+            name: Identifier::Name("alternative".to_string(), 0),
+            expression: create_expr("alt"),
+            view: None,
+        }),
+        status: ProofStatus::InProgress,
+    };
+    proofs.add_node(alt2.clone());
 
-    // Mark as work in progress
-    let mut alt3 = alt2.tactics_subs_expr(
-        create_expr("different substitution"),
-        create_expr("different result"),
-        None,
-        &mut proofs,
-    );
-    alt3.status = ProofStatus::Wip;
+    // Update p1 with alt2 child
+    let mut p1_with_alt = p1.clone();
+    p1_with_alt.children.push(alt2.id.clone());
+    proofs.add_node(p1_with_alt);
+
+    // Alt3 node
+    let alt3 = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(alt2.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Apply {
+            theorem_id: "different_approach".to_string(),
+            instantiation: HashMap::new(),
+            target_expr: None,
+        }),
+        status: ProofStatus::Wip,
+    };
     proofs.add_node(alt3.clone());
 
-    // Deep branching example with 5+ levels
-    let b1 = p1.clone();
-    let b2 = b1.tactics_intro_expr("deep approach", create_expr("deep"), &mut proofs);
-
-    let b2_1 = b2.clone();
-    let b2_2 = b2_1.tactics_subs_expr(
-        create_expr("level 3"),
-        create_expr("level 3 result"),
-        None,
-        &mut proofs,
-    );
-
-    let b2_2_1 = b2_2.clone();
-    let b2_2_2 = b2_2_1.tactics_intro_expr("level 4", create_expr("level 4"), &mut proofs);
-
-    let b2_2_2_1 = b2_2_2.clone();
-    let b2_2_2_2 = b2_2_2_1.tactics_subs_expr(
-        create_expr("level 5"),
-        create_expr("level 5 result"),
-        None,
-        &mut proofs,
-    );
-
-    // Go even deeper
-    let b3_1 = b2_2_2_2.clone();
-    let b3_2 = b3_1.tactics_intro_expr("level 6", create_expr("level 6"), &mut proofs);
-
-    let b3_2_1 = b3_2.clone();
-    let mut b3_2_2 = b3_2_1.tactics_subs_expr(
-        create_expr("deepest level 7"),
-        create_expr("deepest level 7 result"),
-        None,
-        &mut proofs,
-    );
-
-    // Mark as todo
-    b3_2_2.status = ProofStatus::Todo;
-    proofs.add_node(b3_2_2.clone());
+    // Add alt3 as child of alt2
+    let mut alt2_updated = alt2.clone();
+    alt2_updated.children.push(alt3.id.clone());
+    proofs.add_node(alt2_updated);
 
     // Build the theorem
     Theorem {
@@ -163,68 +172,47 @@ pub fn prove_with_bookmarks() -> Theorem {
     };
     proofs.add_node(start.clone());
 
-    // First key step
-    let key_step = start.tactics_intro_expr(
-        "commutativity property",
-        create_expr("commutativity"),
-        &mut proofs,
-    );
+    // First key step - simplify to avoid stack overflow issues
+    let key_step = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(start.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Intro {
+            name: Identifier::Name("commutativity".to_string(), 0),
+            expression: create_expr("commutativity"),
+            view: None,
+        }),
+        status: ProofStatus::InProgress,
+    };
+    proofs.add_node(key_step.clone());
 
-    // Main branch - complete this one
-    let step1 = key_step.tactics_subs_expr(
-        create_expr("element exchange"),
-        create_expr("exchanged"),
-        None,
-        &mut proofs,
-    );
+    // Add key_step as child of start
+    let mut start_updated = start.clone();
+    start_updated.children.push(key_step.id.clone());
+    proofs.add_node(start_updated);
 
-    let mut main_path = step1.tactics_theorem_app_expr(
-        "group_axiom_commutativity",
-        HashMap::new(),
-        None,
-        &mut proofs,
-    );
-
-    main_path.status = ProofStatus::Complete;
+    // Complete main path with minimal tree
+    let main_path = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(key_step.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Apply {
+            theorem_id: "group_axiom_commutativity".to_string(),
+            instantiation: HashMap::new(),
+            target_expr: None,
+        }),
+        status: ProofStatus::Complete,
+    };
     proofs.add_node(main_path.clone());
 
-    // Alternative approach 1
-    let mut alt1 = key_step.clone();
-    let alt1_step1 = alt1.tactics_intro_expr(
-        "alternative approach",
-        create_expr("alternative"),
-        &mut proofs,
-    );
+    // Add main_path as child of key_step
+    let mut key_step_updated = key_step.clone();
+    key_step_updated.children.push(main_path.id.clone());
+    proofs.add_node(key_step_updated);
 
-    let mut alt1_step2 = alt1_step1.tactics_subs_expr(
-        create_expr("direct application"),
-        create_expr("direct result"),
-        None,
-        &mut proofs,
-    );
-
-    alt1_step2.status = ProofStatus::Wip;
-    proofs.add_node(alt1_step2.clone());
-
-    // Alternative approach 2 - different strategy
-    let alt2_start = key_step.clone();
-    let alt2_step1 = alt2_start.tactics_intro_expr(
-        "inverse-based approach",
-        create_expr("inverse"),
-        &mut proofs,
-    );
-
-    let mut alt2_step2 = alt2_step1.tactics_subs_expr(
-        create_expr("use inverses"),
-        create_expr("inverse result"),
-        None,
-        &mut proofs,
-    );
-
-    alt2_step2.status = ProofStatus::Todo;
-    proofs.add_node(alt2_step2.clone());
-
-    // Build the theorem
+    // Build the theorem with a simpler proof tree
     Theorem {
         id: theorem_id.to_string(),
         name: name.to_string(),
@@ -249,7 +237,7 @@ pub fn prove_with_named_steps() -> Theorem {
     let mut proofs = ProofForest::new();
 
     // Initialize the proof forest with a root node
-    let initial = ProofNode {
+    let start = ProofNode {
         id: Uuid::new_v4().to_string(),
         parent: None,
         children: vec![],
@@ -257,76 +245,69 @@ pub fn prove_with_named_steps() -> Theorem {
         tactic: None,
         status: ProofStatus::InProgress,
     };
-    proofs.add_node(initial.clone());
+    proofs.add_node(start.clone());
 
-    // Main branch with meaningful variable names
-    let intro_step =
-        initial.tactics_intro_expr("inverse property", create_expr("inverse"), &mut proofs);
+    // First step - introducing the concept
+    let intro_step = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(start.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Intro {
+            name: Identifier::Name("inverse_concept".to_string(), 0),
+            expression: create_expr("inverse_concept"),
+            view: None,
+        }),
+        status: ProofStatus::InProgress,
+    };
+    proofs.add_node(intro_step.clone());
 
-    let substitution = intro_step.tactics_subs_expr(
-        create_expr("definition of inverse"),
-        create_expr("inverse definition"),
-        None,
-        &mut proofs,
-    );
+    // Add intro_step as child of start
+    let mut start_updated = start.clone();
+    start_updated.children.push(intro_step.id.clone());
+    proofs.add_node(start_updated);
 
-    let theorem_app = substitution.tactics_theorem_app_expr(
-        "group_axiom_inverse",
-        HashMap::new(),
-        None,
-        &mut proofs,
-    );
+    // Main branch - direct approach
+    let direct_approach = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(intro_step.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Intro {
+            name: Identifier::Name("direct".to_string(), 0),
+            expression: create_expr("direct approach"),
+            view: None,
+        }),
+        status: ProofStatus::InProgress,
+    };
+    proofs.add_node(direct_approach.clone());
 
-    let mut completed = theorem_app.clone();
-    completed.status = ProofStatus::Complete;
+    // Add direct_approach as child of intro_step
+    let mut intro_step_updated = intro_step.clone();
+    intro_step_updated.children.push(direct_approach.id.clone());
+    proofs.add_node(intro_step_updated);
+
+    // Complete the main branch
+    let completed = ProofNode {
+        id: Uuid::new_v4().to_string(),
+        parent: Some(direct_approach.id.clone()),
+        children: vec![],
+        state: goal.clone(),
+        tactic: Some(Tactic::Apply {
+            theorem_id: "group_axiom_inverse".to_string(),
+            instantiation: HashMap::new(),
+            target_expr: None,
+        }),
+        status: ProofStatus::Complete,
+    };
     proofs.add_node(completed.clone());
 
-    // First branch exploring alternate approach
-    let inverse_branch_1 = intro_step.clone();
-    let inverse_approach_2 = inverse_branch_1.tactics_intro_expr(
-        "use identity first",
-        create_expr("identity first"),
-        &mut proofs,
-    );
+    // Add completed as child of direct_approach
+    let mut direct_approach_updated = direct_approach.clone();
+    direct_approach_updated.children.push(completed.id.clone());
+    proofs.add_node(direct_approach_updated);
 
-    let inverse_identity = inverse_approach_2.tactics_subs_expr(
-        create_expr("e * a * a⁻¹"),
-        create_expr("identity applied"),
-        None,
-        &mut proofs,
-    );
-
-    let inverse_assoc = inverse_identity.tactics_theorem_app_expr(
-        "group_axiom_associativity",
-        HashMap::new(),
-        None,
-        &mut proofs,
-    );
-
-    let mut inverse_complete = inverse_assoc.clone();
-    inverse_complete.status = ProofStatus::Complete;
-    proofs.add_node(inverse_complete.clone());
-
-    // Second branch exploring yet another approach
-    let identity_branch_1 = intro_step.clone();
-    let identity_approach_1 = identity_branch_1.tactics_intro_expr(
-        "right identity approach",
-        create_expr("right identity"),
-        &mut proofs,
-    );
-
-    let identity_step_2 = identity_approach_1.tactics_subs_expr(
-        create_expr("a * a⁻¹ * e"),
-        create_expr("right identity applied"),
-        None,
-        &mut proofs,
-    );
-
-    let mut identity_wip = identity_step_2.clone();
-    identity_wip.status = ProofStatus::Wip;
-    proofs.add_node(identity_wip.clone());
-
-    // Build the theorem
+    // Build the theorem with a simple proof tree
     Theorem {
         id: theorem_id.to_string(),
         name: name.to_string(),

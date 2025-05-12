@@ -11,7 +11,7 @@ use super::super::super::super::math::theories::zfc::Set;
 use std::collections::HashSet;
 use thiserror::Error;
 
-use super::GroupOperationVariant;
+use super::definitions::GroupOperationVariant;
 use crate::subjects::math::formalism::extract::Parametrizable;
 
 /// Errors that can occur during group operations

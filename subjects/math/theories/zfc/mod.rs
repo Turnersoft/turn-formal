@@ -4,6 +4,7 @@
 //! It serves as the basis for building other mathematical theories in a formally verified way.
 
 pub mod axioms;
+pub mod collect;
 pub mod relations;
 pub mod set;
 pub mod verifier;

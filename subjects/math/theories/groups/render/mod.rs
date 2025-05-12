@@ -11,7 +11,7 @@ use super::definitions::{
     GroupInverse, GroupOperationProperty, GroupOperationVariant, GroupProperty,
     NilpotentPropertyVariant, SimplePropertyVariant, SolvablePropertyVariant,
 };
-use super::{GroupAction, GroupBasic, GroupExpression, GroupRelation};
+use super::definitions::{GroupAction, GroupBasic, GroupExpression, GroupRelation};
 
 impl ToTurnMath for Group {
     fn to_turn_math(&self, master_id: String) -> MathNode {

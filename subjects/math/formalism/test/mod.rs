@@ -5,4 +5,6 @@ pub mod proof_example;
 pub mod real_world_example;
 pub mod tactics_tests;
 // Temporarily commented out until fixed
+pub mod path_index_example;
+pub mod recursive_explorer_tests;
 pub mod type_views;

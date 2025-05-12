@@ -106,12 +106,18 @@ impl Theorem {
     }
 
     pub fn initialize_branch(&mut self) -> ProofNode {
+        // Create an "initialization" tactic to represent the starting point
+        let init_tactic = super::proof::tactics::Tactic::Custom {
+            name: "init".to_string(),
+            args: vec![format!("theorem:{}", self.id)],
+        };
+
         let node = ProofNode {
             id: Uuid::new_v4().to_string(),
             parent: None,
             children: vec![],
             state: self.goal.clone(),
-            tactic: None,
+            tactic: Some(init_tactic),
             status: ProofStatus::InProgress,
         };
         self.proofs.add_node(node.clone());
@@ -285,24 +291,42 @@ impl TheoremExt for Theorem {
 
     /// Recursively checks if any proof step uses a justification referencing a specific theorem name.
     fn has_step_using_theorem(&self, theorem_name: &str) -> bool {
-        fn check_node(node: &ProofNode, forest: &ProofForest, theorem_name: &str) -> bool {
+        // Use an iterative approach with a stack to avoid deep recursion
+        let mut node_stack = Vec::new();
+        let mut visited = std::collections::HashSet::new();
+
+        // Add all root nodes to our stack
+        for root_id in &self.proofs.roots {
+            if let Some(root_node) = self.proofs.nodes.get(root_id) {
+                node_stack.push(root_node);
+            }
+        }
+
+        // Process nodes iteratively
+        while let Some(node) = node_stack.pop() {
+            // Skip if we've already seen this node
+            if !visited.insert(&node.id) {
+                continue;
+            }
+
+            // Check if this node uses the theorem
             if let Some(tactic) = &node.tactic {
-                if format!("{:?}", tactic).contains(theorem_name) {
+                let tactic_str = format!("{:?}", tactic);
+                if tactic_str.contains(theorem_name) {
                     return true;
                 }
             }
-            node.children.iter().any(|child_id| {
-                forest.nodes.get(child_id).map_or(false, |child_node| {
-                    check_node(child_node, forest, theorem_name)
-                })
-            })
+
+            // Add child nodes to the stack
+            for child_id in &node.children {
+                if let Some(child_node) = self.proofs.nodes.get(child_id) {
+                    node_stack.push(child_node);
+                }
+            }
         }
 
-        self.proofs.roots.iter().any(|root_id| {
-            self.proofs.nodes.get(root_id).map_or(false, |root_node| {
-                check_node(root_node, &self.proofs, theorem_name)
-            })
-        })
+        // If we get here, no matching nodes were found
+        false
     }
 
     /// Counts the number of distinct proof branches (cases) originating from the root.
@@ -349,14 +373,16 @@ impl TheoremExt for Theorem {
 
     /// Basic validation of the proof tree structure (e.g., no cycles, parent pointers okay).
     fn proof_tree_is_valid(&self) -> bool {
-        let roots_valid = self
-            .proofs
-            .roots
-            .iter()
-            .filter_map(|root_id| self.proofs.nodes.get(root_id))
-            .all(|root_node| root_node.parent.is_none());
-
-        roots_valid
+        // Simple check: all root nodes should exist and have no parents
+        // This avoids potential recursion issues that can cause stack overflow
+        !self.proofs.roots.is_empty()
+            && self.proofs.roots.iter().all(|root_id| {
+                if let Some(root_node) = self.proofs.nodes.get(root_id) {
+                    root_node.parent.is_none()
+                } else {
+                    false // Root ID doesn't correspond to an actual node
+                }
+            })
     }
 
     /// Checks if all proof steps have some form of justification provided.

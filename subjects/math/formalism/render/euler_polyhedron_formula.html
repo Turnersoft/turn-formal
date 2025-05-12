@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Proof: Euler's Polyhedron Formula (V - E + F = 2) - Enhanced Tactics</title>
+    <style>
+        body {
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            margin: 0 auto;
+            max-width: 900px;
+            padding: 20px;
+            line-height: 1.8;
+            background-color: #fdfdfd;
+            color: #2f2f2f;
+        }
+        .theorem-environment, .proof-environment {
+            margin-bottom: 30px;
+            padding: 20px 25px;
+            border: 1px solid #d8d8d8;
+            border-radius: 4px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+        }
+        .theorem-header, .proof-header {
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e7e7e7;
+        }
+        .theorem-statement-text { margin-bottom: 25px; }
+        .math-expr, .math-var {
+            font-family: 'Latin Modern Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #333;
+            white-space: nowrap;
+            display: inline-block; 
+        }
+        .term {
+            cursor: pointer;
+            padding: 1px 2px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease-out, outline 0.2s ease-out;
+            display: inline-block;
+        }
+        .term-highlight { background-color: #e1f5fe; outline: 1px solid #4fc3f7; color: #0277bd; }
+        .context-definition {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-left: 4px solid #a0b4c2; 
+            background-color: #f9fafb;
+            border-radius: 0 3px 3px 0;
+            font-size: 0.95em;
+        }
+        .context-definition .label { font-weight: bold; color: #34495e; display: block; margin-bottom: 5px; }
+        .definition-item { padding-left: 15px; font-size: 0.9em; color: #4a4a4a; margin-top: 3px; }
+        .definition-item li { margin-bottom: 3px; list-style-type: disc; padding-left: 0; }
+        .code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; background-color: #e9ecef; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; color: #495057; }
+        .narrative-text { margin-bottom: 8px; }
+        .qed { text-align: right; font-weight: bold; margin-top: 25px; color: #2c3e50; font-size: 1.1em; }
+        
+        .proof-sequence { margin: 20px 0; padding: 0; list-style-type: none; }
+        .proof-state {
+            margin-bottom: 25px;
+            padding: 15px;
+            padding-right: 30px; /* Space for icon */
+            border-left: 4px solid #3498db;
+            background-color: #f8f9fa;
+            border-radius: 0 3px 3px 0;
+            position: relative;
+            transition: box-shadow 0.3s ease-in-out; /* For animation cues */
+        }
+        .proof-state.is-subgoal { margin-left: 40px; border-left-color: #f39c12; }
+        .proof-state.is-subgoal-level-2 { margin-left: 80px; border-left-color: #27ae60; }
+        .proof-state.is-subgoal-level-3 { margin-left: 120px; border-left-color: #8e44ad; }
+        .proof-state .label { font-weight: bold; color: #2c3e50; margin-bottom: 5px; display: block; }
+        
+        .proof-state .tactic-label {
+            font-size: 0.85em;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            margin-bottom: 10px;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+        }
+        .tactic-goal-label { background-color: #fadbd8; color: #c0392b; border-color: #f1948a; }
+        .tactic-cases-label { background-color: #e8daef; color: #8e44ad; border-color: #c39bd3; }
+        .tactic-theorem-application-label { background-color: #d6eaf8; color: #2e86c1; border-color: #85c1e9; }
+        .tactic-substitution-label { background-color: #d1f2eb; color: #138d75; border-color: #73c6b6; }
+        .tactic-rewrite-label { background-color: #fef9e7; color: #b7950b; border-color: #f4d03f; }
+        .tactic-intro-label { background-color: #fdebd0; color: #d35400; border-color: #f5b041; }
+
+        .math-expr.animation-trigger { cursor: pointer; transition: background-color 0.2s ease; }
+        .math-expr.animation-trigger:hover { background-color: rgba(52, 152, 219, 0.05); }
+        
+        .animation-trigger-icon {
+            position: absolute; right: 10px; top: 50%;
+            transform: translateY(-50%);
+            color: #3498db;
+            font-size: 18px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .math-expr.animation-trigger:hover ~ .animation-trigger-icon { opacity: 1; }
+
+        .proof-state:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: -4px; 
+            top: 100%;
+            height: 25px; 
+            border-left: 2px dashed #bdc3c7; 
+        }
+        .proof-state.is-subgoal:not(:last-child)::after {
+             left: -4px; /* Adjusted for new border color, but still from the edge of the element */
+        }
+        
+        #animation-stage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10000;
+            overflow: hidden;
+        }
+        .anim-token {
+            position: absolute;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0px 1px;
+            font-family: 'Latin Modern Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #222; 
+            background-color: transparent; 
+            border: none; 
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-in-out, width 0.5s ease, height 0.5s ease;
+            will-change: transform, opacity, width, height;
+            white-space: nowrap;
+            box-sizing: border-box;
+            box-shadow: none; 
+            font-size: inherit;
+            line-height: inherit;
+        }
+        .anim-token.source-dimmed { opacity: 0.3; }
+        .anim-token.target-forming { opacity: 0; transform: scale(0.7); }
+        .anim-token.target-visible { opacity: 1; transform: scale(1); }
+        
+        .dimmed-during-animation .math-expr span[data-token-id],
+        .dimmed-during-animation span[data-token-id] {
+            opacity: 0.1 !important; 
+            transition: opacity 0.2s ease-out;
+        }
+
+        /* Animation Cues */
+        .proof-state.animating-to.is-subgoal { box-shadow: 0px 0px 12px 3px rgba(243, 156, 18, 0.4); }
+        .proof-state.animating-to.has-intro-tactic { box-shadow: 0px 0px 12px 3px rgba(211, 84, 0, 0.3); }
+        .proof-state.animating-to.has-substitution-tactic { box-shadow: 0px 0px 12px 3px rgba(19, 141, 117, 0.3); }
+        .proof-state.animating-to.has-rewrite-tactic { box-shadow: 0px 0px 12px 3px rgba(183, 149, 11, 0.3); }
+        .proof-state.animating-to.is-subgoal-level-2 { box-shadow: 0px 0px 12px 3px rgba(39, 174, 96, 0.4); }
+        .proof-state.animating-to.is-subgoal-level-3 { box-shadow: 0px 0px 12px 3px rgba(142, 68, 173, 0.4); }
+
+        /* Subgoal collapsible functionality */
+        .toggle-subgoal-btn {
+            position: absolute;
+            right: 40px;
+            top: 15px;
+            background: none;
+            border: none;
+            color: #3498db;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px;
+            width: 24px;
+            height: 24px;
+            line-height: 16px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+        .toggle-subgoal-btn:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        .toggle-subgoal-btn::before {
+            content: "−"; /* Unicode minus sign */
+        }
+        .toggle-subgoal-btn.collapsed::before {
+            content: "+";
+        }
+        .proof-state.collapsed {
+            display: none;
+        }
+        /* Style adjustments for proof states with subgoals */
+        .proof-state.has-subgoals {
+            padding-right: 70px; /* Make room for both toggle button and animation icon */
+        }
+        .proof-state .subgoal-count {
+            display: none; /* Hidden by default */
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .proof-state.collapsed .subgoal-count {
+            display: inline-block; /* Show when collapsed */
+        }
+
+        /* Improve collapsible visual indicators */
+        .proof-state.has-subgoals > .label::after {
+            content: "";
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 8px;
+            vertical-align: middle;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #3498db;
+        }
+        
+        /* Prevent animation icon and toggle buttons from clashing */
+        .toggle-subgoal-btn {
+            position: absolute;
+            right: 40px;
+            top: 12px;
+        }
+        
+        /* Make the proof sequence lines work better with collapsible states */
+        .proof-state:not(:last-child)::after {
+            z-index: 1; /* Ensure it renders above nested items */
+        }
+        .proof-state.collapsed + .proof-state::after {
+            display: none; /* Hide connector after collapsed state */
+        }
+
+        /* Add CSS for hover effect on collapsible states */
+        .proof-state.has-subgoals {
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .proof-state.has-subgoals:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="animation-stage"></div> 
+
+    <h1>Theorem: Euler's Polyhedron Formula (Enhanced Tactics)</h1>
+
+    <div class="theorem-environment">
+        <div class="theorem-header" id="theorem-name">Theorem: Euler's Formula for Polyhedra</div>
+        <div class="theorem-statement-text" id="theorem-description">
+            For any convex polyhedron, or more generally, for any connected planar graph, the number of vertices (<span class="term math-var" data-id="V">V</span>), 
+            edges (<span class="term math-var" data-id="E">E</span>), and faces (<span class="term math-var" data-id="F">F</span>) are related by the formula:
+        </div>
+        <div class="theorem-statement-text" id="theorem-goal-statement">
+            <span class="math-expr">
+                <span class="term math-var" data-id="V">V</span> - <span class="term math-var" data-id="E">E</span> + <span class="term math-var" data-id="F">F</span> = <span class="term" data-id="const-2">2</span>
+            </span>.
+        </div>
+
+        <div class="context-definition">
+            <span class="label">Definitions & Intuition:</span>
+            <ul class="definition-item">
+                <li><span class="term math-var" data-id="V">V</span>: Vertices, <span class="term math-var" data-id="E">E</span>: Edges, <span class="term math-var" data-id="F">F</span>: Faces.</li>
+                <li>A <span class="term" data-id="planar-graph">Planar Graph</span>: Drawable on a plane, no edge crossings.</li>
+                <li>A <span class="term" data-id="tree-graph">Tree</span>: Connected graph, no cycles; <span class="math-expr">E = V - 1</span>.</li>
+            </ul>
+            <div class="narrative-text">
+                E.g., Cube: <span class="math-expr">V=8, E=12, F=6 \implies 8 - 12 + 6 = 2</span>.\n                Tetrahedron: <span class="math-expr">V=4, E=6, F=4 \implies 4 - 6 + 4 = 2</span>.\n            </div>
+        </div>
+    </div>
+
+    <div class="proof-environment">
+        <div class="proof-header">Proof.</div>
+        
+        <div class="narrative-text">
+            By induction on edges <span class="term math-var" data-id="E">E</span>. Click expressions for (simplified) animation.
+        </div>
+        
+        <ol class="proof-sequence">
+            <li class="proof-state" id="state0">
+                <span class="label">Overall Goal:</span>
+                <span class="tactic-label tactic-goal-label">Goal</span>
+                <div class="math-expr" id="expr0-goal">
+                    Show <span data-token-id="s0-V"><span class="term math-var" data-id="V">V</span></span> <span data-token-id="s0-minus1">-</span> <span data-token-id="s0-E"><span class="term math-var" data-id="E">E</span></span> <span data-token-id="s0-plus">+</span> <span data-token-id="s0-F"><span class="term math-var" data-id="F">F</span></span> <span data-token-id="s0-equals">=</span> <span data-token-id="s0-two"><span class="term" data-id="const-2">2</span></span>
+                </div>
+            </li>
+
+            <li class="proof-state" id="state1">
+                <span class="label">Branch 1: Base Case - G is a tree.</span>
+                <span class="tactic-label tactic-cases-label">Tactic: Cases</span>
+                <button class="toggle-subgoal-btn" data-parent-id="state1" title="Collapse/Expand"></button>
+                <span class="subgoal-count">(2 subgoals)</span>
+                <div class="narrative-text">
+                    If graph <span class="term math-var" data-id="graph-G">G</span> is a tree (connected, no cycles).
+                </div>
+            </li>
+
+            <li class="proof-state is-subgoal" id="state1a" data-prev-state="state1" data-parent="state1">
+                <span class="label">Base Case Details:</span>
+                <span class="tactic-label tactic-theorem-application-label">Tactic: Theorem Application (Properties of Trees)</span>
+                <div class="narrative-text">
+                    For a tree: <span class="math-expr"><span class="term math-var" data-id="E">E</span> = <span class="term math-var" data-id="V">V</span> - <span class="term" data-id="const-1">1</span></span>, and <span class="math-expr"><span class="term math-var" data-id="F">F</span> = <span class="term" data-id="const-1">1</span></span> (one outer face).
+                </div>
+                <span class="tactic-label tactic-substitution-label">Tactic: Substitution</span>
+                <div class="math-expr animation-trigger" id="expr1a" data-next-state="state1b">
+                    <span data-token-id="s1a-V1"><span class="term math-var" data-id="V">V</span></span> <span data-token-id="s1a-minus1">-</span> <span data-token-id="s1a-E">(<span data-token-id="s1a-V2"><span class="term math-var" data-id="V">V</span></span> - <span data-token-id="s1a-one1"><span class="term" data-id="const-1">1</span></span>)</span> <span data-token-id="s1a-plus">+</span> <span data-token-id="s1a-one2"><span class="term" data-id="const-1">1</span></span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+                 <div class="narrative-text">
+                    (Substituting E and F into V - E + F)
+                </div>
+            </li>
+            
+            <li class="proof-state is-subgoal" id="state1b" data-prev-state="state1a" data-parent="state1">
+                <span class="label">Base Case Simplification:</span>
+                <span class="tactic-label tactic-rewrite-label">Tactic: Rewrite (Algebra)</span>
+                <div class="math-expr animation-trigger" id="expr1b">
+                    <span data-token-id="s1b-V1"><span class="term math-var" data-id="V">V</span></span> <span data-token-id="s1b-minus1">-</span> <span data-token-id="s1b-V2"><span class="term math-var" data-id="V">V</span></span> <span data-token-id="s1b-plus1">+</span> <span data-token-id="s1b-one1"><span class="term" data-id="const-1">1</span></span> <span data-token-id="s1b-plus2">+</span> <span data-token-id="s1b-one2"><span class="term" data-id="const-1">1</span></span>  = <span data-token-id="s1b-two"><span class="term" data-id="const-2">2</span></span>
+                </div>
+                <div class="narrative-text">Base case holds.</div>
+            </li>
+
+            <li class="proof-state" id="state2">
+                <span class="label">Branch 2: Inductive Step - G has cycles.</span>
+                <span class="tactic-label tactic-cases-label">Tactic: Cases</span>
+                <button class="toggle-subgoal-btn" data-parent-id="state2" title="Collapse/Expand"></button>
+                <span class="subgoal-count">(10 subgoals)</span>
+                <div class="narrative-text">
+                    G is connected, planar, and has cycles (<span class="math-expr"><span class="term math-var" data-id="F">F</span> > 1</span>). For the inductive step, we'll establish several nested properties.</div>
+            </li>
+            
+            <li class="proof-state is-subgoal" id="state2a" data-prev-state="state2" data-parent="state2">
+                <span class="label">Inductive Principle Setup:</span>
+                <span class="tactic-label tactic-intro-label">Tactic: Intro (Inductive Hypothesis)</span>
+                <div class="narrative-text">
+                    Assume <span class="math-expr">V\' - E\' + F\' = 2</span> for all connected planar graphs with <span class="math-expr">E\' < E</span> edges.
+                </div>
+            </li>
+            
+            <li class="proof-state is-subgoal" id="state2b" data-prev-state="state2a" data-parent="state2">
+                <span class="label">Graph Transformation:</span>
+                <span class="tactic-label tactic-cases-label">Tactic: Cases</span>
+                <button class="toggle-subgoal-btn" data-parent-id="state2b" title="Collapse/Expand"></button>
+                <span class="subgoal-count"></span>
+                <div class="narrative-text">
+                    For graph G with cycles, we need to establish a relationship with a simpler graph.
+                </div>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-2" id="state2b1" data-prev-state="state2b" data-parent="state2b">
+                <span class="label">Edge Selection Strategy:</span>
+                <span class="tactic-label tactic-intro-label">Tactic: Intro (Edge Selection)</span>
+                <div class="narrative-text">
+                    Since G has at least one cycle, we can choose an edge <span class="term math-var" data-id="edge-e">e</span> that lies on a cycle.
+                    Let <span class="math-expr"><span class="term math-var" data-id="graph-Gprime">G\'</span> = G - {<span class="term math-var" data-id="edge-e">e</span>}</span> be the graph obtained by removing edge e.
+                </div>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-2" id="state2b2" data-prev-state="state2b1" data-parent="state2b">
+                <span class="label">Invariant Properties:</span>
+                <span class="tactic-label tactic-rewrite-label">Tactic: Rewrite (Properties of G')</span>
+                <div class="math-expr animation-trigger" id="expr2b2" data-next-state="state2b3">
+                    <span data-token-id="s2b2-V"><span class="term math-var" data-id="Vprime">V\'</span></span><span data-token-id="s2b2-eq1">=</span><span data-token-id="s2b2-Vval"><span class="term math-var" data-id="V">V</span></span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+                <div class="narrative-text">
+                    Removing an edge preserves all vertices.
+                </div>
+            </li>
+
+            <li class="proof-state is-subgoal-level-2" id="state2b3" data-prev-state="state2b2" data-parent="state2b">
+                <span class="label">Edge Count Change:</span>
+                <span class="tactic-label tactic-rewrite-label">Tactic: Rewrite (Edge Count)</span>
+                <div class="math-expr animation-trigger" id="expr2b3" data-next-state="state2b4">
+                    <span data-token-id="s2b3-E"><span class="term math-var" data-id="Eprime">E\'</span></span><span data-token-id="s2b3-eq2">=</span><span data-token-id="s2b3-Eval"><span class="term math-var" data-id="E">E</span></span><span data-token-id="s2b3-m1">-1</span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+                <div class="narrative-text">
+                    Removing one edge reduces the edge count by exactly 1.
+                </div>
+            </li>
+
+            <li class="proof-state is-subgoal-level-2" id="state2b4" data-prev-state="state2b3" data-parent="state2b">
+                <span class="label">Face Count Change:</span>
+                <span class="tactic-label tactic-rewrite-label">Tactic: Rewrite (Face Count)</span>
+                <div class="math-expr animation-trigger" id="expr2b4" data-next-state="state2c">
+                    <span data-token-id="s2b4-F"><span class="term math-var" data-id="Fprime">F\'</span></span><span data-token-id="s2b4-eq3">=</span><span data-token-id="s2b4-Fval"><span class="term math-var" data-id="F">F</span></span><span data-token-id="s2b4-m2">-1</span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+                <div class="narrative-text">
+                    When we remove an edge from a cycle, two faces merge into one, reducing the face count by 1.
+                </div>
+            </li>
+            
+            <li class="proof-state is-subgoal" id="state2c" data-prev-state="state2b4" data-parent="state2">
+                <span class="label">Formula Verification:</span>
+                <span class="tactic-label tactic-substitution-label">Tactic: Substitution</span>
+                <button class="toggle-subgoal-btn" data-parent-id="state2c" title="Collapse/Expand"></button>
+                <span class="subgoal-count"></span>
+                <div class="narrative-text">We now verify V - E + F = 2 using the derived properties:</div>
+            </li>
+
+            <li class="proof-state is-subgoal-level-2" id="state2c1" data-prev-state="state2c" data-parent="state2c">
+                <span class="label">Original Formula Expressed with G' Properties:</span>
+                <span class="tactic-label tactic-substitution-label">Tactic: Substitution</span>
+                <div class="math-expr animation-trigger" id="expr2c1" data-next-state="state2c2">
+                    <span data-token-id="s2c1-V"><span class="term math-var" data-id="V">V</span></span> <span data-token-id="s2c1-minus1">-</span> <span data-token-id="s2c1-E"><span class="term math-var" data-id="E">E</span></span> <span data-token-id="s2c1-plus1">+</span> <span data-token-id="s2c1-F"><span class="term math-var" data-id="F">F</span></span> <span data-token-id="s2c1-eq">=</span> <span data-token-id="s2c1-what">?</span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-3" id="state2c2" data-prev-state="state2c1" data-parent="state2c">
+                <span class="label">Substituting V':</span>
+                <span class="tactic-label tactic-substitution-label">Tactic: Substitution</span>
+                <div class="math-expr animation-trigger" id="expr2c2" data-next-state="state2c3">
+                    <span data-token-id="s2c2-Vprime"><span class="term math-var" data-id="Vprime">V\'</span></span> <span data-token-id="s2c2-minus1">-</span> <span data-token-id="s2c2-E"><span class="term math-var" data-id="E">E</span></span> <span data-token-id="s2c2-plus1">+</span> <span data-token-id="s2c2-F"><span class="term math-var" data-id="F">F</span></span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-3" id="state2c3" data-prev-state="state2c2" data-parent="state2c">
+                <span class="label">Substituting E':</span>
+                <span class="tactic-label tactic-substitution-label">Tactic: Substitution</span>
+                <div class="math-expr animation-trigger" id="expr2c3" data-next-state="state2c4">
+                    <span data-token-id="s2c3-Vprime"><span class="term math-var" data-id="Vprime">V\'</span></span> <span data-token-id="s2c3-minus1">-</span> <span data-token-id="s2c3-p1">(</span><span data-token-id="s2c3-Eprime"><span class="term math-var" data-id="Eprime">E\'</span></span> <span data-token-id="s2c3-plus1">+</span> <span data-token-id="s2c3-one1"><span class="term" data-id="const-1">1</span></span><span data-token-id="s2c3-p2">)</span> <span data-token-id="s2c3-plus2">+</span> <span data-token-id="s2c3-F"><span class="term math-var" data-id="F">F</span></span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-3" id="state2c4" data-prev-state="state2c3" data-parent="state2c">
+                <span class="label">Substituting F':</span>
+                <span class="tactic-label tactic-substitution-label">Tactic: Substitution</span>
+                <div class="math-expr animation-trigger" id="expr2c4" data-next-state="state2c5">
+                    <span data-token-id="s2c4-Vprime"><span class="term math-var" data-id="Vprime">V\'</span></span> <span data-token-id="s2c4-minus1">-</span> <span data-token-id="s2c4-p1">(</span><span data-token-id="s2c4-Eprime"><span class="term math-var" data-id="Eprime">E\'</span></span> <span data-token-id="s2c4-plus1">+</span> <span data-token-id="s2c4-one1"><span class="term" data-id="const-1">1</span></span><span data-token-id="s2c4-p2">)</span> <span data-token-id="s2c4-plus2">+</span> <span data-token-id="s2c4-p3">(</span><span data-token-id="s2c4-Fprime"><span class="term math-var" data-id="Fprime">F\'</span></span> <span data-token-id="s2c4-plus3">+</span> <span data-token-id="s2c4-one2"><span class="term" data-id="const-1">1</span></span><span data-token-id="s2c4-p4">)</span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-2" id="state2c5" data-prev-state="state2c4" data-parent="state2c">
+                <span class="label">Algebraic Simplification:</span>
+                <span class="tactic-label tactic-rewrite-label">Tactic: Rewrite (Algebra)</span>
+                <div class="math-expr animation-trigger" id="expr2c5" data-next-state="state2c6">
+                     <span data-token-id="s2c5-Vprime"><span class="term math-var" data-id="Vprime">V\'</span></span> <span data-token-id="s2c5-minus1">-</span> <span data-token-id="s2c5-Eprime"><span class="term math-var" data-id="Eprime">E\'</span></span> <span data-token-id="s2c5-minus2">-</span> <span data-token-id="s2c5-one1"><span class="term" data-id="const-1">1</span></span> <span data-token-id="s2c5-plus1">+</span> <span data-token-id="s2c5-Fprime"><span class="term math-var" data-id="Fprime">F\'</span></span> <span data-token-id="s2c5-plus2">+</span> <span data-token-id="s2c5-one2"><span class="term" data-id="const-1">1</span></span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+            </li>
+            
+            <li class="proof-state is-subgoal-level-2" id="state2c6" data-prev-state="state2c5" data-parent="state2c">
+                <span class="label">Final Simplification:</span>
+                <span class="tactic-label tactic-rewrite-label">Tactic: Rewrite (Algebra)</span>
+                <div class="math-expr animation-trigger" id="expr2c6" data-next-state="state2d">
+                     <span data-token-id="s2c6-VEFprime"><span class="term math-var" data-id="Vprime">V\'</span> - <span class="term math-var" data-id="Eprime">E\'</span> + <span class="term math-var" data-id="Fprime">F\'</span></span>
+                </div>
+                <span class="animation-trigger-icon"></span>
+                <div class="narrative-text">
+                    We've reduced the original formula to <span class="math-expr">V\' - E\' + F\'</span>, which is the Euler formula for G'.
+                </div>
+            </li>
+
+            <li class="proof-state is-subgoal" id="state2d" data-prev-state="state2c6" data-parent="state2">
+                <span class="label">Inductive Conclusion:</span>
+                <span class="tactic-label tactic-theorem-application-label">Tactic: Theorem Application (Inductive Hypothesis)</span>
+                <div class="math-expr animation-trigger" id="expr2d">
+                    <span data-token-id="s2d-VEFprime"><span class="term math-var" data-id="Vprime">V\'</span> - <span class="term math-var" data-id="Eprime">E\'</span> + <span class="term math-var" data-id="Fprime">F\'</span></span> <span data-token-id="s2d-eq">=</span> <span data-token-id="s2d-two"><span class="term" data-id="const-2">2</span></span>
+                </div>
+                <div class="narrative-text">
+                    By our inductive hypothesis, we know <span class="math-expr">V\' - E\' + F\' = 2</span> for the graph G', since it has fewer edges than G.
+                    Therefore, <span class="math-expr">V - E + F = V\' - E\' + F\' = 2</span>, and the inductive step holds.
+                </div>
+            </li>
+        </ol>
+
+        <div class="narrative-text">
+            Since the formula holds for the base case and the inductive step, by induction, <span class="math-expr"><span class="term math-var" data-id="V">V</span> - <span class="term math-var" data-id="E">E</span> + <span class="term math-var" data-id="F">F</span> = <span class="term" data-id="const-2">2</span></span> for all connected planar graphs.
+        </div>
+        <div class="qed">Q.E.D.</div>
+    </div>
+
+    <script>
+        const DEBUG_ANIMATION = false;
+        let isAnimating = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.term').forEach(term => {
+                term.addEventListener('mouseenter', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => t.classList.add('term-highlight'));
+                });
+                term.addEventListener('mouseleave', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => t.classList.remove('term-highlight'));
+                });
+            });
+            
+            // Initialize collapsible functionality
+            initializeCollapsibleSubgoals();
+            
+            // Setup animation triggers
+            setupStateAnimations();
+        });
+        
+        function setupStateAnimations() {
+            const animationTriggers = document.querySelectorAll('.math-expr.animation-trigger');
+            animationTriggers.forEach(trigger => {
+                const proofStateContainer = trigger.closest('.proof-state');
+                const icon = proofStateContainer.querySelector('.animation-trigger-icon');
+
+                trigger.addEventListener('click', function() {
+                    if (isAnimating) return;
+                    
+                    let fromStateId = this.dataset.prevState || proofStateContainer.dataset.prevState;
+                    let toStateId = this.dataset.nextState || proofStateContainer.id;
+
+                    // Special handling for first clickable item in a sequence if it initiates the sequence
+                    if (!fromStateId && proofStateContainer.id && this.dataset.nextState) { 
+                        // This is an expr that transitions to a new state, not from a previous one in the list.
+                        // Example: expr1a in state1a transitions to state1b
+                        fromStateId = proofStateContainer.id; // The current state IS the fromState for token animation
+                        toStateId = this.dataset.nextState; // The target state for tokens to go to.
+                    } else if (proofStateContainer.dataset.prevState && proofStateContainer.id) {
+                         // This state is being transitioned TO from a previous state.
+                         // The clickable expression INSIDE this state might lead to a FURTHER state.
+                         // For clicking on expr2a in state2a (data-prev-state=state2) to animate to state2b (expr2a.dataset.nextState=state2b)
+                         // fromStateId for animation should be current container (state2a), toStateId is expr2a.dataset.nextState (state2b)
+                        if(this.dataset.nextState){
+                           fromStateId = proofStateContainer.id;
+                           toStateId = this.dataset.nextState;
+                        } else {
+                           // Standard: animating from a previous li.proof-state to this one.
+                           fromStateId = proofStateContainer.dataset.prevState;
+                           toStateId = proofStateContainer.id;
+                        }
+                    }
+
+                    if (fromStateId && toStateId) {
+                        animateStateTransition(fromStateId, toStateId, this);
+                    } else {
+                        console.warn("Animation trigger clicked, but from/to state IDs are not clear:", this, fromStateId, toStateId);
+                    }
+                });
+
+                if (icon) { // Mouse hover for icon visibility tied to trigger hover
+                    trigger.addEventListener('mouseenter', () => { icon.style.opacity = '1'; });
+                    trigger.addEventListener('mouseleave', () => { icon.style.opacity = '0.6'; });
+                } else if(trigger.closest('.proof-state').querySelector('.animation-trigger-icon')) {
+                    // Fallback if icon is not direct sibling but in same proof-state
+                     const parentIcon = trigger.closest('.proof-state').querySelector('.animation-trigger-icon');
+                     if(parentIcon){
+                        trigger.addEventListener('mouseenter', () => { parentIcon.style.opacity = '1'; });
+                        trigger.addEventListener('mouseleave', () => { parentIcon.style.opacity = '0.6'; });
+                     }
+                }
+            });
+        }
+        
+        async function animateStateTransition(fromStateId, toStateId, clickedTriggerElement) {
+            if (isAnimating) return;
+            isAnimating = true;
+            console.log(`Animating from state ${fromStateId} to state ${toStateId}`);
+
+            const fromStateElement = document.getElementById(fromStateId);
+            const toStateElement = document.getElementById(toStateId);
+
+            // The expression to animate FROM is within fromStateElement
+            // The expression to animate TO is within toStateElement
+            const fromExprContainer = fromStateElement?.querySelector('.math-expr[id^="expr"], .math-expr.animation-trigger'); 
+            const toExprContainer = toStateElement?.querySelector('.math-expr[id^="expr"], .math-expr.animation-trigger');
+
+            if (!fromExprContainer || !toExprContainer) {
+                console.error('Source or target expression container not found for animation.', {fromStateId, toStateId, fromExprContainer, toExprContainer});
+                isAnimating = false;
+                return;
+            }
+            
+            const animationStage = document.getElementById('animation-stage');
+            animationStage.innerHTML = ''; 
+            if (DEBUG_ANIMATION) animationStage.style.border = '1px dotted red'; else animationStage.style.border = 'none';
+
+            // Add animation cue class to target state
+            if (toStateElement) {
+                toStateElement.classList.add('animating-to');
+                if (toStateElement.classList.contains('is-subgoal')) toStateElement.classList.add('is-subgoal'); // Ensure it's there for combo style
+                if (toStateElement.classList.contains('is-subgoal-level-2')) toStateElement.classList.add('is-subgoal-level-2');
+                if (toStateElement.classList.contains('is-subgoal-level-3')) toStateElement.classList.add('is-subgoal-level-3');
+                if (toStateElement.querySelector('.tactic-intro-label')) toStateElement.classList.add('has-intro-tactic');
+                if (toStateElement.querySelector('.tactic-substitution-label')) toStateElement.classList.add('has-substitution-tactic');
+                if (toStateElement.querySelector('.tactic-rewrite-label')) toStateElement.classList.add('has-rewrite-tactic');
+            }
+
+            await smartTokenAnimation(fromExprContainer, toExprContainer, animationStage, fromStateId, toStateId);
+            
+            if (toStateElement) {
+                toStateElement.classList.remove('animating-to', 'has-intro-tactic', 'has-substitution-tactic', 'has-rewrite-tactic');
+                // 'is-subgoal' and other level classes should remain as they're permanent styles
+            }
+            animationStage.innerHTML = '';
+            fromExprContainer.classList.remove('dimmed-during-animation');
+            toExprContainer.classList.remove('dimmed-during-animation');
+            isAnimating = false;
+            console.log("Animation finished for", fromStateId, "to", toStateId);
+        }
+
+        function tokenizeExpression(exprContainer) {
+            const tokens = [];
+            const childSpans = exprContainer.querySelectorAll('span[data-token-id]');
+            childSpans.forEach((span, index) => {
+                tokens.push({
+                    id: span.dataset.tokenId,
+                    html: span.innerHTML,
+                    element: span, 
+                    originalIndex: index
+                });
+            });
+            return tokens;
+        }
+
+        function findBestMatches(sourceTokens, targetTokens) {
+            const matches = [];
+            const usedSourceIndices = new Set();
+            const usedTargetIndices = new Set();
+
+            sourceTokens.forEach((sToken, sIndex) => {
+                targetTokens.forEach((tToken, tIndex) => {
+                    if (!usedTargetIndices.has(tIndex) && sToken.id === tToken.id) {
+                        matches.push({ sourceIndex: sIndex, targetIndex: tIndex, sToken, tToken });
+                        usedSourceIndices.add(sIndex); usedTargetIndices.add(tIndex); return; 
+                    }
+                });
+            });
+            sourceTokens.forEach((sToken, sIndex) => {
+                if (usedSourceIndices.has(sIndex)) return;
+                targetTokens.forEach((tToken, tIndex) => {
+                    if (!usedTargetIndices.has(tIndex) && sToken.html === tToken.html) { 
+                        if (Math.abs(sToken.originalIndex - tToken.originalIndex) < 7) { // Proximity tolerance
+                            matches.push({ sourceIndex: sIndex, targetIndex: tIndex, sToken, tToken });
+                            usedSourceIndices.add(sIndex); usedTargetIndices.add(tIndex); return; 
+                        }
+                    }
+                });
+            });
+            const unmatchedSourceIndices = sourceTokens.map((_,i) => i).filter(i => !usedSourceIndices.has(i));
+            const unmatchedTargetIndices = targetTokens.map((_,i) => i).filter(i => !usedTargetIndices.has(i));
+            return { matches, unmatchedSourceIndices, unmatchedTargetIndices };
+        }
+
+        async function smartTokenAnimation(fromExprContainer, toExprContainer, animationStage) {
+            const sourceTokens = tokenizeExpression(fromExprContainer);
+            const targetTokens = tokenizeExpression(toExprContainer);
+            const { matches, unmatchedSourceIndices, unmatchedTargetIndices } = findBestMatches(sourceTokens, targetTokens);
+
+            const activeClones = [];
+            fromExprContainer.classList.add('dimmed-during-animation');
+            toExprContainer.classList.add('dimmed-during-animation');
+
+            const fromRect = fromExprContainer.getBoundingClientRect();
+            const toRect = toExprContainer.getBoundingClientRect();
+            const stageX = window.innerWidth / 2;
+            const stageY = (fromRect.top + toRect.top) / 2 + window.scrollY; // Account for scroll
+            const spacing = 5;
+
+            let totalSourceStageWidth = sourceTokens.reduce((sum, token) => sum + token.element.getBoundingClientRect().width + spacing, 0) - spacing;
+            const startXSourceStaging = stageX - totalSourceStageWidth / 2;
+            let currentXOffsetStaging = 0;
+
+            for (let i = 0; i < sourceTokens.length; i++) {
+                const token = sourceTokens[i];
+                const clone = document.createElement('span');
+                clone.innerHTML = token.html;
+                clone.classList.add('anim-token');
+                const originalRect = token.element.getBoundingClientRect();
+                clone.style.left = `${originalRect.left}px`;
+                clone.style.top = `${originalRect.top + window.scrollY}px`;
+                clone.style.width = `${originalRect.width}px`;
+                clone.style.height = `${originalRect.height}px`;
+                animationStage.appendChild(clone);
+                activeClones.push({ ...token, clone, originalRect, stageTargetX: startXSourceStaging + currentXOffsetStaging, isMatched: matches.some(m => m.sourceIndex === i) });
+                currentXOffsetStaging += originalRect.width + spacing;
+            }
+
+            await Promise.all(activeClones.map(async (item, idx) => {
+                await new Promise(r => setTimeout(r, idx * 20)); 
+                item.clone.style.transform = `translate(${item.stageTargetX - item.originalRect.left}px, ${stageY - (item.originalRect.top + window.scrollY)}px)`;
+            }));
+            await new Promise(r => setTimeout(r, 700));
+
+            const clonesToKeep = [];
+            activeClones.forEach(item => {
+                if (!item.isMatched) {
+                    item.clone.style.opacity = '0';
+                    item.clone.style.transform += ' scale(0.5)';
+                } else { clonesToKeep.push(item); }
+            });
+
+            const newCloneData = [];
+            currentXOffsetStaging = 0;
+            let totalTargetStageWidth = targetTokens.reduce((sum, token) => sum + token.element.getBoundingClientRect().width + spacing, 0) - spacing;
+            const startXTargetStaging = stageX - totalTargetStageWidth / 2;
+            
+            targetTokens.forEach((targetToken, targetIndex) => {
+                const match = matches.find(m => m.targetIndex === targetIndex);
+                const targetTokenRect = targetToken.element.getBoundingClientRect();
+                if (match) {
+                    const sourceCloneItem = clonesToKeep.find(c => c.originalIndex === match.sourceIndex);
+                    if (sourceCloneItem) {
+                        const targetX = startXTargetStaging + currentXOffsetStaging;
+                        sourceCloneItem.clone.innerHTML = targetToken.html; 
+                        sourceCloneItem.clone.style.width = `${targetTokenRect.width}px`;
+                        sourceCloneItem.clone.style.height = `${targetTokenRect.height}px`;
+                        sourceCloneItem.clone.style.transform = `translate(${targetX - sourceCloneItem.originalRect.left}px, ${stageY - (sourceCloneItem.originalRect.top + window.scrollY)}px) scale(1)`;
+                        sourceCloneItem.finalRect = targetTokenRect; 
+                    }
+                } else {
+                    const clone = document.createElement('span');
+                    clone.innerHTML = targetToken.html;
+                    clone.classList.add('anim-token', 'target-forming');
+                    clone.style.width = `${targetTokenRect.width}px`;
+                    clone.style.height = `${targetTokenRect.height}px`;
+                    const targetX = startXTargetStaging + currentXOffsetStaging;
+                    clone.style.left = `${targetX}px`;
+                    clone.style.top = `${stageY}px`; // Staging Y is absolute on screen
+                    animationStage.appendChild(clone);
+                    newCloneData.push({ ...targetToken, clone, finalRect: targetTokenRect });
+                    clonesToKeep.push(newCloneData[newCloneData.length-1]);
+                }
+                currentXOffsetStaging += targetTokenRect.width + spacing;
+            });
+
+            await new Promise(r => setTimeout(r, 300)); 
+            newCloneData.forEach(item => { item.clone.classList.remove('target-forming'); item.clone.classList.add('target-visible'); });
+            await new Promise(r => setTimeout(r, 700)); 
+
+            await Promise.all(clonesToKeep.map(async (item, idx) => {
+                await new Promise(r => setTimeout(r, idx * 20)); 
+                const finalRect = item.finalRect; 
+                const currentCloneRect = item.clone.getBoundingClientRect(); 
+                // Target is finalRect.left and finalRect.top + window.scrollY
+                // Current is currentCloneRect.left and currentCloneRect.top (which is already screen-absolute)
+                item.clone.style.transform = `translate(${finalRect.left - currentCloneRect.left}px, ${(finalRect.top + window.scrollY) - currentCloneRect.top}px) scale(1)`;
+            }));
+            await new Promise(r => setTimeout(r, 800));
+        }
+
+        function initializeCollapsibleSubgoals() {
+            // Mark states that have subgoals
+            document.querySelectorAll('.proof-state').forEach(state => {
+                const stateId = state.id;
+                const subgoals = document.querySelectorAll(`.proof-state[data-parent="${stateId}"]`);
+                
+                if (subgoals.length > 0) {
+                    state.classList.add('has-subgoals');
+                    // Update subgoal count text
+                    const countSpan = state.querySelector('.subgoal-count');
+                    if (countSpan) {
+                        countSpan.textContent = `(${subgoals.length} subgoal${subgoals.length > 1 ? 's' : ''})`;
+                    }
+                    
+                    // Make the whole proof state header (except buttons) clickable for toggling
+                    state.addEventListener('click', function(e) {
+                        // Only toggle if click was on the header part (label, tactic, etc.)
+                        // but not on buttons or the expression
+                        if (!e.target.closest('.toggle-subgoal-btn') && 
+                            !e.target.closest('.math-expr') &&
+                            !e.target.closest('.animation-trigger')) {
+                            const toggleBtn = this.querySelector('.toggle-subgoal-btn');
+                            if (toggleBtn) {
+                                const isCollapsed = toggleBtn.classList.contains('collapsed');
+                                toggleSubgoals(stateId, !isCollapsed);
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Add click handlers to toggle buttons
+            document.querySelectorAll('.toggle-subgoal-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent click from bubbling to other handlers
+                    const parentId = this.dataset.parentId;
+                    const isCollapsed = this.classList.contains('collapsed');
+                    
+                    toggleSubgoals(parentId, !isCollapsed); // Toggle to opposite state
+                });
+            });
+        }
+
+        function toggleSubgoals(parentId, shouldCollapse) {
+            // Get the toggle button and update its state
+            const toggleBtn = document.querySelector(`.toggle-subgoal-btn[data-parent-id="${parentId}"]`);
+            if (toggleBtn) {
+                if (shouldCollapse) {
+                    toggleBtn.classList.add('collapsed');
+                    toggleBtn.title = "Expand";
+                } else {
+                    toggleBtn.classList.remove('collapsed');
+                    toggleBtn.title = "Collapse";
+                }
+            }
+            
+            // Toggle direct subgoals first
+            const directSubgoals = document.querySelectorAll(`.proof-state[data-parent="${parentId}"]`);
+            directSubgoals.forEach(subgoal => {
+                if (shouldCollapse) {
+                    subgoal.classList.add('collapsed');
+                } else {
+                    subgoal.classList.remove('collapsed');
+                }
+                
+                // If this is a parent with its own subgoals and we're expanding,
+                // check if it should show or hide its children based on its own toggle state
+                const subgoalId = subgoal.id;
+                const hasNestedSubgoals = document.querySelector(`.proof-state[data-parent="${subgoalId}"]`);
+                const subgoalToggleBtn = subgoal.querySelector('.toggle-subgoal-btn');
+                
+                if (hasNestedSubgoals && !shouldCollapse) {
+                    // Check if this subgoal's toggle is collapsed
+                    if (subgoalToggleBtn && subgoalToggleBtn.classList.contains('collapsed')) {
+                        // Keep its children collapsed
+                        toggleSubgoals(subgoalId, true);
+                    }
+                } else if (hasNestedSubgoals && shouldCollapse) {
+                    // If we're collapsing, also collapse all nested subgoals
+                    toggleSubgoals(subgoalId, true);
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

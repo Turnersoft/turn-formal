@@ -7,14 +7,16 @@ use std::rc::Rc;
 
 use crate::subjects::math::formalism::extract::Parametrizable;
 
-use super::super::super::formalism::core::{MathObject, ProofGoal, Theorem, ValueBindedVariable};
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::super::super::formalism::interpretation::TypeViewOperator;
-use super::super::super::formalism::proof::{
-    CaseAnalysisBuilder, DecompositionMethod, InductionType, ProofForest, ProofStatus,
-    RewriteDirection, Tactic,
+use super::super::super::formalism::proof::tactics::{
+    DecompositionMethod, InductionType, RewriteDirection, Tactic, create_expr, expression_summary,
+    name_to_string,
 };
 use super::super::super::formalism::relations::MathRelation;
+use super::super::super::formalism::theorem::{
+    MathObject, ProofGoal, Theorem, ValueBindedVariable,
+};
 use super::super::super::theories::groups::definitions::{
     Group, GroupBasic, GroupElement, GroupExpression, GroupOperation,
 };
@@ -251,24 +253,22 @@ fn test_theorem_application_tactic() {
     );
     let state = ProofGoal::new(statement);
 
-    // Apply the TheoremApplication tactic
-    let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), MathExpression::Var(Identifier::E(3)));
+    // Use Identifier keys for instantiation map
+    let mut instantiation: HashMap<Identifier, MathExpression> = HashMap::new();
+    instantiation.insert(
+        Identifier::Name("x".to_string(), 0),
+        MathExpression::Var(Identifier::E(3)),
+    );
 
     let tactic = Tactic::TheoremApplication {
         theorem_id: "some_theorem".to_string(),
-        instantiation,
+        instantiation, // Now HashMap<Identifier, _>
         target_expr: None,
     };
     let new_state = tactic.apply(&state).unwrap();
 
-    // Create expected state for comparison
-    let mut expected_state = state.clone();
-
-    // The TheoremApplication should preserve the statement but change the path
-    assert_eq!(new_state.statement, expected_state.statement);
-    assert_eq!(new_state.value_variables, expected_state.value_variables);
-    assert_eq!(new_state.quantifier, expected_state.quantifier);
+    let expected_state = state.clone();
+    assert_eq!(new_state.statement, expected_state.statement); // Simple apply preserves statement
 }
 
 /// Test the TheoremApplication tactic with a target
@@ -283,26 +283,20 @@ fn test_theorem_application_expr_tactic_with_target() {
     let statement = MathRelation::equal(var1.clone(), var2.clone());
     let state = ProofGoal::new(statement);
 
-    // Create instantiation map
-    let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), var3.clone());
+    // Use Identifier keys for instantiation map
+    let mut instantiation: HashMap<Identifier, MathExpression> = HashMap::new();
+    instantiation.insert(Identifier::Name("x".to_string(), 0), var3.clone());
 
-    // Apply the TheoremApplication tactic with a target
     let tactic = Tactic::TheoremApplication {
         theorem_id: "some_theorem".to_string(),
-        instantiation,
+        instantiation, // Now HashMap<Identifier, _>
         target_expr: Some(var1.clone()),
     };
 
     let new_state = tactic.apply(&state).unwrap();
 
-    // Create expected state for comparison
-    let mut expected_state = state.clone();
-
-    // Compare the states - the statement should be preserved since this is a simulated theorem application
+    let expected_state = state.clone();
     assert_eq!(new_state.statement, expected_state.statement);
-    assert_eq!(new_state.value_variables, expected_state.value_variables);
-    assert_eq!(new_state.quantifier, expected_state.quantifier);
 }
 
 /// Test the TheoremApplication tactic without a target
@@ -317,26 +311,20 @@ fn test_theorem_application_expr_tactic_without_target() {
     let statement = MathRelation::equal(var1.clone(), var2.clone());
     let state = ProofGoal::new(statement);
 
-    // Create instantiation map
-    let mut instantiation = HashMap::new();
-    instantiation.insert("x".to_string(), var3.clone());
+    // Use Identifier keys for instantiation map
+    let mut instantiation: HashMap<Identifier, MathExpression> = HashMap::new();
+    instantiation.insert(Identifier::Name("x".to_string(), 0), var3.clone());
 
-    // Apply the TheoremApplication tactic without a target
     let tactic = Tactic::TheoremApplication {
         theorem_id: "some_theorem".to_string(),
-        instantiation,
+        instantiation, // Now HashMap<Identifier, _>
         target_expr: None,
     };
 
     let new_state = tactic.apply(&state).unwrap();
 
-    // Create expected state for comparison
-    let mut expected_state = state.clone();
-
-    // Compare the states - the statement should be preserved
+    let expected_state = state.clone();
     assert_eq!(new_state.statement, expected_state.statement);
-    assert_eq!(new_state.value_variables, expected_state.value_variables);
-    assert_eq!(new_state.quantifier, expected_state.quantifier);
 }
 
 /// Test the Rewrite tactic

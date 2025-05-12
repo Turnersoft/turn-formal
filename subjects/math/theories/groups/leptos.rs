@@ -1,4 +1,4 @@
-use super::super::super::super::math::formalism::core::{ProofGoal, Theorem};
+use super::super::super::super::math::formalism::theorem::{ProofGoal, Theorem};
 
 use super::super::super::super::math::formalism::relations::MathRelation;
 use leptos::prelude::*;

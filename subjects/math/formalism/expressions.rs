@@ -3,19 +3,18 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::super::theories::{
-    GroupExpression,
-    rings::definitions::{FieldExpression, RingExpression},
-};
+use super::super::theories::groups::definitions::GroupExpression;
+use super::super::theories::rings::definitions::{FieldExpression, RingExpression};
+
+use super::complexity::Complexity;
 
 use super::super::theories::{
-    groups::Group,
     number_theory::definitions::Number,
     rings::{Ring, definitions::Field},
 };
 
 use super::super::formalism::interpretation::TypeViewOperator;
-use super::{core::MathObject, relations::MathRelation};
+use super::{relations::MathRelation, theorem::MathObject};
 
 /// Variables for use in expressions
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -125,6 +124,18 @@ impl From<String> for TypeViewError {
     }
 }
 
+impl TheoryExpression {
+    pub fn matches_pattern_theory_expr(&self, pattern: &TheoryExpression) -> bool {
+        match (self, pattern) {
+            (TheoryExpression::Group(g1), TheoryExpression::Group(g2)) => {
+                g1.matches_pattern_group_expr(g2)
+            }
+            // TODO: Add Ring and Field expression matching
+            _ => false,
+        }
+    }
+}
+
 impl MathExpression {
     /// Create a variable expression from a name
     pub fn var(name: &str) -> Self {
@@ -195,6 +206,39 @@ impl MathExpression {
         match self {
             MathExpression::Var(Identifier::Name(var_name, _)) => var_name == name,
             _ => false,
+        }
+    }
+
+    /// Check if this expression structurally matches a pattern expression.
+    /// Variables in the pattern act as wildcards.
+    pub fn matches_pattern_expr(&self, pattern: &MathExpression) -> bool {
+        match pattern {
+            // If pattern is a variable, it's a wildcard match.
+            MathExpression::Var(_) => true,
+            _ => match (self, pattern) {
+                (MathExpression::Object(o1), MathExpression::Object(o2)) => o1 == o2, // Or more detailed matching
+                (MathExpression::Expression(te1), MathExpression::Expression(te2)) => {
+                    te1.matches_pattern_theory_expr(te2)
+                }
+                (MathExpression::Relation(r1), MathExpression::Relation(r2)) => {
+                    r1.matches_pattern(r2)
+                }
+                (MathExpression::Number(n1), MathExpression::Number(n2)) => n1 == n2,
+                (
+                    MathExpression::ViewAs {
+                        expression: e1,
+                        view: v1,
+                    },
+                    MathExpression::ViewAs {
+                        expression: e2,
+                        view: v2,
+                    },
+                ) => v1 == v2 && e1.matches_pattern_expr(e2),
+                // Fallback: if current expression (self) is Var and pattern is not, it's not a match unless pattern was Var (handled above)
+                (MathExpression::Var(_), _) => false,
+                // If types don't match structurally and pattern is not a Var.
+                _ => self == pattern, // Default to direct equality if not a special case or wildcard
+            },
         }
     }
 }

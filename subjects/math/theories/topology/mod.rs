@@ -1,3 +1,4 @@
+pub mod collect;
 pub mod definitions;
 pub mod relations;
 

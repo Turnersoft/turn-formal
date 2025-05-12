@@ -1,6 +1,6 @@
-use crate::subjects::math::formalism::core::MathObject;
 use crate::subjects::math::formalism::expressions::Identifier;
 use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::{complexity::Complexity, theorem::MathObject};
 
 use super::super::super::formalism::expressions::{MathExpression, TheoryExpression};
 use super::super::super::formalism::relations::MathRelation;
@@ -926,9 +926,9 @@ pub enum GroupExpression {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupHomomorphism {
     /// The domain group
-    domain: Group,
+    pub domain: Parametrizable<Group>,
     /// The codomain group
-    codomain: Group,
+    pub codomain: Parametrizable<Group>,
 }
 
 /// Different types of element values depending on the group structure
@@ -1979,6 +1979,83 @@ impl Group {
             Group::CentralProduct(g) => &g.core,
             Group::Pullback(g) => &g.core,
             Group::Restriction(g) => &g.core,
+        }
+    }
+}
+
+impl GroupExpression {
+    pub fn matches_pattern_group_expr(&self, pattern: &GroupExpression) -> bool {
+        match (self, pattern) {
+            (
+                GroupExpression::Element {
+                    group: g1,
+                    element: e1,
+                },
+                GroupExpression::Element {
+                    group: g2,
+                    element: e2,
+                },
+            ) => g1.matches_pattern_param(g2) && e1.matches_pattern_param(e2),
+            (GroupExpression::Identity(g1), GroupExpression::Identity(g2)) => {
+                g1.matches_pattern_param(g2)
+            }
+            (
+                GroupExpression::Operation {
+                    group: g1,
+                    left: l1,
+                    right: r1,
+                },
+                GroupExpression::Operation {
+                    group: g2,
+                    left: l2,
+                    right: r2,
+                },
+            ) => {
+                g1.matches_pattern_param(g2)
+                    && l1.matches_pattern_param(l2)
+                    && r1.matches_pattern_param(r2)
+            }
+            (
+                GroupExpression::Inverse {
+                    group: g1,
+                    element: e1,
+                },
+                GroupExpression::Inverse {
+                    group: g2,
+                    element: e2,
+                },
+            ) => g1.matches_pattern_param(g2) && e1.matches_pattern_param(e2),
+            // Add other GroupExpression variants
+            _ => false,
+        }
+    }
+}
+
+impl GroupRelation {
+    pub fn matches_pattern_group_relation(&self, pattern: &GroupRelation) -> bool {
+        match (self, pattern) {
+            (
+                GroupRelation::IsSubgroupOf {
+                    subgroup: sg1,
+                    group: g1,
+                },
+                GroupRelation::IsSubgroupOf {
+                    subgroup: sg2,
+                    group: g2,
+                },
+            ) => sg1.matches_pattern_param(sg2) && g1.matches_pattern_param(g2),
+            (
+                GroupRelation::HasOrder {
+                    group: g1,
+                    order: o1,
+                },
+                GroupRelation::HasOrder {
+                    group: g2,
+                    order: o2,
+                },
+            ) => g1.matches_pattern_param(g2) && o1.matches_pattern_param(o2),
+            // Add more GroupRelation variants here
+            _ => false, // Default to no match for unhandled or different variants
         }
     }
 }

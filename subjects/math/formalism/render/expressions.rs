@@ -2,7 +2,7 @@ use super::super::super::{
     formalism::expressions::{Identifier, MathExpression, TheoryExpression},
     theories::number_theory::definitions::Number,
 };
-use super::super::core::MathObject;
+use super::super::theorem::MathObject;
 use crate::turn_render::{BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath};
 use std::string::String;
 

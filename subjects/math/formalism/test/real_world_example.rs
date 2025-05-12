@@ -5,13 +5,14 @@ use std::collections::HashMap;
 
 use uuid::Uuid;
 
-use super::super::super::formalism::core::{ProofGoal, Theorem};
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
-use super::super::super::formalism::proof::{
-    ProofForest, ProofNode, ProofStatus, RewriteDirection, Tactic,
-};
+use super::super::super::formalism::proof::{ProofForest, ProofNode, ProofStatus};
 use super::super::super::formalism::relations::MathRelation;
+use super::super::super::formalism::theorem::{ProofGoal, Theorem};
 use super::super::super::theories::rings::definitions::{Ring, RingElementValue, RingExpression};
+use crate::subjects::math::formalism::proof::tactics::{
+    DecompositionMethod, InductionType, RewriteDirection, Tactic,
+};
 
 /// Helper function to create a variable expression
 fn create_var(name: &str) -> MathExpression {

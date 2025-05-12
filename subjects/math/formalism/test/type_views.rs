@@ -3,8 +3,8 @@
 
 use super::super::super::super::super::subjects::math::formalism::interpretation::TypeViewOperator;
 
-use super::super::super::formalism::core::MathObject;
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TypeViewError};
+use super::super::super::formalism::theorem::MathObject;
 use super::super::super::theories::groups::definitions::{Group, GroupBasic};
 use super::super::super::theories::number_theory::definitions::Number;
 use super::super::super::theories::rings::definitions::{Field, Ring};

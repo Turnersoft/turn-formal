@@ -13,7 +13,7 @@ mod tests {
 
     use super::super::super::super::super::{
         subjects::math::formalism::{
-            core::{ProofGoal, Theorem},
+            theorem::{ProofGoal, Theorem},
             proof::{ProofForest, ProofNode, ProofStatus},
             relations::MathRelation,
         },

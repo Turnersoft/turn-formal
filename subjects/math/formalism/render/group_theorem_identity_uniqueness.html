@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Proof: Uniqueness of Identity Element</title>
+    <style>
+        body {
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            margin: 0 auto;
+            max-width: 850px;
+            padding: 20px;
+            line-height: 1.7;
+            background-color: #fcfcfa; /* Slightly off-white for textbook feel */
+            color: #222; /* Darker text for readability */
+        }
+        .theorem-environment, .proof-environment {
+            margin-bottom: 35px;
+            padding: 25px;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .theorem-header, .proof-header {
+            font-weight: bold;
+            font-size: 1.25em;
+            color: #333a40; /* Darker, more traditional header color */
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+        .theorem-statement-text, .proof-step {
+            margin-bottom: 20px;
+        }
+        .math-expr, .math-var {
+            font-family: 'Latin Modern Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #333;
+        }
+        .term {
+            cursor: pointer;
+            padding: 1px 3px;
+            border-radius: 3px;
+            transition: background-color 0.2s, outline 0.2s;
+            display: inline-block; 
+        }
+        .term-highlight {
+            background-color: #d6eaf8; /* Softer blue highlight */
+            outline: 1px solid #5dade2;
+            color: #1a5276;
+        }
+        .context-definition, .proof-goal, .proof-hypothesis, .derived-fact {
+            margin-top: 10px;
+            padding: 12px;
+            border-left: 3px solid #a9cce3; /* Accent color */
+            background-color: #f7f9f9;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95em;
+        }
+        .context-definition .label, .proof-goal .label, .proof-hypothesis .label, .derived-fact .label {
+            font-weight: bold;
+            color: #1f618d;
+        }
+        .group-properties {
+            padding-left: 15px;
+            font-size: 0.9em;
+            color: #444;
+            list-style-type: none; margin-top: 5px; padding-top: 5px; border-top: 1px dotted #eee;
+        }
+        .group-properties li { margin-bottom: 4px; }
+        .code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: #f0f2f5; 
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            color: #505050;
+        }
+        .reasoning, .tactic-application {
+            font-size: 0.9em;
+            color: #555;
+            margin-left:20px; 
+            padding-left:15px; 
+            border-left: 2px dotted #bdc3c7;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .qed { text-align: right; font-weight: bold; margin-top: 20px; color: #333a40; }
+    </style>
+</head>
+<body>
+    <h1>Theorem: Uniqueness of the Identity Element in a Group</h1>
+
+    <div class="theorem-environment">
+        <div class="theorem-header">Theorem 1.1</div>
+        <div class="theorem-statement-text">
+            Let <span class="term math-var" data-id="group-G">G</span> be an arbitrary group. 
+            If <span class="term math-var" data-id="element-e1">e₁</span> is an identity element in <span class="term math-var" data-id="group-G">G</span>,
+            and <span class="term math-var" data-id="element-e2">e₂</span> is an identity element in <span class="term math-var" data-id="group-G">G</span>, 
+            then <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="element-e2">e₂</span></span>.
+        </div>
+
+        <div class="context-definition">
+            <span class="label">Definition (Group <span class="term math-var" data-id="group-G">G</span>):</span> 
+            A set with a binary operation <span class="term math-expr" data-id="op-star">*</span><sub><span class="term math-var" data-id="group-G">G</span></sub> satisfying group axioms.
+            <ul class="group-properties">
+                <li>Operation: <span class="term math-expr" data-id="op-star">*</span> (denoted <span class="term math-expr" data-id="op-star">*</span><sub><span class="term math-var" data-id="group-G">G</span></sub> when specific to G)</li>
+                <li>An identity element <span class="term math-var" data-id="identity-generic">e</span> exists such that for all <span class="term math-var" data-id="var-x">x</span> in <span class="term math-var" data-id="group-G">G</span>, 
+                    <span class="math-expr"><span class="term math-var" data-id="identity-generic">e</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="var-x">x</span> = <span class="term math-var" data-id="var-x">x</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="identity-generic">e</span> = <span class="term math-var" data-id="var-x">x</span></span>. (Axiom: <code class="term" data-id="axiom-identity">ID_Axiom</code>)</li>
+                <li>For each element <span class="term math-var" data-id="var-x">x</span> in <span class="term math-var" data-id="group-G">G</span>, an inverse <span class="term math-expr" data-id="op-inv">inv</span>(<span class="term math-var" data-id="var-x">x</span>) exists.</li>
+                 <li>Axiom Set: <code class="term" data-id="axiom-set">StandardGroupAxioms_v1.2</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="proof-environment">
+        <div class="proof-header">Proof.</div>
+        
+        <div class="proof-hypothesis">
+            <span class="label">H1</span> (<span class="term code" data-id="hyp-H1">Hypothesis 1</span>): 
+            <span class="term math-var" data-id="element-e1">e₁</span> is an identity element in <span class="term math-var" data-id="group-G">G</span>. <br/>
+            <span class="reasoning">This implies by <code class="term" data-id="axiom-identity">ID_Axiom</code>: &forall; <span class="term math-var" data-id="var-x">x</span> &isin; <span class="term math-var" data-id="group-G">G</span>, 
+            (<span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="var-x">x</span> = <span class="term math-var" data-id="var-x">x</span></span>) and 
+            (<span class="math-expr"><span class="term math-var" data-id="var-x">x</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="var-x">x</span></span>).</span>
+        </div>
+        <div class="proof-hypothesis">
+            <span class="label">H2</span> (<span class="term code" data-id="hyp-H2">Hypothesis 2</span>): 
+            <span class="term math-var" data-id="element-e2">e₂</span> is an identity element in <span class="term math-var" data-id="group-G">G</span>. <br/>
+            <span class="reasoning">This implies by <code class="term" data-id="axiom-identity">ID_Axiom</code>: &forall; <span class="term math-var" data-id="var-y">y</span> &isin; <span class="term math-var" data-id="group-G">G</span>, 
+            (<span class="math-expr"><span class="term math-var" data-id="element-e2">e₂</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="var-y">y</span> = <span class="term math-var" data-id="var-y">y</span></span>) and 
+            (<span class="math-expr"><span class="term math-var" data-id="var-y">y</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-e2">e₂</span> = <span class="term math-var" data-id="var-y">y</span></span>).</span>
+        </div>
+
+        <div class="proof-goal">
+            <span class="label">Goal</span> (<span class="term code" data-id="goal-target">Target</span>): Show that 
+            <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="element-e2">e₂</span></span>.
+        </div>
+
+        <hr style="border-style: dashed; margin: 25px 0;">
+
+        <div class="proof-step">
+            1. Consider the element <span class="term math-var" data-id="element-e1">e₁</span>. Since <span class="term math-var" data-id="element-e1">e₁</span> &isin; <span class="term math-var" data-id="group-G">G</span> and <span class="term math-var" data-id="element-e2">e₂</span> is an identity element in <span class="term math-var" data-id="group-G">G</span> (by <span class="term code" data-id="hyp-H2">H2</span>), 
+            we can apply the right identity property of <span class="term math-var" data-id="element-e2">e₂</span> to <span class="term math-var" data-id="element-e1">e₁</span>.
+            <div class="derived-fact">
+                <span class="label">F1</span> (<span class="term code" data-id="fact-F1">Fact 1</span>): 
+                <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="element-e1">e₁</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-e2">e₂</span></span>.
+                <div class="tactic-application">Tactic: <code class="term" data-id="tactic-apply">apply</code> <code class="term" data-id="axiom-identity">ID_Axiom</code> (right identity part of <span class="term code" data-id="hyp-H2">H2</span>) <code class="term" data-id="tactic-with">with</code> <span class="math-expr"><span class="term math-var" data-id="var-y">y</span> := <span class="term math-var" data-id="element-e1">e₁</span></span>.</div>
+            </div>
+        </div>
+
+        <div class="proof-step">
+            2. Next, consider the expression <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-e2">e₂</span></span>. Since <span class="term math-var" data-id="element-e2">e₂</span> &isin; <span class="term math-var" data-id="group-G">G</span> and <span class="term math-var" data-id="element-e1">e₁</span> is an identity element in <span class="term math-var" data-id="group-G">G</span> (by <span class="term code" data-id="hyp-H1">H1</span>), 
+            we can apply the left identity property of <span class="term math-var" data-id="element-e1">e₁</span> to <span class="term math-var" data-id="element-e2">e₂</span>.
+            <div class="derived-fact">
+                <span class="label">F2</span> (<span class="term code" data-id="fact-F2">Fact 2</span>): 
+                <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> <span class="term" data-id="op-star">*</span> <span class="term math-var" data-id="element-e2">e₂</span> = <span class="term math-var" data-id="element-e2">e₂</span></span>.
+                <div class="tactic-application">Tactic: <code class="term" data-id="tactic-apply">apply</code> <code class="term" data-id="axiom-identity">ID_Axiom</code> (left identity part of <span class="term code" data-id="hyp-H1">H1</span>) <code class="term" data-id="tactic-with">with</code> <span class="math-expr"><span class="term math-var" data-id="var-x">x</span> := <span class="term math-var" data-id="element-e2">e₂</span></span>.</div>
+            </div>
+        </div>
+
+        <div class="proof-step">
+            3. Combining <span class="term code" data-id="fact-F1">Fact 1</span> (<span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="element-e1">e₁</span> <span class="term data-id="op-star">*</span> <span class="term math-var" data-id="element-e2">e₂</span></span>) 
+            and <span class="term code" data-id="fact-F2">Fact 2</span> (<span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> <span class="term data-id="op-star">*</span> <span class="term math-var" data-id="element-e2">e₂</span> = <span class="term math-var" data-id="element-e2">e₂</span></span>), 
+            by the transitivity of equality, we conclude:
+            <div class="derived-fact">
+                 <span class="label">Conclusion:</span> 
+                 <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="element-e2">e₂</span></span>.
+                 <div class="tactic-application">Tactic: <code class="term" data-id="tactic-transitivity">transitivity</code> <code class="term" data-id="tactic-on">on</code> <span class="term code" data-id="fact-F1">F1</span>, <span class="term code" data-id="fact-F2">F2</span>.</div>
+            </div>
+        </div>
+        
+        <div class="proof-state-section" style="margin-top:20px; background-color: #e8f5e9;">
+            <h4 style="color:#1b5e20;">Final Proof State</h4>
+            <div class="proof-goal" style="border-left-color: #4caf50;">
+                <span class="label" style="color:#1b5e20;">Goal</span> (<span class="term code" data-id="goal-target">Target</span>): 
+                <span class="math-expr"><span class="term math-var" data-id="element-e1">e₁</span> = <span class="term math-var" data-id="element-e2">e₂</span></span> &nbsp; <strong style="color:#1b5e20;">(Proven)</strong>
+            </div>
+        </div>
+
+        <div class="qed">Q.E.D.</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const terms = document.querySelectorAll('.term');
+            
+            terms.forEach(term => {
+                term.addEventListener('mouseenter', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => {
+                        t.classList.add('term-highlight');
+                    });
+                });
+                
+                term.addEventListener('mouseleave', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                     document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => {
+                        t.classList.remove('term-highlight');
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -5,10 +5,11 @@
 // Uncomment to see various examples of compile-time errors in action
 // pub mod counter_example;
 
-pub mod core;
+pub mod complexity;
 pub mod expressions;
 pub mod interpretation;
 pub mod proof;
+pub mod theorem;
 #[macro_use]
 pub mod extract;
 pub mod relations;

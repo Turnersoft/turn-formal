@@ -3,8 +3,8 @@ use std::any::Any;
 use serde::{Deserialize, Serialize};
 
 use super::{
-    core::MathObject,
     expressions::{Identifier, MathExpression},
+    theorem::MathObject,
 };
 
 /// Generic wrapper to allow a field to hold either a concrete value
@@ -13,6 +13,10 @@ use super::{
 pub enum Parametrizable<T> {
     Concrete(T),
     Variable(Identifier),
+}
+
+pub trait Extractable {
+    fn extract<T: 'static + Clone>(&self) -> Option<T>;
 }
 
 impl<T: Clone> Parametrizable<T> {
@@ -87,10 +91,6 @@ macro_rules! impl_extractable {
     };
 }
 
-pub trait Extractable {
-    fn extract<T: 'static + Clone>(&self) -> Option<T>;
-}
-
 impl Extractable for MathExpression {
     fn extract<T: 'static + Clone>(&self) -> Option<T> {
         match self {
@@ -133,7 +133,9 @@ impl Extractable for MathObject {
 
 #[cfg(test)]
 mod tests {
-    use crate::subjects::math::theories::{Group, GroupBasic, rings::Ring};
+    use crate::subjects::math::theories::groups::definitions::Group;
+    use crate::subjects::math::theories::groups::definitions::GroupBasic;
+    use crate::subjects::math::theories::rings::definitions::Ring;
 
     use super::*;
 

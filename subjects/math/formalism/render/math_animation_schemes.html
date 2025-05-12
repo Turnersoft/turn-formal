@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical Expression Animation Schemes</title>
+    <style>
+        body {
+            font-family: 'Charter', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            margin: 0 auto;
+            max-width: 700px;
+            padding: 20px 15px;
+            line-height: 1.5;
+            background-color: #FFFFFF; /* Changed from #000 for better readability with black text */
+            color: #111111;
+            font-size: 15px;
+        }
+        
+        h1 {
+            font-size: 1.6em;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: normal;
+            color: #000;
+        }
+        
+        h2 {
+            font-size: 1.3em;
+            font-variant: small-caps;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .animation-demo {
+            margin-bottom: 30px;
+            padding: 10px 15px;
+            border: none;
+            background-color: #ffffff;
+        }
+        
+        .animation-description {
+            margin-bottom: 10px;
+            text-indent: 1.5em;
+            text-align: justify;
+            hyphens: auto;
+        }
+        
+        .math-expr, .math-var {
+            font-family: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #000;
+            white-space: nowrap;
+        }
+        
+        .math-expr {
+            display: block;
+            text-align: center;
+            margin: 12px auto;
+            line-height: 1.7;
+            font-size: 1.05em;
+            letter-spacing: 0.5px;
+            padding: 5px 0;
+        }
+        
+        .math-expr sup {
+            position: relative;
+            font-size: 0.75em;
+            top: -0.5em;
+        }
+        
+        .math-expr sub {
+            position: relative;
+            font-size: 0.75em;
+            bottom: -0.25em;
+        }
+        
+        /* Math operators should be upright, not italic */
+        .op {
+            font-style: normal;
+            padding: 0 2px;
+        }
+        
+        .term {
+            cursor: pointer;
+            padding: 1px 2px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease-out, outline 0.2s ease-out;
+            display: inline-block;
+        }
+        
+        .term-highlight {
+            background-color: #f8f9fa;
+            outline: 1px solid #dee2e6;
+            color: #495057;
+        }
+        
+        /* Animation trigger styling */
+        .animation-trigger {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-radius: 0;
+            padding: 2px 4px;
+            position: relative;
+            display: block;
+            text-align: center;
+            margin: 10px auto;
+        }
+        
+        .animation-trigger::after {
+            content: "▶";
+            position: absolute;
+            right: -15px;
+            color: #6c757d;
+            font-size: 10px;
+            opacity: 0.5;
+        }
+        
+        .animation-trigger:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .animation-trigger:hover::after {
+            opacity: 1;
+        }
+        
+        /* Animation stage and elements */
+        #animation-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; 
+            z-index: 10000;
+            overflow: hidden; 
+            filter: url(#threshold) blur(0.8px); /* Increased overlay blur for thicker goo */
+        }
+
+        .anim-text-element {
+            position: absolute;
+            font-family: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.05em; /* Match .math-expr */
+            letter-spacing: 0.5px; /* Match .math-expr */
+            color: #000; /* Match .math-expr color */
+            white-space: nowrap;
+            will-change: opacity, filter, transform;
+            text-align: center; 
+            /* Crucial: ensure the div itself has a background for the filter to work effectively on its shape */
+            /* background-color: #FFFFFF; */ /* Optional: if text color alone isn't enough for the filter */
+        }
+        
+        .animation-frame {
+            border-left: 2px solid #adb5bd;
+            margin: 15px 0;
+            padding: 10px 15px;
+        }
+        
+        .animation-label {
+            font-weight: bold;
+            font-style: italic;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.95em;
+        }
+        
+        .arrow {
+            display: block;
+            text-align: center;
+            font-size: 1.3em;
+            color: #adb5bd;
+            margin: 5px 0;
+        }
+        
+        /* Colors for highlighting different parts (kept for potential future use) */
+        .highlight-add { color: #28a745; }
+        .highlight-remove { color: #dc3545; }
+        .highlight-transform { color: #007bff; }
+        .highlight-swap { color: #fd7e14; }
+        .highlight-focus { color: #6f42c1; }
+        
+        /* Tooltip to explain steps */
+        .tooltip {
+            margin: 0 auto;
+            font-size: 0.85em;
+            text-align: center;
+            font-style: italic;
+            color: #6c757d;
+            padding: 3px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Filter for Gooey Effect -->
+    <svg id="filters" style="display:none;">
+        <defs>
+            <filter id="threshold">
+                <feColorMatrix in="SourceGraphic"
+                    type="matrix"
+                    values="1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 45 -15" /> 
+                            <!-- More aggressive alpha for thicker goo: 45 -15 -->
+            </filter>
+        </defs>
+    </svg>
+
+    <div id="animation-overlay"></div> <!-- This is the container for animated elements, applying the filter -->
+    
+    <h1>Mathematical Expression Animation Schemes</h1>
+    
+    <p class="animation-description">
+        This page demonstrates various animation schemes for transforming mathematical expressions in formal proofs.
+        Each section shows a different type of transformation. Click on an expression to see the animation.
+    </p>
+    
+    <!-- 1. One -> Many (decompose/substitution) -->
+    <div class="animation-demo" id="one-to-many">
+        <h2>1. One → Many: Decomposition/Substitution</h2>
+        <div class="animation-description">
+            Breaking down a single expression into multiple components, such as applying the distributive property.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="decompose-source" data-target="decompose-target">
+                a <span class="op">×</span> (b <span class="op">+</span> c)
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Decomposed Expression</span>
+            <div class="math-expr" id="decompose-target">
+                (a <span class="op">×</span> b) <span class="op">+</span> (a <span class="op">×</span> c)
+            </div>
+            <div class="tooltip">Distributive property: a × (b + c) = (a × b) + (a × c)</div>
+        </div>
+    </div>
+    
+    <!-- 2. Many -> One (merge/substitution) -->
+    <div class="animation-demo" id="many-to-one">
+        <h2>2. Many → One: Merge/Substitution</h2>
+        <div class="animation-description">
+            Combining multiple expressions into a single expression, such as factoring.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="merge-source" data-target="merge-target">
+                (x<sup>2</sup> <span class="op">-</span> 2x) <span class="op">+</span> (x <span class="op">-</span> 1)
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Merged Expression</span>
+            <div class="math-expr" id="merge-target">
+                x<sup>2</sup> <span class="op">-</span> x <span class="op">-</span> 1
+            </div>
+            <div class="tooltip">Combining like terms: (x² - 2x) + (x - 1) = x² - 2x + x - 1 = x² - x - 1</div>
+        </div>
+    </div>
+    
+    <!-- 3. Many -> Many (swap/transform collectively) -->
+    <div class="animation-demo" id="many-to-many">
+        <h2>3. Many → Many: Swap/Transform Collectively</h2>
+        <div class="animation-description">
+            Rearranging multiple expressions, such as changing the order of operations.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="swap-source" data-target="swap-target">
+                (a <span class="op">×</span> b) <span class="op">×</span> (c <span class="op">×</span> d)
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Rearranged Expression</span>
+            <div class="math-expr" id="swap-target">
+                (a <span class="op">×</span> c) <span class="op">×</span> (b <span class="op">×</span> d)
+            </div>
+            <div class="tooltip">Rearrangement via associativity and commutativity</div>
+        </div>
+    </div>
+    
+    <!-- 4. One -> One (transform) -->
+    <div class="animation-demo" id="one-to-one">
+        <h2>4. One → One: Transform</h2>
+        <div class="animation-description">
+            Transforming a single expression into another, such as applying an identity or theorem.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="transform-source" data-target="transform-target">
+                sin<sup>2</sup>(θ) <span class="op">+</span> cos<sup>2</sup>(θ)
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Transformed Expression</span>
+            <div class="math-expr" id="transform-target">
+                1
+            </div>
+            <div class="tooltip">Pythagorean identity: sin²(θ) + cos²(θ) = 1</div>
+        </div>
+    </div>
+    
+    <!-- 5. + Many (adding redundant structure) -->
+    <div class="animation-demo" id="add-many">
+        <h2>5. + Many: Adding Redundant Structure</h2>
+        <div class="animation-description">
+            Adding terms to expand an expression, such as multiplying by 1 in different forms.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="add-many-source" data-target="add-many-target">
+                n
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Expanded Expression</span>
+            <div class="math-expr" id="add-many-target">
+                n <span class="op">×</span> ((n <span class="op">-</span> 1) <span class="op">÷</span> (n <span class="op">-</span> 1))
+            </div>
+            <div class="tooltip">Multiplying by (n-1)/(n-1) = 1 to enable further transformations</div>
+        </div>
+    </div>
+    
+    <!-- 6. + One (expand a sub-expression) -->
+    <div class="animation-demo" id="add-one">
+        <h2>6. + One: Expand a Sub-expression</h2>
+        <div class="animation-description">
+            Expanding a particular part of an expression, such as applying a definition or identity.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="add-one-source" data-target="add-one-target">
+                e<sup>x</sup> <span class="op">+</span> y
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Expanded Sub-expression</span>
+            <div class="math-expr" id="add-one-target">
+                (1 <span class="op">+</span> x <span class="op">+</span> <span class="op">x</span><sup>2</sup><span class="op">/</span>2 <span class="op">+</span> ...) <span class="op">+</span> y
+            </div>
+            <div class="tooltip">Taylor series expansion of e^x = 1 + x + x²/2 + ...</div>
+        </div>
+    </div>
+    
+    <!-- 7. - Many (combine terms to form cancellable group) -->
+    <div class="animation-demo" id="remove-many">
+        <h2>7. - Many: Combine Terms to Form Cancellable Group</h2>
+        <div class="animation-description">
+            Grouping terms that will cancel out, preparing for a simplification.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="remove-many-source" data-target="remove-many-target">
+                x <span class="op">+</span> y <span class="op">+</span> z <span class="op">-</span> y
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Grouped for Cancellation</span>
+            <div class="math-expr" id="remove-many-target">
+                x <span class="op">+</span> (y <span class="op">-</span> y) <span class="op">+</span> z
+            </div>
+            <div class="tooltip">Grouping terms: x + y + z - y = x + (y - y) + z</div>
+        </div>
+    </div>
+    
+    <!-- 8. - One (cancel redundant terms directly) -->
+    <div class="animation-demo" id="remove-one">
+        <h2>8. - One: Cancel Redundant Terms Directly</h2>
+        <div class="animation-description">
+            Directly removing redundant terms, such as applying a cancellation or simplification.
+        </div>
+        
+        <div class="animation-frame">
+            <span class="animation-label">Initial Expression</span>
+            <div class="math-expr animation-trigger" id="remove-one-source" data-target="remove-one-target">
+                x <span class="op">+</span> (y <span class="op">-</span> y) <span class="op">+</span> z
+            </div>
+            <div class="arrow">↓</div>
+            <span class="animation-label">Simplified Expression</span>
+            <div class="math-expr" id="remove-one-target">
+                x <span class="op">+</span> z
+            </div>
+            <div class="tooltip">Cancellation: y - y = 0, so x + (y - y) + z = x + 0 + z = x + z</div>
+        </div>
+    </div>
+    
+    <script>
+        // Debug mode to show animation elements
+        const DEBUG_ANIMATION = false;
+        
+        // Morphing animation constants
+        const MORPH_TIME = 1.8; // seconds - Moderate speed
+        const MOVE_DURATION = 1.8; // seconds - Moderate speed
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up animation triggers
+            setupAnimationTriggers();
+            
+            // Term highlighting (can be kept if .term elements are still used within math-expr)
+            setupTermHighlighting();
+        });
+        
+        // Global variables to track animation state
+        let isAnimating = false;
+        let animationFrameId = null;
+        
+        function setupAnimationTriggers() {
+            const triggers = document.querySelectorAll('.animation-trigger');
+            
+            triggers.forEach(trigger => {
+                const targetId = trigger.dataset.target;
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    trigger.addEventListener('click', () => {
+                        if (isAnimating) return; // Prevent overlapping animations
+                        
+                        // Pass the original source (trigger) and original target (targetElement)
+                        animateTransformation(trigger, targetElement);
+                    });
+                    
+                    // Visual cue on hover
+                    trigger.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                    });
+                    
+                    trigger.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                }
+            });
+        }
+        
+        function setupTermHighlighting() {
+            const terms = document.querySelectorAll('.term');
+            terms.forEach(term => {
+                term.addEventListener('mouseenter', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => t.classList.add('term-highlight'));
+                });
+                term.addEventListener('mouseleave', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => t.classList.remove('term-highlight'));
+                });
+            });
+        }
+        
+        function animateTransformation(fromElement, toElement) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const fromRect = fromElement.getBoundingClientRect();
+            const toRect = toElement.getBoundingClientRect();
+            const overlay = document.getElementById('animation-overlay');
+
+            // Clear any previous elements from overlay
+            overlay.innerHTML = '';
+
+            // Create animSourceEl
+            const animSourceEl = document.createElement('div');
+            animSourceEl.classList.add('anim-text-element');
+            animSourceEl.innerHTML = fromElement.innerHTML; 
+            animSourceEl.style.left = `${fromRect.left}px`;
+            animSourceEl.style.top = `${fromRect.top}px`;
+            animSourceEl.style.width = `${fromRect.width}px`;
+            animSourceEl.style.height = `${fromRect.height}px`;
+            animSourceEl.style.opacity = '1';
+            animSourceEl.style.filter = 'blur(0px)';
+            overlay.appendChild(animSourceEl);
+
+            // Create animTargetEl
+            const animTargetEl = document.createElement('div');
+            animTargetEl.classList.add('anim-text-element');
+            animTargetEl.innerHTML = toElement.innerHTML;
+            animTargetEl.style.left = `${fromRect.left}px`; // Start at source position
+            animTargetEl.style.top = `${fromRect.top}px`;
+            animTargetEl.style.width = `${toRect.width}px`; // Use target's final width
+            animTargetEl.style.height = `${toRect.height}px`; // Use target's final height
+            animTargetEl.style.opacity = '0';
+            animTargetEl.style.filter = 'blur(8px)';
+            overlay.appendChild(animTargetEl);
+
+            const startTime = performance.now();
+
+            function tick(currentTime) {
+                const elapsed = (currentTime - startTime) / 1000;
+                let morphFraction = Math.min(elapsed / MORPH_TIME, 1);
+                const moveFraction = Math.min(elapsed / MOVE_DURATION, 1);
+
+                // --- Opacity and Blur Logic --- 
+                let sourceOpacity, targetOpacity, sourceBlur, targetBlur;
+                const minMidOpacity = 0.45; // Minimum opacity during the core transition, slightly increased
+                const elementBlurAmount = 5; // Individual element blur (px), slightly increased for thickness
+
+                if (morphFraction < 0.5) {
+                    sourceOpacity = 1 - (morphFraction * 2); 
+                    targetOpacity = morphFraction * 2;       
+                    sourceBlur = elementBlurAmount * (morphFraction * 2); 
+                    targetBlur = elementBlurAmount * (1 - (morphFraction * 2));
+                } else {
+                    sourceOpacity = (1 - morphFraction) * 2; 
+                    targetOpacity = 1 - ((1 - morphFraction) * 2);
+                    sourceBlur = elementBlurAmount * (1-((morphFraction - 0.5) * 2)); 
+                    targetBlur = elementBlurAmount * ((morphFraction - 0.5) * 2);    
+                }
+
+                sourceOpacity = Math.min(1, Math.max(0, sourceOpacity));
+                targetOpacity = Math.min(1, Math.max(0, targetOpacity));
+
+                if (morphFraction > 0.20 && morphFraction < 0.80) { // Widened window for forced opacity
+                    sourceOpacity = Math.max(sourceOpacity, minMidOpacity);
+                    targetOpacity = Math.max(targetOpacity, minMidOpacity);
+                }
+                if (morphFraction === 1) {
+                    sourceOpacity = 0; targetOpacity = 1;
+                    sourceBlur = 0; targetBlur = 0;
+                }
+                if (morphFraction === 0) {
+                    sourceOpacity = 1; targetOpacity = 0;
+                    sourceBlur = 0; targetBlur = elementBlurAmount;
+                }
+
+                animSourceEl.style.opacity = sourceOpacity.toString();
+                animSourceEl.style.filter = `blur(${sourceBlur}px)`;
+                animTargetEl.style.opacity = targetOpacity.toString();
+                animTargetEl.style.filter = `blur(${targetBlur}px)`;
+
+                // --- Width Animation (Shrink then Expand using scaleX) --- 
+                let scaleX;
+                const minScaleX = 0.3; // How much it shrinks at the midpoint
+                if (morphFraction < 0.5) {
+                    // From 1 down to minScaleX
+                    scaleX = 1 - (morphFraction * 2) * (1 - minScaleX);
+                } else {
+                    // From minScaleX up to 1
+                    scaleX = minScaleX + ((morphFraction - 0.5) * 2) * (1 - minScaleX);
+                }
+                scaleX = Math.max(minScaleX, Math.min(1, scaleX)); // Clamp scaleX
+
+                // --- Movement Logic & Applying Scale --- 
+                const currentX = fromRect.left + (toRect.left - fromRect.left) * moveFraction;
+                const currentY = fromRect.top + (toRect.top - fromRect.top) * moveFraction;
+                
+                // Apply scaleX and translation. Ensure transform origin is center for scaling.
+                animSourceEl.style.transformOrigin = 'center center';
+                animTargetEl.style.transformOrigin = 'center center';
+                animSourceEl.style.transform = `translate(${currentX - fromRect.left}px, ${currentY - fromRect.top}px) scaleX(${scaleX})`;
+                animTargetEl.style.transform = `translate(${currentX - fromRect.left}px, ${currentY - fromRect.top}px) scaleX(${scaleX})`;
+                
+                // It's important that the elements still occupy their original width for layout purposes of the text inside them,
+                // scaleX will visually shrink/expand them.
+                animSourceEl.style.width = `${fromRect.width}px`;
+                animSourceEl.style.height = `${fromRect.height}px`;
+                animTargetEl.style.width = `${toRect.width}px`; 
+                animTargetEl.style.height = `${toRect.height}px`;
+
+                if (elapsed < Math.max(MORPH_TIME, MOVE_DURATION)) {
+                    animationFrameId = requestAnimationFrame(tick);
+                } else {
+                    // Reset scale and remove elements cleanly
+                    if(animSourceEl) {
+                        animSourceEl.style.transform = `translate(${toRect.left - fromRect.left}px, ${toRect.top - fromRect.top}px) scaleX(1)`;
+                        animSourceEl.remove();
+                    }
+                    if(animTargetEl) {
+                         animTargetEl.style.transform = `translate(${toRect.left - fromRect.left}px, ${toRect.top - fromRect.top}px) scaleX(1)`;
+                         animTargetEl.remove();
+                    }
+                    overlay.innerHTML = ''; 
+                    isAnimating = false;
+                    animationFrameId = null;
+                }
+            }
+
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            animationFrameId = requestAnimationFrame(tick);
+            
+            // Optionally hide original elements during animation if they are not part of the overlay
+            // fromElement.style.opacity = '0';
+            // toElement.style.opacity = '0';
+        }
+        
+        // All specific animation functions (animateOneToMany, etc.) are removed.
+        // The extractCharacterInfo function is also removed.
+
+    </script>
+</body>
+</html> 

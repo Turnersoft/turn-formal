@@ -1,7 +1,7 @@
-use super::super::core::{Quantification, QuantifiedMathObject};
+use super::super::theorem::{Quantification, QuantifiedMathObject};
 use super::super::{
-    core::{ProofGoal, Theorem},
     proof::{ProofForest, ProofNode},
+    theorem::{ProofGoal, Theorem},
 };
 use crate::turn_render::{
     MathNode, MathNodeContent, MulSymbol, QuantificationNode, RefinedMulOrDivOperation, ToTurnMath,
@@ -255,13 +255,15 @@ impl ProofForest {
 mod tests {
     use serde_json::to_value;
 
-    use super::super::super::super::theories::prove_abelian_squared_criterion;
+    use crate::subjects::math::theories::theorems::{
+        prove_abelian_squared_criterion, prove_inverse_product_rule,
+    };
 
     use super::*;
 
     #[test]
     fn test_theorem_render() {
-        let theorem = prove_abelian_squared_criterion();
+        let theorem = prove_inverse_product_rule();
         let rendered = theorem.to_turn_math("theorem_id".to_string());
         println!("{:#?}", to_value(&rendered));
     }

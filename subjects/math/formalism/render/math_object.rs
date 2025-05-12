@@ -1,4 +1,4 @@
-use super::super::core::MathObject;
+use super::super::theorem::MathObject;
 use crate::turn_render::{BracketStyle, MathNode, MathNodeContent, ToTurnMath};
 
 impl ToTurnMath for MathObject {

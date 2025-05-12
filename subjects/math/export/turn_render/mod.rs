@@ -8,7 +8,7 @@ use std::fs::{self, File, create_dir_all};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-use super::super::formalism::core::Theorem;
+use super::super::formalism::theorem::Theorem;
 use super::dev::export::{export_to_json, get_theory_data_path};
 use super::dev::json::generate_math_json_exports;
 use crate::turn_render::MathNode;

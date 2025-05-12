@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Math Rendering Example</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+        h3 { color: #34495e; margin-top: 25px; }
+        .theorem-statement, .proof-context, .proof-step, .proof-state {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .theorem-statement strong { color: #3498db; }
+        .math-expr { font-family: "Times New Roman", serif; font-style: italic; color: #555; }
+        .term { cursor: pointer; padding: 1px 3px; border-radius: 3px; transition: background-color 0.2s; }
+        .term-highlight { background-color: #aed6f1; outline: 1px solid #3498db; }
+        .hypothesis, .goal { margin-bottom: 5px; }
+        .hypothesis strong, .goal strong { color: #27ae60; }
+        .tactic { color: #8e44ad; font-weight: bold; margin-bottom: 10px; }
+        .context-item { margin-bottom: 5px; }
+        .context-item .name { font-weight: bold; color: #e67e22; }
+        .context-item .type { font-style: italic; color: #2980b9; }
+        .code { font-family: monospace; background-color: #ecf0f1; padding: 2px 5px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Formal Proof Rendering Example</h2>
+
+        <div class="theorem-statement">
+            <h3>Theorem Statement</h3>
+            <p>
+                <strong>Theorem (Left Identity):</strong> 
+                For any group <span class="term" data-id="group-G">G</span>, 
+                and for any element <span class="term" data-id="element-a">a</span> in <span class="term" data-id="group-G">G</span>, 
+                the equation <span class="math-expr">
+                    <span class="term" data-id="identity-e">identity</span>(<span class="term" data-id="group-G">G</span>) 
+                    <span class="term" data-id="op-star">*</span><sub><span class="term" data-id="group-G">G</span></sub> 
+                    <span class="term" data-id="element-a">a</span> = <span class="term" data-id="element-a">a</span>
+                </span> holds.
+            </p>
+        </div>
+
+        <div class="proof-context">
+            <h3>Initial Proof Context</h3>
+            <div class="context-item">
+                <span class="term name" data-id="group-G">G</span>: <span class="type">Group</span>.
+                <div style="padding-left: 20px;">
+                    Represents a formal group structure with:
+                    <div>- Operation: <span class="term math-expr" data-id="op-star">*</span><sub><span class="term" data-id="group-G">G</span></sub></div>
+                    <div>- Identity Element: <span class="term math-expr" data-id="identity-e">identity</span>(<span class="term" data-id="group-G">G</span>)</div>
+                    <div>- Inverse: <span class="term math-expr" data-id="op-inv">inverse</span>(x, <span class="term" data-id="group-G">G</span>) for x &#8712; <span class="term" data-id="group-G">G</span></div>
+                </div>
+            </div>
+            <div class="context-item">
+                <span class="term name" data-id="element-a">a</span>: <span class="type">Element</span> of <span class="term" data-id="group-G">G</span>.
+            </div>
+            <div class="context-item">
+                <strong>Axiom 1 (LeftIdentityAxiom):</strong> 
+                <span class="math-expr">
+                For any group <span class="term" data-id="axiom-group-var">H</span> and any element <span class="term" data-id="axiom-el-var">x</span> &#8712; <span class="term" data-id="axiom-group-var">H</span>, 
+                <span class="term" data-id="axiom-lhs">
+                    <span class="term" data-id="identity-e">identity</span>(<span class="term" data-id="axiom-group-var">H</span>) 
+                    <span class="term" data-id="op-star">*</span><sub><span class="term" data-id="axiom-group-var">H</span></sub> 
+                    <span class="term" data-id="axiom-el-var">x</span>
+                </span> = <span class="term data-id="axiom-rhs" data-id="axiom-el-var">x</span>.
+                </span>
+                (This axiom is identified as <code class="term" data-id="axiom-LIA">Axiom_LeftIdentity</span>)
+            </div>
+            <hr>
+            <div class="goal">
+                <strong>Goal 0:</strong> 
+                <span class="math-expr">
+                    <span class="term" data-id="goal0-lhs-e"><span class="term" data-id="identity-e">identity</span>(<span class="term" data-id="group-G">G</span>)</span> 
+                    <span class="term" data-id="goal0-lhs-op"><span class="term" data-id="op-star">*</span><sub><span class="term" data-id="group-G">G</span></sub></span> 
+                    <span class="term" data-id="goal0-lhs-a"><span class="term" data-id="element-a">a</span></span> 
+                    = 
+                    <span class="term" data-id="goal0-rhs-a"><span class="term" data-id="element-a">a</span></span>
+                </span>
+                (Identified as <code class="term" data-id="goal-0">G0</span>)
+            </div>
+        </div>
+
+        <div class="proof-step">
+            <h3>Proof Step 1</h3>
+            <div class="tactic">
+                Tactic: <span class="code">apply</span> <span class="term" data-id="axiom-LIA">Axiom_LeftIdentity</span> 
+                <span class="code">with</span> 
+                <span class="math-expr">(<span class="term" data-id="axiom-group-var">H</span> := <span class="term" data-id="group-G">G</span>, <span class="term" data-id="axiom-el-var">x</span> := <span class="term" data-id="element-a">a</span>)</span>
+            </div>
+            <div class="proof-state">
+                <h4>Proof State After Step 1</h4>
+                <p>The tactic <span class="code">apply</span> attempts to match the conclusion of <span class="term" data-id="axiom-LIA">Axiom_LeftIdentity</span> 
+                (<span class="math-expr"><span class="term" data-id="axiom-lhs">identity(H) *<sub>H</sub> x</span> = <span class="term" data-id="axiom-rhs">x</span></span>) 
+                with the current goal <code class="term" data-id="goal-0">G0</code> 
+                (<span class="math-expr"><span class="term" data-id="goal0-lhs-e">identity</span>(<span class="term" data-id="group-G">G</span>) <span class="term" data-id="goal0-lhs-op">*</span><sub><span class="term" data-id="group-G">G</span></sub> <span class="term" data-id="goal0-lhs-a">a</span> = <span class="term" data-id="goal0-rhs-a">a</span></span>).
+                </p>
+                <p>
+                Upon successful unification with <span class="math-expr"><span class="term" data-id="axiom-group-var">H</span> = <span class="term" data-id="group-G">G</span></span> and 
+                <span class="math-expr"><span class="term" data-id="axiom-el-var">x</span> = <span class="term" data-id="element-a">a</span></span>, 
+                the goal <code class="term" data-id="goal-0">G0</span> is directly solved by the axiom.
+                </p>
+                <div class="goal">
+                    <strong>All goals solved. Proof complete (QED).</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const terms = document.querySelectorAll('.term');
+            
+            terms.forEach(term => {
+                term.addEventListener('mouseenter', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                    document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => {
+                        t.classList.add('term-highlight');
+                    });
+                });
+                
+                term.addEventListener('mouseleave', () => {
+                    const id = term.dataset.id;
+                    if (!id) return;
+                     document.querySelectorAll(`.term[data-id="${id}"]`).forEach(t => {
+                        t.classList.remove('term-highlight');
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

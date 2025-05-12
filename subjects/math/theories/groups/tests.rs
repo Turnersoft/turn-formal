@@ -5,7 +5,7 @@
 
 use super::super::VariantSet;
 use super::definitions::*;
-use crate::subjects::math::theories::MetrizablePropertyVariant;
+use crate::subjects::math::theories::definitions::MetrizablePropertyVariant;
 use crate::subjects::math::theories::groups::definitions::{
     LieGroupProperty, ReductivePropertyVariant, SemisimplePropertyVariant, TopologicalGroupProperty,
 };

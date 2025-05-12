@@ -5,17 +5,11 @@
 //! along with macros for convenient manipulation of group expressions.
 
 pub mod checker;
+pub mod collect;
+pub mod complexity;
 pub mod definitions;
 pub mod extract;
-pub mod render;
-pub mod theorems;
-
-#[cfg(test)]
-pub mod tests;
-
-#[cfg(feature = "visualization")]
 pub mod leptos;
-
-pub use checker::*;
-pub use definitions::*;
-pub use theorems::*;
+pub mod render;
+pub mod tests;
+pub mod theorems;

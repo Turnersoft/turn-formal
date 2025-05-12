@@ -1,4 +1,4 @@
-use super::{Group, GroupExpression};
+use super::definitions::{Group, GroupExpression};
 use crate::extract_as;
 use crate::subjects::math::formalism::extract::Extractable;
 

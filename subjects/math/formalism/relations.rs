@@ -4,8 +4,8 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::core::MathObject;
 use super::expressions::{Identifier, MathExpression};
+use super::{complexity::Complexity, theorem::MathObject};
 
 // Import domain-specific relations from their respective modules
 use super::super::super::super::foundational_theories::category_theory::definitions::CategoryRelation;
@@ -158,5 +158,71 @@ impl MathRelation {
     /// Creates a category theory IsIsomorphism relation
     pub fn is_isomorphism(morphism: MathExpression) -> Self {
         MathRelation::CategoryTheory(CategoryRelation::is_isomorphism(&morphism))
+    }
+
+    /// Check if this relation structurally matches a pattern relation.
+    /// This is a simplified form of matching, not full unification.
+    /// It considers variable expressions in the pattern as wildcards.
+    pub fn matches_pattern(&self, pattern: &MathRelation) -> bool {
+        match (self, pattern) {
+            (MathRelation::And(rels1), MathRelation::And(rels2)) => {
+                rels1.len() == rels2.len()
+                    && rels1
+                        .iter()
+                        .zip(rels2.iter())
+                        .all(|(r1, r2)| r1.matches_pattern(r2))
+            }
+            (MathRelation::Or(rels1), MathRelation::Or(rels2)) => {
+                rels1.len() == rels2.len()
+                    && rels1
+                        .iter()
+                        .zip(rels2.iter())
+                        .all(|(r1, r2)| r1.matches_pattern(r2))
+            }
+            (MathRelation::Not(r1), MathRelation::Not(r2)) => r1.matches_pattern(r2),
+            (MathRelation::Implies(a1, c1), MathRelation::Implies(a2, c2)) => {
+                a1.matches_pattern(a2) && c1.matches_pattern(c2)
+            }
+            (MathRelation::Equivalent(l1, r1), MathRelation::Equivalent(l2, r2)) => {
+                l1.matches_pattern(l2) && r1.matches_pattern(r2)
+            }
+            (
+                MathRelation::Equal {
+                    left: l1,
+                    right: r1,
+                    ..
+                },
+                MathRelation::Equal {
+                    left: l2,
+                    right: r2,
+                    ..
+                },
+            ) => {
+                // For equality, allow wildcards in the pattern's expressions
+                l1.matches_pattern_expr(l2) && r1.matches_pattern_expr(r2)
+            }
+            (MathRelation::GroupTheory(gr1), MathRelation::GroupTheory(gr2)) => {
+                gr1.matches_pattern_group_relation(gr2) // Delegate to GroupRelation
+            }
+            // TODO: Add cases for NumberTheory, SetTheory, RingTheory, TopologyTheory, CategoryTheory
+            (
+                MathRelation::Todo {
+                    name: n1,
+                    expressions: e1,
+                },
+                MathRelation::Todo {
+                    name: n2,
+                    expressions: e2,
+                },
+            ) => {
+                n1 == n2
+                    && e1.len() == e2.len()
+                    && e1
+                        .iter()
+                        .zip(e2.iter())
+                        .all(|(expr1, expr2)| expr1.matches_pattern_expr(expr2))
+            }
+            _ => false, // Different relation types or pattern not exhaustive
+        }
     }
 }
