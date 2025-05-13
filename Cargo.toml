@@ -36,3 +36,6 @@ walkdir = "2.4.0"
 lazy_static = "1.5.0"
 uuid = { version = "1.16.0", features = ["v4"] }
 notify = "5.1.0"
+ctor = "0.2"
+linkme = "0.2"
+register-macros = {path = "register-macros"}
