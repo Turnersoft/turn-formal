@@ -1,12 +1,19 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
 import { useLocation } from "react-router-dom";
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import styles from "./math_content.module.scss";
 import { MathContent, Definition, Member, Theorem } from "../../models/math";
 import DependencyGraph from "../dependency_graph/dependency_graph";
 import DebugDisplay from "../debug_display/debug_display";
 import DefinitionDetail from "../definition_detail/definition_detail";
 import TheoremDetail from "../theorem_detail/theorem_detail";
+import { TOC } from "../toc/toc";
 
 // Helper function to extract all type names from a type string
 function extractTypeNames(typeStr: string): string[] {
@@ -66,12 +73,12 @@ const formatTheoryName = (name: string): string => {
 /**
  * Component that displays the definitions section
  */
-const DefinitionsSection = ({ 
-  definitions, 
-  onScroll 
-}: { 
-  definitions: Definition[], 
-  onScroll: (name: string) => void 
+const DefinitionsSection = ({
+  definitions,
+  onScroll,
+}: {
+  definitions: Definition[];
+  onScroll: (name: string) => void;
 }) => {
   // Create a map of definitions for quick lookup
   const definitionMap = new Map<string, Definition>();
@@ -85,7 +92,7 @@ const DefinitionsSection = ({
   // Build dependency structure for visualization
   const dependencyStructure = {
     nodes: definitions.map((def) => ({ id: def.name, label: def.name })),
-    edges: [] as Array<{from: string, to: string}>
+    edges: [] as Array<{ from: string; to: string }>,
   };
 
   // Add edges based on member type references
@@ -135,12 +142,8 @@ const DefinitionsSection = ({
               }}
               data-node-id={definition.name}
             >
-              <span className={styles.definitionKind}>
-                {definition.kind}
-              </span>
-              <span className={styles.definitionName}>
-                {definition.name}
-              </span>
+              <span className={styles.definitionKind}>{definition.kind}</span>
+              <span className={styles.definitionName}>{definition.name}</span>
             </div>
           ))}
         </div>
@@ -169,51 +172,70 @@ const DefinitionsSection = ({
 /**
  * Component that displays the theorems section
  */
-const TheoremsSection = ({ 
+const TheoremsSection = ({
   theorems,
-  theoremsRef
-}: { 
-  theorems: Theorem[],
-  theoremsRef?: React.RefObject<HTMLDivElement>
+  theoremsRef,
+}: {
+  theorems: Theorem[];
+  theoremsRef?: React.RefObject<HTMLDivElement>;
 }) => {
   // Debug log the theorems
   console.log("TheoremsSection: All theorems:", theorems);
-  
+
   // Count theorems with proof steps (either direct or in the complex structure)
-  const theoremsWithProofSteps = theorems.filter(theorem => {
-    console.log(`Checking theorem ${theorem.id || 'unknown'} for proof steps:`, theorem);
-    const hasDirectProofSteps = theorem.proof_steps && theorem.proof_steps.length > 0;
-    const hasNestedProofSteps = (theorem.content?.Theorem?.initial_proof_state?.content?.Theorem?.proof_steps?.length ?? 0) > 0;
-    
-    console.log(`Theorem ${theorem.id || 'unknown'}:`, {
+  const theoremsWithProofSteps = theorems.filter((theorem) => {
+    console.log(
+      `Checking theorem ${theorem.id || "unknown"} for proof steps:`,
+      theorem,
+    );
+    const hasDirectProofSteps =
+      theorem.proof_steps && theorem.proof_steps.length > 0;
+    const hasNestedProofSteps =
+      (theorem.content?.Theorem?.initial_proof_state?.content?.Theorem
+        ?.proof_steps?.length ?? 0) > 0;
+
+    console.log(`Theorem ${theorem.id || "unknown"}:`, {
       hasDirectProofSteps,
       hasNestedProofSteps,
       directProofStepsCount: theorem.proof_steps?.length || 0,
-      nestedProofStepsCount: theorem.content?.Theorem?.initial_proof_state?.content?.Theorem?.proof_steps?.length || 0
+      nestedProofStepsCount:
+        theorem.content?.Theorem?.initial_proof_state?.content?.Theorem
+          ?.proof_steps?.length || 0,
     });
-    
+
     return hasDirectProofSteps || hasNestedProofSteps;
   }).length;
 
-  console.log(`TheoremsSection: Found ${theoremsWithProofSteps} theorems with proof steps out of ${theorems.length} total`);
+  console.log(
+    `TheoremsSection: Found ${theoremsWithProofSteps} theorems with proof steps out of ${theorems.length} total`,
+  );
 
   return (
     <div className={styles.theoremsSection} ref={theoremsRef}>
       <h2 className={styles.sectionHeader}>
         Theorems
         <span className={styles.count}>({theorems.length})</span>
-        {theorems.length > 0 && 
+        {theorems.length > 0 && (
           <small className={styles.debugInfo}>
-            <span title={`${theoremsWithProofSteps} theorems have formal proof steps`}>
-              ✓ {theoremsWithProofSteps > 0 && 
-                  <span className={styles.proofStepsBadge}>{theoremsWithProofSteps} with proofs</span>}
+            <span
+              title={`${theoremsWithProofSteps} theorems have formal proof steps`}
+            >
+              ✓{" "}
+              {theoremsWithProofSteps > 0 && (
+                <span className={styles.proofStepsBadge}>
+                  {theoremsWithProofSteps} with proofs
+                </span>
+              )}
             </span>
           </small>
-        }
+        )}
       </h2>
       <div className={styles.theoremsGrid}>
         {theorems.map((theorem: Theorem, index: number) => {
-          console.log(`Rendering theorem at index ${index}:`, theorem.id || 'unknown');
+          console.log(
+            `Rendering theorem at index ${index}:`,
+            theorem.id || "unknown",
+          );
           return <TheoremDetail key={index} theorem={theorem} index={index} />;
         })}
       </div>
@@ -235,6 +257,36 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
   const [showTheorems, setShowTheorems] = useState(false);
   const theoremsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  const definitionTOC = useMemo(() => {
+    return (
+      content?.definitions.map((definition: Definition) => ({
+        id: `definition-${definition.name}`,
+        name: definition.name,
+      })) ?? []
+    );
+  }, [content?.definitions]);
+
+  const theoremTOC = useMemo(() => {
+    return (
+      content?.theorems.map((theorem: Theorem) => ({
+        id: theorem.id ?? "",
+        name: theorem.name ?? "Unkown",
+      })) ?? []
+    );
+  }, [content?.theorems]);
+
+  const scrollToId = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      // Add a highlight effect
+      element.classList.add(styles.highlightedDefinition);
+      setTimeout(() => {
+        element.classList.remove(styles.highlightedDefinition);
+      }, 2000);
+    }
+  };
 
   // Function to scroll to a definition when clicked
   const scrollToDefinition = (name: string) => {
@@ -262,7 +314,7 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
             // Ensure members array is always defined and valid
             if (!safeDef.members || !Array.isArray(safeDef.members)) {
               console.warn(
-                `Definition ${safeDef.name} has invalid members. Adding empty array.`
+                `Definition ${safeDef.name} has invalid members. Adding empty array.`,
               );
               safeDef.members = [];
             }
@@ -291,7 +343,7 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
         } catch (error) {
           console.error(
             `Error processing definition: ${def?.name || "unknown"}`,
-            error
+            error,
           );
         }
       });
@@ -438,15 +490,20 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
   // Check if the current URL contains "theorem" to auto-focus on theorems section
   useEffect(() => {
     const path = location.pathname;
-    const isTheoremFile = path.toLowerCase().includes('theorem');
-    
+    const isTheoremFile = path.toLowerCase().includes("theorem");
+
     console.log("Path check for theorem focus:", path, isTheoremFile);
     setShowTheorems(isTheoremFile);
-    
+
     // If it's a theorem file and we have theorems content, scroll to the theorem section
-    if (isTheoremFile && content?.theorems && content.theorems.length > 0 && theoremsRef.current) {
+    if (
+      isTheoremFile &&
+      content?.theorems &&
+      content.theorems.length > 0 &&
+      theoremsRef.current
+    ) {
       setTimeout(() => {
-        theoremsRef.current?.scrollIntoView({ behavior: 'smooth' });
+        theoremsRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 300); // Small delay to ensure the component is rendered
     }
   }, [location.pathname, content]);
@@ -456,9 +513,12 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     if (!loading && content) {
       // Log theorem data for debugging
       if (content.theorems && content.theorems.length > 0) {
-        console.log(`Loaded ${content.theorems.length} theorems for ${content.theory}:`, content.theorems);
+        console.log(
+          `Loaded ${content.theorems.length} theorems for ${content.theory}:`,
+          content.theorems,
+        );
       }
-      
+
       // Set a small delay to ensure DOM is updated before marking content as ready
       setTimeout(() => {
         setContentReady(true);
@@ -507,19 +567,27 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
           {!showJsonView && (
             <>
               {/* Definitions Section */}
-              {!showTheorems && content.definitions && content.definitions.length > 0 && (
-                <DefinitionsSection 
-                  definitions={content.definitions} 
-                  onScroll={scrollToDefinition} 
-                />
-              )}
+              {!showTheorems &&
+                content.definitions &&
+                content.definitions.length > 0 && (
+                  <div className={styles.sectionLayout}>
+                    <DefinitionsSection
+                      definitions={content.definitions}
+                      onScroll={scrollToDefinition}
+                    />
+                    <TOC contents={definitionTOC} onClick={scrollToId} />
+                  </div>
+                )}
 
               {/* Theorems Section */}
               {content.theorems && content.theorems.length > 0 && (
-                <TheoremsSection 
-                  theorems={content.theorems} 
-                  theoremsRef={theoremsRef} 
-                />
+                <div className={styles.sectionLayout}>
+                  <TheoremsSection
+                    theorems={content.theorems}
+                    theoremsRef={theoremsRef}
+                  />
+                  <TOC contents={theoremTOC} onClick={scrollToId} />
+                </div>
               )}
 
               {/* Empty State */}
