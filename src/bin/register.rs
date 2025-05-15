@@ -1,10 +1,24 @@
-use turn_formal::{subjects::math::formalism::registry::get_theorems, turn_render::ToTurnMath};
+use std::{fs::File, io::Write};
 
-fn main() {
-    let theorems = get_theorems();
+use turn_formal::subjects::math::formalism::registry::get_serializable_theorem_metas;
 
-    for (i, theorem) in theorems.iter().enumerate() {
-        let math_node = theorem.to_turn_math(theorem.id.clone());
-        println!("Theorem {}: {:#?}", i, serde_json::to_string(&math_node));
-    }
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let serializable_metas = get_serializable_theorem_metas();
+    let json = serde_json::to_string_pretty(&serializable_metas).map_err(|e| {
+        eprintln!("Serialization error: {}", e);
+        eprintln!("Serializable metas: {:?}", serializable_metas);
+        e
+    })?;
+
+    let mut file = File::create("theorems.json").map_err(|e| {
+        eprintln!("Failed to create theorems.json: {}", e);
+        e
+    })?;
+    file.write_all(json.as_bytes()).map_err(|e| {
+        eprintln!("Failed to write to theorems.json: {}", e);
+        e
+    })?;
+
+    println!("Successfully wrote JSON to theorems.json");
+    Ok(())
 }

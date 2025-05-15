@@ -622,7 +622,6 @@ pub fn prove_abelian_squared_criterion() -> Theorem {
 
 /// Prove Lagrange's Theorem: If H is a subgroup of a finite group G,
 /// then the order of H divides the order of G
-#[register_theorem("groups")]
 pub fn prove_lagrange_theorem() -> Theorem {
     // Use Identifier::Name
     let group_g_id = Identifier::Name("G".to_string(), 41);

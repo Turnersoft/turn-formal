@@ -158,9 +158,10 @@ impl ToTurnMath for MathRelation {
                     ))),
                 }
             }
-            MathRelation::Todo { name, expressions } => {
-                panic!("TODO: Implement ToTurnMath for MathRelation::Todo");
-            }
+            MathRelation::Todo { name, expressions } => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Empty),
+            },
         }
     }
 }
