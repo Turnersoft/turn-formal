@@ -6,7 +6,7 @@ use super::theorem::Theorem;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TheoremMeta {
     pub theorem: Theorem,
-    pub category: String,
+    pub categories: Vec<String>,
     pub module_path: String,
     pub file_path: String,
 }
