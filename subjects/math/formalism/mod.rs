@@ -9,6 +9,7 @@ pub mod complexity;
 pub mod expressions;
 pub mod interpretation;
 pub mod proof;
+pub mod registry;
 pub mod theorem;
 #[macro_use]
 pub mod extract;
