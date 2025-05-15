@@ -1,253 +1,254 @@
 // Math Content Component Styles
 
 .mathContentArea {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  transition: opacity 0.2s ease-in-out;
-  background-color: #f8f9fa;
+    flex: 1;
+    position: relative;
+    padding: 2rem;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    transition: opacity 0.2s ease-in-out;
+    background-color: #f8f9fa;
 
-  // Added for math rendering
-  opacity: 0.4;
+    // Added for math rendering
+    opacity: 0.4;
 
-  &.ready {
-    opacity: 1;
-  }
+    &.ready {
+        opacity: 1;
+    }
 }
 
 .contentHeader {
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #dee2e6;
-  padding-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
 
-  h1 {
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: #343a40;
-    margin: 0;
-  }
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: #343a40;
+        margin: 0;
+    }
 }
 
 .mainContent {
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .contentGrid {
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: 1fr;
-
-  @media (min-width: 992px) {
+    display: grid;
+    gap: 2rem;
     grid-template-columns: 1fr;
-  }
+
+    @media (min-width: 992px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 .sectionHeader {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: #495057;
-  border-bottom: 2px solid #6c757d;
-  padding-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #495057;
+    border-bottom: 2px solid #6c757d;
+    padding-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .count {
-  font-size: 1rem;
-  background-color: #6c757d;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  margin-left: 0.5rem;
+    font-size: 1rem;
+    background-color: #6c757d;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
 }
 
 .definitionsSection {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+    flex: 1;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .definition {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px dashed #ced4da;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed #ced4da;
 
-  &:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
+    &:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
 }
 
 .definitionName {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .typeTag {
-  font-size: 0.8rem;
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-weight: normal;
-  margin-left: 1rem;
+    font-size: 0.8rem;
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: normal;
+    margin-left: 1rem;
 }
 
 .definitionDocs {
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #495057;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #495057;
 }
 
 .members {
-  margin-top: 1.5rem;
+    margin-top: 1.5rem;
 
-  h4 {
-    font-size: 1.2rem;
-    margin-bottom: 0.75rem;
-    color: #6c757d;
-  }
-
-  .membersTable {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-
-    th {
-      text-align: left;
-      background-color: #f1f3f5;
-      padding: 0.75rem;
-      font-weight: 600;
-      color: #495057;
-      border-bottom: 2px solid #dee2e6;
+    h4 {
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+        color: #6c757d;
     }
 
-    td {
-      padding: 0.75rem;
-      border-bottom: 1px solid #e9ecef;
-      vertical-align: top;
+    .membersTable {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
 
-      code {
-        font-family: "Menlo", "Monaco", "Courier New", monospace;
-        background-color: #f1f3f5;
-        padding: 0.2rem 0.4rem;
-        border-radius: 3px;
-        font-size: 0.85rem;
-        color: #495057;
-      }
-    }
+        th {
+            text-align: left;
+            background-color: #f1f3f5;
+            padding: 0.75rem;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
 
-    tr:hover {
-      background-color: #f8f9fa;
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+
+            code {
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                background-color: #f1f3f5;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                font-size: 0.85rem;
+                color: #495057;
+            }
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
     }
-  }
 }
 
 .theoremsSection {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-top: 2rem;
+    flex: 1;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-top: 2rem;
 }
 
 .theorem {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px dashed #ced4da;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed #ced4da;
 
-  &:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
+    &:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
 
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 0.75rem;
-  }
+    h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+    }
 }
 
 .statement {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-left: 4px solid #6c757d;
-  font-style: italic;
-  margin-bottom: 1rem;
-  border-radius: 0 0.25rem 0.25rem 0;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-left: 4px solid #6c757d;
+    font-style: italic;
+    margin-bottom: 1rem;
+    border-radius: 0 0.25rem 0.25rem 0;
 }
 
 .description {
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #495057;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #495057;
 }
 
 .proof {
-  background-color: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 0.25rem;
-  margin-top: 1.5rem;
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+    margin-top: 1.5rem;
 
-  h4 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #495057;
-  }
+    h4 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #495057;
+    }
 }
 
 .proofSteps {
-  padding-left: 1.5rem;
-  margin-bottom: 0;
+    padding-left: 1.5rem;
+    margin-bottom: 0;
 }
 
 .proofStep {
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
 }
 
 .stepDescription {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .stepFormula {
-  margin-left: 1rem;
-  padding: 0.75rem;
-  background-color: #e9ecef;
-  border-radius: 0.25rem;
-  margin-bottom: 0.75rem;
-  font-family: "Menlo", "Monaco", "Courier New", monospace;
-  font-size: 1rem;
-  overflow-x: auto;
+    margin-left: 1rem;
+    padding: 0.75rem;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    margin-bottom: 0.75rem;
+    font-family: "Menlo", "Monaco", "Courier New", monospace;
+    font-size: 1rem;
+    overflow-x: auto;
 }
 
 .mathFormula {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  padding: 0.5rem 0;
-  overflow-x: auto;
-  /* Allow horizontal scrolling for long formulas */
+    font-size: 1.1rem;
+    line-height: 1.6;
+    padding: 0.5rem 0;
+    overflow-x: auto;
+    /* Allow horizontal scrolling for long formulas */
 }
 
 // Make sure math formulas in various places look good
@@ -255,451 +256,457 @@
 .description,
 .statement,
 .stepDescription {
-  span[data-latex],
-  .katex,
-  .MathJax {
-    margin: 0 0.2rem;
-  }
+    span[data-latex],
+    .katex,
+    .MathJax {
+        margin: 0 0.2rem;
+    }
 }
 
 .tags {
-  margin-top: 1.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .tag {
-  padding: 0.25rem 0.75rem;
-  background-color: #e9ecef;
-  color: #495057;
-  border-radius: 1rem;
-  font-size: 0.8rem;
-  display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #e9ecef;
+    color: #495057;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    display: inline-block;
 }
 
 .loadingIndicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  font-size: 1.2rem;
-  color: #6c757d;
-  padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.2rem;
+    color: #6c757d;
+    padding: 2rem;
 }
 
 .errorMessage {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 1.5rem;
-  border-radius: 0.25rem;
-  margin: 2rem auto;
-  max-width: 800px;
-
-  button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #dc3545;
-    color: white;
-    border: none;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1.5rem;
     border-radius: 0.25rem;
-    cursor: pointer;
+    margin: 2rem auto;
+    max-width: 800px;
 
-    &:hover {
-      background-color: #c82333;
+    button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #c82333;
+        }
     }
-  }
 }
 
 .emptyState {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 3rem;
-  text-align: center;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 2rem auto;
-  max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    text-align: center;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    max-width: 800px;
 
-  h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: #6c757d;
-  }
+    h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: #6c757d;
+    }
 
-  p {
-    color: #6c757d;
-    font-size: 1.1rem;
-  }
+    p {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
 }
 
 // Debug tools styling
 .debugContainer {
-  margin-top: 0.5rem;
-  width: 100%;
+    margin-top: 0.5rem;
+    width: 100%;
 }
 
 .debugButton {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
-  background-color: #f1f3f5;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    background-color: #f1f3f5;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    cursor: pointer;
 
-  &:hover {
-    background-color: #e9ecef;
-  }
+    &:hover {
+        background-color: #e9ecef;
+    }
 }
 
 .debugPre {
-  margin-top: 0.5rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-size: 0.8rem;
-  max-height: 300px;
-  overflow-y: auto;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 // Add a CSS class for content transitions
 .fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 // Raw JSON section styling
 .rawJsonSection {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  overflow: hidden;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow: hidden;
 }
 
 .jsonContainer {
-  max-height: 500px;
-  overflow-y: auto;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
+    max-height: 500px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
 }
 
 .jsonPre {
-  font-family: "Menlo", "Monaco", "Courier New", monospace;
-  font-size: 0.9rem;
-  white-space: pre-wrap;
-  margin: 0;
+    font-family: "Menlo", "Monaco", "Courier New", monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    margin: 0;
 }
 
 .copyButton {
-  float: right;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.3rem 0.7rem;
-  font-size: 0.8rem;
-  cursor: pointer;
+    float: right;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    cursor: pointer;
 
-  &:hover {
-    background-color: #5a6268;
-  }
+    &:hover {
+        background-color: #5a6268;
+    }
 }
 
 // JSON syntax highlighting
 .jsonCode {
-  display: block;
-  font-family: monospace;
+    display: block;
+    font-family: monospace;
 
-  :global {
-    .json-key {
-      color: #0d6efd;
-    }
+    :global {
+        .json-key {
+            color: #0d6efd;
+        }
 
-    .json-string {
-      color: #198754;
-    }
+        .json-string {
+            color: #198754;
+        }
 
-    .json-boolean {
-      color: #dc3545;
-    }
+        .json-boolean {
+            color: #dc3545;
+        }
 
-    .json-number {
-      color: #fd7e14;
-    }
+        .json-number {
+            color: #fd7e14;
+        }
 
-    .json-null {
-      color: #6c757d;
+        .json-null {
+            color: #6c757d;
+        }
     }
-  }
 }
 
 // Add these new styles to support the enhanced visualization
 
 .structureOverview {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
-  border-radius: 0.5rem;
-  border: 1px solid #dee2e6;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
 
-  h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.4rem;
-    color: #495057;
-  }
+    h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.4rem;
+        color: #495057;
+    }
 }
 
 .definitionList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
 .definitionItem {
-  display: flex;
-  align-items: center;
-  background-color: white;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 0.5rem 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  &:hover {
-    background-color: rgba(75, 139, 244, 0.1);
-  }
+    &:hover {
+        background-color: rgba(75, 139, 244, 0.1);
+    }
 
-  &.hovered {
-    background-color: rgba(75, 139, 244, 0.3);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-    transform: translateX(4px);
-  }
+    &.hovered {
+        background-color: rgba(75, 139, 244, 0.3);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+        transform: translateX(4px);
+    }
 
-  &.incoming {
-    background-color: rgba(100, 200, 255, 0.2);
-    border-left: 3px solid #64c8ff;
-  }
+    &.incoming {
+        background-color: rgba(100, 200, 255, 0.2);
+        border-left: 3px solid #64c8ff;
+    }
 
-  &.outgoing {
-    background-color: rgba(255, 150, 100, 0.2);
-    border-left: 3px solid #ff9664;
-  }
+    &.outgoing {
+        background-color: rgba(255, 150, 100, 0.2);
+        border-left: 3px solid #ff9664;
+    }
 
-  &.dimmed {
-    opacity: 0.4;
-  }
+    &.dimmed {
+        opacity: 0.4;
+    }
 }
 
 .definitionKind {
-  font-size: 0.75rem;
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 0.15rem 0.4rem;
-  border-radius: 3px;
-  margin-right: 0.5rem;
+    font-size: 0.75rem;
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    margin-right: 0.5rem;
 }
 
 .definitionName {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #343a40;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #343a40;
 }
 
 .detailedDefinitions {
-  margin-top: 2rem;
+    margin-top: 2rem;
 }
 
 .highlightedDefinition {
-  animation: highlight 2s ease;
+    animation: highlight 2s ease;
 }
 
 @keyframes highlight {
-  0% {
-    background-color: rgba(255, 243, 205, 0.5);
-    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5);
-  }
-  100% {
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
+    0% {
+        background-color: rgba(255, 243, 205, 0.5);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5);
+    }
+    100% {
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
 }
 
 .graphContainer {
-  width: 100%;
-  margin: 2rem 0;
-  overflow: auto;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #fafafa;
-  height: auto;
-  min-height: 400px;
-  max-height: 800px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-  padding: 10px;
+    width: 100%;
+    margin: 2rem 0;
+    overflow: auto;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fafafa;
+    height: auto;
+    min-height: 400px;
+    max-height: 800px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+    padding: 10px;
 
-  // Add scrolling for large graphs
-  overflow-y: auto;
-  overflow-x: hidden;
+    // Add scrolling for large graphs
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .dependencyGraph {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  display: block;
-  margin: 0 auto;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    display: block;
+    margin: 0 auto;
 }
 
 .graphNode {
-  cursor: pointer;
-  transition: transform 0.2s ease-out;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    cursor: pointer;
+    transition: transform 0.2s ease-out;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 
-  &:hover {
-    transform: scale(1.08);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  }
-
-  &.selected {
-    transform: scale(1.12);
-
-    .nodeCircle {
-      stroke: #fff;
-      stroke-width: 3px;
-      filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4));
+    &:hover {
+        transform: scale(1.08);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     }
 
-    .nodeText {
-      font-weight: 700;
-      font-size: 13px;
+    &.selected {
+        transform: scale(1.12);
+
+        .nodeCircle {
+            stroke: #fff;
+            stroke-width: 3px;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4));
+        }
+
+        .nodeText {
+            font-weight: 700;
+            font-size: 13px;
+        }
     }
-  }
 }
 
 .nodeCircle {
-  transition: all 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .nodeText {
-  pointer-events: none;
-  user-select: none;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  text-rendering: optimizeLegibility;
-  dominant-baseline: middle;
-  font-size: 12px;
+    pointer-events: none;
+    user-select: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    text-rendering: optimizeLegibility;
+    dominant-baseline: middle;
+    font-size: 12px;
 
-  // Handle long names
-  text-overflow: ellipsis;
-  max-width: 50px;
+    // Handle long names
+    text-overflow: ellipsis;
+    max-width: 50px;
 }
 
 .graphLink {
-  fill: none;
-  stroke: #bbb;
-  stroke-width: 1.5;
-  opacity: 0.7;
-  transition: all 0.2s ease;
+    fill: none;
+    stroke: #bbb;
+    stroke-width: 1.5;
+    opacity: 0.7;
+    transition: all 0.2s ease;
 
-  &:hover {
-    stroke: #777;
-    opacity: 1;
-    stroke-width: 2;
-  }
+    &:hover {
+        stroke: #777;
+        opacity: 1;
+        stroke-width: 2;
+    }
 }
 
 .structNode {
-  fill: #4a6fa5;
+    fill: #4a6fa5;
 
-  &:hover {
-    fill: #385a8a;
-  }
+    &:hover {
+        fill: #385a8a;
+    }
 }
 
 .enumNode {
-  fill: #8e67a3;
+    fill: #8e67a3;
 
-  &:hover {
-    fill: #765088;
-  }
+    &:hover {
+        fill: #765088;
+    }
 }
 
 .traitNode {
-  fill: #539e74;
+    fill: #539e74;
 
-  &:hover {
-    fill: #418357;
-  }
+    &:hover {
+        fill: #418357;
+    }
 }
 
 // Highlighted definitions
 .highlight {
-  transition: background-color 0.3s ease;
-  animation: pulseHighlight 1s ease-in-out 1;
+    transition: background-color 0.3s ease;
+    animation: pulseHighlight 1s ease-in-out 1;
 }
 
 @keyframes pulseHighlight {
-  0% {
-    background-color: rgba(74, 144, 226, 0);
-  }
-  50% {
-    background-color: rgba(74, 144, 226, 0.2);
-  }
-  100% {
-    background-color: rgba(74, 144, 226, 0);
-  }
+    0% {
+        background-color: rgba(74, 144, 226, 0);
+    }
+    50% {
+        background-color: rgba(74, 144, 226, 0.2);
+    }
+    100% {
+        background-color: rgba(74, 144, 226, 0);
+    }
 }
 
 .debugInfo {
-  margin-left: 8px;
-  font-size: 0.8rem;
-  color: #28a745;
-  font-weight: normal;
-  
-  span {
-    cursor: help;
-  }
+    margin-left: 8px;
+    font-size: 0.8rem;
+    color: #28a745;
+    font-weight: normal;
+
+    span {
+        cursor: help;
+    }
 }
 
 .theoremsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  
-  @media (min-width: 768px) {
+    display: grid;
     grid-template-columns: 1fr;
-  }
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 .proofStepsBadge {
-  display: inline-block;
-  background-color: #28a745;
-  color: white;
-  font-size: 0.7rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 12px;
-  margin-left: 0.5rem;
-  font-weight: 500;
-  vertical-align: middle;
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.sectionLayout {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 2rem;
 }
