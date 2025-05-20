@@ -1,4 +1,4 @@
-use super::super::super::super::math::theories::{zfc::set::Set, VariantSet};
+use super::super::super::super::math::theories::{VariantSet, zfc::set::Set};
 use serde::{Deserialize, Serialize};
 
 /// A term that can be compared

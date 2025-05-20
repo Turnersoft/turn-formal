@@ -4,6 +4,7 @@
 //! It includes type-safe representations of groups, group elements, and operations,
 //! along with macros for convenient manipulation of group expressions.
 
+pub mod abstraction_level;
 pub mod checker;
 pub mod collect;
 pub mod complexity;

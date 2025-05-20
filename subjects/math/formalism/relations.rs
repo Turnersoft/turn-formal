@@ -13,7 +13,7 @@ use super::super::theories::groups::definitions::GroupRelation;
 use super::super::theories::number_theory::definitions::NumberTheoryRelation;
 use super::super::theories::rings::definitions::RingRelation;
 use super::super::theories::topology::relations::TopologyRelation;
-use super::super::theories::zfc::relations::SetTheoryRelation;
+use super::super::theories::zfc::set::SetRelation;
 
 /// Quantification of a mathematical object
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -52,12 +52,12 @@ pub enum MathRelation {
     And(Vec<MathRelation>),
     Or(Vec<MathRelation>),
     Not(Box<MathRelation>),
-    Implies(Box<MathRelation>, Box<MathRelation>),
-    Equivalent(Box<MathRelation>, Box<MathRelation>),
+    Implies(Box<MathRelation>, Box<MathRelation>), // ->
+    Equivalent(Box<MathRelation>, Box<MathRelation>), // <=>
 
     // Domain-specific relations organized by theory
     NumberTheory(NumberTheoryRelation),
-    SetTheory(SetTheoryRelation),
+    SetTheory(SetRelation),
     GroupTheory(GroupRelation),
     RingTheory(RingRelation),
     TopologyTheory(TopologyRelation),
@@ -115,12 +115,18 @@ impl MathRelation {
 
     /// Creates a set theory ElementOf relation
     pub fn element_of(element: MathExpression, set: MathExpression) -> Self {
-        MathRelation::SetTheory(SetTheoryRelation::element_of(&element, &set))
+        MathRelation::Todo {
+            name: "element_of".to_string(),
+            expressions: vec![element, set],
+        }
     }
 
     /// Creates a set theory SubsetOf relation
     pub fn subset_of(subset: MathExpression, superset: MathExpression) -> Self {
-        MathRelation::SetTheory(SetTheoryRelation::subset_of(&subset, &superset))
+        MathRelation::Todo {
+            name: "subset_of".to_string(),
+            expressions: vec![subset, superset],
+        }
     }
 
     /// Creates an And relation

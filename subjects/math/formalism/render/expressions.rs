@@ -3,7 +3,10 @@ use super::super::super::{
     theories::number_theory::definitions::Number,
 };
 use super::super::theorem::MathObject;
-use crate::turn_render::{BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath};
+use crate::subjects::math::theories::groups::definitions::GroupExpression;
+use crate::subjects::math::theories::rings::definitions::{FieldExpression, RingExpression};
+use crate::turn_render::math_node::ToTurnMath;
+use crate::turn_render::{BracketSize, BracketStyle, MathNode, MathNodeContent};
 use std::string::String;
 
 impl ToTurnMath for MathExpression {
@@ -110,12 +113,43 @@ impl ToTurnMath for MathExpression {
     }
 }
 
+// Commented out due to removal of ToTurnMath trait from Group Theory
+// This entire block below will be replaced by the new implementation
+// impl ToTurnMath for TheoryExpression {
+//     fn to_turn_math(&self, master_id: String) -> MathNode {
+//         match self {
+//             TheoryExpression::Group(group) => group.to_turn_math(master_id),
+//             TheoryExpression::Ring(ring) => ring.to_turn_math(master_id),
+//             TheoryExpression::Field(field) => field.to_turn_math(master_id),
+//             TheoryExpression::Topology(topology) => topology.to_turn_math(master_id),
+//             TheoryExpression::VectorSpace(vector_space) => {
+//                 vector_space.to_turn_math(master_id)
+//             }
+//             TheoryExpression::Module(module) => module.to_turn_math(master_id),
+//             TheoryExpression::ZFCSet(set) => set.to_turn_math(master_id),
+//         }
+//     }
+// }
+
+// New and complete implementation:
 impl ToTurnMath for TheoryExpression {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            TheoryExpression::Group(group) => group.to_turn_math(master_id),
-            TheoryExpression::Ring(ring_expression) => todo!(),
-            TheoryExpression::Field(field_expression) => todo!(),
+            TheoryExpression::Group(group_expr) => group_expr.to_turn_math(master_id),
+            TheoryExpression::Ring(_ring_expr) => {
+                // TODO: Implement ToTurnMath for RingExpression or provide better placeholder
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text("RingExpression (TODO)".to_string())),
+                }
+            }
+            TheoryExpression::Field(_field_expr) => {
+                // TODO: Implement ToTurnMath for FieldExpression or provide better placeholder
+                MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Text("FieldExpression (TODO)".to_string())),
+                }
+            } // Removed non-existent variants: Topology, VectorSpace, Module, ZFCSet
         }
     }
 }

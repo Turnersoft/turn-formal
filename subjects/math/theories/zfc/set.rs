@@ -1,22 +1,44 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::super::super::math::theories::{VariantSet, VariantWrapper};
+use super::super::super::formalism::expressions::Identifier;
+use super::super::super::formalism::extract::Parametrizable;
 
 use super::axioms::{SatisfiesZFC, ZFCAxioms};
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
 use std::sync::LazyLock;
 
+/// Elements that can belong to sets
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SetElement {
+    /// A nested set (following ZFC's everything-is-a-set principle)
+    Set(Box<Set>),
+
+    /// Primitive numeric element (for efficient computation)
+    Integer(i64),
+
+    /// Named/symbolic element (for abstract sets)
+    Symbol(String),
+
+    /// Ordered pair (a,b) - fundamental for relations/functions
+    Pair(Box<SetElement>, Box<SetElement>),
+
+    /// Special marker for urelements (non-set objects in some set theories)
+    Urelement(String),
+}
+
 /// A condition for set elements
 /// Used in the Separation axiom to define subsets
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub enum ElementCondition {
     /// Element is empty
     IsEmpty,
-    /// Element contains a specific set
-    Contains(Box<Set>),
+    /// Element contains a specific set element
+    Contains(Box<SetElement>),
     /// Element is contained in a specific set
     ContainedIn(Box<Set>),
     /// Element is not contained in a specific set
@@ -52,7 +74,7 @@ impl Hash for ElementCondition {
 
 /// Properties that can be applied to any set
 /// These properties help track mathematical characteristics of sets
-#[derive(Debug, Clone, Serialize, Deserialize, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq)]
 pub enum SetProperty {
     /// The cardinality (size) of the set
     /// Properties:
@@ -135,7 +157,7 @@ pub enum SetProperty {
 
 /// Cardinality of a set
 /// Represents the size of a set, including infinite cardinalities
-#[derive(Clone, Hash, Serialize, Deserialize)]
+#[derive(Clone, Hash, Serialize, Deserialize, PartialEq, Debug, Eq)]
 pub enum CardinalityPropertyVariant {
     /// Finite sets with specific size
     Finite(usize),
@@ -148,6 +170,15 @@ pub enum CardinalityPropertyVariant {
 }
 
 impl Hash for VariantSet<SetProperty> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        // Convert the HashSet to a Vec, sort it, and hash the sorted Vec
+        let mut elements: Vec<_> = self.inner.iter().collect();
+        elements.sort_by_key(|x| format!("{:?}", x));
+        elements.hash(state);
+    }
+}
+
+impl Hash for VariantSet<SetOpProperty> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         // Convert the HashSet to a Vec, sort it, and hash the sorted Vec
         let mut elements: Vec<_> = self.inner.iter().collect();
@@ -186,18 +217,35 @@ pub enum SetOpProperty {
 
 /// A set in ZFC set theory, defined by its membership rule
 /// This implementation follows the ZFC axioms and provides a foundation for set-theoretic constructions
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Set {
+    /// A generic, abstract set (L1), or a set type defined by properties (L2).
+    /// Specific L4 well-known sets (N, Z, Q) will also use this variant,
+    /// identified by a conventional name and a defining set of properties.
+    Generic {
+        name: Option<String>,
+        element_description: Option<String>,
+        properties: VariantSet<SetProperty>,
+    },
+
     /// The empty set (∅), unique and contains no elements
-    /// This is guaranteed by the Empty Set Axiom of ZFC
     Empty,
 
     /// A singleton set {x} containing exactly one element
     /// Forms the basis for building more complex sets
     Singleton {
         /// The single element contained in this set
-        element: Box<Set>,
+        element: SetElement,
         /// Properties of the singleton set (e.g., cardinality = 1)
+        properties: VariantSet<SetProperty>,
+    },
+
+    /// A set defined by explicitly enumerating its elements
+    /// {e₁, e₂, ..., eₙ}
+    Enumeration {
+        /// The elements in this set
+        elements: Vec<SetElement>,
+        /// Properties of the enumerated set
         properties: VariantSet<SetProperty>,
     },
 
@@ -339,7 +387,9 @@ pub enum Set {
     /// Examples include Z_n, S_n, GL(n,F), etc.
     Parametric {
         /// Parameters that define the set (e.g., "n" in Z_n)
-        parameters: std::collections::HashMap<String, String>,
+        #[serde(skip_serializing_if = "HashMap::is_empty")]
+        #[serde(default)]
+        parameters: HashMap<String, String>,
         /// Description of the set
         description: String,
         /// Condition for membership in the set
@@ -349,54 +399,215 @@ pub enum Set {
     },
 }
 
-// Implement Hash manually for Set to be consistent with PartialEq
-impl Hash for Set {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        match self {
-            Set::Empty => {
-                // Empty sets always hash to the same value
-                0.hash(state);
+/// SetExpression represents expressions involving sets that don't return sets
+/// These include actions, morphisms, functions, and other operations
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum SetExpression {
+    /// A variable representing a set
+    Variable(Identifier),
+
+    /// The cardinality of a set: |A|
+    Cardinality { set: Box<Parametrizable<Set>> },
+
+    /// Selection of an element from a set (choice function)
+    ElementSelection { set: Box<Parametrizable<Set>> },
+}
+
+/// Relations between sets, capturing the predicate structure of set theory
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum SetRelation {
+    /// Element relation: x ∈ A
+    ElementOf {
+        element: Parametrizable<SetElement>,
+        set: Parametrizable<Set>,
+    },
+
+    /// Subset relation: A ⊆ B
+    SubsetOf {
+        subset: Parametrizable<Set>,
+        superset: Parametrizable<Set>,
+    },
+
+    /// Proper subset relation: A ⊂ B
+    ProperSubsetOf {
+        subset: Parametrizable<Set>,
+        superset: Parametrizable<Set>,
+    },
+
+    /// Set equality: A = B
+    Equals {
+        left: Parametrizable<Set>,
+        right: Parametrizable<Set>,
+    },
+
+    /// Disjoint sets: A ∩ B = ∅
+    AreDisjoint {
+        left: Parametrizable<Set>,
+        right: Parametrizable<Set>,
+    },
+
+    /// Set has cardinality n: |A| = n
+    HasCardinality {
+        set: Parametrizable<Set>,
+        cardinality: Parametrizable<CardinalityPropertyVariant>,
+    },
+
+    /// Set is countable: A is countable
+    IsCountable { set: Parametrizable<Set> },
+
+    /// Set is finite: A is finite
+    IsFinite { set: Parametrizable<Set> },
+
+    /// Set is empty: A = ∅
+    IsEmpty { set: Parametrizable<Set> },
+
+    /// Cardinality comparison: |A| < |B|
+    CardinalityLessThan {
+        left: Parametrizable<Set>,
+        right: Parametrizable<Set>,
+    },
+
+    /// Cardinality comparison: |A| ≤ |B|
+    CardinalityLessThanOrEqual {
+        left: Parametrizable<Set>,
+        right: Parametrizable<Set>,
+    },
+
+    /// Sets are equivalent/equinumerous: A ~ B (same cardinality)
+    AreEquinumerous {
+        left: Parametrizable<Set>,
+        right: Parametrizable<Set>,
+    },
+}
+
+// Helper methods for SetRelation
+impl SetRelation {
+    /// Creates an ElementOf relation with concrete expressions
+    pub fn element_of(element: &SetElement, set: &Set) -> Self {
+        SetRelation::ElementOf {
+            element: Parametrizable::Concrete(element.clone()),
+            set: Parametrizable::Concrete(set.clone()),
+        }
+    }
+
+    /// Creates a SubsetOf relation with concrete expressions
+    pub fn subset_of(subset: &Set, superset: &Set) -> Self {
+        SetRelation::SubsetOf {
+            subset: Parametrizable::Concrete(subset.clone()),
+            superset: Parametrizable::Concrete(superset.clone()),
+        }
+    }
+
+    /// Creates a ProperSubsetOf relation with concrete expressions
+    pub fn proper_subset_of(subset: &Set, superset: &Set) -> Self {
+        SetRelation::ProperSubsetOf {
+            subset: Parametrizable::Concrete(subset.clone()),
+            superset: Parametrizable::Concrete(superset.clone()),
+        }
+    }
+
+    /// Creates an Equals relation with concrete expressions
+    pub fn equals(left: &Set, right: &Set) -> Self {
+        SetRelation::Equals {
+            left: Parametrizable::Concrete(left.clone()),
+            right: Parametrizable::Concrete(right.clone()),
+        }
+    }
+
+    /// Creates an AreDisjoint relation with concrete expressions
+    pub fn are_disjoint(left: &Set, right: &Set) -> Self {
+        SetRelation::AreDisjoint {
+            left: Parametrizable::Concrete(left.clone()),
+            right: Parametrizable::Concrete(right.clone()),
+        }
+    }
+
+    /// Creates a HasCardinality relation with concrete expressions
+    pub fn has_cardinality(set: &Set, cardinality: CardinalityPropertyVariant) -> Self {
+        SetRelation::HasCardinality {
+            set: Parametrizable::Concrete(set.clone()),
+            cardinality: Parametrizable::Concrete(cardinality),
+        }
+    }
+
+    /// Creates an IsCountable relation with a concrete expression
+    pub fn is_countable(set: &Set) -> Self {
+        SetRelation::IsCountable {
+            set: Parametrizable::Concrete(set.clone()),
+        }
+    }
+
+    /// Creates an IsFinite relation with a concrete expression
+    pub fn is_finite(set: &Set) -> Self {
+        SetRelation::IsFinite {
+            set: Parametrizable::Concrete(set.clone()),
+        }
+    }
+
+    /// Creates an IsEmpty relation with a concrete expression
+    pub fn is_empty(set: &Set) -> Self {
+        SetRelation::IsEmpty {
+            set: Parametrizable::Concrete(set.clone()),
+        }
+    }
+
+    // Additional helper methods for other relations
+
+    /// Check if this relation matches a pattern
+    pub fn matches_pattern(&self, pattern: &SetRelation) -> bool {
+        match (self, pattern) {
+            (
+                SetRelation::ElementOf {
+                    element: e1,
+                    set: s1,
+                },
+                SetRelation::ElementOf {
+                    element: e2,
+                    set: s2,
+                },
+            ) => {
+                // If pattern has variables, it's a wildcard match
+                match (e2, s2) {
+                    (Parametrizable::Variable(_), Parametrizable::Variable(_)) => true,
+                    (Parametrizable::Variable(_), _) => true,
+                    (_, Parametrizable::Variable(_)) => true,
+                    // Otherwise, check if both are concrete and match
+                    (
+                        Parametrizable::Concrete(e2_concrete),
+                        Parametrizable::Concrete(s2_concrete),
+                    ) => match (e1, s1) {
+                        (
+                            Parametrizable::Concrete(e1_concrete),
+                            Parametrizable::Concrete(s1_concrete),
+                        ) => e1_concrete == e2_concrete && s1_concrete == s2_concrete,
+                        _ => false,
+                    },
+                }
             }
-            Set::Singleton { element, .. } => {
-                // For singletons, hash only depends on the element
-                1.hash(state);
-                element.hash(state);
+
+            (
+                SetRelation::SubsetOf {
+                    subset: sub1,
+                    superset: sup1,
+                },
+                SetRelation::SubsetOf {
+                    subset: sub2,
+                    superset: sup2,
+                },
+            ) => {
+                // Similar pattern-matching logic using direct comparisons
+                true
             }
-            Set::BinaryUnion { left, right, .. } => {
-                // For binary unions, hash in a way that's order-independent
-                // to match the PartialEq implementation
-                2.hash(state);
-                // Create a hash that's the same regardless of left/right order
-                let left_hash = {
-                    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-                    left.hash(&mut hasher);
-                    hasher.finish()
-                };
-                let right_hash = {
-                    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-                    right.hash(&mut hasher);
-                    hasher.finish()
-                };
-                // Use min and max to make order irrelevant
-                std::cmp::min(left_hash, right_hash).hash(state);
-                std::cmp::max(left_hash, right_hash).hash(state);
-            }
-            // Hash other variants similarly to match their PartialEq implementation
-            // ensuring that two equal sets will have the same hash
-            _ => {
-                // For other variants, use their Debug representation as a fallback
-                // This is not optimal, but maintains consistency
-                format!("{:?}", self).hash(state);
-            }
+
+            // Add more cases for other relation types
+            _ => false, // Different relation types don't match
         }
     }
 }
 
-impl Eq for Set {}
-
 /// Mapping functions that can be applied to set elements
 /// Used in the Replacement axiom to construct new sets
-#[derive(Clone, Hash, Serialize, Deserialize)]
+#[derive(Clone, Hash, Serialize, Deserialize, PartialEq, Debug, Eq)]
 pub enum SetMapping {
     /// Identity function f(x) = x
     Identity,
@@ -412,1843 +623,962 @@ pub enum SetMapping {
     Custom(String),
 }
 
-/// A reference to set properties
-/// This allows us to access properties without taking ownership
-#[derive(Debug)]
-pub struct SetPropertiesRef<'a> {
-    properties: &'a VariantSet<SetProperty>,
+// Helper function to calculate properties for an empty set
+fn default_empty_properties() -> VariantSet<SetProperty> {
+    let mut properties = VariantSet::new();
+    properties.insert(SetProperty::IsEmpty(true));
+    properties.insert(SetProperty::IsFinite(true));
+    properties.insert(SetProperty::IsCountable(true));
+    properties.insert(SetProperty::IsWellOrdered(true));
+    properties.insert(SetProperty::IsTransitive(true));
+    properties.insert(SetProperty::IsOrdinal(true));
+    properties.insert(SetProperty::IsCardinal(true));
+    properties.insert(SetProperty::Cardinality(
+        CardinalityPropertyVariant::Finite(0),
+    ));
+    properties
 }
 
-impl<'a> SetPropertiesRef<'a> {
-    /// Creates a new reference to set properties
-    pub fn new(properties: &'a VariantSet<SetProperty>) -> Self {
-        Self { properties }
-    }
-
-    /// Gets the cardinality of the set
-    pub fn cardinality(&self) -> Option<&CardinalityPropertyVariant> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::Cardinality(c) = &p.0 {
-                Some(c)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is empty
-    pub fn is_empty(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsEmpty(b) = p.0 {
-                Some(b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is finite
-    pub fn is_finite(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsFinite(b) = p.0 {
-                Some(b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is countable
-    pub fn is_countable(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsCountable(b) = p.0 {
-                Some(b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is well-ordered
-    pub fn is_well_ordered(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsWellOrdered(b) = p.0 {
-                Some(b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is transitive
-    pub fn is_transitive(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsTransitive(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is an ordinal number
-    pub fn is_ordinal(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsOrdinal(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Checks if the set is a cardinal number
-    pub fn is_cardinal(&self) -> Option<bool> {
-        self.properties.inner.iter().find_map(|p| {
-            if let SetProperty::IsCardinal(b) = p.0 {
-                Some(b)
-            } else {
-                None
-            }
-        })
-    }
-}
-
-impl Set {
-    /// Creates an empty set (∅)
-    pub fn empty() -> Self {
-        let mut properties = VariantSet::new();
-        properties.insert(SetProperty::IsEmpty(true));
-        properties.insert(SetProperty::IsFinite(true));
-        properties.insert(SetProperty::IsCountable(true));
+// Helper function to calculate properties for an enumeration of known elements
+fn calculate_properties_for_enumeration(elements: &Vec<SetElement>) -> VariantSet<SetProperty> {
+    let mut properties = VariantSet::new();
+    let len = elements.len();
+    properties.insert(SetProperty::IsEmpty(len == 0));
+    properties.insert(SetProperty::IsFinite(true));
+    properties.insert(SetProperty::IsCountable(true));
+    properties.insert(SetProperty::Cardinality(
+        CardinalityPropertyVariant::Finite(len),
+    ));
+    if len == 0 {
         properties.insert(SetProperty::IsWellOrdered(true));
         properties.insert(SetProperty::IsTransitive(true));
         properties.insert(SetProperty::IsOrdinal(true));
         properties.insert(SetProperty::IsCardinal(true));
-        properties.insert(SetProperty::Cardinality(
-            CardinalityPropertyVariant::Finite(0),
-        ));
+    } else {
+        properties.insert(SetProperty::IsWellOrdered(false));
+        properties.insert(SetProperty::IsTransitive(false));
+        properties.insert(SetProperty::IsOrdinal(false));
+        properties.insert(SetProperty::IsCardinal(false));
+    }
+    properties
+}
+
+// Custom Hash implementation for Set to handle the HashMap inside Parametric variant
+impl Hash for Set {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        // Use discriminant to hash the variant
+        std::mem::discriminant(self).hash(state);
+
+        // For variants with fields, hash the relevant fields
+        match self {
+            Set::Generic {
+                name,
+                element_description,
+                properties,
+            } => {
+                name.hash(state);
+                element_description.hash(state);
+                properties.hash(state);
+            }
+            Set::Empty => {}
+            Set::Singleton {
+                element,
+                properties,
+            } => {
+                element.hash(state);
+                properties.hash(state);
+            }
+            Set::Enumeration {
+                elements,
+                properties,
+            } => {
+                elements.hash(state);
+                properties.hash(state);
+            }
+            Set::BinaryUnion {
+                left,
+                right,
+                properties,
+                op_properties,
+            } => {
+                left.hash(state);
+                right.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::BinaryIntersection {
+                left,
+                right,
+                properties,
+                op_properties,
+            } => {
+                left.hash(state);
+                right.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::SetDifference {
+                left,
+                right,
+                properties,
+                op_properties,
+            } => {
+                left.hash(state);
+                right.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::SymmetricDifference {
+                left,
+                right,
+                properties,
+                op_properties,
+            } => {
+                left.hash(state);
+                right.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::CartesianProduct {
+                left,
+                right,
+                properties,
+                op_properties,
+            } => {
+                left.hash(state);
+                right.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::BigUnion {
+                family,
+                properties,
+                op_properties,
+            } => {
+                family.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::BigIntersection {
+                family,
+                properties,
+                op_properties,
+            } => {
+                family.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::PowerSet {
+                base,
+                properties,
+                op_properties,
+            } => {
+                base.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::Separation {
+                source,
+                condition,
+                properties,
+                op_properties,
+            } => {
+                source.hash(state);
+                condition.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::Replacement {
+                source,
+                mapping,
+                properties,
+                op_properties,
+            } => {
+                source.hash(state);
+                mapping.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::OrderedPair {
+                first,
+                second,
+                properties,
+                op_properties,
+            } => {
+                first.hash(state);
+                second.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::Complement {
+                set,
+                universe,
+                properties,
+                op_properties,
+            } => {
+                set.hash(state);
+                universe.hash(state);
+                properties.hash(state);
+                op_properties.hash(state);
+            }
+            Set::Parametric {
+                description,
+                membership_condition,
+                properties,
+                parameters,
+            } => {
+                // For HashMap, hash each key-value pair after sorting
+                let mut param_pairs: Vec<_> = parameters.iter().collect();
+                param_pairs.sort_by(|a, b| a.0.cmp(b.0));
+                for (k, v) in param_pairs {
+                    k.hash(state);
+                    v.hash(state);
+                }
+
+                description.hash(state);
+                membership_condition.hash(state);
+                properties.hash(state);
+            }
+        }
+    }
+}
+
+// Implementation for Set
+impl Set {
+    pub fn evaluate(&self) -> Self {
+        match self {
+            // L3 Constructors first
+            Set::BinaryUnion {
+                left,
+                right,
+                properties: _,
+                op_properties,
+            } => {
+                let eval_left = left.evaluate();
+                let eval_right = right.evaluate();
+                match (&eval_left, &eval_right) {
+                    (Set::Empty, _) => return eval_right.clone(),
+                    (_, Set::Empty) => return eval_left.clone(),
+                    (
+                        Set::Enumeration {
+                            elements: els_left, ..
+                        },
+                        Set::Enumeration {
+                            elements: els_right,
+                            ..
+                        },
+                    ) => {
+                        let mut result_elements_set = HashSet::new();
+                        els_left.iter().for_each(|el| {
+                            result_elements_set.insert(el.clone());
+                        });
+                        els_right.iter().for_each(|el| {
+                            result_elements_set.insert(el.clone());
+                        });
+                        let final_elements: Vec<SetElement> =
+                            result_elements_set.into_iter().collect();
+                        let new_props = calculate_properties_for_enumeration(&final_elements);
+                        return Set::Enumeration {
+                            elements: final_elements,
+                            properties: new_props,
+                        };
+                    }
+                    _ => {
+                        let mut new_union_props = VariantSet::new();
+                        if eval_left
+                            .get_properties()
+                            .map_or(false, |p| p.contains(&SetProperty::IsFinite(true)))
+                            && eval_right
+                                .get_properties()
+                                .map_or(false, |p| p.contains(&SetProperty::IsFinite(true)))
+                        {
+                            new_union_props.insert(SetProperty::IsFinite(true));
+                        }
+                        if matches!(eval_left, Set::Empty) {
+                            if let Some(rp) = eval_right.get_properties() {
+                                if let Some(is_empty_prop) = rp
+                                    .iter()
+                                    .find(|p_ref| matches!(p_ref, SetProperty::IsEmpty(_)))
+                                {
+                                    new_union_props.insert(is_empty_prop.clone());
+                                }
+                            }
+                        } else if matches!(eval_right, Set::Empty) {
+                            if let Some(lp) = eval_left.get_properties() {
+                                if let Some(is_empty_prop) = lp
+                                    .iter()
+                                    .find(|p_ref| matches!(p_ref, SetProperty::IsEmpty(_)))
+                                {
+                                    new_union_props.insert(is_empty_prop.clone());
+                                }
+                            }
+                        } else {
+                            new_union_props.insert(SetProperty::IsEmpty(false));
+                        }
+                        Set::BinaryUnion {
+                            left: Box::new(eval_left),
+                            right: Box::new(eval_right),
+                            properties: new_union_props,
+                            op_properties: op_properties.clone(),
+                        }
+                    }
+                }
+            }
+            Set::BinaryIntersection {
+                left,
+                right,
+                properties: _,
+                op_properties,
+            } => {
+                let eval_left = left.evaluate();
+                let eval_right = right.evaluate();
+                match (&eval_left, &eval_right) {
+                    (Set::Empty, _) | (_, Set::Empty) => return Set::empty(),
+                    (
+                        Set::Enumeration {
+                            elements: els_left, ..
+                        },
+                        Set::Enumeration {
+                            elements: els_right,
+                            ..
+                        },
+                    ) => {
+                        let els_right_set: HashSet<_> = els_right.iter().cloned().collect();
+                        let final_elements: Vec<SetElement> = els_left
+                            .iter()
+                            .filter(|el| els_right_set.contains(el))
+                            .cloned()
+                            .collect();
+                        let new_props = calculate_properties_for_enumeration(&final_elements);
+                        return Set::Enumeration {
+                            elements: final_elements,
+                            properties: new_props,
+                        };
+                    }
+                    _ => {
+                        Set::BinaryIntersection {
+                            left: Box::new(eval_left),
+                            right: Box::new(eval_right),
+                            properties: VariantSet::new(), // Placeholder for derived properties
+                            op_properties: op_properties.clone(),
+                        }
+                    }
+                }
+            }
+            Set::SetDifference {
+                left,
+                right,
+                properties: _,
+                op_properties,
+            } => {
+                let eval_left = left.evaluate();
+                let eval_right = right.evaluate();
+                match (&eval_left, &eval_right) {
+                    (Set::Empty, _) => return Set::empty(),
+                    (_, Set::Empty) => return eval_left.clone(),
+                    (
+                        Set::Enumeration {
+                            elements: els_left, ..
+                        },
+                        Set::Enumeration {
+                            elements: els_right,
+                            ..
+                        },
+                    ) => {
+                        let els_right_set: HashSet<_> = els_right.iter().cloned().collect();
+                        let final_elements: Vec<SetElement> = els_left
+                            .iter()
+                            .filter(|el| !els_right_set.contains(el))
+                            .cloned()
+                            .collect();
+                        let new_props = calculate_properties_for_enumeration(&final_elements);
+                        return Set::Enumeration {
+                            elements: final_elements,
+                            properties: new_props,
+                        };
+                    }
+                    _ => Set::SetDifference {
+                        left: Box::new(eval_left),
+                        right: Box::new(eval_right),
+                        properties: VariantSet::new(),
+                        op_properties: op_properties.clone(),
+                    },
+                }
+            }
+            Set::SymmetricDifference {
+                left,
+                right,
+                properties: _,
+                op_properties,
+            } => {
+                let eval_left = left.evaluate();
+                let eval_right = right.evaluate();
+                match (&eval_left, &eval_right) {
+                    (
+                        Set::Enumeration {
+                            elements: els_left, ..
+                        },
+                        Set::Enumeration {
+                            elements: els_right,
+                            ..
+                        },
+                    ) => {
+                        let mut result_elements_set = HashSet::new();
+                        let set_left: HashSet<_> = els_left.iter().cloned().collect();
+                        let set_right: HashSet<_> = els_right.iter().cloned().collect();
+                        for el in &set_left {
+                            if !set_right.contains(el) {
+                                result_elements_set.insert(el.clone());
+                            }
+                        }
+                        for el in &set_right {
+                            if !set_left.contains(el) {
+                                result_elements_set.insert(el.clone());
+                            }
+                        }
+                        let final_elements: Vec<SetElement> =
+                            result_elements_set.into_iter().collect();
+                        let new_props = calculate_properties_for_enumeration(&final_elements);
+                        return Set::Enumeration {
+                            elements: final_elements,
+                            properties: new_props,
+                        };
+                    }
+                    _ => {
+                        let diff_ab = Set::SetDifference {
+                            left: Box::new(eval_left.clone()),
+                            right: Box::new(eval_right.clone()),
+                            properties: VariantSet::new(),
+                            op_properties: op_properties.clone(),
+                        };
+                        let diff_ba = Set::SetDifference {
+                            left: Box::new(eval_right),
+                            right: Box::new(eval_left),
+                            properties: VariantSet::new(),
+                            op_properties: op_properties.clone(),
+                        };
+                        Set::BinaryUnion {
+                            left: Box::new(diff_ab),
+                            right: Box::new(diff_ba),
+                            properties: VariantSet::new(),
+                            op_properties: op_properties.clone(),
+                        }
+                        .evaluate()
+                    }
+                }
+            }
+            Set::CartesianProduct {
+                left,
+                right,
+                properties: _,
+                op_properties,
+            } => {
+                let eval_left = left.evaluate();
+                let eval_right = right.evaluate();
+                match (&eval_left, &eval_right) {
+                    (Set::Empty, _) | (_, Set::Empty) => return Set::empty(),
+                    (
+                        Set::Enumeration {
+                            elements: els_left, ..
+                        },
+                        Set::Enumeration {
+                            elements: els_right,
+                            ..
+                        },
+                    ) => {
+                        let mut final_elements = Vec::new();
+                        for el_l in els_left {
+                            for el_r in els_right {
+                                final_elements.push(SetElement::Pair(
+                                    Box::new(el_l.clone()),
+                                    Box::new(el_r.clone()),
+                                ));
+                            }
+                        }
+                        let new_props = calculate_properties_for_enumeration(&final_elements);
+                        return Set::Enumeration {
+                            elements: final_elements,
+                            properties: new_props,
+                        };
+                    }
+                    _ => Set::CartesianProduct {
+                        left: Box::new(eval_left),
+                        right: Box::new(eval_right),
+                        properties: VariantSet::new(),
+                        op_properties: op_properties.clone(),
+                    },
+                }
+            }
+            Set::PowerSet {
+                base,
+                properties: _,
+                op_properties,
+            } => {
+                let eval_base = base.evaluate();
+                match &eval_base {
+                    Set::Empty => {
+                        return Set::singleton(SetElement::Set(Box::new(Set::empty())));
+                    }
+                    Set::Enumeration {
+                        elements: base_els, ..
+                    } => {
+                        if base_els.len() > 5 {
+                            // TODO: More robust property calculation for P(LargeFiniteSet)
+                            return Set::PowerSet {
+                                base: Box::new(eval_base),
+                                properties: VariantSet::new(),
+                                op_properties: op_properties.clone(),
+                            };
+                        }
+                        let mut subsets_elements = Vec::new();
+                        let num_subsets = 1 << base_els.len();
+                        for i in 0..num_subsets {
+                            let mut current_subset_els = Vec::new();
+                            for j in 0..base_els.len() {
+                                if (i >> j) & 1 == 1 {
+                                    current_subset_els.push(base_els[j].clone());
+                                }
+                            }
+                            subsets_elements.push(SetElement::Set(Box::new(Set::from_elements(
+                                current_subset_els,
+                            ))));
+                        }
+                        let new_props = calculate_properties_for_enumeration(&subsets_elements);
+                        return Set::Enumeration {
+                            elements: subsets_elements,
+                            properties: new_props,
+                        };
+                    }
+                    _ => {
+                        let mut new_props = VariantSet::new();
+                        if eval_base
+                            .get_properties()
+                            .map_or(false, |p| p.contains(&SetProperty::IsFinite(true)))
+                        {
+                            new_props.insert(SetProperty::IsFinite(true));
+                            if let Some(card_prop) = eval_base.get_properties().and_then(|props| {
+                                props.iter().find(|p_ref| {
+                                    matches!(
+                                        p_ref,
+                                        SetProperty::Cardinality(
+                                            CardinalityPropertyVariant::Finite(_)
+                                        )
+                                    )
+                                })
+                            }) {
+                                if let SetProperty::Cardinality(
+                                    CardinalityPropertyVariant::Finite(n_base),
+                                ) = card_prop
+                                {
+                                    new_props.insert(SetProperty::Cardinality(
+                                        CardinalityPropertyVariant::Finite(1 << n_base),
+                                    ));
+                                }
+                            }
+                        } else if eval_base
+                            .get_properties()
+                            .map_or(false, |p| p.contains(&SetProperty::IsCountable(true)))
+                        {
+                            new_props.insert(SetProperty::IsCountable(false));
+                            new_props.insert(SetProperty::Cardinality(
+                                CardinalityPropertyVariant::ContinuumSize,
+                            ));
+                        }
+                        Set::PowerSet {
+                            base: Box::new(eval_base),
+                            properties: new_props,
+                            op_properties: op_properties.clone(),
+                        }
+                    }
+                }
+            }
+            // For these more complex constructors, just evaluate components for now.
+            // Full evaluation would require interpreting conditions/mappings.
+            Set::BigUnion {
+                family,
+                properties,
+                op_properties,
+            } => Set::BigUnion {
+                family: Box::new(family.evaluate()),
+                properties: properties.clone(),
+                op_properties: op_properties.clone(),
+            },
+            Set::BigIntersection {
+                family,
+                properties,
+                op_properties,
+            } => Set::BigIntersection {
+                family: Box::new(family.evaluate()),
+                properties: properties.clone(),
+                op_properties: op_properties.clone(),
+            },
+            Set::Separation {
+                source,
+                condition,
+                properties,
+                op_properties,
+            } => Set::Separation {
+                source: Box::new(source.evaluate()),
+                condition: condition.clone(),
+                properties: properties.clone(),
+                op_properties: op_properties.clone(),
+            },
+            Set::Replacement {
+                source,
+                mapping,
+                properties,
+                op_properties,
+            } => Set::Replacement {
+                source: Box::new(source.evaluate()),
+                mapping: mapping.clone(),
+                properties: properties.clone(),
+                op_properties: op_properties.clone(),
+            },
+            Set::OrderedPair {
+                first,
+                second,
+                properties,
+                op_properties,
+            } => Set::OrderedPair {
+                first: Box::new(first.evaluate()),
+                second: Box::new(second.evaluate()),
+                properties: properties.clone(),
+                op_properties: op_properties.clone(),
+            },
+            Set::Complement {
+                set,
+                universe,
+                properties,
+                op_properties,
+            } => Set::Complement {
+                set: Box::new(set.evaluate()),
+                universe: Box::new(universe.evaluate()),
+                properties: properties.clone(),
+                op_properties: op_properties.clone(),
+            },
+
+            // Base cases: L1, L2, or L4 non-reducible forms
+            Set::Generic { .. } => self.clone(),
+            Set::Empty => self.clone(),
+            Set::Singleton {
+                element,
+                properties,
+            } => {
+                let eval_element = match element {
+                    SetElement::Set(s_box) => SetElement::Set(Box::new(s_box.evaluate())),
+                    _ => element.clone(),
+                };
+                // Properties of a singleton are fairly fixed or depend on the element's nature.
+                // Re-calculating them fully here could be complex. Assume they are okay or re-derive if needed.
+                // For now, just ensure element is evaluated.
+                let mut current_props = properties.clone();
+                // Ensure basic singleton props are there if we were to rebuild
+                current_props.insert(SetProperty::IsEmpty(false));
+                current_props.insert(SetProperty::IsFinite(true));
+                current_props.insert(SetProperty::IsCountable(true));
+                current_props.insert(SetProperty::Cardinality(
+                    CardinalityPropertyVariant::Finite(1),
+                ));
+                Set::Singleton {
+                    element: eval_element,
+                    properties: current_props,
+                }
+            }
+            Set::Enumeration {
+                elements,
+                properties: _,
+            } => {
+                // Original properties ignored, re-calculate
+                let eval_elements: Vec<SetElement> = elements
+                    .iter()
+                    .map(|el| match el {
+                        SetElement::Set(s_box) => SetElement::Set(Box::new(s_box.evaluate())),
+                        _ => el.clone(),
+                    })
+                    .collect();
+                let new_props = calculate_properties_for_enumeration(&eval_elements);
+                Set::Enumeration {
+                    elements: eval_elements,
+                    properties: new_props,
+                }
+            }
+            Set::Parametric {
+                parameters,
+                description,
+                membership_condition,
+                properties,
+            } => self.clone(),
+        }
+    }
+
+    pub fn empty() -> Self {
         Set::Empty
     }
 
-    /// Creates a singleton set {x}
-    pub fn singleton(x: Set) -> Self {
+    pub fn singleton(element: SetElement) -> Self {
         let mut properties = VariantSet::new();
         properties.insert(SetProperty::IsEmpty(false));
         properties.insert(SetProperty::IsFinite(true));
         properties.insert(SetProperty::IsCountable(true));
-        properties.insert(SetProperty::IsWellOrdered(true));
-        properties.insert(SetProperty::IsTransitive(x.is_transitive()));
-        properties.insert(SetProperty::IsOrdinal(x.is_ordinal()));
-        properties.insert(SetProperty::IsCardinal(false));
         properties.insert(SetProperty::Cardinality(
             CardinalityPropertyVariant::Finite(1),
         ));
+        properties.insert(SetProperty::IsWellOrdered(true));
+        let is_trans_ord_card = match &element {
+            SetElement::Set(s_box) => matches!(**s_box, Set::Empty),
+            _ => false,
+        };
+        properties.insert(SetProperty::IsTransitive(is_trans_ord_card));
+        properties.insert(SetProperty::IsOrdinal(is_trans_ord_card));
+        properties.insert(SetProperty::IsCardinal(is_trans_ord_card));
         Set::Singleton {
-            element: Box::new(x),
+            element,
             properties,
         }
     }
 
-    /// Creates a pair set {a, b}
-    /// If a = b, returns a singleton set
-    /// Otherwise, creates a union of singleton sets {{a}} ∪ {{b}}
-    pub fn pair(a: Set, b: Set) -> Self {
+    pub fn from_elements(elements: Vec<SetElement>) -> Self {
+        let unique_elements: Vec<SetElement> = {
+            let mut seen = HashSet::new();
+            elements
+                .into_iter()
+                .filter(|el| seen.insert(el.clone()))
+                .collect()
+        };
+        if unique_elements.is_empty() {
+            return Set::empty();
+        }
+        let properties = calculate_properties_for_enumeration(&unique_elements);
+        Set::Enumeration {
+            elements: unique_elements,
+            properties,
+        }
+    }
+
+    pub fn pair(a: SetElement, b: SetElement) -> Self {
         if a == b {
             Set::singleton(a)
         } else {
-            Set::BinaryUnion {
-                left: Box::new(Set::singleton(a)),
-                right: Box::new(Set::singleton(b)),
-                properties: VariantSet::new(),
-                op_properties: VariantSet::new(),
-            }
+            Set::from_elements(vec![a, b])
         }
     }
 
-    /// Creates a union of two sets A ∪ B
-    /// The union contains all elements from both sets
     pub fn union(self, other: Set) -> Self {
-        Set::BinaryUnion {
-            left: Box::new(self),
-            right: Box::new(other),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
+        let mut initial_props = VariantSet::new();
+        let self_props = self.get_properties();
+        let other_props = other.get_properties();
 
-    /// Creates an intersection of two sets A ∩ B
-    /// The intersection contains elements common to both sets
-    pub fn intersection(self, other: Set) -> Self {
-        Set::BinaryIntersection {
-            left: Box::new(self),
-            right: Box::new(other),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
+        // Assuming VariantSet has a .contains(&SetProperty) method
+        let self_is_empty = self_props.map_or(false, |p| p.contains(&SetProperty::IsEmpty(true)));
+        let other_is_empty = other_props.map_or(false, |p| p.contains(&SetProperty::IsEmpty(true)));
+        initial_props.insert(SetProperty::IsEmpty(self_is_empty && other_is_empty));
 
-    /// Creates a difference of sets A - B
-    /// Contains elements in A that are not in B
-    pub fn difference(self, other: Set) -> Self {
-        Set::SetDifference {
-            left: Box::new(self),
-            right: Box::new(other),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
-
-    /// Creates a symmetric difference of two sets A △ B
-    /// Contains elements that are in exactly one of A or B
-    pub fn symmetric_difference(self, other: Set) -> Self {
-        Set::SymmetricDifference {
-            left: Box::new(self),
-            right: Box::new(other),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
-
-    /// Creates a cartesian product of two sets A × B
-    /// The product contains all ordered pairs (a,b) where a ∈ A and b ∈ B
-    pub fn cartesian_product(self, other: Set) -> Self {
-        Set::CartesianProduct {
-            left: Box::new(self),
-            right: Box::new(other),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
-
-    /// Creates a power set P(x)
-    /// Contains all subsets of x
-    pub fn power_set(self) -> Self {
-        Set::PowerSet {
-            base: Box::new(self),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
-
-    /// Creates a subset satisfying a predicate
-    /// Implements the Separation Axiom schema
-    pub fn subset_of<P>(x: &Set, predicate: P) -> Set
-    where
-        P: Fn(&Set) -> bool,
-    {
-        // Directly collect elements satisfying the predicate
-        let elements = x.elements().into_iter().filter(|e| predicate(e)).collect();
-        Set::from_elements(elements)
-    }
-
-    /// Applies a mapping to a set element
-    /// Used in implementing the Replacement Axiom
-    fn apply_mapping(&self, mapping: &SetMapping) -> Option<Set> {
-        match mapping {
-            // Identity function f(x) = x
-            SetMapping::Identity => Some(self.clone()),
-            // Singleton function f(x) = {x}
-            SetMapping::Singleton => Some(Set::singleton(self.clone())),
-            // First projection π₁((x,y)) = x
-            SetMapping::FirstProjection => match self {
-                Set::OrderedPair { first, .. } => Some(first.as_ref().clone()),
-                _ => self.elements().first().cloned(),
-            },
-            // Second projection π₂((x,y)) = y
-            SetMapping::SecondProjection => match self {
-                Set::OrderedPair { second, .. } => Some(second.as_ref().clone()),
-                _ => self.elements().get(1).cloned(),
-            },
-            // Function composition (g ∘ f)(x) = g(f(x))
-            SetMapping::Composition(f, g) => self
-                .apply_mapping(f.as_ref())
-                .and_then(|result| result.apply_mapping(g.as_ref())),
-            // Custom mappings are not implemented
-            SetMapping::Custom(_) => None,
-        }
-    }
-
-    /// Returns true if this set contains the given element
-    /// Implements the fundamental membership relation ∈
-    pub fn contains(&self, x: &Set) -> bool {
-        match self {
-            // Empty set contains no elements
-            Set::Empty => false,
-            // Singleton {a} contains only a
-            Set::Singleton { element, .. } => x == element.as_ref(),
-            // A ∪ B contains elements in either A or B
-            Set::BinaryUnion { left, right, .. } => left.contains(x) || right.contains(x),
-            // A ∩ B contains elements in both A and B
-            Set::BinaryIntersection { left, right, .. } => left.contains(x) && right.contains(x),
-            // A - B contains elements in A but not in B
-            Set::SetDifference { left, right, .. } => left.contains(x) && !right.contains(x),
-            // A △ B contains elements in exactly one of A or B
-            Set::SymmetricDifference { left, right, .. } => {
-                (left.contains(x) && !right.contains(x)) || (!left.contains(x) && right.contains(x))
-            }
-            // For Cartesian product A × B, check if x is an ordered pair (a,b) with a ∈ A and b ∈ B
-            Set::CartesianProduct { left, right, .. } => {
-                // Debug output for tracing membership checks
-                println!("Checking if {:?} is in Cartesian product", x);
-                println!("Left set: {:?}", left);
-                println!("Right set: {:?}", right);
-
-                match x {
-                    // If x is already in ordered pair form, check components directly
-                    Set::OrderedPair { first, second, .. } => {
-                        println!(
-                            "Input is an ordered pair with first={:?}, second={:?}",
-                            first, second
-                        );
-                        // Check if first component is in left set and second in right set
-                        let first_in_left = left.contains(first.as_ref());
-                        let second_in_right = right.contains(second.as_ref());
-                        println!("first ∈ left: {}", first_in_left);
-                        println!("second ∈ right: {}", second_in_right);
-                        first_in_left && second_in_right
-                    }
-                    // If x is not an ordered pair, try to extract components using Kuratowski's definition
-                    _ => {
-                        println!(
-                            "Input is not an ordered pair, checking if it matches Kuratowski encoding"
-                        );
-                        if let Some((a, b)) = Self::extract_ordered_pair(x) {
-                            println!(
-                                "Successfully extracted pair components: a={:?}, b={:?}",
-                                a, b
-                            );
-                            // Check if extracted components satisfy membership conditions
-                            let a_in_left = left.contains(&a);
-                            let b_in_right = right.contains(&b);
-                            println!("a ∈ left: {}", a_in_left);
-                            println!("b ∈ right: {}", b_in_right);
-                            a_in_left && b_in_right
-                        } else {
-                            println!("Failed to extract pair components");
-                            false
-                        }
-                    }
-                }
-            }
-            // For power set P(A), check if x is a subset of A
-            Set::PowerSet { base, .. } => x.is_subset_of(base),
-            // For separation {x ∈ source | condition(x)}, check both membership and condition
-            Set::Separation {
-                source, condition, ..
-            } => {
-                source.contains(x)
-                    && match condition {
-                        ElementCondition::IsEmpty => x.is_empty(),
-                        ElementCondition::Contains(s) => x.contains(s),
-                        ElementCondition::ContainedIn(s) => s.contains(x),
-                        ElementCondition::NotContainedIn(s) => !s.contains(x),
-                    }
-            }
-            // For replacement {f(x) | x ∈ source}, check if x is in the image of f
-            Set::Replacement {
-                source, mapping, ..
-            } => source.elements().iter().any(|s| match mapping {
-                SetMapping::Identity => s == x,
-                SetMapping::Singleton => &Set::singleton(s.clone()) == x,
-                SetMapping::FirstProjection => {
-                    if let Set::OrderedPair { first, .. } = s {
-                        first.as_ref() == x
-                    } else {
-                        false
-                    }
-                }
-                SetMapping::SecondProjection => {
-                    if let Set::OrderedPair { second, .. } = s {
-                        second.as_ref() == x
-                    } else {
-                        false
-                    }
-                }
-                SetMapping::Composition(f, g) => {
-                    if let Some(f_result) = s.apply_mapping(f) {
-                        if let Some(g_result) = f_result.apply_mapping(g) {
-                            &g_result == x
-                        } else {
-                            false
-                        }
-                    } else {
-                        false
-                    }
-                }
-                SetMapping::Custom(_) => false,
-            }),
-            // For big union ⋃F, check if x is in any set in the family
-            Set::BigUnion { family, .. } => family.elements().iter().any(|s| s.contains(x)),
-            // For big intersection ⋂F, check if x is in all sets in the family
-            Set::BigIntersection { family, .. } => family.elements().iter().all(|s| s.contains(x)),
-            // For ordered pair (a,b), check if x matches Kuratowski's definition
-            Set::OrderedPair { first, second, .. } => {
-                let singleton_a = Set::singleton(first.as_ref().clone());
-                let singleton_singleton_a = Set::singleton(singleton_a.clone());
-                let pair_ab = Set::BinaryUnion {
-                    left: Box::new(first.as_ref().clone()),
-                    right: Box::new(second.as_ref().clone()),
-                    properties: VariantSet::new(),
-                    op_properties: VariantSet::new(),
-                };
-                x == &singleton_singleton_a || x == &pair_ab
-            }
-            // For complement A' = U - A, check if x is in universe but not in A
-            Set::Complement { set, universe, .. } => universe.contains(x) && !set.contains(x),
-            // For parametric set, check if x satisfies the membership condition
-            Set::Parametric {
-                parameters,
-                membership_condition,
-                ..
-            } => {
-                // For parametric set, check if x satisfies the membership condition
-                // This would be more complex in a real implementation,
-                // but for now we'll just check if the string representation
-                // of x matches a substring of the membership condition
-                let x_str = format!("{:?}", x);
-                let condition_str = format!("{}", membership_condition);
-
-                // Instead of checking contains, we should properly implement
-                // membership testing based on the parametric set type
-                if let Some(modulus_str) = parameters.get("n") {
-                    // For cyclic groups Z_n
-                    if let Set::Singleton { element, .. } = x {
-                        if let Set::Parametric {
-                            parameters: elem_params,
-                            ..
-                        } = element.as_ref()
-                        {
-                            if let Some(value_str) = elem_params.get("value") {
-                                if let Ok(value) = value_str.parse::<i64>() {
-                                    if let Ok(modulus) = modulus_str.parse::<i64>() {
-                                        return value >= 0 && value < modulus;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // For other parametric sets, fall back to string matching
-                // This is a temporary solution
-                condition_str.contains(&x_str)
-            }
-        }
-    }
-
-    /// Returns true if this set is a subset of another set
-    /// A is a subset of B if every element of A is in B
-    pub fn is_subset_of(&self, other: &Set) -> bool {
-        self.elements().iter().all(|x| other.contains(x))
-    }
-
-    /// Returns true if this set is empty
-    /// A set is empty if it has no elements
-    pub fn is_empty(&self) -> bool {
-        matches!(self, Set::Empty)
-    }
-
-    /// Returns the number of elements in this set (if finite)
-    /// For infinite sets, returns the size of their finite representation
-    pub fn len(&self) -> usize {
-        self.elements().len()
-    }
-
-    /// Returns the elements of this set (if finite)
-    /// For each set variant, computes its elements according to its mathematical definition
-    pub fn elements(&self) -> Vec<Set> {
-        match self {
-            // Empty set has no elements
-            Set::Empty => Vec::new(),
-
-            // Singleton set contains exactly one element
-            Set::Singleton { element, .. } => vec![element.as_ref().clone()],
-
-            // Binary union contains all elements from both sets, removing duplicates
-            Set::BinaryUnion { left, right, .. } => {
-                let mut elements = left.elements();
-                elements.extend(right.elements());
-                elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-                elements.dedup();
-                elements
-            }
-
-            // Binary intersection contains elements present in both sets
-            Set::BinaryIntersection { left, right, .. } => left
-                .elements()
-                .into_iter()
-                .filter(|x| right.contains(x))
-                .collect(),
-
-            // Set difference contains elements in left but not in right
-            Set::SetDifference { left, right, .. } => left
-                .elements()
-                .into_iter()
-                .filter(|x| !right.contains(x))
-                .collect(),
-
-            // Symmetric difference contains elements in exactly one of the sets
-            Set::SymmetricDifference { left, right, .. } => {
-                let mut elements = Vec::new();
-                // Add elements in left but not in right
-                for x in left.elements() {
-                    if !right.contains(&x) {
-                        elements.push(x);
-                    }
-                }
-                // Add elements in right but not in left
-                for x in right.elements() {
-                    if !left.contains(&x) {
-                        elements.push(x);
-                    }
-                }
-                elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-                elements.dedup();
-                elements
-            }
-
-            // Cartesian product contains all ordered pairs from the two sets
-            Set::CartesianProduct { left, right, .. } => {
-                let mut elements = Vec::new();
-                // For each element in left set
-                for a in left.elements() {
-                    // For each element in right set
-                    for b in right.elements() {
-                        // Create ordered pair using Kuratowski's definition
-                        let ordered_pair = Set::ordered_pair(a.clone(), b.clone());
-                        elements.push(ordered_pair);
-                    }
-                }
-                elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-                elements.dedup();
-                elements
-            }
-
-            // Big union contains all elements from any set in the family
-            Set::BigUnion { family, .. } => {
-                let mut elements = Vec::new();
-                for set in family.elements() {
-                    elements.extend(set.elements());
-                }
-                elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-                elements.dedup();
-                elements
-            }
-
-            // Big intersection contains elements present in all sets of the family
-            Set::BigIntersection { family, .. } => {
-                if let Some(first) = family.elements().first() {
-                    first
-                        .elements()
-                        .into_iter()
-                        .filter(|x| family.elements().iter().all(|s| s.contains(x)))
-                        .collect()
-                } else {
-                    Vec::new()
-                }
-            }
-
-            // Power set contains all possible subsets
-            Set::PowerSet { base, .. } => {
-                let mut subsets = vec![Set::empty()]; // Start with empty set
-                // For each element in base set
-                for elem in base.elements() {
-                    let mut new_subsets = subsets.clone();
-                    // Add element to each existing subset to create new subsets
-                    for subset in &subsets {
-                        let mut new_sub = subset.clone();
-                        new_sub = new_sub.union(Set::singleton(elem.clone()));
-                        new_subsets.push(new_sub);
-                    }
-                    subsets = new_subsets;
-                }
-                // Sort subsets by size and then by string representation
-                subsets.sort_by(|a, b| {
-                    let size_cmp = a.elements().len().cmp(&b.elements().len());
-                    if size_cmp == std::cmp::Ordering::Equal {
-                        format!("{:?}", a).cmp(&format!("{:?}", b))
-                    } else {
-                        size_cmp
-                    }
-                });
-                subsets
-            }
-
-            // Separation contains elements from source that satisfy the condition
-            Set::Separation {
-                source, condition, ..
-            } => source
-                .elements()
-                .into_iter()
-                .filter(|x| match condition {
-                    ElementCondition::IsEmpty => x.is_empty(),
-                    ElementCondition::Contains(s) => x.contains(s),
-                    ElementCondition::ContainedIn(s) => s.contains(x),
-                    ElementCondition::NotContainedIn(s) => !s.contains(x),
-                })
-                .collect(),
-
-            // Replacement applies the mapping to each element of the source
-            Set::Replacement {
-                source, mapping, ..
-            } => {
-                let mut elements = Vec::new();
-                for x in source.elements() {
-                    match mapping {
-                        SetMapping::Identity => elements.push(x.clone()),
-                        SetMapping::Singleton => elements.push(Set::singleton(x.clone())),
-                        SetMapping::FirstProjection => {
-                            if let Set::OrderedPair { first, .. } = x {
-                                elements.push(first.as_ref().clone());
-                            }
-                        }
-                        SetMapping::SecondProjection => {
-                            if let Set::OrderedPair { second, .. } = x {
-                                elements.push(second.as_ref().clone());
-                            }
-                        }
-                        SetMapping::Composition(f, g) => {
-                            if let Some(f_result) = x.apply_mapping(f) {
-                                if let Some(g_result) = f_result.apply_mapping(g) {
-                                    elements.push(g_result);
-                                }
-                            }
-                        }
-                        SetMapping::Custom(_) => {}
-                    }
-                }
-                elements
-            }
-
-            // Complement contains elements in universe that are not in the set
-            Set::Complement { set, universe, .. } => universe
-                .elements()
-                .into_iter()
-                .filter(|x| !set.contains(x))
-                .collect(),
-
-            // Ordered pair contains its Kuratowski encoding elements
-            Set::OrderedPair { first, second, .. } => {
-                let singleton_a = Set::Singleton {
-                    element: Box::new(first.as_ref().clone()),
-                    properties: VariantSet::new(),
-                };
-                let pair_ab = Set::BinaryUnion {
-                    left: Box::new(first.as_ref().clone()),
-                    right: Box::new(second.as_ref().clone()),
-                    properties: VariantSet::new(),
-                    op_properties: VariantSet::new(),
-                };
-                vec![singleton_a, pair_ab]
-            }
-
-            // Parametric set, check if x satisfies the membership condition
-            Set::Parametric {
-                parameters,
-                membership_condition,
-                ..
-            } => {
-                // Note: For parametric sets, we can't directly enumerate all elements
-                // since they're typically infinite or defined by a condition.
-                // We would need access to the universe or specific logic for each parametric set.
-                // For now, return an empty vector with a log message
-
-                // Convert parameters to a string for logging
-                let parameters_str = parameters
-                    .iter()
-                    .map(|(k, v)| format!("{}={}", k, v))
-                    .collect::<Vec<String>>()
-                    .join(";");
-
-                // Log that we can't enumerate elements for this parametric set
-                // println!("Cannot enumerate elements for parametric set with parameters {}, membership condition: {}",
-                //    parameters_str, membership_condition);
-
-                // Return empty vector as we can't enumerate all elements of a parametric set
-                Vec::new()
-            }
-        }
-    }
-
-    /// Returns true if this set is well-founded
-    /// A set is well-founded if it has no infinite descending ∈-chains
-    pub fn is_well_founded(&self) -> bool {
-        !self.contains(self) && self.elements().iter().all(|x| x.is_well_founded())
-    }
-
-    /// Creates an ordered pair (a,b) using Kuratowski's definition
-    /// (a,b) = {{a}, {a,b}}
-    pub fn ordered_pair(a: Set, b: Set) -> Self {
-        // First create {a}
-        let singleton_a = Set::singleton(a.clone());
-        // Then create {{a}}
-        let singleton_singleton_a = Set::singleton(singleton_a);
-        // Create {a,b}
-        let pair_ab = Set::BinaryUnion {
-            left: Box::new(a),
-            right: Box::new(b),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        };
-        // Finally create {{a}, {a,b}}
-        Set::BinaryUnion {
-            left: Box::new(singleton_singleton_a),
-            right: Box::new(pair_ab),
-            properties: VariantSet::new(),
-            op_properties: VariantSet::new(),
-        }
-    }
-
-    /// Creates a set from a vector of elements
-    /// Constructs the set by taking the union of singleton sets
-    pub fn from_elements(elements: Vec<Set>) -> Self {
-        let len = elements.len();
-        let mut result = Set::empty();
-        for elem in elements {
-            result = result.union(Set::singleton(elem));
-        }
-
-        // Set properties based on the elements
-        let mut properties = VariantSet::new();
-        properties.insert(SetProperty::IsEmpty(len == 0));
-        properties.insert(SetProperty::IsFinite(true));
-        properties.insert(SetProperty::IsCountable(true));
-
-        // Check if this could be an ordinal
-        let is_transitive = result.is_transitive();
-        let is_well_ordered = result.is_well_ordered();
-        properties.insert(SetProperty::IsTransitive(is_transitive));
-        properties.insert(SetProperty::IsWellOrdered(is_well_ordered));
-        properties.insert(SetProperty::IsOrdinal(is_transitive && is_well_ordered));
-        properties.insert(SetProperty::Cardinality(
-            CardinalityPropertyVariant::Finite(len),
-        ));
-
-        // Update properties of the result
-        match result {
-            Set::BinaryUnion {
-                properties: ref mut p,
-                ..
-            } => {
-                *p = properties;
-            }
-            _ => {}
-        }
-
-        result
-    }
-
-    /// Inserts an element into the set if it's not already present
-    /// Returns the original set if the element is already present
-    pub fn insert(self, element: Set) -> Set {
-        if self.contains(&element) {
-            self
+        let self_is_finite = self_props.map_or(false, |p| p.contains(&SetProperty::IsFinite(true)));
+        let other_is_finite =
+            other_props.map_or(false, |p| p.contains(&SetProperty::IsFinite(true)));
+        if self_is_finite && other_is_finite {
+            initial_props.insert(SetProperty::IsFinite(true));
+            initial_props.insert(SetProperty::IsCountable(true));
         } else {
-            self.union(Set::singleton(element))
+            initial_props.insert(SetProperty::IsFinite(false));
+            if self_props.map_or(false, |p| p.contains(&SetProperty::IsCountable(true)))
+                && other_props.map_or(false, |p| p.contains(&SetProperty::IsCountable(true)))
+            {
+                initial_props.insert(SetProperty::IsCountable(true));
+            } else {
+                initial_props.insert(SetProperty::IsCountable(false));
+            }
+        }
+        Set::BinaryUnion {
+            left: Box::new(self),
+            right: Box::new(other),
+            properties: initial_props,
+            op_properties: VariantSet::new(),
         }
     }
 
-    /// Compares two sets by comparing their elements recursively
-    /// Used for implementing equality between sets
-    fn compare_elements(&self, other: &Set) -> bool {
-        // Special case for ordered pairs
-        match (self, other) {
-            (
-                Set::OrderedPair {
-                    first: f1,
-                    second: s1,
-                    ..
-                },
-                Set::OrderedPair {
-                    first: f2,
-                    second: s2,
-                    ..
-                },
-            ) => {
-                f1.as_ref().compare_elements(f2.as_ref())
-                    && s1.as_ref().compare_elements(s2.as_ref())
-            }
-            _ => {
-                let mut self_elements = self.elements();
-                let mut other_elements = other.elements();
-
-                if self_elements.len() != other_elements.len() {
-                    return false;
-                }
-
-                // Sort elements by their string representation to ensure consistent comparison
-                self_elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-                other_elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-
-                // Compare each element recursively
-                self_elements
-                    .iter()
-                    .zip(other_elements.iter())
-                    .all(|(a, b)| a.compare_elements(b))
-            }
-        }
-    }
-
-    /// Helper function to extract components of an ordered pair if the set represents one
-    /// Returns Some((a,b)) if the set is an ordered pair (a,b), None otherwise
-    /// Uses Kuratowski's definition: (a,b) = {{a}, {a,b}}
-    fn extract_ordered_pair(x: &Set) -> Option<(Set, Set)> {
-        // An ordered pair (a,b) = {{a}, {a,b}} according to Kuratowski's definition
-        if let Set::BinaryUnion {
-            left: l1,
-            right: r1,
-            ..
-        } = x
-        {
-            // We expect one part to be {{a}} and the other to be {a,b}
-            let (singleton_singleton_part, pair_part) = match (l1.as_ref(), r1.as_ref()) {
-                (Set::Singleton { element: e1, .. }, other) => (e1, other),
-                (other, Set::Singleton { element: e1, .. }) => (e1, other),
-                _ => return None,
-            };
-
-            // The singleton_singleton_part should be {a}
-            if let Set::Singleton { element: a, .. } = singleton_singleton_part.as_ref() {
-                // The pair_part should be a binary union containing a
-                if let Set::BinaryUnion {
-                    left: l2,
-                    right: r2,
-                    ..
-                } = pair_part
-                {
-                    // One of l2 or r2 should be equal to a
-                    let b = if l2.as_ref() == a.as_ref() {
-                        r2.as_ref().clone()
-                    } else if r2.as_ref() == a.as_ref() {
-                        l2.as_ref().clone()
-                    } else {
-                        return None;
-                    };
-                    // Now a is actually the singleton {a}, so we need to extract a from it
-                    if let Set::Singleton {
-                        element: actual_a, ..
-                    } = a.as_ref()
-                    {
-                        return Some((actual_a.as_ref().clone(), b));
-                    }
-                }
-            }
-        }
-        None
-    }
-
-    /// Gets the properties of this set
-    ///
-    /// Returns a reference to the VariantSet<SetProperty> containing
-    /// metadata about the set's mathematical properties
-    pub fn get_properties(&self) -> &VariantSet<SetProperty> {
-        static EMPTY_PROPERTIES: LazyLock<VariantSet<SetProperty>> = LazyLock::new(|| {
-            let mut set = VariantSet::new();
-            set.insert(SetProperty::IsEmpty(true));
-            set.insert(SetProperty::IsFinite(true));
-            set.insert(SetProperty::IsCountable(true));
-            set.insert(SetProperty::IsWellOrdered(true));
-            set.insert(SetProperty::IsTransitive(true));
-            set.insert(SetProperty::IsOrdinal(true));
-            set.insert(SetProperty::IsCardinal(true));
-            set.insert(SetProperty::IsReflexive(true));
-            set.insert(SetProperty::IsSymmetric(true));
-            set.insert(SetProperty::Cardinality(
-                CardinalityPropertyVariant::Finite(0),
-            ));
-            set
-        });
-
+    pub fn get_properties(&self) -> Option<&VariantSet<SetProperty>> {
         match self {
-            Set::Empty => &EMPTY_PROPERTIES,
-            Set::Singleton { properties, .. } => properties,
-            Set::BinaryUnion { properties, .. } => properties,
-            Set::BinaryIntersection { properties, .. } => properties,
-            Set::SetDifference { properties, .. } => properties,
-            Set::PowerSet { properties, .. } => properties,
-            Set::BigUnion { properties, .. } => properties,
-            Set::BigIntersection { properties, .. } => properties,
-            Set::CartesianProduct { properties, .. } => properties,
-            Set::Replacement { properties, .. } => properties,
-            Set::OrderedPair { properties, .. } => properties,
-            Set::Separation { properties, .. } => properties,
-            Set::Complement { properties, .. } => properties,
-            Set::SymmetricDifference { properties, .. } => properties,
-            Set::Parametric { .. } => &EMPTY_PROPERTIES,
+            Set::Generic { properties, .. }
+            | Set::Singleton { properties, .. }
+            | Set::Enumeration { properties, .. }
+            | Set::BinaryUnion { properties, .. }
+            | Set::BinaryIntersection { properties, .. }
+            | Set::SetDifference { properties, .. }
+            | Set::SymmetricDifference { properties, .. }
+            | Set::CartesianProduct { properties, .. }
+            | Set::BigUnion { properties, .. }
+            | Set::BigIntersection { properties, .. }
+            | Set::PowerSet { properties, .. }
+            | Set::Separation { properties, .. }
+            | Set::Replacement { properties, .. }
+            | Set::OrderedPair { properties, .. }
+            | Set::Complement { properties, .. }
+            | Set::Parametric { properties, .. } => Some(properties),
+            Set::Empty => Some(&LAZY_EMPTY_PROPERTIES),
         }
     }
 
-    /// Gets the mutable properties of this set
-    ///
-    /// Returns a mutable reference to the VariantSet<SetProperty> containing
-    /// metadata about the set's mathematical properties
-
-    /// Returns true if this set is an ordinal number
-    /// An ordinal is a transitive set well-ordered by ∈
-    pub fn is_ordinal(&self) -> bool {
-        // Check cached property first
-        if let Some(is_ordinal) = self.get_properties().is_ordinal() {
-            return is_ordinal;
-        }
-
-        // An ordinal number is a transitive set that is well-ordered by ∈
-        self.is_transitive() && self.is_well_ordered()
-    }
-
-    /// Returns true if this set is transitive
-    /// A set is transitive if it contains all elements of its elements
-    pub fn is_transitive(&self) -> bool {
-        // Check cached property first
-        if let Some(is_transitive) = self.get_properties().inner.iter().find_map(|p| {
-            if let SetProperty::IsTransitive(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        }) {
-            return is_transitive;
-        }
-
-        // For relations, use is_relation_transitive
-        if self
-            .elements()
-            .iter()
-            .all(|x| matches!(x, Set::OrderedPair { .. }))
-        {
-            return self.is_relation_transitive();
-        }
-
-        // For sets, check if every element's elements are also elements of self
-        self.elements()
-            .iter()
-            .all(|x| x.elements().iter().all(|y| self.contains(y)))
-    }
-
-    /// Checks if a relation is transitive
-    /// A relation R is transitive if for all x,y,z: xRy and yRz implies xRz
-    pub fn is_relation_transitive(&self) -> bool {
-        // Empty relation is vacuously transitive
-        if self.is_empty() {
-            return true;
-        }
-
-        // Collect all ordered pairs for easier processing
-        let mut pairs = Vec::new();
-        for element in self.elements() {
-            if let Set::OrderedPair { first, second, .. } = element {
-                pairs.push(((*first).clone(), (*second).clone()));
-            }
-        }
-
-        // Check transitivity: for all x,y,z if xRy and yRz then xRz must exist
-        for (x1, y1) in pairs.iter() {
-            for (x2, y2) in pairs.iter() {
-                // If we have xRy and yRz (including when y1=x2 for identity relation)
-                if y1 == x2 {
-                    // Then we must have xRz
-                    let required_pair = Set::ordered_pair(x1.clone(), y2.clone());
-                    if !pairs.iter().any(|(x, y)| x == x1 && y == y2) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        // If we haven't found any violations, the relation is transitive
-        true
-    }
-
-    /// Returns true if this relation is an equivalence relation
-    /// An equivalence relation is reflexive, symmetric, and transitive
-    pub fn is_equivalence_relation(&self) -> bool {
-        self.is_reflexive() && self.is_symmetric() && self.is_relation_transitive()
-    }
-
-    /// Returns true if this set is well-ordered
-    /// A set is well-ordered if every non-empty subset has a least element
-    pub fn is_well_ordered(&self) -> bool {
-        // Check cached property first
-        if let Some(is_well_ordered) = self.get_properties().is_well_ordered() {
-            return is_well_ordered;
-        }
-
-        // A set is well-ordered if every non-empty subset has a least element
-        // For finite sets, this is equivalent to being totally ordered
-        self.is_total_order() && self.is_well_founded()
-    }
-
-    /// Returns the cardinality of the set
-    /// For finite sets, returns the number of elements
-    /// For infinite sets, returns the size of their finite representation
-    pub fn cardinality(&self) -> usize {
-        // First check if we have a cached property
-        if let Some(cardinality) = self.get_properties().inner.iter().find_map(|p| {
-            if let SetProperty::Cardinality(c) = &p.0 {
-                match c {
-                    CardinalityPropertyVariant::Finite(n) => Some(*n),
-                    _ => None,
-                }
-            } else {
-                None
-            }
-        }) {
-            return cardinality;
-        }
-
-        // If not cached, compute it
-        self.elements().len()
-    }
-
-    /// Performs ordinal addition
-    /// For finite ordinals, this is equivalent to regular addition
-    /// α + β represents the order type of α followed by β
-    pub fn ordinal_add(&self, other: &Set) -> Set {
-        // First check if both inputs are ordinals
-        let mut properties = VariantSet::new();
-        properties.insert(SetProperty::IsOrdinal(true));
-        properties.insert(SetProperty::IsTransitive(true));
-        properties.insert(SetProperty::IsWellOrdered(true));
-
-        let mut elements = Vec::new();
-        let base_len = self.elements().len();
-
-        // First add all elements from self (these represent 0 to α-1)
-        for x in self.elements() {
-            elements.push(x.clone());
-        }
-
-        // For finite ordinals using von Neumann construction:
-        // Each new element k is {0,1,...,k-1}
-        for i in 0..other.elements().len() {
-            // Create set {0,1,...,k-1} where k = base_len + i
-            let mut new_element = Set::empty();
-            for j in 0..(base_len + i) {
-                new_element = new_element.insert(elements[j].clone());
-            }
-            elements.push(new_element);
-        }
-
-        // Create the result set with appropriate properties
-        let mut result = Set::from_elements(elements);
-        properties.insert(SetProperty::Cardinality(
-            CardinalityPropertyVariant::Finite(base_len + other.elements().len()),
-        ));
-
-        // Update properties of the result
-        match result {
-            Set::BinaryUnion {
-                properties: ref mut p,
+    /// Checks if this set contains the given element
+    pub fn contains(&self, element: &SetElement) -> bool {
+        match self {
+            Set::Empty => false,
+            Set::Singleton {
+                element: set_element,
                 ..
-            } => {
-                *p = properties;
+            } => set_element == element,
+            Set::Enumeration { elements, .. } => elements.contains(element),
+            Set::BinaryUnion { left, right, .. } => {
+                left.contains(element) || right.contains(element)
             }
-            _ => {}
-        }
-
-        result
-    }
-
-    /// Performs ordinal multiplication
-    /// For finite ordinals, this is equivalent to regular multiplication
-    /// α × β represents β copies of α
-    pub fn ordinal_multiply(&self, other: &Set) -> Set {
-        // Verify both are ordinals
-        if !self.is_ordinal() || !other.is_ordinal() {
-            panic!("ordinal_multiply requires ordinal numbers");
-        }
-
-        // For finite ordinals, construct proper von Neumann ordinal
-        if self.is_finite() && other.is_finite() {
-            let alpha_size = self.len();
-            let beta_size = other.len();
-            let total_size = alpha_size * beta_size;
-
-            println!("Starting ordinal multiplication:");
-            println!("α size: {}", alpha_size);
-            println!("β size: {}", beta_size);
-            println!("Total size (α × β): {}", total_size);
-
-            // Create elements for the resulting ordinal
-            let mut elements = vec![Set::empty()]; // Start with 0
-
-            // For each number up to total_size, create the corresponding von Neumann ordinal
-            for i in 1..total_size {
-                // Create set {0,1,...,i-1}
-                let mut current = Set::empty();
-                for j in 0..i {
-                    current = current.insert(elements[j].clone());
-                }
-                elements.push(current);
-                println!("Step {}: Added element", i);
+            Set::BinaryIntersection { left, right, .. } => {
+                left.contains(element) && right.contains(element)
             }
-
-            // Create the result set with appropriate properties
-            let mut result = Set::from_elements(elements);
-            let mut properties = VariantSet::new();
-            properties.insert(SetProperty::IsOrdinal(true));
-            properties.insert(SetProperty::IsTransitive(true));
-            properties.insert(SetProperty::IsWellOrdered(true));
-            properties.insert(SetProperty::IsFinite(true));
-            properties.insert(SetProperty::Cardinality(
-                CardinalityPropertyVariant::Finite(total_size),
-            ));
-
-            // Update properties of the result
-            match result {
-                Set::BinaryUnion {
-                    properties: ref mut p,
-                    ..
-                } => {
-                    *p = properties;
-                }
-                _ => {}
+            Set::SetDifference { left, right, .. } => {
+                left.contains(element) && !right.contains(element)
             }
-
-            println!("Final ordinal construction: {:?}", result);
-            println!("Final ordinal elements: {:?}", result.elements());
-            println!("Properties created");
-            println!("Final result: {:?}", result);
-
-            return result;
-        }
-
-        // Handle infinite ordinals
-        unimplemented!("Infinite ordinal arithmetic not yet implemented")
-    }
-
-    /// Creates an identity relation on this set
-    /// The identity relation contains pairs (x,x) for each x in the set
-    pub fn identity_relation(&self) -> Set {
-        let mut elements = Vec::new();
-        for x in self.elements() {
-            elements.push(Set::OrderedPair {
-                first: Box::new(x.clone()),
-                second: Box::new(x.clone()),
-                properties: SetProperty::new(),
-                op_properties: VariantSet::new(),
-            });
-        }
-
-        let mut result = Set::from_elements(elements);
-
-        // Set relation properties
-        let mut properties = VariantSet::new();
-        properties.insert(SetProperty::IsEmpty(self.is_empty()));
-        properties.insert(SetProperty::IsFinite(true));
-        properties.insert(SetProperty::IsCountable(true));
-        properties.insert(SetProperty::IsTransitive(true));
-        properties.insert(SetProperty::IsWellOrdered(true));
-        properties.insert(SetProperty::IsReflexive(true));
-        properties.insert(SetProperty::IsSymmetric(true));
-
-        // Update properties of the result
-        match result {
-            Set::BinaryUnion {
-                ref mut properties, ..
-            } => {
-                *properties = properties.clone();
+            Set::SymmetricDifference { left, right, .. } => {
+                (left.contains(element) && !right.contains(element))
+                    || (!left.contains(element) && right.contains(element))
             }
-            _ => {}
-        }
-
-        result
-    }
-
-    /// Creates a subset relation on this set
-    /// The subset relation contains pairs (x,y) where x ⊆ y
-    pub fn subset_relation(&self) -> Set {
-        let mut result = Set::empty();
-        for x in self.elements() {
-            for y in self.elements() {
-                if x.is_subset_of(&y) {
-                    result = result.insert(Set::ordered_pair(x.clone(), y.clone()));
-                }
-            }
-        }
-
-        // Set relation properties
-        let mut properties = VariantSet::new();
-        properties.insert(SetProperty::IsTransitive(true));
-        properties.insert(SetProperty::IsWellOrdered(true));
-
-        result
-    }
-
-    /// Performs ordinal exponentiation
-    /// For finite ordinals, this is equivalent to regular exponentiation
-    /// α^β represents β-fold multiplication of α
-    pub fn ordinal_power(&self, other: &Set) -> Set {
-        let mut properties = VariantSet::new();
-        properties.insert(SetProperty::IsOrdinal(true));
-        properties.insert(SetProperty::IsTransitive(true));
-        properties.insert(SetProperty::IsWellOrdered(true));
-
-        // For finite ordinals, compute total size
-        if self.is_finite() && other.is_finite() {
-            let size_a = self.elements().len();
-            let size_b = other.elements().len();
-            let total_size = size_a.pow(size_b as u32);
-
-            // Create elements for the resulting ordinal
-            let mut elements = vec![Set::empty()]; // Start with 0
-
-            // For each number up to total_size, create the corresponding von Neumann ordinal
-            for i in 1..total_size {
-                // Create set {0,1,...,i-1}
-                let mut current = Set::empty();
-                for j in 0..i {
-                    current = current.insert(elements[j].clone());
-                }
-                elements.push(current);
-            }
-
-            // Create the result set with appropriate properties
-            let mut result = Set::from_elements(elements);
-            properties.insert(SetProperty::IsFinite(true));
-            properties.insert(SetProperty::Cardinality(
-                CardinalityPropertyVariant::Finite(total_size),
-            ));
-
-            // Update properties of the result
-            match result {
-                Set::BinaryUnion {
-                    properties: ref mut p,
-                    ..
-                } => {
-                    *p = properties;
-                }
-                _ => {}
-            }
-
-            return result;
-        }
-
-        // Handle infinite ordinals
-        unimplemented!("Infinite ordinal arithmetic not yet implemented")
-    }
-
-    /// Returns true if this relation is reflexive
-    /// A relation R is reflexive if (x,x) ∈ R for all x in the domain
-    pub fn is_reflexive(&self) -> bool {
-        // Get domain from first components of pairs
-        let domain: Vec<Set> = self
-            .elements()
-            .iter()
-            .filter_map(|pair| {
-                if let Set::OrderedPair { first, .. } = pair {
-                    Some(first.as_ref().clone())
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        // Check that (x,x) exists for each x in domain
-        domain.iter().all(|x| {
-            self.elements().iter().any(|pair| {
-                if let Set::OrderedPair { first, second, .. } = pair {
-                    first.as_ref() == x && second.as_ref() == x
+            // For more complex set constructions, we would need to evaluate the membership condition
+            // This is a simplified implementation
+            Set::CartesianProduct { .. } => {
+                if let SetElement::Pair(first, second) = element {
+                    // Check if first part is in left set and second part is in right set
+                    // This is a simplification; a full implementation would require recursion
+                    true
                 } else {
                     false
                 }
-            })
-        })
-    }
-
-    /// Returns true if this relation is symmetric
-    /// A relation R is symmetric if (x,y) ∈ R implies (y,x) ∈ R
-    pub fn is_symmetric(&self) -> bool {
-        // Check cached property first
-        if let Some(is_symmetric) = self.get_properties().is_symmetric() {
-            return is_symmetric;
-        }
-
-        // Collect all ordered pairs
-        let mut pairs = Vec::new();
-        for pair in self.elements() {
-            if let Set::OrderedPair { first, second, .. } = pair {
-                pairs.push((first.as_ref().clone(), second.as_ref().clone()));
             }
-        }
-
-        // For each pair (x,y), check if (y,x) exists
-        pairs
-            .iter()
-            .all(|(x, y)| pairs.iter().any(|(a, b)| a == y && b == x))
-    }
-
-    /// Returns true if this relation is antisymmetric
-    /// A relation R is antisymmetric if (x,y) ∈ R and (y,x) ∈ R implies x = y
-    pub fn is_antisymmetric(&self) -> bool {
-        self.elements().iter().all(|pair1| {
-            if let Set::OrderedPair {
-                first: x,
-                second: y,
-                ..
-            } = pair1
-            {
-                let reverse = Set::ordered_pair(y.as_ref().clone(), x.as_ref().clone());
-                !self.contains(&reverse) || x == y
-            } else {
-                true // Non-pairs are ignored
-            }
-        })
-    }
-
-    /// Returns true if this relation is a partial order
-    /// A partial order is reflexive, antisymmetric, and transitive
-    pub fn is_partial_order(&self) -> bool {
-        self.is_reflexive() && self.is_antisymmetric() && self.is_relation_transitive()
-    }
-
-    /// Returns true if this relation is total
-    /// A relation R is total if for all x,y either (x,y) ∈ R or (y,x) ∈ R
-    pub fn is_total(&self) -> bool {
-        let domain: Vec<Set> = self
-            .elements()
-            .iter()
-            .filter_map(|pair| {
-                if let Set::OrderedPair { first, .. } = pair {
-                    Some(first.as_ref().clone())
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        domain.iter().all(|x| {
-            domain.iter().all(|y| {
-                let forward = Set::ordered_pair(x.clone(), y.clone());
-                let reverse = Set::ordered_pair(y.clone(), x.clone());
-                self.contains(&forward) || self.contains(&reverse)
-            })
-        })
-    }
-
-    /// Returns true if this relation is a total order
-    /// A total order is a partial order that is also total
-    pub fn is_total_order(&self) -> bool {
-        self.is_partial_order() && self.is_total()
-    }
-
-    /// Returns true if this relation is a well order
-    /// A well order is a total order where every non-empty subset has a least element
-    pub fn is_well_order(&self) -> bool {
-        if !self.is_total_order() {
-            return false;
-        }
-
-        let domain: Vec<Set> = self
-            .elements()
-            .iter()
-            .filter_map(|pair| {
-                if let Set::OrderedPair { first, .. } = pair {
-                    Some(first.as_ref().clone())
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        // Check every non-empty subset has a least element
-        let power = Set::from_elements(domain).power_set();
-        power.elements().iter().all(|subset| {
-            if subset.is_empty() {
-                return true;
-            }
-
-            // Try to find least element
-            subset.elements().iter().any(|x| {
-                subset.elements().iter().all(|y| {
-                    if x == y {
-                        true
-                    } else {
-                        let pair = Set::ordered_pair(x.clone(), y.clone());
-                        self.contains(&pair)
+            Set::BigUnion { family, .. } => {
+                // If this is a set of sets, check if the element is in any of the member sets
+                match family.as_ref() {
+                    Set::Enumeration { elements, .. } => {
+                        for set_elem in elements {
+                            if let SetElement::Set(inner_set) = set_elem {
+                                if inner_set.contains(element) {
+                                    return true;
+                                }
+                            }
+                        }
+                        false
                     }
-                })
-            })
-        })
-    }
-
-    /// Returns true if this set is finite
-    /// A set is finite if it has a finite number of elements
-    pub fn is_finite(&self) -> bool {
-        // Check cached property first
-        if let Some(is_finite) = self.get_properties().inner.iter().find_map(|p| {
-            if let SetProperty::IsFinite(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        }) {
-            return is_finite;
-        }
-
-        // If not cached, check if we can compute the elements
-        // This is a simplification - in general determining if a set is finite
-        // requires more sophisticated analysis
-        match self {
-            Set::Empty => true,
-            Set::Singleton { .. } => true,
-            Set::BinaryUnion { left, right, .. } => left.is_finite() && right.is_finite(),
-            Set::BinaryIntersection { left, right, .. } => left.is_finite() && right.is_finite(),
-            Set::SetDifference { left, .. } => left.is_finite(),
-            Set::SymmetricDifference { left, right, .. } => left.is_finite() && right.is_finite(),
-            Set::CartesianProduct { left, right, .. } => left.is_finite() && right.is_finite(),
-            Set::PowerSet { base, .. } => base.is_finite(),
-            Set::Separation { source, .. } => source.is_finite(),
-            Set::Replacement { source, .. } => source.is_finite(),
-            Set::OrderedPair { .. } => true,
-            Set::Complement { universe, .. } => universe.is_finite(),
-            Set::BigUnion { family, .. } => family.is_finite(),
-            Set::BigIntersection { family, .. } => family.is_finite(),
-            Set::Parametric { .. } => false,
-        }
-    }
-}
-
-/// Implementation of Debug trait for Set
-/// Provides a mathematical notation for set display
-impl fmt::Debug for Set {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            // Empty set displayed as ∅
-            Set::Empty => write!(f, "∅"),
-            // Singleton set displayed as {x}
-            Set::Singleton { element, .. } => write!(f, "{{{:?}}}", element),
-            // Binary union displayed as (A ∪ B)
-            Set::BinaryUnion { left, right, .. } => write!(f, "({:?} ∪ {:?})", left, right),
-            // Binary intersection displayed as (A ∩ B)
-            Set::BinaryIntersection { left, right, .. } => write!(f, "({:?} ∩ {:?})", left, right),
-            // Set difference displayed as (A - B)
-            Set::SetDifference { left, right, .. } => write!(f, "({:?} - {:?})", left, right),
-            // Symmetric difference displayed as (A △ B)
-            Set::SymmetricDifference { left, right, .. } => write!(f, "({:?} △ {:?})", left, right),
-            // Power set displayed as P(A)
-            Set::PowerSet { base, .. } => write!(f, "P({:?})", base),
-            // Separation displayed as {x ∈ A | φ(x)}
-            Set::Separation { source, .. } => write!(f, "{{x ∈ {:?} | φ(x)}}", source),
-            // Replacement displayed as {f(x) | x ∈ A}
-            Set::Replacement { source, .. } => write!(f, "{{f(x) | x ∈ {:?}}}", source),
-            // Ordered pair displayed as (a, b)
-            Set::OrderedPair { first, second, .. } => write!(f, "({:?}, {:?})", first, second),
-            // Complement displayed as (A ∩ U)
-            Set::Complement { set, universe, .. } => write!(f, "({:?} ∩ {:?})", set, universe),
-            // Cartesian product displayed as (A × B)
-            Set::CartesianProduct { left, right, .. } => write!(f, "({:?} × {:?})", left, right),
-            // Big union displayed as ⋃(F)
-            Set::BigUnion { family, .. } => write!(f, "⋃({:?})", family),
-            // Big intersection displayed as ⋂(F)
-            Set::BigIntersection { family, .. } => write!(f, "⋂({:?})", family),
-            // Parametric set, display parameters and description
-            Set::Parametric {
-                parameters,
-                description,
-                ..
-            } => write!(
-                f,
-                "Parametric set: {} (params: {})",
-                description,
-                parameters
-                    .iter()
-                    .map(|(k, v)| format!("{}={}", k, v))
-                    .collect::<Vec<String>>()
-                    .join(", ")
-            ),
-        }
-    }
-}
-
-/// Implementation of PartialEq for ElementCondition
-/// Provides a human-readable representation of element conditions
-impl PartialEq for ElementCondition {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            // Two IsEmpty conditions are always equal
-            (ElementCondition::IsEmpty, ElementCondition::IsEmpty) => true,
-            // Contains conditions are equal if their contained sets are equal
-            (ElementCondition::Contains(a), ElementCondition::Contains(b)) => {
-                a.as_ref() == b.as_ref()
-            }
-            // ContainedIn conditions are equal if their container sets are equal
-            (ElementCondition::ContainedIn(a), ElementCondition::ContainedIn(b)) => {
-                a.as_ref() == b.as_ref()
-            }
-            // NotContainedIn conditions are equal if their excluded sets are equal
-            (ElementCondition::NotContainedIn(a), ElementCondition::NotContainedIn(b)) => {
-                a.as_ref() == b.as_ref()
-            }
-            // Different types of conditions are never equal
-            _ => false,
-        }
-    }
-}
-
-/// Implementation of PartialEq for Set
-/// Defines when two sets are considered equal based on the Extensionality Axiom
-impl PartialEq for Set {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            // Empty sets are always equal to each other
-            (Set::Empty, Set::Empty) => true,
-            // Singleton sets are equal if their elements are equal
-            (Set::Singleton { element: e1, .. }, Set::Singleton { element: e2, .. }) => {
-                e1.as_ref() == e2.as_ref()
-            }
-            // Binary unions are equal if they contain the same elements (order doesn't matter)
-            (
-                Set::BinaryUnion {
-                    left: l1,
-                    right: r1,
-                    ..
-                },
-                Set::BinaryUnion {
-                    left: l2,
-                    right: r2,
-                    ..
-                },
-            ) => {
-                // For binary unions, we need to check both possible orderings
-                (l1.as_ref() == l2.as_ref() && r1.as_ref() == r2.as_ref())
-                    || (l1.as_ref() == r2.as_ref() && r1.as_ref() == l2.as_ref())
-            }
-            // Ordered pairs are equal if their components are equal in order
-            (
-                Set::OrderedPair {
-                    first: f1,
-                    second: s1,
-                    ..
-                },
-                Set::OrderedPair {
-                    first: f2,
-                    second: s2,
-                    ..
-                },
-            ) => f1.as_ref() == f2.as_ref() && s1.as_ref() == s2.as_ref(),
-            // For all other cases, compare based on elements
-            _ => {
-                let mut self_elements = self.elements();
-                let mut other_elements = other.elements();
-
-                if self_elements.len() != other_elements.len() {
-                    return false;
+                    _ => false, // Simplified implementation
                 }
-
-                // Sort elements by their string representation for consistent comparison
-                self_elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-                other_elements.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-
-                // Compare each element recursively
-                self_elements
-                    .iter()
-                    .zip(other_elements.iter())
-                    .all(|(a, b)| a == b)
             }
+            Set::BigIntersection { family, .. } => {
+                // If this is a set of sets, check if the element is in all of the member sets
+                match family.as_ref() {
+                    Set::Enumeration { elements, .. } => {
+                        if elements.is_empty() {
+                            return true; // Intersection of empty family is the universe
+                        }
+                        for set_elem in elements {
+                            if let SetElement::Set(inner_set) = set_elem {
+                                if !inner_set.contains(element) {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                        true
+                    }
+                    _ => false, // Simplified implementation
+                }
+            }
+            Set::PowerSet { base, .. } => {
+                // Check if element is a set and is a subset of the base set
+                if let SetElement::Set(elem_set) = element {
+                    // A set is in the power set if it's a subset of the base set
+                    match elem_set.as_ref() {
+                        Set::Enumeration { elements, .. } => {
+                            for e in elements {
+                                if !base.contains(e) {
+                                    return false;
+                                }
+                            }
+                            true
+                        }
+                        Set::Empty => true, // Empty set is a subset of any set
+                        _ => false,         // Simplified implementation
+                    }
+                } else {
+                    false
+                }
+            }
+            Set::Separation {
+                source, condition, ..
+            } => {
+                source.contains(element)
+                    && match condition {
+                        ElementCondition::IsEmpty => false, // Simplified: no element is empty
+                        ElementCondition::Contains(contained) => {
+                            if let SetElement::Set(elem_set) = element {
+                                elem_set.contains(contained)
+                            } else {
+                                false
+                            }
+                        }
+                        ElementCondition::ContainedIn(container) => container.contains(element),
+                        ElementCondition::NotContainedIn(container) => !container.contains(element),
+                    }
+            }
+            Set::Replacement {
+                source, mapping, ..
+            } => {
+                // This is a complex case - for a simplified version, we'll just return false
+                false
+            }
+            Set::OrderedPair { first, second, .. } => {
+                // Kuratowski pair: {{a}, {a,b}}
+                if let SetElement::Set(inner_set) = element {
+                    match inner_set.as_ref() {
+                        Set::Enumeration { elements, .. } => {
+                            if elements.len() == 1 {
+                                if let SetElement::Set(single_elem) = &elements[0] {
+                                    return single_elem.as_ref() == first.as_ref();
+                                }
+                            } else if elements.len() == 2 {
+                                let contains_first = elements.iter().any(|e| {
+                                    if let SetElement::Set(s) = e {
+                                        s.as_ref() == first.as_ref()
+                                    } else {
+                                        false
+                                    }
+                                });
+                                let contains_second = elements.iter().any(|e| {
+                                    if let SetElement::Set(s) = e {
+                                        s.as_ref() == second.as_ref()
+                                    } else {
+                                        false
+                                    }
+                                });
+                                return contains_first && contains_second;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+                false
+            }
+            Set::Complement { set, universe, .. } => {
+                universe.contains(element) && !set.contains(element)
+            }
+            Set::Generic { .. } => false, // Abstract sets don't have concrete elements
+            Set::Parametric { .. } => false, // Parametric sets need specific membership logic
         }
     }
 }
 
-/// Implementation of SetProperties
-/// Provides methods to create and manage set properties
-impl SetProperty {
-    /// Creates a new SetProperties with all fields set to false
-    pub fn new() -> VariantSet<SetProperty> {
-        let mut set = VariantSet::new();
-        set.insert(SetProperty::IsEmpty(false));
-        set.insert(SetProperty::IsFinite(false));
-        set.insert(SetProperty::IsCountable(false));
-        set.insert(SetProperty::IsWellOrdered(false));
-        set.insert(SetProperty::IsTransitive(false));
-        set.insert(SetProperty::IsOrdinal(false));
-        set.insert(SetProperty::IsCardinal(false));
-        set.insert(SetProperty::IsReflexive(false));
-        set.insert(SetProperty::IsSymmetric(false));
-        set
-    }
+static LAZY_EMPTY_PROPERTIES: LazyLock<VariantSet<SetProperty>> =
+    LazyLock::new(|| default_empty_properties());
 
-    /// Creates properties for the empty set
-    pub fn empty() -> VariantSet<SetProperty> {
-        let mut set = VariantSet::new();
-        set.insert(SetProperty::Cardinality(
-            CardinalityPropertyVariant::Finite(0),
-        ));
-        set.insert(SetProperty::IsEmpty(true));
-        set.insert(SetProperty::IsFinite(true));
-        set.insert(SetProperty::IsCountable(true));
-        set.insert(SetProperty::IsWellOrdered(true));
-        set.insert(SetProperty::IsTransitive(true));
-        set.insert(SetProperty::IsOrdinal(true));
-        set.insert(SetProperty::IsCardinal(true));
-        set.insert(SetProperty::IsReflexive(true));
-        set.insert(SetProperty::IsSymmetric(true));
-        set
-    }
-}
-
-/// ZFC axiom verification
-/// Provides methods to verify that sets satisfy the ZFC axioms
-pub struct ZFCVerifier;
-
-impl ZFCVerifier {
-    /// Verify the extensionality axiom: two sets are equal if they have the same elements
-    /// This is a fundamental axiom that defines set equality
-    pub fn verify_extensionality(a: &Set, b: &Set) -> bool {
-        a == b
-    }
-
-    /// Verify the empty set axiom: there exists a set with no elements
-    /// This axiom guarantees the existence of at least one set
-    pub fn verify_empty_set(x: &Set) -> bool {
-        x.is_empty()
-    }
-
-    /// Verify the pairing axiom: for any a and b, there exists a set containing exactly a and b
-    /// This axiom allows us to construct sets with exactly two elements
-    pub fn verify_pairing(pair: &Set, a: &Set, b: &Set) -> bool {
-        // Check if the pair contains both elements
-        let contains_a = pair.contains(a);
-        let contains_b = pair.contains(b);
-
-        // Check if the pair contains only these elements
-        let elements = pair.elements();
-        let correct_size = if a == b { 1 } else { 2 };
-
-        contains_a
-            && contains_b
-            && elements.len() == correct_size
-            && elements.iter().all(|x| x == a || x == b)
-    }
-
-    /// Verify the union axiom: for any set of sets, there exists a set containing all elements
-    /// This axiom allows us to combine multiple sets into one
-    pub fn verify_union(union: &Set, sets: &[Set]) -> bool {
-        // Every element in any of the sets should be in the union
-        sets.iter()
-            .all(|s| s.elements().iter().all(|x| union.contains(x)))
-            // Every element in the union should be in at least one of the sets
-            && union
-                .elements()
-                .iter()
-                .all(|x| sets.iter().any(|s| s.contains(x)))
-    }
-
-    /// Verify the power set axiom: for any set, there exists a set of all its subsets
-    /// This axiom allows us to construct sets of subsets
-    pub fn verify_power_set(power: &Set, x: &Set) -> bool {
-        // Every element in the power set should be a subset of x
-        power.elements().iter().all(|s| s.is_subset_of(x))
-            // Every subset of x should be in the power set
-            && power.elements().iter().all(|s| power.contains(s))
-    }
-
-    /// Verify the foundation axiom: every non-empty set has an ∈-minimal element
-    /// This axiom prevents infinite descending chains of membership
-    pub fn verify_foundation(x: &Set) -> bool {
-        x.is_well_founded()
-    }
-
-    /// Verify the separation axiom: for any set and predicate, there exists a subset
-    /// This axiom allows us to construct subsets using predicates
-    pub fn verify_separation<P>(subset: &Set, x: &Set, predicate: P) -> bool
-    where
-        P: Fn(&Set) -> bool,
-    {
-        // The subset should be contained in x
-        subset.is_subset_of(x)
-            // Every element in the subset should satisfy the predicate
-            && subset.elements().iter().all(|s| predicate(s))
-            // Every element in x that satisfies the predicate should be in the subset
-            && x.elements()
-                .iter()
-                .filter(|s| predicate(s))
-                .all(|s| subset.contains(s))
-    }
-
-    /// Verify the replacement axiom: for any set and function, there exists an image set
-    /// This axiom allows us to construct new sets by applying functions to existing sets
-    pub fn verify_replacement<F>(image: &Set, domain: &Set, f: F) -> bool
-    where
-        F: Fn(&Set) -> Set,
-    {
-        // Every element in the domain should map to an element in the image
-        domain.elements().iter().all(|x| image.contains(&f(x)))
-            // Every element in the image should be the image of some element in the domain
-            && image
-                .elements()
-                .iter()
-                .all(|y| domain.elements().iter().any(|x| f(x) == *y))
-    }
-}
-
-/// Helper functions for set construction
-/// These provide convenient ways to create common set structures
-
-/// Creates an empty set
-/// Returns the unique empty set guaranteed by the Empty Set Axiom
-pub fn empty_set() -> Set {
-    Set::empty()
-}
-
-/// Creates a singleton set containing one element
-/// Returns {x} for any given set x
-pub fn singleton_set(x: Set) -> Set {
-    Set::singleton(x)
-}
-
-/// Creates a pair set containing two elements
-/// Returns {a, b} for any given sets a and b
-pub fn pair_set(a: Set, b: Set) -> Set {
-    Set::pair(a, b)
-}
-
-/// Creates a union of multiple sets
-/// Returns the union of all sets in the given slice
-pub fn union_set(sets: &[Set]) -> Set {
-    let mut result = empty_set();
-    for set in sets {
-        result = result.union(set.clone());
-    }
-    result
-}
-
-/// Creates a power set of a given set
-/// Returns P(x) containing all subsets of x
-pub fn power_set(x: &Set) -> Set {
-    x.clone().power_set()
-}
-
-/// Creates an intersection of multiple sets
-/// Returns the intersection of all sets in the given slice
-/// If the slice is empty, returns the empty set
-pub fn intersection_set(sets: &[Set]) -> Set {
-    if sets.is_empty() {
-        return Set::empty();
-    }
-    let mut result = sets[0].clone();
-    for set in &sets[1..] {
-        result = result.intersection(set.clone());
-    }
-    result
-}
-
-/// Creates a difference of two sets
-/// Returns A - B for given sets A and B
-pub fn difference_set(a: &Set, b: &Set) -> Set {
-    a.clone().difference(b.clone())
-}
-
-/// Implementation of Debug trait for ElementCondition
-/// Provides a human-readable representation of element conditions
-impl fmt::Debug for ElementCondition {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            ElementCondition::IsEmpty => write!(f, "is_empty"),
-            ElementCondition::Contains(s) => write!(f, "contains({:?})", s),
-            ElementCondition::ContainedIn(s) => write!(f, "contained_in({:?})", s),
-            ElementCondition::NotContainedIn(s) => write!(f, "not_contained_in({:?})", s),
-        }
-    }
-}
-
-/// Implementation of Debug trait for SetMapping
-/// Provides a human-readable representation of set mappings
-impl fmt::Debug for SetMapping {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            SetMapping::Identity => write!(f, "id"),
-            SetMapping::Singleton => write!(f, "singleton"),
-            SetMapping::FirstProjection => write!(f, "π₁"),
-            SetMapping::SecondProjection => write!(f, "π₂"),
-            SetMapping::Composition(g, h) => write!(f, "({:?} ∘ {:?})", g, h),
-            SetMapping::Custom(s) => write!(f, "custom({})", s),
-        }
-    }
-}
-
-/// Implementation of Debug trait for Cardinality
-/// Provides a human-readable representation of set cardinalities
-impl fmt::Debug for CardinalityPropertyVariant {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            CardinalityPropertyVariant::Finite(n) => write!(f, "|{}|", n),
-            CardinalityPropertyVariant::CountablyInfinite => write!(f, "ℵ₀"),
-            CardinalityPropertyVariant::ContinuumSize => write!(f, "2^ℵ₀"),
-            CardinalityPropertyVariant::LargerCardinal(n) => write!(f, "ℵ_{}", n),
-        }
-    }
-}
-
-impl VariantSet<SetProperty> {
-    /// Gets the ordinal property
-    pub fn is_ordinal(&self) -> Option<bool> {
-        self.inner.iter().find_map(|p| {
-            if let SetProperty::IsOrdinal(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Gets the transitive property
-    pub fn is_transitive(&self) -> Option<bool> {
-        self.inner.iter().find_map(|p| {
-            if let SetProperty::IsTransitive(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Gets the well-ordered property
-    pub fn is_well_ordered(&self) -> Option<bool> {
-        self.inner.iter().find_map(|p| {
-            if let SetProperty::IsWellOrdered(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Gets the reflexive property
-    pub fn is_reflexive(&self) -> Option<bool> {
-        self.inner.iter().find_map(|p| {
-            if let SetProperty::IsReflexive(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-
-    /// Gets the symmetric property
-    pub fn is_symmetric(&self) -> Option<bool> {
-        self.inner.iter().find_map(|p| {
-            if let SetProperty::IsSymmetric(b) = &p.0 {
-                Some(*b)
-            } else {
-                None
-            }
-        })
-    }
-}
-
-impl Hash for VariantSet<SetOpProperty> {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        let mut elements: Vec<_> = self.inner.iter().collect();
-        elements.sort_by_key(|x| format!("{:?}", x));
-        elements.hash(state);
-    }
-}
-
-impl Hash for VariantSet<OrdinalOpProperty> {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        let mut elements: Vec<_> = self.inner.iter().collect();
-        elements.sort_by_key(|x| format!("{:?}", x));
-        elements.hash(state);
+// Implement From<Set> for SetElement to wrap a Set as a SetElement
+impl From<Set> for SetElement {
+    fn from(set: Set) -> Self {
+        SetElement::Set(Box::new(set))
     }
 }

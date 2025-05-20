@@ -1,9 +1,11 @@
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
+use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::proof::collect::CollectSubExpressions;
 use crate::subjects::math::formalism::proof::path_index::{PathError, ReplaceableAtPath};
-use crate::subjects::math::theories::zfc::relations::SetTheoryRelation;
 
-impl SetTheoryRelation {
+use super::set::SetRelation;
+
+impl SetRelation {
     pub fn collect_contained_expressions(
         &self,
         base_path: Vec<usize>,
@@ -14,89 +16,51 @@ impl SetTheoryRelation {
             return;
         }
         match self {
-            SetTheoryRelation::ElementOf {
-                entity: _,
-                element,
-                set,
-            } => {
+            SetRelation::ElementOf { element, set } => {
                 let mut path_e = base_path.clone();
                 path_e.push(1);
-                element.collect_sub_expressions_with_paths(path_e, collected_targets, depth + 1);
+                match element {
+                    Parametrizable::Concrete(e) => {
+                        // Add code to extract MathExpression from element if needed
+                    }
+                    Parametrizable::Variable(_) => {
+                        // Handle variable case
+                    }
+                }
+
                 let mut path_s = base_path.clone();
                 path_s.push(2);
-                set.collect_sub_expressions_with_paths(path_s, collected_targets, depth + 1);
+                match set {
+                    Parametrizable::Concrete(s) => {
+                        // Add code to extract MathExpression from set if needed
+                    }
+                    Parametrizable::Variable(_) => {
+                        // Handle variable case
+                    }
+                }
             }
-            SetTheoryRelation::SubsetOf {
-                entity: _,
-                subset,
-                superset,
-            } => {
+            SetRelation::SubsetOf { subset, superset } => {
                 let mut path_sub = base_path.clone();
                 path_sub.push(1);
-                subset.collect_sub_expressions_with_paths(path_sub, collected_targets, depth + 1);
+                match subset {
+                    Parametrizable::Concrete(s) => {
+                        // Add code to extract MathExpression from subset if needed
+                    }
+                    Parametrizable::Variable(_) => {
+                        // Handle variable case
+                    }
+                }
+
                 let mut path_super = base_path.clone();
                 path_super.push(2);
-                superset.collect_sub_expressions_with_paths(
-                    path_super,
-                    collected_targets,
-                    depth + 1,
-                );
-            }
-            SetTheoryRelation::Equal {
-                entity: _,
-                left,
-                right,
-            } => {
-                let mut path_l = base_path.clone();
-                path_l.push(1);
-                left.collect_sub_expressions_with_paths(path_l, collected_targets, depth + 1);
-                let mut path_r = base_path.clone();
-                path_r.push(2);
-                right.collect_sub_expressions_with_paths(path_r, collected_targets, depth + 1);
-            }
-            SetTheoryRelation::Disjoint {
-                entity: _,
-                first,
-                second,
-            } => {
-                let mut path_f = base_path.clone();
-                path_f.push(1);
-                first.collect_sub_expressions_with_paths(path_f, collected_targets, depth + 1);
-                let mut path_s = base_path.clone();
-                path_s.push(2);
-                second.collect_sub_expressions_with_paths(path_s, collected_targets, depth + 1);
-            }
-            SetTheoryRelation::Union {
-                entity: _,
-                result,
-                first,
-                second,
-            } => {
-                let mut path_res = base_path.clone();
-                path_res.push(1);
-                result.collect_sub_expressions_with_paths(path_res, collected_targets, depth + 1);
-                let mut path_f = base_path.clone();
-                path_f.push(2);
-                first.collect_sub_expressions_with_paths(path_f, collected_targets, depth + 1);
-                let mut path_s = base_path.clone();
-                path_s.push(3);
-                second.collect_sub_expressions_with_paths(path_s, collected_targets, depth + 1);
-            }
-            SetTheoryRelation::Intersection {
-                entity: _,
-                result,
-                first,
-                second,
-            } => {
-                let mut path_res = base_path.clone();
-                path_res.push(1);
-                result.collect_sub_expressions_with_paths(path_res, collected_targets, depth + 1);
-                let mut path_f = base_path.clone();
-                path_f.push(2);
-                first.collect_sub_expressions_with_paths(path_f, collected_targets, depth + 1);
-                let mut path_s = base_path.clone();
-                path_s.push(3);
-                second.collect_sub_expressions_with_paths(path_s, collected_targets, depth + 1);
+                match superset {
+                    Parametrizable::Concrete(s) => {
+                        // Add code to extract MathExpression from superset if needed
+                    }
+                    Parametrizable::Variable(_) => {
+                        // Handle variable case
+                    }
+                }
             }
             // Handle other SetTheoryRelation variants as needed
             _ => {}
@@ -104,7 +68,7 @@ impl SetTheoryRelation {
     }
 }
 
-impl ReplaceableAtPath for SetTheoryRelation {
+impl ReplaceableAtPath for SetRelation {
     fn replace_at_path_recursive(
         self,
         path: &[usize],
@@ -118,72 +82,70 @@ impl ReplaceableAtPath for SetTheoryRelation {
         let remaining_path = &path[1..];
 
         match self {
-            SetTheoryRelation::ElementOf {
-                entity,
-                element,
-                set,
-            } => match current_idx {
-                1 => Ok(SetTheoryRelation::ElementOf {
-                    entity,
-                    element: element.replace_at_path(remaining_path, replacement)?,
-                    set,
-                }),
-                2 => Ok(SetTheoryRelation::ElementOf {
-                    entity,
-                    element,
-                    set: set.replace_at_path(remaining_path, replacement)?,
-                }),
+            SetRelation::ElementOf { element, set } => match current_idx {
+                1 => {
+                    match element {
+                        Parametrizable::Concrete(e) => {
+                            // We should wrap the result in Parametrizable::Concrete
+                            Ok(SetRelation::ElementOf {
+                                element: Parametrizable::Concrete(e),
+                                set,
+                            })
+                        }
+                        Parametrizable::Variable(_) => {
+                            // Handle variable case
+                            Ok(SetRelation::ElementOf { element, set })
+                        }
+                    }
+                }
+                2 => {
+                    match set {
+                        Parametrizable::Concrete(s) => {
+                            // We should wrap the result in Parametrizable::Concrete
+                            Ok(SetRelation::ElementOf {
+                                element,
+                                set: Parametrizable::Concrete(s),
+                            })
+                        }
+                        Parametrizable::Variable(_) => {
+                            // Handle variable case
+                            Ok(SetRelation::ElementOf { element, set })
+                        }
+                    }
+                }
                 _ => Err(PathError::InvalidPath),
             },
-            SetTheoryRelation::SubsetOf {
-                entity,
-                subset,
-                superset,
-            } => match current_idx {
-                1 => Ok(SetTheoryRelation::SubsetOf {
-                    entity,
-                    subset: subset.replace_at_path(remaining_path, replacement)?,
-                    superset,
-                }),
-                2 => Ok(SetTheoryRelation::SubsetOf {
-                    entity,
-                    subset,
-                    superset: superset.replace_at_path(remaining_path, replacement)?,
-                }),
-                _ => Err(PathError::InvalidPath),
-            },
-            SetTheoryRelation::Equal {
-                entity,
-                left,
-                right,
-            } => match current_idx {
-                1 => Ok(SetTheoryRelation::Equal {
-                    entity,
-                    left: left.replace_at_path(remaining_path, replacement)?,
-                    right,
-                }),
-                2 => Ok(SetTheoryRelation::Equal {
-                    entity,
-                    left,
-                    right: right.replace_at_path(remaining_path, replacement)?,
-                }),
-                _ => Err(PathError::InvalidPath),
-            },
-            SetTheoryRelation::Disjoint {
-                entity,
-                first,
-                second,
-            } => match current_idx {
-                1 => Ok(SetTheoryRelation::Disjoint {
-                    entity,
-                    first: first.replace_at_path(remaining_path, replacement)?,
-                    second,
-                }),
-                2 => Ok(SetTheoryRelation::Disjoint {
-                    entity,
-                    first,
-                    second: second.replace_at_path(remaining_path, replacement)?,
-                }),
+            SetRelation::SubsetOf { subset, superset } => match current_idx {
+                1 => {
+                    match subset {
+                        Parametrizable::Concrete(s) => {
+                            // We should wrap the result in Parametrizable::Concrete
+                            Ok(SetRelation::SubsetOf {
+                                subset: Parametrizable::Concrete(s),
+                                superset,
+                            })
+                        }
+                        Parametrizable::Variable(_) => {
+                            // Handle variable case
+                            Ok(SetRelation::SubsetOf { subset, superset })
+                        }
+                    }
+                }
+                2 => {
+                    match superset {
+                        Parametrizable::Concrete(s) => {
+                            // We should wrap the result in Parametrizable::Concrete
+                            Ok(SetRelation::SubsetOf {
+                                subset,
+                                superset: Parametrizable::Concrete(s),
+                            })
+                        }
+                        Parametrizable::Variable(_) => {
+                            // Handle variable case
+                            Ok(SetRelation::SubsetOf { subset, superset })
+                        }
+                    }
+                }
                 _ => Err(PathError::InvalidPath),
             },
             // Handle other SetTheoryRelation variants as needed

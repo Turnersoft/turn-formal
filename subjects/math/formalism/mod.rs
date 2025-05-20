@@ -5,6 +5,7 @@
 // Uncomment to see various examples of compile-time errors in action
 // pub mod counter_example;
 
+pub mod abstraction_level;
 pub mod complexity;
 pub mod expressions;
 pub mod interpretation;

@@ -19,7 +19,7 @@ use wasm_bindgen::prelude::*;
 
 // Removed unused imports from the refactored traversal module
 // use self::traversal::{PotentialTheoremTarget, TargetCollector};
-use super::super::theories::zfc::relations::SetTheoryRelation;
+use super::super::theories::zfc::set::SetRelation;
 use super::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
 use super::relations::{MathRelation, RelationDetail};
@@ -35,6 +35,17 @@ pub mod tactics;
 pub use tactics::{
     CaseAnalysisBuilder, CaseResult, DecompositionMethod, InductionType, RewriteDirection, Tactic,
 };
+
+// Remove the invalid re-exports from super
+// These are defined in this file, no need to import them from super
+// pub use super::ProofForest;
+// pub use super::ProofNode;
+// pub use super::TheoremRegistry;
+// pub use super::get_theorem_registry;
+
+use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::theories::groups::definitions::GroupExpression;
+use crate::subjects::math::theories::rings::definitions::{FieldExpression, RingExpression};
 
 /// Status of a proof branch
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -370,17 +381,292 @@ fn find_subexpr_in_expr(expr: &MathExpression, pattern: &MathExpression) -> Opti
             }
             None
         }
-        MathExpression::Expression(theory_expr) => {
-            // Instantiate theory-specific expressions
-            match theory_expr {
-                // Add cases for theory expressions
-                // For now, just return None
-                _ => None,
-            }
+        MathExpression::Expression(theory_expr) => match theory_expr {
+            TheoryExpression::Group(group_expr) => find_subexpr_in_group_expr(group_expr, pattern),
+            TheoryExpression::Ring(ring_expr) => find_subexpr_in_ring_expr(ring_expr, pattern),
+            TheoryExpression::Field(field_expr) => find_subexpr_in_field_expr(field_expr, pattern),
+        },
+        MathExpression::Relation(relation) => {
+            // Check if the pattern is within this relation
+            find_subexpr_in_relation_expr(relation, pattern)
         }
-        // Handle other expression types
+        // These expression types don't contain subexpressions
+        MathExpression::Var(_) | MathExpression::Number(_) | MathExpression::Object(_) => None,
+    }
+}
+
+/// Helper function to find a subexpression within a group expression
+fn find_subexpr_in_group_expr(
+    expr: &GroupExpression,
+    pattern: &MathExpression,
+) -> Option<Vec<usize>> {
+    use crate::subjects::math::theories::groups::definitions::GroupExpression;
+
+    match expr {
+        GroupExpression::Operation { left, right, .. } => {
+            // Check left operand
+            if let Some(mut path) = find_subexpr_in_parametrizable(left, pattern) {
+                path.insert(0, 0); // Add index for left
+                return Some(path);
+            }
+
+            // Check right operand
+            if let Some(mut path) = find_subexpr_in_parametrizable(right, pattern) {
+                path.insert(0, 1); // Add index for right
+                return Some(path);
+            }
+
+            None
+        }
+        GroupExpression::Inverse { element, .. } => {
+            if let Some(mut path) = find_subexpr_in_parametrizable(element, pattern) {
+                path.insert(0, 0);
+                return Some(path);
+            }
+            None
+        }
+        GroupExpression::Power { base, .. } => {
+            if let Some(mut path) = find_subexpr_in_parametrizable(base, pattern) {
+                path.insert(0, 0);
+                return Some(path);
+            }
+            None
+        }
+        GroupExpression::Commutator { a, b, .. } => {
+            // Check the 'a' operand
+            if let Some(mut path) = find_subexpr_in_parametrizable(a, pattern) {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check the 'b' operand
+            if let Some(mut path) = find_subexpr_in_parametrizable(b, pattern) {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        // Other group expression types may need similar handling
+        // depending on their structure
         _ => None,
     }
+}
+
+/// Helper function to find a subexpression within a parametrizable item
+fn find_subexpr_in_parametrizable<T>(
+    param: &Parametrizable<T>,
+    pattern: &MathExpression,
+) -> Option<Vec<usize>>
+where
+    T: Clone + PartialEq,
+{
+    use crate::subjects::math::formalism::extract::Parametrizable;
+
+    match param {
+        Parametrizable::Concrete(_) => {
+            // Convert to MathExpression and compare directly
+            // This is a simplified approach - a complete implementation would
+            // need proper conversion from concrete type to MathExpression
+            None
+        }
+        Parametrizable::Variable(id) => {
+            // Check if the variable matches our pattern
+            if &MathExpression::Var(id.clone()) == pattern {
+                return Some(vec![]);
+            }
+            None
+        }
+    }
+}
+
+/// Helper function to find a subexpression within a ring expression
+fn find_subexpr_in_ring_expr(
+    expr: &RingExpression,
+    pattern: &MathExpression,
+) -> Option<Vec<usize>> {
+    use crate::subjects::math::theories::rings::definitions::RingExpression;
+
+    match expr {
+        RingExpression::Addition { left, right, .. } => {
+            // Check left operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_ring_expr_to_math_expr(left), pattern)
+            {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check right operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_ring_expr_to_math_expr(right), pattern)
+            {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        RingExpression::Multiplication { left, right, .. } => {
+            // Check left operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_ring_expr_to_math_expr(left), pattern)
+            {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check right operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_ring_expr_to_math_expr(right), pattern)
+            {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        RingExpression::AdditiveInverse { element, .. } => {
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_ring_expr_to_math_expr(element), pattern)
+            {
+                path.insert(0, 0);
+                return Some(path);
+            }
+            None
+        }
+        // Handle other ring expression types as needed
+        _ => None,
+    }
+}
+
+/// Helper function to find a subexpression within a field expression
+fn find_subexpr_in_field_expr(
+    expr: &FieldExpression,
+    pattern: &MathExpression,
+) -> Option<Vec<usize>> {
+    use crate::subjects::math::theories::rings::definitions::FieldExpression;
+
+    match expr {
+        FieldExpression::Addition { left, right, .. } => {
+            // Check left operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_field_expr_to_math_expr(left), pattern)
+            {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check right operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_field_expr_to_math_expr(right), pattern)
+            {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        FieldExpression::Multiplication { left, right, .. } => {
+            // Check left operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_field_expr_to_math_expr(left), pattern)
+            {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check right operand
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_field_expr_to_math_expr(right), pattern)
+            {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        FieldExpression::Division {
+            numerator,
+            denominator,
+            ..
+        } => {
+            // Check numerator
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_field_expr_to_math_expr(numerator), pattern)
+            {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check denominator
+            if let Some(mut path) =
+                find_subexpr_in_expr(&convert_field_expr_to_math_expr(denominator), pattern)
+            {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        // Handle other field expression types as needed
+        _ => None,
+    }
+}
+
+/// Helper function to find a subexpression within a relation
+fn find_subexpr_in_relation_expr(
+    relation: &MathRelation,
+    pattern: &MathExpression,
+) -> Option<Vec<usize>> {
+    use crate::subjects::math::formalism::relations::MathRelation;
+
+    match relation {
+        MathRelation::Equal { left, right, .. } => {
+            // Check left side
+            if let Some(mut path) = find_subexpr_in_expr(left, pattern) {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check right side
+            if let Some(mut path) = find_subexpr_in_expr(right, pattern) {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        MathRelation::Implies(ante, cons) => {
+            // Check antecedent (first box)
+            if let Some(mut path) = find_subexpr_in_relation_expr(ante, pattern) {
+                path.insert(0, 0);
+                return Some(path);
+            }
+
+            // Check consequent (second box)
+            if let Some(mut path) = find_subexpr_in_relation_expr(cons, pattern) {
+                path.insert(0, 1);
+                return Some(path);
+            }
+
+            None
+        }
+        // Handle other relation types
+        _ => None,
+    }
+}
+
+/// Helper utility to convert a ring expression to a math expression
+fn convert_ring_expr_to_math_expr(expr: &RingExpression) -> MathExpression {
+    use crate::subjects::math::formalism::expressions::TheoryExpression;
+    MathExpression::Expression(TheoryExpression::Ring(expr.clone()))
+}
+
+/// Helper utility to convert a field expression to a math expression
+fn convert_field_expr_to_math_expr(expr: &FieldExpression) -> MathExpression {
+    use crate::subjects::math::formalism::expressions::TheoryExpression;
+    MathExpression::Expression(TheoryExpression::Field(expr.clone()))
 }
 
 /// Helper function to replace a subexpression at a specific path
@@ -409,9 +695,136 @@ fn replace_subexpr_in_expr(
                 expr.clone()
             }
         }
-        // Handle other expression types
+        MathExpression::Expression(theory_expr) => {
+            let new_theory_expr = match theory_expr {
+                TheoryExpression::Group(group_expr) => TheoryExpression::Group(
+                    replace_subexpr_in_group_expr(group_expr, &path[1..], replacement),
+                ),
+                TheoryExpression::Ring(ring_expr) => TheoryExpression::Ring(
+                    replace_subexpr_in_ring_expr(ring_expr, &path[1..], replacement),
+                ),
+                TheoryExpression::Field(field_expr) => TheoryExpression::Field(
+                    replace_subexpr_in_field_expr(field_expr, &path[1..], replacement),
+                ),
+            };
+            MathExpression::Expression(new_theory_expr)
+        }
+        MathExpression::Relation(relation) => MathExpression::Relation(Box::new(
+            replace_subexpr_in_relation(relation, expr, path, replacement),
+        )),
+        // For these types, no replacement is possible
         _ => expr.clone(),
     }
+}
+
+/// Helper function to replace a subexpression in a group expression
+fn replace_subexpr_in_group_expr(
+    expr: &GroupExpression,
+    path: &[usize],
+    replacement: &MathExpression,
+) -> GroupExpression {
+    use crate::subjects::math::theories::groups::definitions::GroupExpression;
+
+    if path.is_empty() {
+        // Try to convert replacement to GroupExpression
+        // This is a simplified approach - a complete implementation would
+        // need proper conversion from MathExpression to GroupExpression
+        return expr.clone();
+    }
+
+    match expr {
+        GroupExpression::Operation { group, left, right } => {
+            if path[0] == 0 {
+                // Replace in left operand
+                GroupExpression::Operation {
+                    group: group.clone(),
+                    left: Box::new(replace_subexpr_in_parametrizable(
+                        left,
+                        &path[1..],
+                        replacement,
+                    )),
+                    right: right.clone(),
+                }
+            } else if path[0] == 1 {
+                // Replace in right operand
+                GroupExpression::Operation {
+                    group: group.clone(),
+                    left: left.clone(),
+                    right: Box::new(replace_subexpr_in_parametrizable(
+                        right,
+                        &path[1..],
+                        replacement,
+                    )),
+                }
+            } else {
+                expr.clone()
+            }
+        }
+        // Handle other group expression types
+        _ => expr.clone(),
+    }
+}
+
+/// Helper function to replace a subexpression in a parametrizable item
+fn replace_subexpr_in_parametrizable<T>(
+    param: &Parametrizable<T>,
+    path: &[usize],
+    replacement: &MathExpression,
+) -> Parametrizable<T>
+where
+    T: Clone + PartialEq,
+{
+    use crate::subjects::math::formalism::extract::Parametrizable;
+
+    if path.is_empty() {
+        // Try to convert replacement to Parametrizable<T>
+        // This is a simplified approach - a complete implementation would
+        // need proper conversion from MathExpression to Parametrizable<T>
+        return param.clone();
+    }
+
+    match param {
+        // For concrete values and variables, no replacement is possible in subexpressions
+        _ => param.clone(),
+    }
+}
+
+/// Helper function to replace a subexpression in a ring expression
+fn replace_subexpr_in_ring_expr(
+    expr: &RingExpression,
+    path: &[usize],
+    replacement: &MathExpression,
+) -> RingExpression {
+    use crate::subjects::math::theories::rings::definitions::RingExpression;
+
+    if path.is_empty() {
+        // Try to convert replacement to RingExpression
+        // This is a simplified approach - a complete implementation would
+        // need proper conversion from MathExpression to RingExpression
+        return expr.clone();
+    }
+
+    // Handle ring expression types as needed
+    expr.clone()
+}
+
+/// Helper function to replace a subexpression in a field expression
+fn replace_subexpr_in_field_expr(
+    expr: &FieldExpression,
+    path: &[usize],
+    replacement: &MathExpression,
+) -> FieldExpression {
+    use crate::subjects::math::theories::rings::definitions::FieldExpression;
+
+    if path.is_empty() {
+        // Try to convert replacement to FieldExpression
+        // This is a simplified approach - a complete implementation would
+        // need proper conversion from MathExpression to FieldExpression
+        return expr.clone();
+    }
+
+    // Handle field expression types as needed
+    expr.clone()
 }
 
 /// Helper function to create the next path in a proof
@@ -654,8 +1067,9 @@ impl ProofNode {
         self.apply_tactic(tactic, forest)
     }
 
-    /// Mark this proof branch as complete
+    /// Mark this proof branch as complete is it completes
     pub fn should_complete(self, forest: &mut ProofForest) -> Self {
+        // TODO: assert the proof node is complete
         if let Some(node) = forest.nodes.get_mut(&self.id) {
             node.status = ProofStatus::Complete;
         }

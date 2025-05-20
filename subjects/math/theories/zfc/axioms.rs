@@ -1,7 +1,7 @@
 /// The nine axioms of Zermelo-Fraenkel set theory with Choice (ZFC)
 pub trait ZFCAxioms {
     /// The type that represents a set in the theory
-    type Set;
+    type Set: Clone + PartialEq + std::fmt::Debug;
 
     /// 1. Axiom of Extensionality:
     /// Two sets are equal if and only if they have the same elements

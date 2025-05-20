@@ -1,0 +1,4 @@
+Okay, i agree, now let's edit zfc to be zfca, and let's think about how we can include other theory's set returning operation into Set enum, remember Set is the primary constructor for Set, if some variant for example in GroupExpression returns a set like the GroupExpression::Coset, then that variant should be warpped into a struct that can be used in Set enum as well. This way we will achieve maximum compositionality, which will helps us in the convertion to foundational theory I guess. This is categorical, since we don't worry what exactly is in the morphism, but the source and sink! 
+I want a Set::GroupTheory, Set::FunctionCodomain, Set::
+
+is this a good idea?

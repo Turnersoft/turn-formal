@@ -36,6 +36,8 @@ use crate::subjects::math::formalism::theorem::QuantifiedMathObject;
 use crate::subjects::math::formalism::theorem::Quantification;
 use crate::subjects::math::formalism::theorem::ValueBindedVariable;
 use crate::subjects::math::formalism::extract::Parametrizable;
+
+
 /// Prove the theorem that in a group, inverses are unique
 pub fn prove_inverse_uniqueness() -> Theorem {
     // Create a group structure for our proof
@@ -336,7 +338,7 @@ pub fn prove_identity_uniqueness_with_syntax_trees() -> Theorem {
     theorem
 }
 
-/// Prove that in a group, (ab)⁻¹ = b⁻¹a⁻¹
+/// Prove that in a group, forall a,b in G, (ab)⁻¹ = b⁻¹a⁻¹
 pub fn prove_inverse_product_rule() -> Theorem {
     let group = create_abstract_group();
     let group_param = Box::new(Parametrizable::Concrete(group.clone())); // Wrap group
@@ -440,7 +442,7 @@ pub fn prove_inverse_product_rule() -> Theorem {
     let mut theorem = Theorem {
         id: "inverse_product_rule".to_string(),
         name: "Group Inverse Product Rule".to_string(),
-        description: "Proof that in a group, (ab)⁻¹ = b⁻¹a⁻¹".to_string(),
+        description: "Proof that in a group, forall a,b in G, (ab)⁻¹ = b⁻¹a⁻¹".to_string(),
         goal, 
         proofs: ProofForest::new() 
     };

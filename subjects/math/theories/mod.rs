@@ -77,6 +77,10 @@ impl<T: Clone> VariantSet<T> {
         self.inner.contains(&VariantWrapper(value.clone()))
     }
 
+    pub fn contains(&self, value: &T) -> bool {
+        self.inner.contains(&VariantWrapper(value.clone()))
+    }
+
     pub fn get(&self, value: &T) -> Option<&T> {
         self.inner
             .get(&VariantWrapper(value.clone()))
