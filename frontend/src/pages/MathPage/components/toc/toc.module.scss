@@ -1,0 +1,20 @@
+.toc::part(base) {
+    position: sticky;
+    top: 0;
+}
+
+.toc::part(body) {
+    overflow: auto;
+    height: 50rem;
+}
+
+.tocItem button {
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    padding: 8px;
+    &:hover {
+        background-color: #f0f0f0;
+    }
+}
