@@ -7,6 +7,8 @@ import DependencyGraph from "../dependency_graph/dependency_graph";
 import DebugDisplay from "../debug_display/debug_display";
 import DefinitionDetail from "../definition_detail/definition_detail";
 import TheoremDetail from "../theorem_detail/theorem_detail";
+import AbstractionViewer from './abstraction_viewer';
+import { fetchGroupTheoryAbstractionData } from '../../../../services/mathAbstractionService';
 
 // Helper function to extract all type names from a type string
 function extractTypeNames(typeStr: string): string[] {
@@ -235,6 +237,9 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
   const [showTheorems, setShowTheorems] = useState(false);
   const theoremsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const [showAbstractionViewer, setShowAbstractionViewer] = useState(false);
+  const [abstractionData, setAbstractionData] = useState<Record<string, any>>({});
+  const [abstractionLoading, setAbstractionLoading] = useState(false);
 
   // Function to scroll to a definition when clicked
   const scrollToDefinition = (name: string) => {
@@ -466,6 +471,31 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     }
   }, [content, loading]);
 
+  // Load group theory definitions with abstraction levels if on the group theory page
+  useEffect(() => {
+    if (content && content.theory && content.theory.toLowerCase().includes('group')) {
+      // Check if we're on the group theory page
+      console.log("Detected group theory page, loading abstraction viewer data");
+      
+      const loadAbstractionData = async () => {
+        setAbstractionLoading(true);
+        try {
+          const data = await fetchGroupTheoryAbstractionData();
+          setAbstractionData(data);
+          setShowAbstractionViewer(true);
+        } catch (error) {
+          console.error("Error loading abstraction data:", error);
+        } finally {
+          setAbstractionLoading(false);
+        }
+      };
+      
+      loadAbstractionData();
+    } else {
+      setShowAbstractionViewer(false);
+    }
+  }, [content]);
+
   // Early rendering states
   if (loading) {
     return (
@@ -502,6 +532,21 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
       </div>
 
       <div className={styles.mainContent}>
+        {/* Add abstraction viewer if we're on the group theory page */}
+        {showAbstractionViewer && (
+          <div className={styles.abstractionViewerContainer}>
+            <h2>Group Theory Abstraction Levels</h2>
+            <p>Explore group theory definitions at different abstraction levels with various display modes.</p>
+            {abstractionLoading ? (
+              <div className={styles.loadingIndicator}>Loading abstraction data...</div>
+            ) : Object.keys(abstractionData).length > 0 ? (
+              <AbstractionViewer sectionData={abstractionData} />
+            ) : (
+              <div className={styles.emptyState}>No abstraction data available</div>
+            )}
+          </div>
+        )}
+        
         <div className={styles.contentGrid}>
           {/* Only show structured content if not showing JSON view */}
           {!showJsonView && (
@@ -524,7 +569,8 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
 
               {/* Empty State */}
               {(!content.theorems || content.theorems.length === 0) &&
-                (!content.definitions || content.definitions.length === 0) && (
+                (!content.definitions || content.definitions.length === 0) &&
+                !showAbstractionViewer && (
                   <div className={styles.emptyState}>
                     No content found in this theory. The JSON files may be
                     empty.

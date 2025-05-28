@@ -16,7 +16,7 @@ use super::super::theories::{
 use super::super::formalism::interpretation::TypeViewOperator;
 use super::{relations::MathRelation, theorem::MathObject};
 
-/// Variables for use in expressions
+/// Variables for use in expressionshttp://localhost:5173/math
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Identifier {
     /// Object variables

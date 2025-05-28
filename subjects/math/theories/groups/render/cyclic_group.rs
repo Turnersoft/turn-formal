@@ -6,8 +6,10 @@ use crate::turn_render::math_node::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
 };
 use crate::turn_render::section_node::{
-    AbstractionMetadata, MathDocument, ParagraphNode, RichTextSegment, Section, SectionContentNode,
-    SelectableProperty, StructuredMathContentNode, ToSectionNode, p_text,
+    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
+    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, ParagraphNode,
+    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
+    StructuredMathContentNode, ToSectionNode,
 };
 
 impl ToTurnMath for CyclicGroup {
@@ -24,10 +26,21 @@ impl ToTurnMath for CyclicGroup {
         // For infinite cyclic group (Z), just use the generator
         // For finite cyclic group (Z_n), add order information
         let final_content = if let Some(order) = self.order {
-            Box::new(MathNodeContent::Text(format!(
-                "C_{} = ⟨{:?}⟩",
-                order, self.generator
-            )))
+            // Use proper mathematical notation C_n with subscript for finite cyclic groups
+            Box::new(MathNodeContent::Identifier {
+                body: "C".to_string(),
+                pre_script: None,
+                mid_script: None,
+                post_script: Some(Box::new(MathNode {
+                    id: format!("{}_order", master_id),
+                    content: Box::new(MathNodeContent::Quantity {
+                        number: order.to_string(),
+                        unit: None,
+                    }),
+                })),
+                primes: 0,
+                is_function: false,
+            })
         } else {
             Box::new(content)
         };
@@ -51,53 +64,82 @@ impl ToSectionNode for CyclicGroup {
         };
 
         // Create content nodes with group information
-        let mut content_nodes = vec![SectionContentNode::Paragraph(p_text(&format!(
-            "Generator: {:?}",
-            self.generator
-        )))];
+        let mut content_nodes = vec![SectionContentNode::Paragraph(ParagraphNode {
+            segments: vec![RichTextSegment::Text(format!(
+                "Generator: {:?}",
+                self.generator
+            ))],
+            alignment: None,
+        })];
 
         // Add order information if available
         if let Some(order) = self.order {
-            content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-                "Order: {}",
-                order
-            ))));
+            content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(format!("Order: {}", order))],
+                alignment: None,
+            }));
         } else {
-            content_nodes.push(SectionContentNode::Paragraph(p_text("Order: Infinite")));
+            content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text("Order: Infinite".to_string())],
+                alignment: None,
+            }));
         }
 
-        // Add core group information
-        content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-            "Base set: {:?}",
-            self.core.base_set
-        ))));
-
-        content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-            "Operation: {:?} ({:?})",
-            self.core.operation.operation_type, self.core.operation.notation
-        ))));
+        // Link to group basic information instead of embedding it directly
+        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+            segments: vec![
+                RichTextSegment::Text("For the underlying group structure, see ".to_string()),
+                RichTextSegment::Link {
+                    content: vec![RichTextSegment::Text("Group Theory".to_string())],
+                    target: LinkTarget::DefinitionId {
+                        term_id: format!("{}-groupbasic-section", id_prefix),
+                        theory_context: Some("GroupTheory".to_string()),
+                    },
+                    tooltip: Some(format!(
+                        "View definition of {}-groupbasic-section",
+                        id_prefix
+                    )),
+                },
+                RichTextSegment::Text(".".to_string()),
+            ],
+            alignment: None,
+        }));
 
         // Add abstraction level specific content
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L1: A general schema for any cyclic group.",
-                )));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L1: A general schema for any cyclic group.".to_string(),
+                    )],
+                    alignment: None,
+                }));
             }
             AbstractionLevel::Level2 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L2: A specific type of cyclic group with defined properties.",
-                )));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L2: A specific type of cyclic group with defined properties."
+                            .to_string(),
+                    )],
+                    alignment: None,
+                }));
             }
             AbstractionLevel::Level3 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L3: A constructor for building a cyclic group from a generator.",
-                )));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L3: A constructor for building a cyclic group from a generator."
+                            .to_string(),
+                    )],
+                    alignment: None,
+                }));
             }
             AbstractionLevel::Level4 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L4: A concrete cyclic group with fully specified generator and elements."
-                )));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L4: A concrete cyclic group with fully specified generator and elements.".to_string(),
+                    )],
+                    alignment: None,
+                }));
             }
         };
 
@@ -134,7 +176,10 @@ impl ToSectionNode for CyclicGroup {
 
         Section {
             id: format!("{}-cyclicgroup-section", id_prefix),
-            title: Some(p_text(&title)),
+            title: Some(ParagraphNode {
+                segments: vec![RichTextSegment::Text(title.clone())],
+                alignment: None,
+            }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathContentNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
@@ -144,55 +189,75 @@ impl ToSectionNode for CyclicGroup {
                     abstraction_meta: Some(AbstractionMetadata {
                         level: Some(formalism_obj_level as u8),
                         source_template_id: None,
-                        specified_parameters: None,
-                        universally_quantified_properties: None,
+                        specified_parameters: vec![],
+                        universally_quantified_properties: vec![],
                     }),
                     selectable_properties: if selectable_props.is_empty() {
-                        None
+                        vec![]
                     } else {
-                        Some(selectable_props)
+                        selectable_props
                     },
                 },
             )],
-            sub_sections: vec![],
-            metadata: Some(vec![(
-                "type".to_string(),
-                "CyclicGroupDefinition".to_string(),
-            )]),
+            metadata: vec![("type".to_string(), "CyclicGroupDefinition".to_string())],
             display_options: None,
         }
     }
 
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
+        let title = main_section.title.as_ref().map_or_else(
+            || "Cyclic Group Document".to_string(),
+            |p| {
+                p.segments
+                    .iter()
+                    .map(|s| match s {
+                        RichTextSegment::Text(t) => t.clone(),
+                        RichTextSegment::StyledText { text, .. } => text.clone(),
+                        _ => "".to_string(),
+                    })
+                    .collect::<String>()
+            },
+        );
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            title: main_section.title.as_ref().map_or_else(
-                || "Cyclic Group Document".to_string(),
-                |p| {
-                    p.segments
-                        .iter()
-                        .map(|s| match s {
-                            RichTextSegment::Text(t) => t.clone(),
-                            RichTextSegment::StyledText { text, .. } => text.clone(),
-                            _ => "".to_string(),
-                        })
-                        .collect::<String>()
+            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+                title,
+                paper_type: crate::turn_render::section_node::PaperType::Research,
+                venue: None,
+                peer_reviewed: false,
+                content_metadata: ContentMetadata {
+                    language: Some("en-US".to_string()),
+                    version: Some("1.0".to_string()),
+                    created_at: None,
+                    last_modified: None,
+                    content_hash: None,
                 },
-            ),
-            language: Some("en-US".to_string()),
-            version: Some("1.0".to_string()),
-            authors: None,
-            date_published: None,
-            date_modified: None,
-            abstract_content: None,
-            table_of_contents: None,
-            body: vec![main_section],
-            footnotes: None,
-            glossary: None,
-            bibliography: None,
-            document_metadata: None,
+                academic_metadata: AcademicMetadata {
+                    authors: vec![],
+                    date_published: None,
+                    date_modified: None,
+                    venue: None,
+                    doi: None,
+                    keywords: vec![],
+                },
+                structure: DocumentStructure {
+                    abstract_content: None,
+                    table_of_contents: None,
+                    body: vec![main_section],
+                    footnotes: vec![],
+                    glossary: vec![],
+                    bibliography: vec![],
+                },
+                relationships: DocumentRelationships {
+                    parent_documents: vec![],
+                    child_documents: vec![],
+                    related_concepts: vec![],
+                    cross_references: vec![],
+                    dependency_graph: None,
+                },
+            }),
         }
     }
 
@@ -213,10 +278,16 @@ impl ToSectionNode for CyclicGroup {
             format!("Infinite Cyclic Group ⟨{:?}⟩", self.generator)
         };
 
-        vec![crate::turn_render::section_node::link_to_definition(
-            &name,
-            &format!("{}-cyclicgroup-section", id_prefix),
-            Some("GroupTheory"),
-        )]
+        vec![RichTextSegment::Link {
+            content: vec![RichTextSegment::Text(name)],
+            target: LinkTarget::DefinitionId {
+                term_id: format!("{}-cyclicgroup-section", id_prefix),
+                theory_context: Some("GroupTheory".to_string()),
+            },
+            tooltip: Some(format!(
+                "View definition of {}-cyclicgroup-section",
+                id_prefix
+            )),
+        }]
     }
 }

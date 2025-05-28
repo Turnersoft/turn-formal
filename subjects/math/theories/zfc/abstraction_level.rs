@@ -9,14 +9,10 @@ use crate::subjects::math::theories::zfc::set::{
 impl GetAbstractionLevel for Set {
     fn level(&self) -> AbstractionLevel {
         match self {
-            Set::Generic {
-                name: _,
-                properties,
-                ..
-            } => {
+            Set::Generic(gs) => {
                 // L1: Abstract schema (e.g., "Set S" with no constraining properties)
                 // L2: A specific "type" of set defined by properties (e.g., "Finite Set F")
-                if properties.inner.is_empty() {
+                if gs.properties.inner.is_empty() {
                     AbstractionLevel::Level1
                 } else {
                     // Any property makes it a more specific type of set.

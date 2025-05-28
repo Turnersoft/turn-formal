@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Theorem, ProofStep, MathNode } from "../../models/math";
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import styles from "./theorem_detail.module.css";
@@ -66,7 +66,7 @@ export default function TheoremDetail({ theorem, index }: TheoremDetailProps) {
   /**
    * Render a proof step with formatted content
    */
-  const renderProofStep = (step: ProofStep | MathNode | string, stepIndex: number) => {
+  const renderProofStep = (step: ProofStep | MathNode | string, _stepIndex: number) => {
     // For string steps, just render them directly
     if (typeof step === 'string') {
       return (

@@ -22,8 +22,11 @@ impl ToTurnMath for Identifier {
                     pre_script: None,
                     mid_script: None,
                     post_script: Some(Box::new(MathNode {
-                        id: master_id,
-                        content: Box::new(MathNodeContent::Text(format!("{}", o))),
+                        id: format!("{}_subscript", master_id),
+                        content: Box::new(MathNodeContent::Quantity {
+                            number: o.to_string(),
+                            unit: None,
+                        }),
                     })),
                     primes: 0,
                     is_function: false,
@@ -36,8 +39,11 @@ impl ToTurnMath for Identifier {
                     pre_script: None,
                     mid_script: None,
                     post_script: Some(Box::new(MathNode {
-                        id: master_id,
-                        content: Box::new(MathNodeContent::Text(format!("{}", m))),
+                        id: format!("{}_subscript", master_id),
+                        content: Box::new(MathNodeContent::Quantity {
+                            number: m.to_string(),
+                            unit: None,
+                        }),
                     })),
                     primes: 0,
                     is_function: false,
@@ -50,8 +56,11 @@ impl ToTurnMath for Identifier {
                     pre_script: None,
                     mid_script: None,
                     post_script: Some(Box::new(MathNode {
-                        id: master_id,
-                        content: Box::new(MathNodeContent::Text(format!("{}", e))),
+                        id: format!("{}_subscript", master_id),
+                        content: Box::new(MathNodeContent::Quantity {
+                            number: e.to_string(),
+                            unit: None,
+                        }),
                     })),
                     primes: 0,
                     is_function: false,
@@ -64,8 +73,11 @@ impl ToTurnMath for Identifier {
                     pre_script: None,
                     mid_script: None,
                     post_script: Some(Box::new(MathNode {
-                        id: master_id,
-                        content: Box::new(MathNodeContent::Text(format!("{}", n))),
+                        id: format!("{}_subscript", master_id),
+                        content: Box::new(MathNodeContent::Quantity {
+                            number: n.to_string(),
+                            unit: None,
+                        }),
                     })),
                     primes: 0,
                     is_function: false,
@@ -77,10 +89,17 @@ impl ToTurnMath for Identifier {
                     body: name.clone(),
                     pre_script: None,
                     mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: master_id,
-                        content: Box::new(MathNodeContent::Text(format!("{}", index))),
-                    })),
+                    post_script: if *index == 0 {
+                        None // No subscript for index 0
+                    } else {
+                        Some(Box::new(MathNode {
+                            id: format!("{}_subscript", master_id),
+                            content: Box::new(MathNodeContent::Quantity {
+                                number: index.to_string(),
+                                unit: None,
+                            }),
+                        }))
+                    },
                     primes: 0,
                     is_function: false,
                 }),

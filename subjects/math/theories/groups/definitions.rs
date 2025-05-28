@@ -177,7 +177,7 @@ impl Default for GroupOperation {
 
 /// Core algebraic structure of a group, containing the minimal data needed to satisfy group axioms
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct GroupBasic {
+pub struct GenericGroup {
     /// The underlying set
     pub base_set: Set,
     /// The binary operation with its properties
@@ -186,9 +186,9 @@ pub struct GroupBasic {
     pub props: VariantSet<GroupProperty>,
 }
 
-impl Default for GroupBasic {
+impl Default for GenericGroup {
     fn default() -> Self {
-        GroupBasic {
+        GenericGroup {
             base_set: Set::empty(),
             operation: GroupOperation::default(),
             props: VariantSet::new(),
@@ -228,7 +228,7 @@ pub enum ProductOperation {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ProductGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
 
     /// The type of product operation used
     pub operation: ProductOperation,
@@ -247,7 +247,7 @@ pub struct ProductGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Group {
     /// Basic abstract group
-    Basic(GroupBasic),
+    Generic(GenericGroup),
 
     // Groups with additional structure (axiomatically defined)
     Topological(TopologicalGroup),
@@ -1163,7 +1163,7 @@ impl GroupRelation {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TopologicalGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The topology on the group
     pub topology: TopologicalSpace,
     /// Properties specific to the topological structure
@@ -1174,7 +1174,7 @@ pub struct TopologicalGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct LieGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The topology on the group
     pub topology: TopologicalSpace,
     /// Smooth manifold structure (represented with charts)
@@ -1187,7 +1187,7 @@ pub struct LieGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CyclicGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The generator element
     pub generator: GroupElement,
     /// The order of the group (can be infinite)
@@ -1198,7 +1198,7 @@ pub struct CyclicGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SymmetricGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The number of elements being permuted
     pub degree: usize,
 }
@@ -1207,7 +1207,7 @@ pub struct SymmetricGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DihedralGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The order of the group (twice the number of sides of the polygon)
     pub order: usize,
 }
@@ -1636,7 +1636,7 @@ pub enum SpecialUnitaryVolumeVariant {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GeneralLinearGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The dimension
     pub dimension: u32,
     /// The field over which the group is defined
@@ -1660,7 +1660,7 @@ pub struct SpecialLinearGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct OrthogonalGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The dimension
     pub dimension: u32,
     /// Matrix specific properties
@@ -1680,7 +1680,7 @@ pub struct SpecialOrthogonalGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct UnitaryGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The dimension
     pub dimension: u32,
     /// Matrix specific properties
@@ -1700,7 +1700,7 @@ pub struct SpecialUnitaryGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct AlternatingGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The degree (n in A_n)
     pub degree: u32,
     /// Permutation specific properties
@@ -1711,7 +1711,7 @@ pub struct AlternatingGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ModularAdditiveGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The modulus
     pub modulus: u32,
     /// Modular specific properties
@@ -1722,7 +1722,7 @@ pub struct ModularAdditiveGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ModularMultiplicativeGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The modulus
     pub modulus: u32,
     /// Modular specific properties
@@ -1733,7 +1733,7 @@ pub struct ModularMultiplicativeGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FreeGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The rank (number of generators)
     pub rank: u32,
     /// Free group specific properties
@@ -1744,7 +1744,7 @@ pub struct FreeGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct QuotientGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     /// The group
     pub group: Box<Group>,
     /// The normal subgroup
@@ -1757,7 +1757,7 @@ impl QuotientGroup {
     /// Creates a new quotient group from a group and a normal subgroup
     pub fn new(group: Group, normal_subgroup: Group, is_maximal: bool) -> Self {
         QuotientGroup {
-            core: GroupBasic::default(),
+            core: GenericGroup::default(),
             group: Box::new(group),
             normal_subgroup: Box::new(normal_subgroup),
             quotient_props: VariantSet::new(),
@@ -1769,7 +1769,7 @@ impl QuotientGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrivialGroup {
     /// The core algebraic group structure
-    pub core: GroupBasic,
+    pub core: GenericGroup,
 }
 
 // --- Structs for Flattened Group Constructions ---
@@ -1777,7 +1777,7 @@ pub struct TrivialGroup {
 /// A group defined as the kernel of a homomorphism
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct KernelGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub defining_homomorphism: Box<GroupHomomorphism>,
     // Potentially add domain_group: Box<Group> if needed for context
 }
@@ -1785,7 +1785,7 @@ pub struct KernelGroup {
 /// A group defined as the image of a homomorphism
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ImageGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub defining_homomorphism: Box<GroupHomomorphism>,
     // Potentially add codomain_group: Box<Group> if needed for context
 }
@@ -1793,14 +1793,14 @@ pub struct ImageGroup {
 /// A group defined as the center of another group: Z(G)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CenterGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
 }
 
 /// A group defined as a subgroup generated by a set of elements
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GeneratedSubgroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
     pub generators: Vec<GroupElement>, // Or GroupExpression?
 }
@@ -1808,7 +1808,7 @@ pub struct GeneratedSubgroup {
 /// A group defined as the normalizer of a subgroup: N_G(H)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NormalizerGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
     pub subgroup_normalized: Box<Group>,
 }
@@ -1816,7 +1816,7 @@ pub struct NormalizerGroup {
 /// A group defined as the centralizer of an element: C_G(x)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CentralizerGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
     pub element_centralized: GroupElement, // Or GroupExpression?
 }
@@ -1824,14 +1824,14 @@ pub struct CentralizerGroup {
 /// A group defined as the commutator subgroup: [G,G]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CommutatorSubgroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
 }
 
 /// A group defined as a Sylow p-subgroup: Syl_p(G)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SylowSubgroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
     pub prime: u64, // Assuming prime is a number
 }
@@ -1839,7 +1839,7 @@ pub struct SylowSubgroup {
 /// A group defined as a wreath product
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct WreathProductGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub base_group: Box<Group>,
     pub acting_group: Box<Group>,
     // Add action details if needed
@@ -1848,7 +1848,7 @@ pub struct WreathProductGroup {
 /// A group defined as a central product
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CentralProductGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub component_groups: Vec<Box<Group>>,
     pub center_identification_map: String, // Details on how centers are identified
 }
@@ -1856,7 +1856,7 @@ pub struct CentralProductGroup {
 /// A group defined as a pullback (fibered product)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct PullbackGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub source_groups: Vec<Box<Group>>, // Groups being mapped from
     pub target_group: Box<Group>,       // Group being mapped to
     pub defining_homomorphisms: Vec<GroupHomomorphism>,
@@ -1865,7 +1865,7 @@ pub struct PullbackGroup {
 /// A group constructed by restricting to a specific subset satisfying group properties
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct RestrictionGroup {
-    pub core: GroupBasic,
+    pub core: GenericGroup,
     pub parent_group: Box<Group>,
     pub restriction_description: String, // How the restriction is defined
 }
@@ -1874,7 +1874,7 @@ impl Group {
     /// Gets the properties of the group
     pub fn get_properties(&self) -> &VariantSet<GroupProperty> {
         match self {
-            Group::Basic(g) => &g.props,
+            Group::Generic(g) => &g.props,
             Group::Topological(g) => &g.core.props,
             Group::Lie(g) => &g.core.props,
             Group::Cyclic(g) => &g.core.props,
@@ -1911,7 +1911,7 @@ impl Group {
     /// Sets the properties of the group
     pub fn set_properties(&mut self, props: VariantSet<GroupProperty>) {
         match self {
-            Group::Basic(g) => g.props = props,
+            Group::Generic(g) => g.props = props,
             Group::Topological(g) => g.core.props = props,
             Group::Lie(g) => g.core.props = props,
             Group::Cyclic(g) => g.core.props = props,
@@ -1946,9 +1946,9 @@ impl Group {
     }
 
     /// Gets a reference to the core of the group
-    pub fn get_core(&self) -> &GroupBasic {
+    pub fn get_core(&self) -> &GenericGroup {
         match self {
-            Group::Basic(g) => &g,
+            Group::Generic(g) => &g,
             Group::Topological(g) => &g.core,
             Group::Lie(g) => &g.core,
             Group::Cyclic(g) => &g.core,

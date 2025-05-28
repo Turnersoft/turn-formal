@@ -1,0 +1,527 @@
+[
+  {
+    "name": "FieldProperty",
+    "docs": "Properties specific to fields",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Characteristic",
+        "docs": "Characteristic of the field",
+        "type_info": "CharacteristicVariant"
+      },
+      {
+        "name": "AlgebraicClosure",
+        "docs": "Algebraic closure property",
+        "type_info": "AlgebraicClosureVariant"
+      },
+      {
+        "name": "Ordering",
+        "docs": "Ordering property",
+        "type_info": "OrderingVariant"
+      },
+      {
+        "name": "Completeness",
+        "docs": "Completeness property (often w.r.t. a metric)",
+        "type_info": "CompletenessVariant"
+      },
+      {
+        "name": "Perfect, // A field is perfect if its characteristic is 0, or if char=p>0 and Frobenius map is surjective",
+        "docs": "Perfect field property",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "CharacteristicVariant",
+    "docs": "Variants for field characteristic",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Zero",
+        "docs": "Characteristic zero (e.g., ℚ, ℝ, ℂ)",
+        "type_info": null
+      },
+      {
+        "name": "Prime",
+        "docs": "Characteristic p (prime) (e.g., F_p)",
+        "type_info": "u32"
+      }
+    ]
+  },
+  {
+    "name": "AlgebraicClosureVariant",
+    "docs": "Variants for algebraic closure",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Closed",
+        "docs": "Is algebraically closed (e.g., ℂ, algebraic closure of ℚ)",
+        "type_info": null
+      },
+      {
+        "name": "NotClosed",
+        "docs": "Is not algebraically closed (e.g., ℚ, ℝ, F_p)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "OrderingVariant",
+    "docs": "Variants for ordering (existence of a total order compatible with field operations)",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Ordered",
+        "docs": "Is ordered (e.g., ℚ, ℝ)",
+        "type_info": null
+      },
+      {
+        "name": "NotOrdered",
+        "docs": "Is not ordered (e.g., ℂ, F_p)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "CompletenessVariant",
+    "docs": "Variants for completeness (usually w.r.t. the standard metric/valuation)",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Complete",
+        "docs": "Is complete (e.g., ℝ, ℂ, ℚ_p)",
+        "type_info": null
+      },
+      {
+        "name": "NotComplete",
+        "docs": "Is not complete (e.g., ℚ)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "FieldOperation",
+    "docs": "Represents a binary operation within a field structure.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "operation_type",
+        "type": "FieldOperationVariant",
+        "docs": "The type of operation (e.g., addition, multiplication)"
+      },
+      {
+        "name": "symbol",
+        "type": "String",
+        "docs": "The notation used (e.g., '+', '*')"
+      },
+      {
+        "name": "identity_element",
+        "type": "Box<MathExpression>, // Might need a specific FieldElement type later",
+        "docs": "The identity element for this operation"
+      },
+      {
+        "name": "properties",
+        "type": "Vec<FieldOperationProperty>",
+        "docs": "Properties of the operation (associativity, commutativity, etc.)"
+      }
+    ]
+  },
+  {
+    "name": "FieldOperationVariant",
+    "docs": "Types of operations specific to field theory",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Addition",
+        "docs": "Addition (+)",
+        "type_info": null
+      },
+      {
+        "name": "Multiplication",
+        "docs": "Multiplication (*)",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "FieldOperationProperty",
+    "docs": "Properties specific to field operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Associative",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "Commutative",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "Distributive, // e.g., Multiplication distributes over Addition\n    HasIdentity",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "HasInverse, // All non-zero elements have multiplicative inverse",
+        "docs": "",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "FieldBasic",
+    "docs": "Core algebraic structure of a field, containing minimal data for field axioms.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "base_set",
+        "type": "Set",
+        "docs": "The underlying set"
+      },
+      {
+        "name": "addition",
+        "type": "FieldOperation",
+        "docs": "The additive operation (+)"
+      },
+      {
+        "name": "multiplication",
+        "type": "FieldOperation",
+        "docs": "The multiplicative operation (*)"
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<FieldProperty>",
+        "docs": "Properties specific to the field structure itself (beyond operations)"
+      }
+    ]
+  },
+  {
+    "name": "FiniteField",
+    "docs": "A Finite field GF(q) or F_q",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "core",
+        "type": "FieldBasic",
+        "docs": ""
+      },
+      {
+        "name": "order",
+        "type": "u64, // Using u64 for potentially larger fields",
+        "docs": "The order of the field (must be a prime power)"
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<FiniteFieldProperty>",
+        "docs": "Properties specific to finite fields"
+      }
+    ]
+  },
+  {
+    "name": "PAdicField",
+    "docs": "The field of p-adic numbers ℚ_p",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "core",
+        "type": "FieldBasic",
+        "docs": ""
+      },
+      {
+        "name": "prime",
+        "type": "u32",
+        "docs": "The prime p defining the field"
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<PAdicFieldProperty>",
+        "docs": "Properties specific to p-adic fields"
+      }
+    ]
+  },
+  {
+    "name": "FunctionField",
+    "docs": "A Function Field (e.g., K(X))",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "core",
+        "type": "FieldBasic",
+        "docs": ""
+      },
+      {
+        "name": "description",
+        "type": "String",
+        "docs": "Description of the base field K and the variable X"
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<FunctionFieldProperty>",
+        "docs": "Properties specific to function fields"
+      }
+    ]
+  },
+  {
+    "name": "TopologicalField",
+    "docs": "A field with a compatible topological structure.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "core",
+        "type": "FieldBasic",
+        "docs": ""
+      },
+      {
+        "name": "topology",
+        "type": "TopologicalSpace",
+        "docs": "The topology on the field's underlying set."
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<TopologicalFieldProperty>",
+        "docs": "Properties specific to the topological field structure"
+      }
+    ]
+  },
+  {
+    "name": "OrderedField",
+    "docs": "A field with a compatible total order.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "core",
+        "type": "FieldBasic",
+        "docs": ""
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<OrderedFieldProperty>",
+        "docs": "Properties specific to the ordered field structure"
+      }
+    ]
+  },
+  {
+    "name": "AlgebraicClosureField",
+    "docs": "Represents the algebraic closure of a given base field.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "core",
+        "type": "FieldBasic",
+        "docs": ""
+      },
+      {
+        "name": "base_field",
+        "type": "Box<Field>, // Use Box to avoid recursion issues if Field contains this",
+        "docs": "The base field of which this is the algebraic closure."
+      },
+      {
+        "name": "props",
+        "type": "VariantSet<AlgebraicClosureFieldProperty>",
+        "docs": "Properties specific to algebraic closure fields (if any)"
+      }
+    ]
+  },
+  {
+    "name": "Field",
+    "docs": "A unified wrapper for all field structures",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Basic",
+        "docs": "Basic abstract field without specific additional structure assumed by type.",
+        "type_info": "FieldBasic"
+      },
+      {
+        "name": "Topological",
+        "docs": "Field with a compatible topology (e.g., ℝ, ℂ, ℚ_p).",
+        "type_info": "TopologicalField"
+      },
+      {
+        "name": "Ordered",
+        "docs": "Field with a compatible total order (e.g., ℚ, ℝ).",
+        "type_info": "OrderedField"
+      },
+      {
+        "name": "AlgebraicClosure",
+        "docs": "The algebraic closure of some base field.",
+        "type_info": "AlgebraicClosureField"
+      },
+      {
+        "name": "Finite",
+        "docs": "Finite field GF(q).",
+        "type_info": "FiniteField"
+      },
+      {
+        "name": "PAdicNumbers",
+        "docs": "p-adic numbers ℚ_p (a specific type of TopologicalField).",
+        "type_info": "PAdicField"
+      },
+      {
+        "name": "Function",
+        "docs": "Function field K(X).",
+        "type_info": "FunctionField"
+      }
+    ]
+  },
+  {
+    "name": "FieldRelation",
+    "docs": "Relations specific to field theory",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "IsSubfieldOf",
+        "docs": "One field is a subfield of another",
+        "type_info": "{\n        subfield: Box<Field>,\n        field: Box<Field>,\n    }"
+      },
+      {
+        "name": "IsExtensionOf",
+        "docs": "One field is an extension of another",
+        "type_info": "{\n        extension: Box<Field>,\n        base_field: Box<Field>,\n        degree: Option<u32>, // Degree of the extension [E : F]\n    }"
+      },
+      {
+        "name": "IsIsomorphicTo",
+        "docs": "Two fields are isomorphic",
+        "type_info": "{\n        first: Box<Field>,\n        second: Box<Field>,\n    }"
+      },
+      {
+        "name": "IsAlgebraicOver",
+        "docs": "An element is algebraic over a field",
+        "type_info": "{\n        element: MathExpression, // Representing the element\n        field: Box<Field>,\n        minimal_polynomial: Option<MathExpression>, // Polynomial expr\n    }"
+      },
+      {
+        "name": "IsTranscendentalOver",
+        "docs": "An element is transcendental over a field",
+        "type_info": "{\n        element: MathExpression,\n        field: Box<Field>,\n    }"
+      },
+      {
+        "name": "HasCharacteristic",
+        "docs": "A field has a specific characteristic",
+        "type_info": "{\n        field: Box<Field>,\n        characteristic: CharacteristicVariant,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "TopologicalFieldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Compact",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "LocallyCompact",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "Connected",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "TotallyDisconnected",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "Metrizable",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "Complete, // May overlap with core FieldProperty::Completeness",
+        "docs": "",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "OrderedFieldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Archimedean",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "NonArchimedean",
+        "docs": "",
+        "type_info": null
+      },
+      {
+        "name": "DedekindComplete",
+        "docs": "",
+        "type_info": null
+      }
+    ]
+  },
+  {
+    "name": "FiniteFieldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "IsPrimeField, // GF",
+        "docs": "",
+        "type_info": "(p)\n    IsExtensionField, // GF(p^n), n > 1"
+      }
+    ]
+  },
+  {
+    "name": "PAdicFieldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "RamificationIndex",
+        "docs": "",
+        "type_info": "u32"
+      },
+      {
+        "name": "InertiaDegree",
+        "docs": "",
+        "type_info": "u32"
+      },
+      {
+        "name": "ResidueFieldCharacteristic",
+        "docs": "",
+        "type_info": "(u32), // Should match the p"
+      }
+    ]
+  },
+  {
+    "name": "FunctionFieldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "TranscendenceDegree",
+        "docs": "",
+        "type_info": "u32"
+      },
+      {
+        "name": "Genus",
+        "docs": "",
+        "type_info": "u32"
+      },
+      {
+        "name": "BaseFieldCharacteristic",
+        "docs": "",
+        "type_info": "CharacteristicVariant"
+      }
+    ]
+  },
+  {
+    "name": "AlgebraicClosureFieldProperty",
+    "docs": "",
+    "kind": "enum",
+    "members": []
+  }
+]

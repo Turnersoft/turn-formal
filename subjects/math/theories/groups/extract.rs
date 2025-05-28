@@ -5,7 +5,7 @@ use crate::subjects::math::formalism::extract::Extractable;
 impl Extractable for Group {
     fn extract<T: 'static + Clone>(&self) -> Option<T> {
         match self {
-            Group::Basic(group) => extract_as!(group, T),
+            Group::Generic(group) => extract_as!(group, T),
             Group::Topological(topological_group) => extract_as!(topological_group, T),
             Group::Lie(lie_group) => extract_as!(lie_group, T),
             Group::Cyclic(cyclic_group) => extract_as!(cyclic_group, T),

@@ -1,0 +1,39 @@
+{
+  "theories": [
+    {
+      "theory_id": "group_theory",
+      "theory_name": "Group Theory",
+      "files": [
+        {
+          "file_path": "group_theory.definitions.json",
+          "content_type": "definitions",
+          "item_count": 5,
+          "items": [
+            "group_theory.basic.l1-l4-doc",
+            "group_theory.topological.l1-doc",
+            "group_theory.cyclic.l1-doc",
+            "group_theory.symmetric.l1-doc",
+            "group_theory.lie.l1-doc"
+          ]
+        },
+        {
+          "file_path": "group_theory.theorems.json",
+          "content_type": "theorems",
+          "item_count": 6,
+          "items": [
+            "group_theory.inverse_uniqueness-doc",
+            "group_theory.inverse_product_rule-doc",
+            "group_theory.abelian_squared_criterion-doc",
+            "group_theory.lagrange_theorem-doc",
+            "group_theory.example_chaining_theorems-doc",
+            "group_theory.theorem_extraction_example-doc"
+          ]
+        }
+      ],
+      "item_count": 11
+    }
+  ],
+  "total_items": 11,
+  "generated_at": "1748442762",
+  "version": "1.0.0"
+}

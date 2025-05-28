@@ -5,14 +5,14 @@ use super::super::super::super::super::subjects::math::formalism::interpretation
 
 use super::super::super::formalism::expressions::{Identifier, MathExpression, TypeViewError};
 use super::super::super::formalism::theorem::MathObject;
-use super::super::super::theories::groups::definitions::{Group, GroupBasic};
+use super::super::super::theories::groups::definitions::{GenericGroup, Group};
 use super::super::super::theories::number_theory::definitions::Number;
 use super::super::super::theories::rings::definitions::{Field, Ring};
 
 /// Helper to create default Group
 fn default_group() -> Group {
     // Use the Basic variant with its default implementation
-    Group::Basic(GroupBasic::default())
+    Group::Generic(GenericGroup::default())
 }
 
 /// Helper to create default Ring
@@ -49,10 +49,10 @@ impl MathExpressionExt for MathExpression {
             ))),
             TypeViewOperator::AsGroupElement { .. } => Ok(MathObject::Element(Box::new(
                 // Use Basic variant's default
-                MathObject::Group(Group::Basic(GroupBasic::default())),
+                MathObject::Group(Group::Generic(GenericGroup::default())),
             ))),
             TypeViewOperator::AsGroup { .. } => {
-                Ok(MathObject::Group(Group::Basic(GroupBasic::default())))
+                Ok(MathObject::Group(Group::Generic(GenericGroup::default())))
             }
             TypeViewOperator::AsRing { .. } => Ok(MathObject::Ring(Ring::default())), // Placeholder: Use Todo as Ring::default() likely doesn't exist
             TypeViewOperator::Custom { name, .. } => Ok(MathObject::Todo(name)),
@@ -86,7 +86,7 @@ fn test_basic_type_views() {
     // Test viewing a number as a group element
     let group_view = num.to_view(TypeViewOperator::AsGroupElement {
         // Use Basic variant's default
-        group: Group::Basic(GroupBasic::default()),
+        group: Group::Generic(GenericGroup::default()),
     });
     assert!(group_view.is_ok());
 

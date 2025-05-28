@@ -2,13 +2,12 @@ use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetA
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::theories::groups::definitions::{
     AlternatingGroup, CenterGroup, CentralProductGroup, CentralizerGroup, CommutatorSubgroup,
-    CyclicGroup, DihedralGroup, FreeGroup, GeneralLinearGroup, GeneratedSubgroup, Group,
-    GroupBasic, GroupElement, GroupExpression, GroupHomomorphism, GroupOperation,
-    GroupOperationVariant, ImageGroup, KernelGroup, LieGroup, ModularAdditiveGroup,
-    ModularMultiplicativeGroup, NormalizerGroup, OrthogonalGroup, ProductGroup, PullbackGroup,
-    QuotientGroup, RestrictionGroup, SpecialLinearGroup, SpecialOrthogonalGroup,
-    SpecialUnitaryGroup, SylowSubgroup, SymmetricGroup, TopologicalGroup, TrivialGroup,
-    UnitaryGroup, WreathProductGroup,
+    CyclicGroup, DihedralGroup, FreeGroup, GeneralLinearGroup, GeneratedSubgroup, GenericGroup,
+    Group, GroupElement, GroupExpression, GroupHomomorphism, GroupOperation, GroupOperationVariant,
+    ImageGroup, KernelGroup, LieGroup, ModularAdditiveGroup, ModularMultiplicativeGroup,
+    NormalizerGroup, OrthogonalGroup, ProductGroup, PullbackGroup, QuotientGroup, RestrictionGroup,
+    SpecialLinearGroup, SpecialOrthogonalGroup, SpecialUnitaryGroup, SylowSubgroup, SymmetricGroup,
+    TopologicalGroup, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 use crate::subjects::math::theories::zfc::set::Set;
@@ -19,7 +18,7 @@ impl GetAbstractionLevel for Group {
     fn level(&self) -> AbstractionLevel {
         match self {
             // Basic group definition with the axioms is Level 1 or 2 depending on specifications
-            Group::Basic(basic) => {
+            Group::Generic(basic) => {
                 // Delegate to the basic group implementation
                 basic.level()
             }
@@ -61,7 +60,7 @@ impl GetAbstractionLevel for Group {
     }
 }
 
-impl GetAbstractionLevel for GroupBasic {
+impl GetAbstractionLevel for GenericGroup {
     fn level(&self) -> AbstractionLevel {
         let base_set_level = self.base_set.level();
         let operation_level = self.operation.level(); // L3 for the operation *type*

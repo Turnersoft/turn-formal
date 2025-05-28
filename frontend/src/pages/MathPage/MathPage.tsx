@@ -1,262 +1,261 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import styles from "./MathPage.module.scss";
-import Sidebar from "./components/sidebar/sidebar";
-import MathContentComponent from "./components/math_content/math_content";
-import { TheoryFolder, MathContent } from "./models/math";
-import {
-  fetchAvailableTheories,
-  selectJsonFromAll,
-  refreshTheoryCache,
-  buildCompleteFileTree,
-  FolderNode,
-  debugFilePaths,
-  tryLoadWithAlternativePaths,
-} from "../../services/mathService";
+import React, { useState, useEffect } from 'react';
+import { DataNavigationSidebar } from './components/binding-renderers/core/DataNavigationSidebar';
+import { DocumentRenderer } from './components/binding-renderers/core/DocumentRenderer';
+import { StatsView } from './components/binding-renderers/core/StatsView';
+import { mathDataService, type MathDataExport } from './services/mathDataService';
+import type { MathematicalContent } from './components/binding-renderers';
+import styles from './MathPage.module.scss';
 
-const MathPage: React.FC = () => {
-  console.log("MathPage rendering");
-  const navigate = useNavigate();
-  const location = useLocation();
+type ViewMode = 'content' | 'stats';
 
-  // Extract theory path from URL
-  // This will work for both /math/theoryId and deeper paths like /math/theories/groups
-  const getTheoryPathFromUrl = (): string | undefined => {
-    const path = location.pathname;
-    if (path === "/math") return undefined;
+export const MathPage: React.FC = () => {
+  // Data state
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
+  const [currentContent, setCurrentContent] = useState<MathematicalContent | null>(null);
+  const [dataExport, setDataExport] = useState<MathDataExport | null>(null);
+  
+  // UI state
+  const [viewMode, setViewMode] = useState<ViewMode>('content');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [contentIndex, setContentIndex] = useState<any[]>([]);
 
-    // Remove the leading '/math/' to get the theory path
-    const theoryPath = path.replace(/^\/math\//, "");
+  // Load content when file/content selection changes
+  useEffect(() => {
+    if (selectedFile && selectedContentId) {
+      loadSpecificContent();
+    } else if (selectedFile) {
+      loadFileData();
+    }
+  }, [selectedFile, selectedContentId]);
 
-    // When the path is directly accessed (like on refresh), it will include the full path
-    // We want to preserve that full path (including "theories/" prefix if it exists)
-    return theoryPath;
+  const loadFileData = async () => {
+    if (!selectedFile) return;
+
+      setLoading(true);
+    setError(null);
+    try {
+      const data = await mathDataService.loadMathData(selectedFile);
+      setDataExport(data);
+      
+      // Load content index for the content sidebar
+      const index = await mathDataService.getContentIndex(selectedFile);
+      setContentIndex(index);
+      
+      // Auto-select first content item if none selected
+      if (!selectedContentId && Object.keys(data.content).length > 0) {
+        const firstContentId = Object.keys(data.content)[0];
+        setSelectedContentId(firstContentId);
+        setCurrentContent(data.content[firstContentId]);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load data');
+      setDataExport(null);
+      setCurrentContent(null);
+      setContentIndex([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const theoryPath = getTheoryPathFromUrl();
-  console.log("Extracted theory path from URL:", theoryPath);
+  const loadSpecificContent = async () => {
+    if (!selectedFile || !selectedContentId) return;
 
-  const [theories, setTheories] = useState<TheoryFolder[]>([]);
-  const [folderTree, setFolderTree] = useState<FolderNode[]>([]);
-  const [mathContent, setMathContent] = useState<MathContent | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [contentLoading, setContentLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Load available theories on component mount and whenever the location changes (refresh)
-  useEffect(() => {
-    console.log("Loading theories effect triggered - location change or mount");
-
-    const loadTheories = async () => {
-      setLoading(true);
-      try {
-        // Debug file paths to help diagnose issues
-        console.log("Running path diagnostics...");
-        await debugFilePaths();
-
-        // Refresh the theory cache to ensure we have the latest data
-        await refreshTheoryCache();
-
-        // Fetch available theories
-        console.log("Fetching theories from filesystem");
-        const theoryData = await fetchAvailableTheories();
-        console.log("Theory data received:", theoryData);
-        setTheories(theoryData);
-
-        // Build complete folder tree for sidebar
-        const treeData = buildCompleteFileTree();
-        console.log("Complete folder tree:", treeData);
-        setFolderTree(treeData);
-
-        // If no theory is selected in the URL but theories are available, redirect to the first one
-        // OR if a theory path is already in the URL, ensure we load it properly
-        if (theoryPath) {
-          console.log("Theory path found in URL:", theoryPath);
-          // We don't need to navigate since we're already at this path
-          // The second useEffect will handle loading content
-        } else if (theoryData.length > 0) {
-          console.log(
-            "No theory selected, redirecting to first theory:",
-            theoryData[0].path
-          );
-          navigate(`/math/${theoryData[0].path}`, { replace: true });
-        }
-
+    setLoading(true);
         setError(null);
+    try {
+      const content = await mathDataService.getContentById(selectedFile, selectedContentId);
+      setCurrentContent(content);
       } catch (err) {
-        console.error("Error loading theories:", err);
-        setError("Failed to load available theories");
+      setError(err instanceof Error ? err.message : 'Failed to load content');
+      setCurrentContent(null);
       } finally {
         setLoading(false);
       }
     };
 
-    loadTheories();
-  }, [location.key]); // Run on mount and when the location key changes (page refresh)
+  const handleFileSelect = (filename: string) => {
+    setSelectedFile(filename);
+    setSelectedContentId(null);
+    setCurrentContent(null);
+    setViewMode('content');
+  };
 
-  // Load content when the URL theory parameter changes
-  useEffect(() => {
-    console.log("Selected theory (from URL) changed:", theoryPath);
-    if (!theoryPath) {
-      setMathContent(null);
-      return;
+  const handleContentSelect = (contentId: string) => {
+    setSelectedContentId(contentId);
+    setViewMode('content');
+  };
+
+  const handleStatsView = () => {
+    setViewMode('stats');
+  };
+
+  const renderMainContent = () => {
+    if (viewMode === 'stats') {
+      return (
+        <StatsView 
+          selectedFile={selectedFile}
+          onClose={() => setViewMode('content')}
+        />
+      );
     }
 
-    const loadTheoryContent = async () => {
-      setContentLoading(true);
-      try {
-        // Fetch theory content from filesystem
-        console.log("Fetching theory content for:", theoryPath);
-        let content = selectJsonFromAll(theoryPath);
+    if (loading) {
+      return (
+        <div className={styles.loadingState}>
+          <h3>🔄 Loading Content...</h3>
+          <p>Fetching mathematical content from the data files...</p>
+        </div>
+      );
+    }
 
-        console.log("Theory content received:", content);
+    if (error) {
+      return (
+        <div className={styles.errorState}>
+          <h3>❌ Error Loading Content</h3>
+          <p>{error}</p>
+          <button 
+            onClick={() => selectedFile && handleFileSelect(selectedFile)}
+            className={styles.retryButton}
+          >
+            🔄 Retry
+          </button>
+        </div>
+      );
+    }
 
-        // Check if we got placeholder content
-        const isPlaceholder =
-          content &&
-          content.definitions &&
-          content.definitions.length === 1 &&
-          (content.definitions[0].name.includes("(Not Found)") ||
-            content.definitions[0].name.includes("Placeholder"));
+    if (!selectedFile) {
+      return (
+        <div className={styles.welcomeState}>
+          <div className={styles.welcomeContent}>
+            <h2>🚀 Welcome to the Binding-Based Math Explorer</h2>
+            <p>
+              This application demonstrates the new binding-renderer architecture 
+              where components directly consume Rust binding types with zero runtime transformation.
+            </p>
+            
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <h3>📚 Comprehensive Data</h3>
+                <p>Browse through multiple mathematical content files with thousands of definitions, theorems, and examples.</p>
+              </div>
+              
+              <div className={styles.feature}>
+                <h3>🔍 Advanced Navigation</h3>
+                <p>Navigate through mathematical objects with clean mathematical notation like GL(2, 𝔽).</p>
+              </div>
+              
+              <div className={styles.feature}>
+                <h3>⚡ Type-Safe Rendering</h3>
+                <p>All components use exact Rust binding types, ensuring perfect synchronization between frontend and backend.</p>
+              </div>
+            </div>
 
-        // If we got placeholder content, try alternative paths
-        if (isPlaceholder) {
-          console.log("Received placeholder content, trying alternative paths");
-          const altContent = await tryLoadWithAlternativePaths(theoryPath);
+            <div className={styles.getStarted}>
+              <h3>🎯 Get Started</h3>
+              <p>Select a data file from the left sidebar to begin exploring mathematical content.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
-          if (altContent) {
-            console.log("Using content from alternative path");
-            content = altContent;
-          }
-        }
-
-        // Extra validation to ensure the content is valid
-        if (
-          content &&
-          content.definitions &&
-          Array.isArray(content.definitions)
-        ) {
-          // Validate members to ensure they're properly initialized
-          content.definitions.forEach((def, index) => {
-            if (!def.members || !Array.isArray(def.members)) {
-              console.warn(
-                `Definition ${index} (${def.name}) has invalid or missing members array. Fixing.`
-              );
-              def.members = [
-                {
-                  name: "placeholder",
-                  type: "String",
-                  docs: "This is a placeholder member to ensure the definition can be rendered correctly.",
-                },
-              ];
+    if (!currentContent) {
+      return (
+        <div className={styles.noContentState}>
+          <h3>📄 No Content Selected</h3>
+          <p>
+            {dataExport ? 
+              `Select a document from the content list to view it here.` :
+              'Select content from the sidebar to view it here.'
             }
-          });
-
-          console.log(
-            "Validated content. Definitions:",
-            content.definitions.length
-          );
-        } else {
-          console.warn("Content is null or has invalid structure");
-        }
-
-        setMathContent(content);
-        setError(null);
-
-        // Update the document title with the theory name
-        document.title = content?.theory
-          ? `${content.theory} - Turn-Formal`
-          : "Mathematics - Turn-Formal";
-      } catch (err) {
-        console.error(`Error loading content for ${theoryPath}:`, err);
-        setError(`Failed to load content for ${theoryPath}`);
-      } finally {
-        setContentLoading(false);
-      }
-    };
-
-    loadTheoryContent();
-  }, [theoryPath]);
-
-  // Handle theory selection by updating the URL
-  const handleTheorySelect = (theoryPath: string) => {
-    console.log("Theory selected:", theoryPath);
-
-    // No need for special handling of the same theory selection
-    // as the router will handle it - only navigate if it's different
-    if (getTheoryPathFromUrl() !== theoryPath) {
-      // Update URL with theory ID, but don't replace the history entry to allow back/forward navigation
-      navigate(`/math/${theoryPath}`);
-
-      // Update document title immediately for better UX
-      const theoryName =
-        theories.find((t) => t.path === theoryPath)?.name || theoryPath;
-      document.title = `${formatTheoryName(theoryName)} - Turn-Formal`;
-    } else {
-      // Force a refresh of the content if clicking the same theory
-      console.log("Re-selecting same theory, forcing content refresh");
-
-      // Refresh theory cache first
-      refreshTheoryCache().then(() => {
-        const selected = selectJsonFromAll(theoryPath);
-        setMathContent(selected);
-      });
+          </p>
+          {dataExport && (
+            <div className={styles.fileInfo}>
+              <h4>📊 File Information</h4>
+              <p><strong>Theory:</strong> {dataExport.theory_name}</p>
+              <p><strong>Version:</strong> {dataExport.version}</p>
+              <p><strong>Documents:</strong> {Object.keys(dataExport.content).length}</p>
+              <p><strong>Exported:</strong> {new Date(parseInt(dataExport.exported_at) * 1000).toLocaleDateString()}</p>
+            </div>
+          )}
+        </div>
+      );
     }
+
+    // Render the actual mathematical content using binding-based renderers
+    return (
+      <div className={styles.contentRenderer}>
+        <div className={styles.contentHeader}>
+          <div className={styles.breadcrumb}>
+            <span className={styles.fileName}>
+              {selectedFile?.replace('.json', '').replace(/_/g, ' ')}
+            </span>
+            {selectedContentId && (
+              <>
+                <span className={styles.separator}>→</span>
+                <span className={styles.contentId}>{selectedContentId}</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.documentContent}>
+          <DocumentRenderer content={currentContent} />
+        </div>
+      </div>
+    );
   };
 
-  // Helper function to format theory names consistently
-  const formatTheoryName = (name: string): string => {
-    return name
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
+  const renderContentSidebar = () => {
+    if (!selectedFile || contentIndex.length === 0) {
+      return null;
+    }
 
-  console.log("Current state:", {
-    theories: theories.length,
-    selectedTheory: theoryPath,
-    contentLoaded: !!mathContent,
-    loading,
-    contentLoading,
-    error,
-  });
+    return (
+      <div className={styles.contentSidebar}>
+        <div className={styles.contentHeader}>
+          <h3>📄 {selectedFile.replace('.json', '').replace(/_/g, ' ')}</h3>
+          <div className={styles.contentCount}>
+            {contentIndex.length} objects
+          </div>
+        </div>
+        
+        <div className={styles.contentList}>
+          {contentIndex.map(item => (
+            <div
+              key={item.id}
+              onClick={() => handleContentSelect(item.id)}
+              className={`${styles.contentItem} ${selectedContentId === item.id ? styles.selected : ''}`}
+            >
+              <div className={styles.contentTitle}>{item.title}</div>
+              <div className={styles.contentMeta}>
+                {item.level && <span className={styles.level}>L{item.level}</span>}
+                <span className={styles.sections}>{item.section_count} sections</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={styles.mathPage}>
-      <Sidebar
-        theories={theories}
-        folderTree={folderTree}
-        selectedTheory={theoryPath || null}
-        onTheorySelect={handleTheorySelect}
-        loading={loading}
+      <DataNavigationSidebar
+        selectedFile={selectedFile}
+        onFileSelect={handleFileSelect}
+        onStatsView={handleStatsView}
       />
-      <div className={styles.mainContent}>
-        <MathContentComponent
-          content={mathContent}
-          loading={contentLoading}
-          error={error}
-        />
-
-        {!loading && !error && mathContent === null && (
-          <div className={styles.emptyState}>
-            <h3>No Mathematical Content Found</h3>
-            <p>
-              No mathematical content could be found in this folder. Please
-              select a different folder from the sidebar or make sure your
-              content is properly formatted as JSON files.
-            </p>
-          </div>
-        )}
-      </div>
+      
+      {renderContentSidebar()}
+      
+      <main className={styles.mainContent}>
+        {renderMainContent()}
+      </main>
     </div>
   );
 };
-
-// Extend Window interface to include MathJax
-declare global {
-  interface Window {
-    MathJax: any;
-  }
-}
 
 export default MathPage;

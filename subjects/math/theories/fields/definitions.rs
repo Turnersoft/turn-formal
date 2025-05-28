@@ -7,6 +7,7 @@ use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 // Assuming an OrderRelation type might be defined elsewhere or needs definition
 // use crate::subjects::math::theories::relations::OrderRelation;
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::hash::Hash;
 
 /// Properties specific to fields

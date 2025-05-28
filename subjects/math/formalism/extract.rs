@@ -134,14 +134,14 @@ impl Extractable for MathObject {
 #[cfg(test)]
 mod tests {
     use crate::subjects::math::theories::groups::definitions::Group;
-    use crate::subjects::math::theories::groups::definitions::GroupBasic;
+    use crate::subjects::math::theories::groups::definitions::GenericGroup;
     use crate::subjects::math::theories::rings::definitions::Ring;
 
     use super::*;
 
     #[test]
     fn test_extract_math_object() {
-        let group = Group::Basic(GroupBasic::default());
+        let group = Group::Generic(GenericGroup::default());
         let math_object = MathObject::Group(group.clone());
         let extracted = math_object.extract::<Group>();
         assert_eq!(extracted, Some(group));
@@ -149,7 +149,7 @@ mod tests {
 
     #[test]
     fn test_extract_with_macro() {
-        let group = Group::Basic(GroupBasic::default());
+        let group = Group::Generic(GenericGroup::default());
         let math_object = MathObject::Group(group.clone());
 
         // Test with the extract_as macro (via its usage in MathObject impl)

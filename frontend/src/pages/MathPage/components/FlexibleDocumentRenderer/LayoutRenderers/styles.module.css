@@ -1,0 +1,414 @@
+/* Side-by-Side Layout */
+.sideBySideLayout {
+  display: grid;
+  margin: 2em 0;
+  min-height: 400px;
+  width: 100%;
+  gap: 2rem;
+}
+
+/* Panel Layouts */
+.panel {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  margin: 0.5em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.panelTitle {
+  font-size: 1.3em;
+  font-weight: 600;
+  margin-bottom: 1.5em;
+  padding-bottom: 0.75em;
+  border-bottom: 2px solid #eee;
+}
+
+.panelContent {
+  margin: 0;
+  width: 100%;
+}
+
+.panelBody {
+  margin-top: 1.5em;
+  width: 100%;
+}
+
+/* Panel role-specific styles */
+.panel-maincontent {
+  border-left: 4px solid #007bff;
+}
+
+.panel-comparisonleft {
+  border-left: 4px solid #28a745;
+}
+
+.panel-comparisonright {
+  border-left: 4px solid #dc3545;
+}
+
+.panel-sourcetheory {
+  border-left: 4px solid #6f42c1;
+}
+
+.panel-targettheory {
+  border-left: 4px solid #fd7e14;
+}
+
+.panel-typeannotations {
+  border-left: 4px solid #20c997;
+}
+
+.panel-resourcebank {
+  border-left: 4px solid #6c757d;
+}
+
+.panel-navigation {
+  border-left: 4px solid #ffc107;
+}
+
+.panel-controlpanel {
+  border-left: 4px solid #e83e8c;
+}
+
+.panel-infobox {
+  border-left: 4px solid #17a2b8;
+}
+
+/* Tabs Layout */
+.tabsLayout {
+  margin: 1.5em 0;
+}
+
+.tabsList {
+  display: flex;
+  border-bottom: 2px solid #dee2e6;
+  margin-bottom: 0;
+  gap: 0;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0.75em 1.5em;
+  cursor: pointer;
+  font-size: 1em;
+  color: #6c757d;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #495057;
+  background-color: #f8f9fa;
+}
+
+.tabActive {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  background-color: #fff;
+}
+
+.tabContent {
+  padding: 1.5em 0;
+}
+
+/* Accordion Layout */
+.accordionLayout {
+  margin: 1.5em 0;
+}
+
+.accordionPanel {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5em;
+}
+
+.accordionPanel:first-child {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.accordionPanel:last-child {
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  margin-bottom: 0;
+}
+
+.accordionSummary {
+  background-color: #f8f9fa;
+  padding: 0.75rem 1.25rem;
+  margin: 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.accordionSummary:hover {
+  background-color: #e9ecef;
+}
+
+.accordionPanel[open] .accordionSummary {
+  background-color: #e9ecef;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Grid Layout */
+.gridLayout {
+  display: grid;
+  margin: 1.5em 0;
+}
+
+.gridPanel {
+  padding: 0.5em;
+}
+
+/* Default Layout */
+.defaultLayout {
+  margin: 1.5em 0;
+}
+
+.defaultLayout > * {
+  margin-bottom: 1em;
+}
+
+/* Annotation Overlay */
+.annotationOverlay {
+  position: relative;
+  margin: 1.5em 0;
+}
+
+.baseContent {
+  position: relative;
+  z-index: 1;
+}
+
+.annotations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.annotation {
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  pointer-events: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  max-width: 200px;
+}
+
+.annotation-typeinfo {
+  background-color: #e3f2fd;
+  border: 1px solid #2196f3;
+  color: #1976d2;
+}
+
+.annotation-definition {
+  background-color: #e8f5e8;
+  border: 1px solid #4caf50;
+  color: #2e7d32;
+}
+
+.annotation-explanation {
+  background-color: #fff3e0;
+  border: 1px solid #ff9800;
+  color: #f57c00;
+}
+
+.annotation-animation {
+  background-color: #f3e5f5;
+  border: 1px solid #9c27b0;
+  color: #7b1fa2;
+}
+
+.annotation-highlight {
+  background-color: #fff8e1;
+  border: 1px solid #ffc107;
+  color: #f9a825;
+}
+
+.annotation-warning {
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+  color: #d32f2f;
+}
+
+.annotation-step {
+  background-color: #e8eaf6;
+  border: 1px solid #3f51b5;
+  color: #303f9f;
+}
+
+/* Interactive Controls */
+.interactiveControls {
+  margin: 1.5em 0;
+  padding: 1.5em;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.controlWrapper {
+  margin: 0.75em 0;
+}
+
+.controlLabel {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  color: #495057;
+}
+
+.controlDescription {
+  font-size: 0.85em;
+  color: #6c757d;
+  margin-top: 0.25em;
+}
+
+.controlValue {
+  display: inline-block;
+  margin-left: 0.5em;
+  font-weight: 500;
+  color: #007bff;
+}
+
+/* Control Type Specific Styles */
+.sliderControl input[type="range"] {
+  width: 100%;
+  margin: 0.5em 0;
+}
+
+.toggleControl {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggleControl input[type="checkbox"] {
+  margin-right: 0.5em;
+  transform: scale(1.2);
+}
+
+.dropdownControl select {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  font-size: 1em;
+}
+
+.numberControl input[type="number"] {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  font-size: 1em;
+}
+
+.colorControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.colorControl input[type="color"] {
+  width: 3em;
+  height: 3em;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.buttonControl {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease;
+}
+
+.buttonControl:hover {
+  background-color: #0056b3;
+}
+
+/* Control Layout Styles */
+.layout-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.layout-horizontal .controlWrapper {
+  flex: 1;
+  min-width: 200px;
+}
+
+.layout-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.layoutGrid {
+  display: grid;
+  gap: 1em;
+}
+
+.layout-floating {
+  position: relative;
+}
+
+.layout-floating .controlWrapper {
+  position: absolute;
+  background-color: white;
+  padding: 1em;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sideBySideLayout {
+    grid-template-columns: 1fr !important;
+    gap: 1em !important;
+  }
+  
+  .tabsList {
+    flex-direction: column;
+  }
+  
+  .tab {
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+    border-left: 3px solid transparent;
+  }
+  
+  .tabActive {
+    border-left-color: #007bff;
+    border-bottom-color: #dee2e6;
+  }
+  
+  .layout-horizontal {
+    flex-direction: column;
+  }
+  
+  .layout-horizontal .controlWrapper {
+    min-width: auto;
+  }
+  
+  .gridLayout {
+    grid-template-columns: 1fr !important;
+  }
+} 

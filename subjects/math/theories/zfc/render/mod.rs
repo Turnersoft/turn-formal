@@ -1,8 +1,9 @@
 use crate::turn_render::math_node::{MathNode, MathNodeContent};
 use crate::turn_render::section_node::{
-    AbstractionMetadata, LinkTarget, MathDocument, ParagraphNode, RichTextSegment, Section,
-    SectionContentNode, SelectableProperty, StructuredMathContentNode, ToSectionNode,
-    link_to_definition, p_text,
+    AbstractionMetadata, CompletenessLevel, ContentMetadata, DocumentRelationships,
+    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, ParagraphNode,
+    RichTextSegment, Section, SectionContentNode, SelectableProperty, StructuredMathContentNode,
+    ToSectionNode, WikiPageContent,
 };
 
 // This AbstractionLevel is for the GetAbstractionLevel trait implementations for ZFC types.
@@ -12,6 +13,7 @@ use crate::subjects::math::theories::zfc::set::{
     CardinalityPropertyVariant, ElementCondition, Set, SetElement, SetExpression, SetMapping,
     SetProperty, SetRelation,
 };
+use crate::turn_render::DocumentType;
 
 impl ToSectionNode for Set {
     fn to_section_node(&self, id_prefix: &str) -> Section {
@@ -25,22 +27,8 @@ impl ToSectionNode for Set {
         let mut selectable_props = vec![];
 
         match self {
-            Set::Generic {
-                name,
-                element_description,
-                properties,
-            } => {
-                title_text = name.as_ref().map_or_else(
-                    || "Generic Set".to_string(),
-                    |n| format!("Generic Set: {}", n),
-                );
-                if let Some(desc) = element_description {
-                    content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-                        "Elements described as: {}",
-                        desc
-                    ))));
-                }
-                for prop in properties.iter() {
+            Set::Generic(gs) => {
+                for prop in gs.properties.iter() {
                     let (prop_name, current_variant, all_variants) = property_to_selectable(prop);
                     selectable_props.push(SelectableProperty {
                         name: prop_name,
@@ -54,16 +42,22 @@ impl ToSectionNode for Set {
             }
             Set::Empty => {
                 title_text = "The Empty Set".to_string();
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "Contains no elements (∅).",
-                )));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "Contains no elements (∅).".to_string(),
+                    )],
+                    alignment: None,
+                }));
             }
             Set::Singleton {
                 element,
                 properties,
             } => {
                 title_text = format!("Singleton Set {{{:?}}}", element);
-                // content_nodes.push(SectionContentNode::Paragraph(p_text(&format!("Contains exactly one element: {:?}", element))));
+                // content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                //     segments: vec![RichTextSegment::Text(format!("Contains exactly one element: {:?}", element))],
+                //     alignment: None,
+                // }));
                 for prop in properties.iter() {
                     let (prop_name, current_variant, all_variants) = property_to_selectable(prop);
                     selectable_props.push(SelectableProperty {
@@ -86,10 +80,13 @@ impl ToSectionNode for Set {
                     .map(|e| format!("{:?}", e))
                     .collect::<Vec<_>>()
                     .join(", ");
-                content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-                    "Elements: {{{}}}",
-                    elements_str
-                ))));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(format!(
+                        "Elements: {{{}}}",
+                        elements_str
+                    ))],
+                    alignment: None,
+                }));
                 for prop in properties.iter() {
                     let (prop_name, current_variant, all_variants) = property_to_selectable(prop);
                     selectable_props.push(SelectableProperty {
@@ -108,34 +105,40 @@ impl ToSectionNode for Set {
                     .chars()
                     .take(50)
                     .collect(); // Fallback title
-                content_nodes.push(SectionContentNode::Paragraph(p_text(&format!("This set is defined by a ZFC construction (e.g., Union, Intersection, PowerSet). Rendering for display level {:?} needs to be detailed.", object_formalism_level))));
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(format!("This set is defined by a ZFC construction (e.g., Union, Intersection, PowerSet). Rendering for display level {:?} needs to be detailed.", object_formalism_level))],
+                    alignment: None,
+                }));
             }
         }
 
+        // Create the section with all the content
         Section {
             id: format!("{}-set-section", id_prefix),
-            title: Some(p_text(&title_text)),
+            title: Some(ParagraphNode {
+                segments: vec![RichTextSegment::Text(title_text.clone())],
+                alignment: None,
+            }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathContentNode::Definition {
                     term_display: vec![RichTextSegment::Text(title_text.clone())],
-                    formal_term: None, // TODO: Convert Set to local MathNode
-                    label: Some(title_text.clone()),
+                    formal_term: None,
+                    label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
                     abstraction_meta: Some(AbstractionMetadata {
                         level: Some(object_formalism_level as u8),
                         source_template_id: None,
-                        specified_parameters: None,
-                        universally_quantified_properties: None,
+                        specified_parameters: vec![],
+                        universally_quantified_properties: vec![],
                     }),
                     selectable_properties: if selectable_props.is_empty() {
-                        None
+                        vec![]
                     } else {
-                        Some(selectable_props)
+                        selectable_props
                     },
                 },
             )],
-            sub_sections: vec![],
-            metadata: None,
+            metadata: vec![("type".to_string(), "ZFCSetDefinition".to_string())],
             display_options: None,
         }
     }
@@ -144,34 +147,51 @@ impl ToSectionNode for Set {
         // Determine the inherent level of this Set object
         let inherent_formalism_level = self.level(); // formalism::AbstractionLevel
 
-        let main_section = self.to_section_node(&format!("{}-main", id_prefix)); // Call with only id_prefix
+        let main_section = self.to_section_node(&format!("{}-main", id_prefix));
+        let title = main_section.title.as_ref().map_or_else(
+            || "Set Document".to_string(),
+            |p| {
+                p.segments
+                    .iter()
+                    .map(|s| match s {
+                        RichTextSegment::Text(t) => t.clone(),
+                        RichTextSegment::StyledText { text, .. } => text.clone(),
+                        _ => "".to_string(),
+                    })
+                    .collect::<String>()
+            },
+        );
+
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            title: main_section.title.as_ref().map_or_else(
-                || "Set Document".to_string(),
-                |p| {
-                    p.segments
-                        .iter()
-                        .map(|s| match s {
-                            RichTextSegment::Text(t) => t.clone(),
-                            RichTextSegment::StyledText { text, .. } => text.clone(),
-                            _ => "".to_string(),
-                        })
-                        .collect::<String>()
+            content_type: MathematicalContentType::WikiPage(WikiPageContent {
+                title,
+                theory_domain: "ZFC Set Theory".to_string(),
+                completeness_level: CompletenessLevel::Basic,
+                maintainer: None,
+                content_metadata: ContentMetadata {
+                    language: Some("en-US".to_string()),
+                    version: Some("1.0".to_string()),
+                    created_at: None,
+                    last_modified: None,
+                    content_hash: None,
                 },
-            ),
-            language: Some("en-US".to_string()),
-            version: Some("1.0".to_string()),
-            authors: None,
-            date_published: None,
-            date_modified: None,
-            abstract_content: None,
-            table_of_contents: None,
-            body: vec![main_section],
-            footnotes: None,
-            glossary: None,
-            bibliography: None,
-            document_metadata: None,
+                structure: DocumentStructure {
+                    abstract_content: None,
+                    table_of_contents: None,
+                    body: vec![main_section],
+                    footnotes: vec![],
+                    glossary: vec![],
+                    bibliography: vec![],
+                },
+                relationships: DocumentRelationships {
+                    parent_documents: vec![],
+                    child_documents: vec![],
+                    related_concepts: vec![],
+                    cross_references: vec![],
+                    dependency_graph: None,
+                },
+            }),
         }
     }
 
@@ -190,11 +210,14 @@ impl ToSectionNode for Set {
             Set::Singleton { element, .. } => format!("{{{:?}}}", element),
             _ => format!("Set {}", id_prefix),
         };
-        vec![link_to_definition(
-            &name,
-            &format!("{}-set-section", id_prefix),
-            Some("ZFCSetTheory"),
-        )]
+        vec![RichTextSegment::Link {
+            content: vec![RichTextSegment::Text(name)],
+            target: LinkTarget::DefinitionId {
+                term_id: format!("{}-section", id_prefix),
+                theory_context: Some("ZFCSetTheory".to_string()),
+            },
+            tooltip: Some(format!("View definition of {}-section", id_prefix)),
+        }]
     }
 }
 

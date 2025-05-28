@@ -5,8 +5,8 @@ mod tests {
     };
     use crate::subjects::math::theories::VariantSet;
     use crate::subjects::math::theories::groups::definitions::{
-        AbelianPropertyVariant, CyclicGroup, FinitePropertyVariant, Group, GroupBasic,
-        GroupElement, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
+        AbelianPropertyVariant, CyclicGroup, FinitePropertyVariant, Group, GroupElement,
+        GenericGroup, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
         GroupOperation, GroupOperationProperty, GroupOperationVariant, GroupProperty, GroupSymbol,
         SymmetricGroup, TopologicalGroup,
     };
@@ -37,7 +37,7 @@ mod tests {
             product_info: None,
         };
 
-        let group_basic = GroupBasic {
+        let group_basic = GenericGroup {
             base_set: create_named_set("Z_10"),
             operation,
             props,
@@ -68,7 +68,7 @@ mod tests {
     #[test]
     fn test_cyclic_group_to_section_node() {
         // Create a CyclicGroup
-        let group_basic = GroupBasic::default();
+        let group_basic = GenericGroup::default();
         let cyclic_group = CyclicGroup {
             core: group_basic,
             generator: GroupElement::Integer(1),
@@ -102,7 +102,7 @@ mod tests {
     #[test]
     fn test_symmetric_group_to_section_node() {
         // Create a SymmetricGroup
-        let group_basic = GroupBasic::default();
+        let group_basic = GenericGroup::default();
         let symmetric_group = SymmetricGroup {
             core: group_basic,
             degree: 3,
@@ -135,7 +135,7 @@ mod tests {
     #[test]
     fn test_topological_group_to_section_node() {
         // Create a TopologicalGroup
-        let group_basic = GroupBasic::default();
+        let group_basic = GenericGroup::default();
 
         let topology = Topology {
             properties: VariantSet::new(),
@@ -174,7 +174,7 @@ mod tests {
         let set_l1 = create_named_set("G"); // Set with symbolic name, L1
 
         // Create a Group::Basic with L1 characteristics
-        let group_basic_l1 = GroupBasic {
+        let group_basic_l1 = GenericGroup {
             base_set: set_l1.clone(), // Abstract set
             operation: GroupOperation::default(),
             props: VariantSet::new(), // No specific properties
@@ -187,7 +187,7 @@ mod tests {
         let mut props_l2 = VariantSet::new();
         props_l2.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
 
-        let group_basic_l2 = GroupBasic {
+        let group_basic_l2 = GenericGroup {
             base_set: set_l1.clone(), // Abstract set
             operation: GroupOperation::default(),
             props: props_l2, // Has specific properties
@@ -195,7 +195,7 @@ mod tests {
 
         // Create a CyclicGroup (L2 or L4 when generator is concrete)
         let cyclic_group = CyclicGroup {
-            core: GroupBasic::default(),
+            core: GenericGroup::default(),
             generator: GroupElement::Integer(1),
             order: Some(5), // Concrete order
         };
@@ -232,8 +232,8 @@ mod tests {
         );
 
         // Create Group variants
-        let group_l1 = Group::Basic(group_basic_l1);
-        let group_l2 = Group::Basic(group_basic_l2);
+        let group_l1 = Group::Generic(group_basic_l1);
+        let group_l2 = Group::Generic(group_basic_l2);
         let group_cyclic = Group::Cyclic(cyclic_group);
 
         // Check that the Group enum preserves the abstraction levels

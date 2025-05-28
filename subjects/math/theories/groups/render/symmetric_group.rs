@@ -4,16 +4,31 @@ use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetA
 use crate::subjects::math::theories::groups::definitions::SymmetricGroup;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
 use crate::turn_render::section_node::{
-    AbstractionMetadata, MathDocument, ParagraphNode, RichTextSegment, Section,
-    SectionContentNode, SelectableProperty, StructuredMathContentNode, ToSectionNode, p_text,
+    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
+    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
+    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
+    StructuredMathContentNode, ToSectionNode,
 };
 
 impl ToTurnMath for SymmetricGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        // Standard notation for symmetric group is S_n
+        // Use proper mathematical notation S_n with subscript
         MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text(format!("S_{}", self.degree))),
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Identifier {
+                body: "S".to_string(),
+                pre_script: None,
+                mid_script: None,
+                post_script: Some(Box::new(MathNode {
+                    id: format!("{}_subscript", master_id),
+                    content: Box::new(MathNodeContent::Quantity {
+                        number: self.degree.to_string(),
+                        unit: None,
+                    }),
+                })),
+                primes: 0,
+                is_function: false,
+            }),
         }
     }
 }
@@ -21,94 +36,124 @@ impl ToTurnMath for SymmetricGroup {
 impl ToSectionNode for SymmetricGroup {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         let formalism_obj_level: AbstractionLevel = self.level();
-        
+
         // Create title
         let title = format!("Symmetric Group S_{}", self.degree);
-        
+
         // Create content nodes
         let mut content_nodes = vec![
-            SectionContentNode::Paragraph(p_text(&format!(
-                "Degree: {}",
-                self.degree
-            ))),
-            SectionContentNode::Paragraph(p_text(&format!(
-                "Order: {}",
-                factorial(self.degree)
-            ))),
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(format!("Degree: {}", self.degree))],
+                alignment: None,
+            }),
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(format!(
+                    "Order: {}",
+                    factorial(self.degree)
+                ))],
+                alignment: None,
+            }),
         ];
-        
-        // Add core group information
-        content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-            "Base set: {:?}",
-            self.core.base_set
-        ))));
-        
-        content_nodes.push(SectionContentNode::Paragraph(p_text(&format!(
-            "Operation: {:?} ({})",
-            self.core.operation.operation_type,
-            match self.core.operation.notation {
-                crate::subjects::math::theories::groups::definitions::GroupNotation::Infix(ref symbol) => 
-                    format!("{:?}", symbol),
-                crate::subjects::math::theories::groups::definitions::GroupNotation::Function(ref name) => 
-                    name.clone(),
-                crate::subjects::math::theories::groups::definitions::GroupNotation::Juxtaposition => 
-                    "juxtaposition".to_string(),
-            }
-        ))));
-        
+
+        // Link to group basic information instead of embedding it directly
+        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+            segments: vec![
+                RichTextSegment::Text("For the underlying group structure, see ".to_string()),
+                RichTextSegment::Link {
+                    content: vec![RichTextSegment::Text("Group Theory".to_string())],
+                    target: LinkTarget::DefinitionId {
+                        term_id: format!("{}-groupbasic-section", id_prefix),
+                        theory_context: Some("GroupTheory".to_string()),
+                    },
+                    tooltip: Some(format!(
+                        "View definition of {}-groupbasic-section",
+                        id_prefix
+                    )),
+                },
+                RichTextSegment::Text(".".to_string()),
+            ],
+            alignment: None,
+        }));
+
         // Add abstraction level specific content
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L1: A general schema for any symmetric group."
-                )));
-            },
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L1: A general schema for any symmetric group.".to_string(),
+                    )],
+                    alignment: None,
+                }));
+            }
             AbstractionLevel::Level2 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L2: A specific type of symmetric group with defined properties."
-                )));
-                
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "A symmetric group S_n consists of all permutations on n elements. \
-                    It is a non-abelian group for n ≥ 3."
-                )));
-            },
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L2: A specific type of symmetric group with defined properties."
+                            .to_string(),
+                    )],
+                    alignment: None,
+                }));
+
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "A symmetric group S_n consists of all permutations on n elements. \
+                        It is a non-abelian group for n ≥ 3."
+                            .to_string(),
+                    )],
+                    alignment: None,
+                }));
+            }
             AbstractionLevel::Level3 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L3: A constructor for building a symmetric group from its degree."
-                )));
-            },
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L3: A constructor for building a symmetric group from a degree."
+                            .to_string(),
+                    )],
+                    alignment: None,
+                }));
+            }
             AbstractionLevel::Level4 => {
-                content_nodes.push(SectionContentNode::Paragraph(p_text(
-                    "This is L4: A concrete symmetric group with fully specified elements."
-                )));
-                
+                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    segments: vec![RichTextSegment::Text(
+                        "This is L4: A concrete symmetric group with fully specified degree and elements.".to_string(),
+                    )],
+                    alignment: None,
+                }));
+
                 // For small degree, list the elements
                 if self.degree <= 3 {
-                    content_nodes.push(SectionContentNode::Paragraph(p_text(
-                        "Elements: "
-                    )));
-                    
+                    content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                        segments: vec![RichTextSegment::Text("Elements: ".to_string())],
+                        alignment: None,
+                    }));
+
                     if self.degree == 1 {
-                        content_nodes.push(SectionContentNode::Paragraph(p_text(
-                            "e (identity)"
-                        )));
+                        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                            segments: vec![RichTextSegment::Text("e (identity)".to_string())],
+                            alignment: None,
+                        }));
                     } else if self.degree == 2 {
-                        content_nodes.push(SectionContentNode::Paragraph(p_text(
-                            "e (identity), (1 2)"
-                        )));
+                        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                            segments: vec![RichTextSegment::Text(
+                                "e (identity), (1 2)".to_string(),
+                            )],
+                            alignment: None,
+                        }));
                     } else if self.degree == 3 {
-                        content_nodes.push(SectionContentNode::Paragraph(p_text(
-                            "e (identity), (1 2), (1 3), (2 3), (1 2 3), (1 3 2)"
-                        )));
+                        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                            segments: vec![RichTextSegment::Text(
+                                "e (identity), (1 2), (1 3), (2 3), (1 2 3), (1 3 2)".to_string(),
+                            )],
+                            alignment: None,
+                        }));
                     }
                 }
-            },
+            }
         };
-        
+
         // Create selectable properties
         let mut selectable_props = vec![];
-        
+
         // Add properties from core group if any
         if !self.core.props.inner.is_empty() {
             for prop in self.core.props.inner.iter() {
@@ -122,7 +167,7 @@ impl ToSectionNode for SymmetricGroup {
                 });
             }
         }
-        
+
         // Add specific symmetric group properties
         if self.degree >= 3 {
             selectable_props.push(SelectableProperty {
@@ -143,7 +188,7 @@ impl ToSectionNode for SymmetricGroup {
                 property_type_def_id: None,
             });
         }
-        
+
         // Always finite
         selectable_props.push(SelectableProperty {
             name: "Order".to_string(),
@@ -153,7 +198,7 @@ impl ToSectionNode for SymmetricGroup {
             variant_descriptions: None,
             property_type_def_id: None,
         });
-        
+
         // Simple property
         if self.degree >= 5 {
             selectable_props.push(SelectableProperty {
@@ -174,10 +219,13 @@ impl ToSectionNode for SymmetricGroup {
                 property_type_def_id: None,
             });
         }
-        
+
         Section {
             id: format!("{}-symmetricgroup-section", id_prefix),
-            title: Some(p_text(&title)),
+            title: Some(ParagraphNode {
+                segments: vec![RichTextSegment::Text(title.clone())],
+                alignment: None,
+            }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathContentNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
@@ -187,72 +235,102 @@ impl ToSectionNode for SymmetricGroup {
                     abstraction_meta: Some(AbstractionMetadata {
                         level: Some(formalism_obj_level as u8),
                         source_template_id: None,
-                        specified_parameters: None,
-                        universally_quantified_properties: None,
+                        specified_parameters: vec![],
+                        universally_quantified_properties: vec![],
                     }),
                     selectable_properties: if selectable_props.is_empty() {
-                        None
+                        vec![]
                     } else {
-                        Some(selectable_props)
+                        selectable_props
                     },
                 },
             )],
-            sub_sections: vec![],
-            metadata: Some(vec![("type".to_string(), "SymmetricGroupDefinition".to_string())]),
+            metadata: vec![("type".to_string(), "SymmetricGroupDefinition".to_string())],
             display_options: None,
         }
     }
 
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
-        
+        let title = main_section.title.as_ref().map_or_else(
+            || "Symmetric Group Document".to_string(),
+            |p| {
+                p.segments
+                    .iter()
+                    .map(|s| match s {
+                        RichTextSegment::Text(t) => t.clone(),
+                        RichTextSegment::StyledText { text, .. } => text.clone(),
+                        _ => "".to_string(),
+                    })
+                    .collect::<String>()
+            },
+        );
+
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            title: main_section.title.as_ref().map_or_else(
-                || "Symmetric Group Document".to_string(),
-                |p| {
-                    p.segments
-                        .iter()
-                        .map(|s| match s {
-                            RichTextSegment::Text(t) => t.clone(),
-                            RichTextSegment::StyledText { text, .. } => text.clone(),
-                            _ => "".to_string(),
-                        })
-                        .collect::<String>()
+            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+                title,
+                paper_type: PaperType::Research,
+                venue: None,
+                peer_reviewed: false,
+                content_metadata: ContentMetadata {
+                    language: Some("en-US".to_string()),
+                    version: Some("1.0".to_string()),
+                    created_at: None,
+                    last_modified: None,
+                    content_hash: None,
                 },
-            ),
-            language: Some("en-US".to_string()),
-            version: Some("1.0".to_string()),
-            authors: None,
-            date_published: None,
-            date_modified: None,
-            abstract_content: None,
-            table_of_contents: None,
-            body: vec![main_section],
-            footnotes: None,
-            glossary: None,
-            bibliography: None,
-            document_metadata: None,
+                academic_metadata: AcademicMetadata {
+                    authors: vec![],
+                    date_published: None,
+                    date_modified: None,
+                    venue: None,
+                    doi: None,
+                    keywords: vec![],
+                },
+                structure: DocumentStructure {
+                    abstract_content: None,
+                    table_of_contents: None,
+                    body: vec![main_section],
+                    footnotes: vec![],
+                    glossary: vec![],
+                    bibliography: vec![],
+                },
+                relationships: DocumentRelationships {
+                    parent_documents: vec![],
+                    child_documents: vec![],
+                    related_concepts: vec![],
+                    cross_references: vec![],
+                    dependency_graph: None,
+                },
+            }),
         }
     }
 
     fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let tooltip_text = format!("Symmetric Group S_{} (order {})", 
-            self.degree, 
+        let tooltip_text = format!(
+            "Symmetric Group S_{} (order {})",
+            self.degree,
             factorial(self.degree)
         );
-        
+
         vec![RichTextSegment::Text(tooltip_text)]
     }
 
     fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         let name = format!("Symmetric Group S_{}", self.degree);
-        
-        vec![crate::turn_render::section_node::link_to_definition(
-            &name,
-            &format!("{}-symmetricgroup-section", id_prefix),
-            Some("GroupTheory"),
-        )]
+
+        vec![RichTextSegment::Link {
+            content: vec![RichTextSegment::Text(name)],
+            target: LinkTarget::DefinitionId {
+                term_id: format!("{}-symmetricgroup-section", id_prefix),
+                theory_context: Some("GroupTheory".to_string()),
+            },
+            tooltip: Some(format!(
+                "View definition of {}-symmetricgroup-section",
+                id_prefix
+            )),
+        }]
     }
 }
 
@@ -261,11 +339,11 @@ fn factorial(n: usize) -> u64 {
     if n == 0 {
         return 1;
     }
-    
+
     let mut result: u64 = 1;
     for i in 1..=n {
         result *= i as u64;
     }
-    
+
     result
-} 
+}

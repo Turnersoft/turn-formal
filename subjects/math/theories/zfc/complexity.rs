@@ -4,7 +4,7 @@ use crate::subjects::math::theories::zfc::set::{Set, SetElement};
 impl Complexity for Set {
     fn complexity(&self) -> usize {
         match self {
-            Set::Generic { properties, .. } => 1 + properties.inner.len(),
+            Set::Generic(gs) => 1 + gs.properties.inner.len(),
             Set::Empty => 1,
             Set::Singleton { element, .. } => 1 + element.complexity(),
             Set::Enumeration { elements, .. } => {

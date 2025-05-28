@@ -215,18 +215,17 @@ pub enum SetOpProperty {
     Idempotent(bool),
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
+pub struct GenericSet {
+    pub properties: VariantSet<SetProperty>,
+}
+
 /// A set in ZFC set theory, defined by its membership rule
 /// This implementation follows the ZFC axioms and provides a foundation for set-theoretic constructions
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Set {
     /// A generic, abstract set (L1), or a set type defined by properties (L2).
-    /// Specific L4 well-known sets (N, Z, Q) will also use this variant,
-    /// identified by a conventional name and a defining set of properties.
-    Generic {
-        name: Option<String>,
-        element_description: Option<String>,
-        properties: VariantSet<SetProperty>,
-    },
+    Generic(GenericSet),
 
     /// The empty set (∅), unique and contains no elements
     Empty,
@@ -671,14 +670,8 @@ impl Hash for Set {
 
         // For variants with fields, hash the relevant fields
         match self {
-            Set::Generic {
-                name,
-                element_description,
-                properties,
-            } => {
-                name.hash(state);
-                element_description.hash(state);
-                properties.hash(state);
+            Set::Generic(gs) => {
+                (*gs).hash(state);
             }
             Set::Empty => {}
             Set::Singleton {
@@ -1399,8 +1392,8 @@ impl Set {
 
     pub fn get_properties(&self) -> Option<&VariantSet<SetProperty>> {
         match self {
-            Set::Generic { properties, .. }
-            | Set::Singleton { properties, .. }
+            Set::Generic(gs) => Some(&gs.properties),
+            Set::Singleton { properties, .. }
             | Set::Enumeration { properties, .. }
             | Set::BinaryUnion { properties, .. }
             | Set::BinaryIntersection { properties, .. }

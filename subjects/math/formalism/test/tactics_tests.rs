@@ -18,7 +18,7 @@ use super::super::super::formalism::theorem::{
     MathObject, ProofGoal, Theorem, ValueBindedVariable,
 };
 use super::super::super::theories::groups::definitions::{
-    Group, GroupBasic, GroupElement, GroupExpression, GroupOperation,
+    Group, GenericGroup, GroupElement, GroupExpression, GroupOperation,
 };
 use super::super::super::theories::number_theory::definitions::NumberTheoryRelation;
 use super::super::super::theories::rings::definitions::{Ring, RingElementValue, RingExpression};
@@ -117,7 +117,7 @@ fn test_substitution_tactic() {
     let var_c = MathExpression::Var(Identifier::Name("c".to_string(), 0));
 
     // Create a statement with a+b = c (we'll replace a+b with d)
-    let group = Group::Basic(GroupBasic::default());
+    let group = Group::Generic(GenericGroup::default());
 
     // Create dummy GroupExpression elements for a and b using a valid enum variant
     // Assuming GroupElement::Symbol exists and takes a String
@@ -966,8 +966,8 @@ fn test_domain_specific_operations() {
     let state = ProofGoal::new(statement.clone());
 
     // Create a group for our operations
-    let group = super::super::super::theories::groups::definitions::Group::Basic(
-        super::super::super::theories::groups::definitions::GroupBasic::default(),
+    let group = super::super::super::theories::groups::definitions::Group::Generic(
+        super::super::super::theories::groups::definitions::GenericGroup::default(),
     );
 
     // Create dummy GroupExpression elements for g and h using a valid enum variant

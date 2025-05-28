@@ -1,6 +1,6 @@
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
-use crate::subjects::math::formalism::proof::path_index::{PathError, ReplaceableAtPath};
 use crate::subjects::math::formalism::proof::collect::CollectSubExpressions;
+use crate::subjects::math::formalism::proof::path_index::{PathError, ReplaceableAtPath};
 use crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation;
 
 impl NumberTheoryRelation {

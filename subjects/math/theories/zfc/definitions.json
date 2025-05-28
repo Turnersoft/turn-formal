@@ -1,120 +1,33 @@
 [
   {
-    "name": "SetTheoryRelationEntity",
-    "docs": "Entity information for set theory relation operations",
-    "kind": "struct",
-    "members": [
-      {
-        "name": "id",
-        "type": "Option<String>",
-        "docs": "Optional ID for referencing this relation"
-      },
-      {
-        "name": "description",
-        "type": "Option<String>",
-        "docs": "Optional description explaining this relation instance"
-      },
-      {
-        "name": "tags",
-        "type": "Vec<(String, String)>",
-        "docs": "Optional key-value pairs for additional context"
-      }
-    ]
-  },
-  {
-    "name": "SetTheoryRelation",
-    "docs": "Relations specific to set theory",
+    "name": "SetElement",
+    "docs": "Elements that can belong to sets",
     "kind": "enum",
     "members": [
       {
-        "name": "ElementOf",
-        "docs": "Element is in a set: x ∈ A",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        element: MathExpression,\n        set: MathExpression,\n    }"
+        "name": "Set",
+        "docs": "A nested set (following ZFC's everything-is-a-set principle)",
+        "type_info": "Box<Set>"
       },
       {
-        "name": "NotElementOf",
-        "docs": "Element is not in a set: x ∉ A",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        element: MathExpression,\n        set: MathExpression,\n    }"
+        "name": "Integer",
+        "docs": "Primitive numeric element (for efficient computation)",
+        "type_info": "i64"
       },
       {
-        "name": "SubsetOf",
-        "docs": "One set is a subset of another: A ⊆ B",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        subset: MathExpression,\n        superset: MathExpression,\n    }"
+        "name": "Symbol",
+        "docs": "Named/symbolic element (for abstract sets)",
+        "type_info": "String"
       },
       {
-        "name": "ProperSubsetOf",
-        "docs": "One set is a proper subset of another: A ⊊ B",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        subset: MathExpression,\n        superset: MathExpression,\n    }"
+        "name": "Pair",
+        "docs": "Ordered pair (a,b) - fundamental for relations/functions",
+        "type_info": "(Box<SetElement>, Box<SetElement>)"
       },
       {
-        "name": "Equal",
-        "docs": "Two sets are equal: A = B",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        left: MathExpression,\n        right: MathExpression,\n    }"
-      },
-      {
-        "name": "Disjoint",
-        "docs": "Two sets are disjoint: A ∩ B = ∅",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
-      },
-      {
-        "name": "Union",
-        "docs": "A set is the union of two others: C = A ∪ B",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        result: MathExpression,\n        first: MathExpression,\n        second: MathExpression,\n    }"
-      },
-      {
-        "name": "Intersection",
-        "docs": "A set is the intersection of two others: C = A ∩ B",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        result: MathExpression,\n        first: MathExpression,\n        second: MathExpression,\n    }"
-      },
-      {
-        "name": "Complement",
-        "docs": "A set is the complement of another: A = B^c",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        complement: MathExpression,\n        original: MathExpression,\n        universe: Option<MathExpression>,\n    }"
-      },
-      {
-        "name": "PowerSet",
-        "docs": "A set is the power set of another: A = P(B)",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        power_set: MathExpression,\n        original: MathExpression,\n    }"
-      },
-      {
-        "name": "HasCardinality",
-        "docs": "A set has a specific cardinality: |A| = n",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n        cardinality: MathExpression,\n    }"
-      },
-      {
-        "name": "SameCardinality",
-        "docs": "Two sets have the same cardinality: |A| = |B|",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
-      },
-      {
-        "name": "IsCountable",
-        "docs": "A set is countable",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
-      },
-      {
-        "name": "IsUncountable",
-        "docs": "A set is uncountable",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
-      },
-      {
-        "name": "IsFinite",
-        "docs": "A set is finite",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
-      },
-      {
-        "name": "IsInfinite",
-        "docs": "A set is infinite",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
-      },
-      {
-        "name": "IsEmpty",
-        "docs": "A set is empty",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        set: MathExpression,\n    }"
-      },
-      {
-        "name": "Custom",
-        "docs": "Custom set theory relation",
-        "type_info": "{\n        entity: SetTheoryRelationEntity,\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
+        "name": "Urelement",
+        "docs": "Special marker for urelements (non-set objects in some set theories)",
+        "type_info": "String"
       }
     ]
   },
@@ -130,8 +43,8 @@
       },
       {
         "name": "Contains",
-        "docs": "Element contains a specific set",
-        "type_info": "Box<Set>"
+        "docs": "Element contains a specific set element",
+        "type_info": "Box<SetElement>"
       },
       {
         "name": "ContainedIn",
@@ -289,19 +202,41 @@
     ]
   },
   {
+    "name": "GenericSet",
+    "docs": "",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "properties",
+        "type": "VariantSet<SetProperty>",
+        "docs": ""
+      }
+    ]
+  },
+  {
     "name": "Set",
     "docs": "A set in ZFC set theory, defined by its membership rule\nThis implementation follows the ZFC axioms and provides a foundation for set-theoretic constructions",
     "kind": "enum",
     "members": [
       {
+        "name": "Generic",
+        "docs": "A generic, abstract set (L1), or a set type defined by properties (L2).",
+        "type_info": "GenericSet"
+      },
+      {
         "name": "Empty",
-        "docs": "The empty set (∅), unique and contains no elements\nThis is guaranteed by the Empty Set Axiom of ZFC",
+        "docs": "The empty set (∅), unique and contains no elements",
         "type_info": null
       },
       {
         "name": "Singleton",
         "docs": "Properties of the singleton set (e.g., cardinality = 1)",
-        "type_info": "{\n        element: Box<Set>,\n        properties: VariantSet<SetProperty>,\n    }"
+        "type_info": "{\n        element: SetElement,\n        properties: VariantSet<SetProperty>,\n    }"
+      },
+      {
+        "name": "Enumeration",
+        "docs": "Properties of the enumerated set",
+        "type_info": "{\n        elements: Vec<SetElement>,\n        properties: VariantSet<SetProperty>,\n    }"
       },
       {
         "name": "BinaryUnion",
@@ -366,7 +301,96 @@
       {
         "name": "Parametric",
         "docs": "Properties of the parametric set",
-        "type_info": "{\n        parameters: std::collections::HashMap<String, String>,\n        description: String,\n        membership_condition: String,\n        properties: VariantSet<SetProperty>,\n    }"
+        "type_info": "{\n        parameters: HashMap<String, String>,\n        description: String,\n        membership_condition: String,\n        properties: VariantSet<SetProperty>,\n    }"
+      }
+    ]
+  },
+  {
+    "name": "SetExpression",
+    "docs": "SetExpression represents expressions involving sets that don't return sets\nThese include actions, morphisms, functions, and other operations",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "Variable",
+        "docs": "A variable representing a set",
+        "type_info": "Identifier"
+      },
+      {
+        "name": "Cardinality",
+        "docs": "The cardinality of a set: |A|",
+        "type_info": "{ set: Box<Parametrizable<Set>> }"
+      },
+      {
+        "name": "ElementSelection",
+        "docs": "Selection of an element from a set (choice function)",
+        "type_info": "{ set: Box<Parametrizable<Set>> }"
+      }
+    ]
+  },
+  {
+    "name": "SetRelation",
+    "docs": "Relations between sets, capturing the predicate structure of set theory",
+    "kind": "enum",
+    "members": [
+      {
+        "name": "ElementOf",
+        "docs": "Element relation: x ∈ A",
+        "type_info": "{\n        element: Parametrizable<SetElement>,\n        set: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "SubsetOf",
+        "docs": "Subset relation: A ⊆ B",
+        "type_info": "{\n        subset: Parametrizable<Set>,\n        superset: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "ProperSubsetOf",
+        "docs": "Proper subset relation: A ⊂ B",
+        "type_info": "{\n        subset: Parametrizable<Set>,\n        superset: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "Equals",
+        "docs": "Set equality: A = B",
+        "type_info": "{\n        left: Parametrizable<Set>,\n        right: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "AreDisjoint",
+        "docs": "Disjoint sets: A ∩ B = ∅",
+        "type_info": "{\n        left: Parametrizable<Set>,\n        right: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "HasCardinality",
+        "docs": "Set has cardinality n: |A| = n",
+        "type_info": "{\n        set: Parametrizable<Set>,\n        cardinality: Parametrizable<CardinalityPropertyVariant>,\n    }"
+      },
+      {
+        "name": "IsCountable",
+        "docs": "Set is countable: A is countable",
+        "type_info": "{ set: Parametrizable<Set> }"
+      },
+      {
+        "name": "IsFinite",
+        "docs": "Set is finite: A is finite",
+        "type_info": "{ set: Parametrizable<Set> }"
+      },
+      {
+        "name": "IsEmpty",
+        "docs": "Set is empty: A = ∅",
+        "type_info": "{ set: Parametrizable<Set> }"
+      },
+      {
+        "name": "CardinalityLessThan",
+        "docs": "Cardinality comparison: |A| < |B|",
+        "type_info": "{\n        left: Parametrizable<Set>,\n        right: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "CardinalityLessThanOrEqual",
+        "docs": "Cardinality comparison: |A| ≤ |B|",
+        "type_info": "{\n        left: Parametrizable<Set>,\n        right: Parametrizable<Set>,\n    }"
+      },
+      {
+        "name": "AreEquinumerous",
+        "docs": "Sets are equivalent/equinumerous: A ~ B (same cardinality)",
+        "type_info": "{\n        left: Parametrizable<Set>,\n        right: Parametrizable<Set>,\n    }"
       }
     ]
   },
@@ -406,11 +430,5 @@
         "type_info": "String"
       }
     ]
-  },
-  {
-    "name": "SetPropertiesRef",
-    "docs": "A reference to set properties\nThis allows us to access properties without taking ownership",
-    "kind": "struct",
-    "members": []
   }
 ]

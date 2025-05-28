@@ -20,7 +20,7 @@ use super::super::super::theories::VariantSet;
 use super::super::super::theories::zfc::Set;
 
 use super::definitions::{
-    AbelianPropertyVariant, FinitePropertyVariant, Group, GroupBasic, GroupElement,
+    AbelianPropertyVariant, FinitePropertyVariant, Group, GenericGroup, GroupElement,
     GroupExpression, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
     GroupOperation, GroupOperationProperty, GroupOperationVariant, GroupProperty, GroupRelation,
     GroupSymbol, SimplePropertyVariant,
@@ -570,7 +570,7 @@ pub fn prove_lagrange_theorem() -> Theorem {
 
     // Create concrete finite G wrapped in Parametrizable
     let mut group_g_concrete = create_abstract_group();
-    if let Group::Basic(ref mut basic_group) = group_g_concrete {
+    if let Group::Generic(ref mut basic_group) = group_g_concrete {
         basic_group
             .props
             .insert(GroupProperty::Finite(FinitePropertyVariant::Finite(10)));
@@ -649,7 +649,7 @@ fn create_abstract_group() -> Group {
         properties: vec![GroupOperationProperty::Associative], // Minimal required properties
         product_info: None,                                    // Default to None
     };
-    Group::Basic(GroupBasic {
+    Group::Generic(GenericGroup {
         base_set,
         operation,
         props: VariantSet::new(),

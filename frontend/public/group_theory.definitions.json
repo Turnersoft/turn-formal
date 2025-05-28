@@ -1,0 +1,1025 @@
+{
+  "theory_name": "Group Theory",
+  "content_type": "definitions",
+  "version": "1.0.0",
+  "exported_at": "1748442762",
+  "content": [
+    {
+      "id": "group_theory.basic.l1-l4-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Concrete Group: Group on set ∅",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "group_theory.basic.l1-l4-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "A document describing a concrete group instance on set Empty with explicit elements and structure."
+                      }
+                    ],
+                    "alignment": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.basic.l1-main-groupbasic-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Group on set ∅"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Group on set ∅"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.basic.l1-main-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Concrete Group (Group on set ∅)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Concrete group on set Empty with explicit structure:"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Operation: Multiplication (Infix(Times))"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Identity element: One"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Inverse rule: MultiplicativeInverse"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Elements: Empty"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the abstract specification, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Type"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.basic.l1-main-l2-doc",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.basic.l1-main-l2-doc"
+                                  }
+                                },
+                                {
+                                  "Text": ". For construction methods, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Constructors"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.basic.l1-main-l3-doc",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.basic.l1-main-l3-doc"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 3,
+                          "source_template_id": "group_theory.basic.l1-main-l2-doc",
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "GroupBasicDefinition"
+                  ],
+                  [
+                    "abstraction_level",
+                    "4"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.topological.l1-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Topological Group on Empty",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.topological.l1-main-topologicalgroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Topological Group on Empty"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Topological Group on Empty"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.topological.l1-main-formalTerm",
+                          "content": {
+                            "Text": "(Empty, τ)"
+                          }
+                        },
+                        "label": "Definition (Topological Group on Empty)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "A topological group is a mathematical structure that combines the algebraic structure of a group with the geometric structure of a topology in a compatible way."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Formally, a topological group G is a group (G, ·, e, ⁻¹) equipped with a topology such that the group operations are continuous functions."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Underlying algebraic structure: "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.topological.l1-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View the underlying group structure with closure, associativity, identity, and inverses"
+                                  }
+                                },
+                                {
+                                  "Text": " — provides the algebraic framework with binary operation, identity element, and inverses."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Underlying geometric structure: "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Topological Space"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.topological.l1-main-topology-section",
+                                        "theory_context": "Topology"
+                                      }
+                                    },
+                                    "tooltip": "View the underlying topological space with open sets, continuity, and convergence"
+                                  }
+                                },
+                                {
+                                  "Text": " — provides the geometric framework with open sets, neighborhoods, and continuity."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Compatibility Requirements: The algebra and geometry must be compatible through continuity of group operations:"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "• Multiplication μ: G × G → G, (x,y) ↦ x·y must be continuous"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "• Inversion ι: G → G, x ↦ x⁻¹ must be continuous"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This specific topological group is constructed on the set Empty:"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Level 1 (General Schema): This represents the abstract mathematical concept of topological groups, providing the foundational framework that all specific topological groups must satisfy."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Classical Examples: ℝ (real numbers under addition), S¹ (circle group), GL(n,ℝ) (general linear group), SL(n,ℝ) (special linear group), O(n) (orthogonal group), U(n) (unitary group)."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Applications: Lie group theory, harmonic analysis, representation theory, gauge theory in physics, and symmetric spaces in differential geometry."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Mathematical Significance: Topological groups bridge algebra and geometry, providing the foundation for modern harmonic analysis, representation theory, and differential geometry."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Key Theorems: Haar's theorem (existence of invariant measure), Peter-Weyl theorem (decomposition of representations), and the structure theory of locally compact groups."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Physical Applications: Gauge theories, crystal structures, particle physics symmetries, and quantum mechanical systems all rely heavily on topological group theory."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "TopologicalGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.cyclic.l1-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Cyclic Group C_12 generated by Integer(1)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.cyclic.l1-main-cyclicgroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Cyclic Group C_12 generated by Integer(1)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Cyclic Group C_12 generated by Integer(1)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.cyclic.l1-main-formalTerm",
+                          "content": {
+                            "Identifier": {
+                              "body": "C",
+                              "pre_script": null,
+                              "mid_script": null,
+                              "post_script": {
+                                "id": "group_theory.cyclic.l1-main-formalTerm_order",
+                                "content": {
+                                  "Quantity": {
+                                    "number": "12",
+                                    "unit": null
+                                  }
+                                }
+                              },
+                              "primes": 0,
+                              "is_function": false
+                            }
+                          }
+                        },
+                        "label": "Definition (Cyclic Group C_12 generated by Integer(1))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Generator: Integer(1)"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Order: 12"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the underlying group structure, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.cyclic.l1-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.cyclic.l1-main-groupbasic-section"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L4: A concrete cyclic group with fully specified generator and elements."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 3,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": [
+                          {
+                            "name": "Order",
+                            "current_variant": "Finite(12)",
+                            "all_variants": [
+                              "Finite(n)",
+                              "Infinite"
+                            ],
+                            "description": "Order of the cyclic group",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "CyclicGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.symmetric.l1-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Symmetric Group S_4",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.symmetric.l1-main-symmetricgroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Symmetric Group S_4"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Symmetric Group S_4"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.symmetric.l1-main-formalTerm",
+                          "content": {
+                            "Identifier": {
+                              "body": "S",
+                              "pre_script": null,
+                              "mid_script": null,
+                              "post_script": {
+                                "id": "group_theory.symmetric.l1-main-formalTerm_subscript",
+                                "content": {
+                                  "Quantity": {
+                                    "number": "4",
+                                    "unit": null
+                                  }
+                                }
+                              },
+                              "primes": 0,
+                              "is_function": false
+                            }
+                          }
+                        },
+                        "label": "Definition (Symmetric Group S_4)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Degree: 4"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Order: 24"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the underlying group structure, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.symmetric.l1-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.symmetric.l1-main-groupbasic-section"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L4: A concrete symmetric group with fully specified degree and elements."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 3,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": [
+                          {
+                            "name": "Abelian",
+                            "current_variant": "NonAbelian",
+                            "all_variants": [
+                              "Abelian",
+                              "NonAbelian"
+                            ],
+                            "description": "Commutativity property",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          },
+                          {
+                            "name": "Order",
+                            "current_variant": "Finite(24)",
+                            "all_variants": [
+                              "Finite(n)",
+                              "Infinite"
+                            ],
+                            "description": "Order of the group (number of elements)",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          },
+                          {
+                            "name": "Simple",
+                            "current_variant": "NonSimple",
+                            "all_variants": [
+                              "Simple",
+                              "NonSimple"
+                            ],
+                            "description": "Simplicity property (no normal subgroups)",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "SymmetricGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.lie.l1-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Lie Group on Empty",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.lie.l1-main-liegroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Lie Group on Empty"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Lie Group on Empty"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.lie.l1-main-formalTerm",
+                          "content": {
+                            "Text": "Lie(Empty, τ)"
+                          }
+                        },
+                        "label": "Definition (Lie Group on Empty)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "A Lie group is a group that is also a differentiable manifold, with the property that the group operations are compatible with the smooth structure."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the underlying group structure, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.lie.l1-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.lie.l1-main-groupbasic-section"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Manifold Topology: Empty"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Charts: chart1"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L1: A general schema for any Lie group."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": [
+                          {
+                            "name": "Connected",
+                            "current_variant": "Connected",
+                            "all_variants": [
+                              "Connected",
+                              "Disconnected"
+                            ],
+                            "description": "Connectedness property",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "LieGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    }
+  ]
+}

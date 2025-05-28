@@ -11,4 +11,8 @@ cargo run --bin content_compiler
 echo "Building React frontend..."
 cd frontend && npm run build
 
+# Exporting rust bindings to typescript
+echo "Exporting rust bindings to typescript..."
+cargo test export_bindings  
+
 echo "Build complete! The application is ready in frontend/dist" 

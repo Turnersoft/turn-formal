@@ -56,3 +56,125 @@ impl ToTurnMath for MathObject {
         }
     }
 }
+
+// Add conversion trait for structured export
+use crate::turn_render::section_node::{
+    StructuredExpression, StructuredGroupProperty, StructuredMathObject, StructuredNumberType,
+    StructuredSetType, StructuredSpaceType, structured_placeholder,
+};
+
+use super::expressions::ToStructuredFormat;
+
+impl ToStructuredFormat for MathObject {
+    type Output = String;
+
+    fn to_structured(&self) -> Self::Output {
+        match self {
+            MathObject::Set(_) => "Set".to_string(),
+            MathObject::Element(element) => "Element".to_string(),
+            MathObject::Group(_) => "Group".to_string(),
+            MathObject::Ring(_) => "Ring".to_string(),
+            MathObject::Field(_) => "Field".to_string(),
+            MathObject::Module(_) => "Module".to_string(),
+            MathObject::Algebra(_) => "Algebra".to_string(),
+            MathObject::TopologicalSpace(_) => "Topological Space".to_string(),
+            MathObject::VectorSpace(_) => "Vector Space".to_string(),
+            MathObject::Function(_) => "Function".to_string(),
+            MathObject::Integer => "Integer".to_string(),
+            MathObject::Rational => "Rational".to_string(),
+            MathObject::Irrational => "Irrational".to_string(),
+            MathObject::Real => "Real".to_string(),
+            MathObject::Complex => "Complex".to_string(),
+            MathObject::Morphism(from, to) => "Morphism".to_string(),
+            MathObject::Product(_) => "Product".to_string(),
+            MathObject::Coproduct(_) => "Coproduct".to_string(),
+            MathObject::Todo(description) => format!("Todo: {}", description),
+        }
+    }
+}
+
+impl MathObject {
+    pub fn to_structured_math_object(&self) -> StructuredMathObject {
+        match self {
+            MathObject::Group(group) => StructuredMathObject::Group {
+                structure: Box::new(structured_placeholder("Group structure")),
+                properties: vec![], // Could be enhanced with actual group properties
+            },
+            MathObject::Ring(ring) => StructuredMathObject::Ring {
+                structure: Box::new(structured_placeholder("Ring structure")),
+                properties: vec![],
+            },
+            MathObject::Field(field) => StructuredMathObject::Field {
+                structure: Box::new(structured_placeholder("Field structure")),
+                properties: vec![],
+            },
+            MathObject::Set(set) => StructuredMathObject::Set {
+                elements: vec![],                    // Could be enhanced with actual set elements
+                set_type: StructuredSetType::Finite, // Default assumption
+            },
+            MathObject::Element(element) => StructuredMathObject::Element {
+                value: Box::new(structured_placeholder("Element value")),
+                parent_object: Box::new(element.to_structured_math_object()),
+            },
+            MathObject::Function(func) => StructuredMathObject::Function {
+                domain: Box::new(StructuredMathObject::Set {
+                    elements: vec![],
+                    set_type: StructuredSetType::Finite,
+                }),
+                codomain: Box::new(StructuredMathObject::Set {
+                    elements: vec![],
+                    set_type: StructuredSetType::Finite,
+                }),
+                definition: None,
+            },
+            MathObject::TopologicalSpace(space) => StructuredMathObject::Space {
+                structure: Box::new(structured_placeholder("Topological space structure")),
+                space_type: StructuredSpaceType::Topological,
+            },
+            MathObject::VectorSpace(space) => StructuredMathObject::Space {
+                structure: Box::new(structured_placeholder("Vector space structure")),
+                space_type: StructuredSpaceType::Vector,
+            },
+            MathObject::Integer => StructuredMathObject::NumberType(StructuredNumberType::Integer),
+            MathObject::Rational => {
+                StructuredMathObject::NumberType(StructuredNumberType::Rational)
+            }
+            MathObject::Irrational => {
+                StructuredMathObject::NumberType(StructuredNumberType::Irrational)
+            }
+            MathObject::Real => StructuredMathObject::NumberType(StructuredNumberType::Real),
+            MathObject::Complex => StructuredMathObject::NumberType(StructuredNumberType::Complex),
+            MathObject::Morphism(from, to) => StructuredMathObject::Function {
+                domain: Box::new(from.to_structured_math_object()),
+                codomain: Box::new(to.to_structured_math_object()),
+                definition: None,
+            },
+            MathObject::Product(objects) => StructuredMathObject::Set {
+                elements: objects
+                    .iter()
+                    .map(|obj| structured_placeholder(&obj.to_structured()))
+                    .collect(),
+                set_type: StructuredSetType::Finite,
+            },
+            MathObject::Coproduct(objects) => StructuredMathObject::Set {
+                elements: objects
+                    .iter()
+                    .map(|obj| structured_placeholder(&obj.to_structured()))
+                    .collect(),
+                set_type: StructuredSetType::Finite,
+            },
+            MathObject::Module(module) => StructuredMathObject::Set {
+                elements: vec![],
+                set_type: StructuredSetType::Finite,
+            },
+            MathObject::Algebra(algebra) => StructuredMathObject::Ring {
+                structure: Box::new(structured_placeholder("Algebra structure")),
+                properties: vec![],
+            },
+            MathObject::Todo(description) => StructuredMathObject::Set {
+                elements: vec![structured_placeholder(description)],
+                set_type: StructuredSetType::Finite,
+            },
+        }
+    }
+}

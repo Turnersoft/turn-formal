@@ -285,7 +285,7 @@ mod group_tests {
         props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
         props.insert(GroupProperty::Simple(SimplePropertyVariant::NonSimple));
 
-        Group::Basic(GroupBasic {
+        Group::Generic(GenericGroup {
             base_set,
             operation,
             props,
@@ -368,7 +368,7 @@ mod group_tests {
         s3_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
         s3_props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(6)));
         s3_props.insert(GroupProperty::Simple(SimplePropertyVariant::NonSimple));
-        let s3_core = GroupBasic {
+        let s3_core = GenericGroup {
             base_set: create_test_set("S3", Some(6)),
             operation: GroupOperation {
                 operation_type: GroupOperationVariant::Composition,
@@ -394,7 +394,7 @@ mod group_tests {
         z2_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
         z2_props.insert(GroupProperty::Finite(FinitePropertyVariant::Finite(2)));
         z2_props.insert(GroupProperty::Simple(SimplePropertyVariant::Simple));
-        let z2_core = GroupBasic {
+        let z2_core = GenericGroup {
             base_set: create_test_set("Z/2Z", Some(2)),
             operation: GroupOperation {
                 operation_type: GroupOperationVariant::Addition,
@@ -480,7 +480,7 @@ mod topological_group_tests {
         let mut group_props = VariantSet::new();
         group_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::Abelian));
         group_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
-        let group_core = GroupBasic {
+        let group_core = GenericGroup {
             base_set: create_test_set("R", None),
             operation: GroupOperation {
                 operation_type: GroupOperationVariant::Addition,
@@ -567,7 +567,7 @@ mod topological_group_tests {
             product_info: None,
         };
 
-        let circle_core = GroupBasic {
+        let circle_core = GenericGroup {
             base_set: circle_set,
             operation: circle_operation,
             props: circle_props,
@@ -609,7 +609,7 @@ mod topological_group_tests {
             product_info: None,
         };
 
-        let integer_core = GroupBasic {
+        let integer_core = GenericGroup {
             base_set: integer_set,
             operation: integer_operation,
             props: integer_props,
@@ -681,7 +681,7 @@ mod lie_group_tests {
         let mut glnr_props = VariantSet::new();
         glnr_props.insert(GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian));
         glnr_props.insert(GroupProperty::Finite(FinitePropertyVariant::Infinite));
-        let glnr_core = GroupBasic {
+        let glnr_core = GenericGroup {
             base_set: create_test_set("GL(n,R)", None),
             operation: GroupOperation {
                 operation_type: GroupOperationVariant::MatrixMultiplication,
@@ -765,7 +765,7 @@ mod lie_group_tests {
             product_info: None,
         };
 
-        let so3_core = GroupBasic {
+        let so3_core = GenericGroup {
             base_set: so3_set,
             operation: so3_operation,
             props: so3_group_props,
@@ -809,7 +809,7 @@ mod lie_group_tests {
             product_info: None,
         };
 
-        let sl2r_core = GroupBasic {
+        let sl2r_core = GenericGroup {
             base_set: sl2r_set,
             operation: sl2r_operation,
             props: sl2r_group_props,
@@ -891,7 +891,7 @@ mod group_action_tests {
         };
 
         let group = Group::Symmetric(SymmetricGroup {
-            core: GroupBasic {
+            core: GenericGroup {
                 base_set: group_set,
                 operation: group_operation,
                 props: s4_group_props,
@@ -958,7 +958,7 @@ mod group_action_tests {
         z2_mod_props.insert(ModularProperty::Modulus(2));
 
         let z2_group = Group::ModularAdditive(ModularAdditiveGroup {
-            core: GroupBasic {
+            core: GenericGroup {
                 base_set: z2_set,
                 operation: z2_operation,
                 props: z2_group_props,

@@ -1,0 +1,462 @@
+/* =====================================================
+   DOCUMENT RENDERER - TECHNICAL DARK THEME
+   ===================================================== */
+
+.document {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.6;
+}
+
+/* =====================================================
+   SCIENTIFIC PAPER STYLES
+   ===================================================== */
+
+.scientificPaper {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  line-height: 1.7;
+}
+
+.paperHeader {
+  padding: 3rem 2.5rem;
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-surface) 100%);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-gradient);
+  }
+}
+
+.paperTitle {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.paperMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.paperType {
+  background: var(--accent-primary);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.paperVenue {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.peerReviewed {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.paperAuthors {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  
+  &::before {
+    content: '👥 ';
+    margin-right: 0.5rem;
+  }
+}
+
+.paperKeywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.keyword {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--accent-primary);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.2);
+    transform: translateY(-1px);
+  }
+}
+
+.abstract {
+  padding: 2.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+
+  h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+}
+
+.abstractTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before {
+    content: '📄';
+    font-size: 1.25rem;
+  }
+}
+
+.abstractContent {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 800px;
+}
+
+.paperBody {
+  padding: 2.5rem;
+  background: var(--bg-card);
+}
+
+.footnotes {
+  padding: 2rem 2.5rem;
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-subtle);
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before {
+      content: '📝';
+    }
+  }
+}
+
+.footnote {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--accent-primary);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* =====================================================
+   WIKI PAGE STYLES
+   ===================================================== */
+
+.wikiPage {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+}
+
+.wikiHeader {
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-surface) 100%);
+  padding: 2.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-tertiary) 0%, var(--accent-secondary) 100%);
+  }
+}
+
+.wikiTitle {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.wikiMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contentType {
+  background: var(--accent-tertiary);
+  color: var(--text-primary);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wikiContent {
+  padding: 2.5rem;
+  background: var(--bg-card);
+}
+
+/* =====================================================
+   TEXTBOOK STYLES
+   ===================================================== */
+
+.textbook {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+}
+
+.textbookHeader {
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-surface) 100%);
+  padding: 2.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+  }
+}
+
+.textbookTitle {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.textbookContent {
+  padding: 2.5rem;
+  background: var(--bg-card);
+}
+
+/* =====================================================
+   UNHANDLED CONTENT TYPE
+   ===================================================== */
+
+.unhandledContentType {
+  padding: 2.5rem;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-lg);
+  text-align: center;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    &::before {
+      content: '⚠️';
+    }
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  code {
+    background: var(--bg-surface);
+    color: var(--accent-primary);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+
+  details {
+    margin-top: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  summary {
+    padding: 1rem;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: var(--bg-tertiary);
+    }
+  }
+
+  pre {
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-normal);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--border-strong);
+    }
+  }
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .paperHeader,
+  .wikiHeader,
+  .textbookHeader,
+  .abstract,
+  .paperBody,
+  .wikiContent,
+  .textbookContent,
+  .unhandledContentType {
+    padding: 1.5rem;
+  }
+
+  .paperTitle,
+  .wikiTitle,
+  .textbookTitle {
+    font-size: 1.75rem;
+  }
+
+  .paperMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .paperKeywords {
+    margin-top: 1rem;
+  }
+
+  .abstractTitle {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .paperHeader,
+  .wikiHeader,
+  .textbookHeader,
+  .abstract,
+  .paperBody,
+  .wikiContent,
+  .textbookContent,
+  .unhandledContentType {
+    padding: 1rem;
+  }
+
+  .paperTitle,
+  .wikiTitle,
+  .textbookTitle {
+    font-size: 1.5rem;
+  }
+
+  .paperType,
+  .paperVenue,
+  .peerReviewed,
+  .contentType {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .keyword {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+  }
+} 

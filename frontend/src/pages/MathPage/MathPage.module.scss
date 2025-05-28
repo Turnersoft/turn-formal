@@ -1,434 +1,495 @@
-// Top navigation bar that sticks to the top
-.topBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1a1a2e;
-  color: white;
-  height: 60px;
-  padding: 0 20px;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+// =====================================================
+// SYMBOLICA-INSPIRED TECHNICAL DARK THEME
+// =====================================================
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-.navLinks {
-  display: flex;
-  gap: 20px;
-
-  a {
-    color: white;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-.mainContent {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-// Content wrapper that holds both sidebar and main content
-.contentWrapper {
-  display: flex;
-  flex: 1;
-  height: calc(100vh - 60px);
-  overflow: hidden;
-  max-height: calc(100vh - 60px);
-}
-
-.loadingIndicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.errorMessage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 20px;
-  color: #d32f2f;
-
-  button {
-    padding: 10px 20px;
-    background-color: #1a1a2e;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #16213e;
-    }
-  }
-}
-
-.theoremContent {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-// Grid for content cards
-.contentGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-// Card styling
-.mathCard {
-  padding: 1.5rem;
-  border-radius: 8px;
-  background-color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  }
-
-  h2 {
-    margin-top: 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #f8f9fa;
-    padding-bottom: 0.5rem;
-  }
-}
-
-// Styles for theorem cards
-.theorem {
-  border-left: 4px solid #4299e1;
-
-  h2 {
-    color: #2b6cb0;
-  }
-}
-
-// Styles for theory cards
-.theory {
-  border-left: 4px solid #48bb78;
-
-  h2 {
-    color: #2f855a;
-  }
-}
-
-.metadataSection {
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-
-  .foundationalTheory {
-    margin-bottom: 0.5rem;
-    color: #4a5568;
-  }
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.tag {
-  background-color: #e2e8f0;
-  color: #4a5568;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-  font-size: 0.8rem;
-}
-
-.sourcePath {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  color: #718096;
-  border-top: 1px solid #f8f9fa;
-  padding-top: 0.5rem;
-}
-
-.emptyState {
-  margin: 2rem;
-  padding: 2rem;
-  text-align: center;
-  background-color: #f5f5f7;
-  border-radius: 8px;
-
-  h3 {
-    margin-top: 0;
-    color: #333;
-  }
-
-  p {
-    color: #666;
-    line-height: 1.5;
-  }
-}
-
-.dates {
-  font-size: 0.8rem;
-  color: #718096;
-  margin-top: 0.5rem;
-}
-
-// Responsive layout adjustments
-@media (max-width: 768px) {
-  .contentWrapper {
-    flex-direction: column;
-  }
-
-  .contentArea {
-    height: auto;
-  }
-}
-
-// Section headers
-.sectionHeader {
-  width: 100%;
-  margin: 1rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
-  font-size: 1.5rem;
-}
-
-// Definition card styles
-.definition {
-  background-color: #f5f8ff;
-  border-left: 4px solid #3f51b5;
-}
-
-// Theorem card styles
-.theorem {
-  background-color: #f8f5ff;
-  border-left: 4px solid #7b1fa2;
-}
-
-// Math content common styles
-.mathCard {
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  h2 {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    font-size: 1.5rem;
-    color: #333;
-  }
-
-  h3 {
-    margin: 1.25rem 0 0.75rem;
-    font-size: 1.2rem;
-    color: #444;
-  }
-}
-
-// Description section
-.description {
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.5;
-}
-
-// Statement section
-.statement {
-  margin: 1rem 0;
-  padding: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.03);
-  border-radius: 4px;
-  font-size: 1.1rem;
-
-  strong {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-}
-
-// Enum variants
-.enumVariants {
-  ul {
-    padding-left: 1.5rem;
-
-    li {
-      margin-bottom: 0.5rem;
-
-      strong {
-        color: #3f51b5;
-      }
-    }
-  }
-}
-
-// Struct fields table
-.structFields {
-  margin: 1rem 0;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-      padding: 0.5rem;
-      border: 1px solid #e0e0e0;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f5f5f5;
-      font-weight: 600;
-    }
-
-    td code {
-      padding: 0.2rem 0.4rem;
-      background-color: #f5f5f5;
-      border-radius: 3px;
-      font-family: "Courier New", monospace;
-      font-size: 0.85rem;
-    }
-  }
-}
-
-// Proof section
-.proofSection {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.02);
-  border-radius: 4px;
-
-  h3 {
-    margin-top: 0;
-    color: #7b1fa2;
-  }
-}
-
-// Proof steps
-.proofSteps {
-  padding-left: 2rem;
-  counter-reset: step-counter;
-
-  .proofStep {
-    margin-bottom: 1rem;
-    position: relative;
-
-    &::before {
-      counter-increment: step-counter;
-      content: counter(step-counter);
-      position: absolute;
-      left: -2rem;
-      width: 1.5rem;
-      height: 1.5rem;
-      background-color: #7b1fa2;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-
-    .stepDescription {
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .formula {
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      background-color: #f8f8f8;
-      border-left: 2px solid #7b1fa2;
-      font-family: "Times New Roman", serif;
-      font-style: italic;
-      overflow-x: auto;
-    }
-  }
-}
-
-// Tags
-.tags {
-  margin-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-
-  .tag {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    background-color: #eee;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    color: #666;
-
-    &:hover {
-      background-color: #ddd;
-    }
-  }
-}
-
-// Empty state
-.emptyState {
-  padding: 2rem;
-  text-align: center;
-  color: #888;
-  font-style: italic;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  margin: 1rem 0;
+// Theme Variables
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #121218;
+  --bg-tertiary: #1a1a24;
+  --bg-card: #1e1e2a;
+  --bg-surface: #252530;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b0;
+  --text-muted: #6b6b80;
+  --text-inverse: #000000;
+  
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-tertiary: #06b6d4;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-normal: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+  
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 }
 
 .mathPage {
   display: flex;
   height: 100%;
-  width: 100vw;
   overflow: hidden;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
-  // Mobile styles (stacked layout)
-  @media (max-width: 767px) {
-    flex-direction: column;
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  gap: 20px;
+}
 
-    :global(.sidebar) {
-      width: 100%;
-      height: auto;
-      max-height: 40vh;
+.contentSidebar {
+  width: 350px;
+  background: rgba(16, 24, 40, 0.95);
+  border-right: 1px solid rgba(59, 130, 246, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  
+  .contentHeader {
+    padding: 20px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    background: rgba(16, 24, 40, 0.8);
+    
+    h3 {
+      margin: 0 0 8px 0;
+      color: #e2e8f0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .contentCount {
+      color: rgba(148, 163, 184, 0.8);
+      font-size: 0.9rem;
     }
   }
-
-  // Desktop styles (side-by-side layout)
-  @media (min-width: 768px) {
-    :global(.sidebar) {
-      width: 320px;
-      min-width: 320px;
+  
+  .contentList {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(16, 24, 40, 0.5);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 3px;
+      
+      &:hover {
+        background: rgba(59, 130, 246, 0.5);
+      }
+    }
+  }
+  
+  .contentItem {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    background: rgba(30, 41, 59, 0.4);
+    
+    &:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      transform: translateY(-1px);
+    }
+    
+    &.selected {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+    
+    .contentTitle {
+      color: #f1f5f9;
+      font-weight: 500;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    
+    .contentMeta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      
+      .level {
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+      }
+      
+      .sections {
+        color: rgba(148, 163, 184, 0.7);
+        font-size: 0.8rem;
+      }
     }
   }
 }
+
+// =====================================================
+// WELCOME STATE - HERO SECTION
+// =====================================================
+
+.welcomeState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  
+  .welcomeContent {
+    max-width: 800px;
+    text-align: center;
+    color: #e2e8f0;
+    
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: rgba(226, 232, 240, 0.8);
+      line-height: 1.6;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+      
+      .feature {
+        background: rgba(30, 41, 59, 0.5);
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        
+        h3 {
+          color: #3b82f6;
+          margin-bottom: 12px;
+          font-size: 1.3rem;
+        }
+        
+        p {
+          color: rgba(226, 232, 240, 0.7);
+          font-size: 1rem;
+          margin: 0;
+        }
+      }
+    }
+    
+    .getStarted {
+      background: rgba(59, 130, 246, 0.1);
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      
+      h3 {
+        color: #60a5fa;
+        margin-bottom: 12px;
+      }
+      
+      p {
+        margin: 0;
+        color: rgba(226, 232, 240, 0.8);
+      }
+    }
+  }
+}
+
+// =====================================================
+// CONTENT STATES
+// =====================================================
+
+.noContentState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #e2e8f0;
+  
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    color: #3b82f6;
+  }
+  
+  p {
+    color: rgba(226, 232, 240, 0.7);
+    margin-bottom: 24px;
+  }
+  
+  .fileInfo {
+    background: rgba(30, 41, 59, 0.5);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    margin-top: 20px;
+    
+    h4 {
+      color: #60a5fa;
+      margin-bottom: 12px;
+    }
+    
+    p {
+      margin: 8px 0;
+      text-align: left;
+      
+      strong {
+        color: #e2e8f0;
+      }
+    }
+  }
+}
+
+.fileInfo {
+  margin-top: 3rem;
+  padding: 2.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    
+    strong {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+  }
+}
+
+// =====================================================
+// CONTENT RENDERER
+// =====================================================
+
+.contentRenderer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  .contentHeader {
+    background: rgba(30, 41, 59, 0.8);
+    padding: 16px 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #e2e8f0;
+      
+      .fileName {
+        font-weight: 600;
+        color: #60a5fa;
+      }
+      
+      .separator {
+        color: rgba(148, 163, 184, 0.6);
+      }
+      
+      .contentId {
+        color: rgba(226, 232, 240, 0.8);
+        font-family: 'SF Mono', Consolas, monospace;
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  .documentContent {
+    flex: 1;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 4px;
+      
+      &:hover {
+        background: rgba(59, 130, 246, 0.5);
+      }
+    }
+  }
+}
+
+// =====================================================
+// LOADING & ERROR STATES
+// =====================================================
+
+.loadingState, .errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--bg-secondary);
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+}
+
+.errorState {
+  h3 {
+    color: #ef4444;
+  }
+}
+
+.retryButton {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+// =====================================================
+// RESPONSIVE DESIGN
+// =====================================================
+
+@media (max-width: 768px) {
+  .mathPage {
+    flex-direction: column;
+  }
+
+  .welcomeState,
+  .noContentState,
+  .contentRenderer {
+    padding: 2rem 1rem;
+  }
+
+  .welcomeContent h2 {
+    font-size: 2.5rem;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .feature {
+    padding: 2rem;
+  }
+
+  .getStarted {
+    margin-top: 2rem;
+    padding: 2rem;
+  }
+
+  .breadcrumb {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .fileName,
+    .contentId {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .welcomeContent h2 {
+    font-size: 2rem;
+  }
+
+  .feature h3 {
+    font-size: 1.25rem;
+  }
+
+  .feature p {
+    font-size: 0.95rem;
+  }
+}
+
+
