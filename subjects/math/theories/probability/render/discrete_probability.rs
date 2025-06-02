@@ -1,0 +1,83 @@
+use crate::subjects::math::theories::probability::definitions::DiscreteProbabilitySpace;
+use crate::turn_render::section_node::{
+    AcademicMetadata, ContentMetadata, DocumentRelationships, DocumentStructure, MathDocument,
+    MathematicalContent, MathematicalContentType, PaperType, ParagraphNode, RichTextSegment,
+    ScientificPaperContent, Section, SectionContentNode, ToSectionNode,
+};
+
+impl ToSectionNode for DiscreteProbabilitySpace {
+    fn to_section_node(&self, id_prefix: &str) -> Section {
+        Section {
+            id: format!("{}.main", id_prefix),
+            title: Some(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "Discrete Probability Space".to_string(),
+                )],
+                alignment: None,
+            }),
+            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "A discrete probability space with finite or countable sample space."
+                        .to_string(),
+                )],
+                alignment: None,
+            })],
+            metadata: vec![],
+            display_options: None,
+        }
+    }
+
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let main_section = self.to_section_node(id_prefix);
+
+        MathematicalContent {
+            id: format!("{}.doc", id_prefix),
+            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+                title: "Discrete Probability Space".to_string(),
+                paper_type: PaperType::Research,
+                venue: Some("Mathematical Probability".to_string()),
+                peer_reviewed: true,
+                content_metadata: ContentMetadata {
+                    language: Some("en-US".to_string()),
+                    version: Some("1.0".to_string()),
+                    created_at: None,
+                    last_modified: None,
+                    content_hash: None,
+                },
+                academic_metadata: AcademicMetadata {
+                    authors: vec!["Turn-Formal System".to_string()],
+                    date_published: None,
+                    date_modified: None,
+                    venue: Some("Mathematical Probability".to_string()),
+                    doi: None,
+                    keywords: vec!["discrete probability".to_string()],
+                },
+                structure: DocumentStructure {
+                    abstract_content: None,
+                    table_of_contents: None,
+                    body: vec![main_section],
+                    footnotes: vec![],
+                    glossary: vec![],
+                    bibliography: vec![],
+                },
+                relationships: DocumentRelationships {
+                    parent_documents: vec![],
+                    child_documents: vec![],
+                    related_concepts: vec![],
+                    dependency_graph: None,
+                    cross_references: vec![],
+                },
+            }),
+        }
+    }
+
+    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+        vec![RichTextSegment::Text(
+            "Discrete Probability Space".to_string(),
+        )]
+    }
+
+    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+        vec![RichTextSegment::Text("(Ω_discrete, ℱ, P)".to_string())]
+    }
+}

@@ -9,7 +9,7 @@ use crate::turn_render::section_node::{
 // This AbstractionLevel is for the GetAbstractionLevel trait implementations for ZFC types.
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::zfc::set::{
+use crate::subjects::math::theories::zfc::definitions::{
     CardinalityPropertyVariant, ElementCondition, Set, SetElement, SetExpression, SetMapping,
     SetProperty, SetRelation,
 };

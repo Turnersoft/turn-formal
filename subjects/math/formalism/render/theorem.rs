@@ -372,19 +372,17 @@ impl ToSectionNode for Theorem {
             content: {
                 let mut content = vec![
                     // Theorem as structured mathematical content - use fully structured variant
-                    SectionContentNode::StructuredMath(
-                        StructuredMathContentNode::StructuredTheoremLike {
-                            kind: TheoremLikeKind::Theorem,
-                            label: Some(self.id.clone()),
-                            statement: self.convert_statement_to_structured(&self.goal.statement),
-                            proof: if !self.proofs.nodes.is_empty() {
-                                Some(self.create_structured_proof_display())
-                            } else {
-                                None
-                            },
-                            abstraction_meta: None,
+                    SectionContentNode::StructuredMath(StructuredMathContentNode::TheoremLike {
+                        kind: TheoremLikeKind::Theorem,
+                        label: Some(self.id.clone()),
+                        statement: self.convert_statement_to_structured(&self.goal.statement),
+                        proof: if !self.proofs.nodes.is_empty() {
+                            Some(self.create_structured_proof_display())
+                        } else {
+                            None
                         },
-                    ),
+                        abstraction_meta: None,
+                    }),
                 ];
 
                 // Add parsed mathematical content from description
@@ -833,7 +831,7 @@ impl Theorem {
                 base: Box::new(ab_product),
                 exponent: Box::new(MathNode {
                     id: format!("{}_desc_neg_one", id_prefix),
-                    content: Box::new(MathNodeContent::UnaryPrefix {
+                    content: Box::new(MathNodeContent::UnaryPrefixOperation {
                         parameter: Box::new(MathNode {
                             id: format!("{}_desc_one", id_prefix),
                             content: Box::new(MathNodeContent::Quantity {
@@ -854,7 +852,7 @@ impl Theorem {
                 base: Box::new(b_var.clone()),
                 exponent: Box::new(MathNode {
                     id: format!("{}_desc_b_neg_one", id_prefix),
-                    content: Box::new(MathNodeContent::UnaryPrefix {
+                    content: Box::new(MathNodeContent::UnaryPrefixOperation {
                         parameter: Box::new(MathNode {
                             id: format!("{}_desc_b_one", id_prefix),
                             content: Box::new(MathNodeContent::Quantity {
@@ -875,7 +873,7 @@ impl Theorem {
                 base: Box::new(a_var.clone()),
                 exponent: Box::new(MathNode {
                     id: format!("{}_desc_a_neg_one", id_prefix),
-                    content: Box::new(MathNodeContent::UnaryPrefix {
+                    content: Box::new(MathNodeContent::UnaryPrefixOperation {
                         parameter: Box::new(MathNode {
                             id: format!("{}_desc_a_one", id_prefix),
                             content: Box::new(MathNodeContent::Quantity {
@@ -1230,7 +1228,7 @@ impl Theorem {
                 base: Box::new(base),
                 exponent: Box::new(MathNode {
                     id: format!("{}_neg_one", node_id),
-                    content: Box::new(MathNodeContent::UnaryPrefix {
+                    content: Box::new(MathNodeContent::UnaryPrefixOperation {
                         parameter: Box::new(self.create_number("1", &format!("{}_one", node_id))),
                         operator: "−".to_string(),
                     }),

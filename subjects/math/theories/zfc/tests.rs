@@ -23,9 +23,10 @@ mod zfc_machinery_tests {
     use super::super::super::super::super::math::theories::zfc::{
         ZFCVerifier,
         axioms::{SatisfiesZFC, ZFCAxioms},
-        cartesian_product, empty_set, ordered_pair, pair_set, power_set,
-        set::{ElementCondition, Set, SetElement, SetMapping, SetOpProperty, SetProperty},
-        singleton_set, symmetric_difference_set, union_set,
+        cartesian_product,
+        definitions::{ElementCondition, Set, SetElement, SetMapping, SetOpProperty, SetProperty},
+        empty_set, ordered_pair, pair_set, power_set, singleton_set, symmetric_difference_set,
+        union_set,
     };
     use super::super::*;
     use super::*;
@@ -1493,7 +1494,7 @@ mod set_structure_tests {
     use crate::subjects::math::formalism::expressions::Identifier;
     use crate::subjects::math::formalism::extract::Parametrizable;
     use crate::subjects::math::theories::VariantSet;
-    use crate::subjects::math::theories::zfc::set::{
+    use crate::subjects::math::theories::zfc::definitions::{
         CardinalityPropertyVariant, Set, SetElement, SetExpression, SetRelation,
     };
 
@@ -1583,9 +1584,10 @@ mod additional_tests {
     use super::super::super::super::super::math::theories::zfc::{
         ZFCVerifier,
         axioms::{SatisfiesZFC, ZFCAxioms},
-        cartesian_product, empty_set, ordered_pair, pair_set, power_set,
-        set::{ElementCondition, Set, SetElement, SetMapping, SetOpProperty, SetProperty},
-        singleton_set, symmetric_difference_set, union_set,
+        cartesian_product,
+        definitions::{ElementCondition, Set, SetElement, SetMapping, SetOpProperty, SetProperty},
+        empty_set, ordered_pair, pair_set, power_set, singleton_set, symmetric_difference_set,
+        union_set,
     };
     use super::*;
     use crate::subjects::math::theories::VariantSet;

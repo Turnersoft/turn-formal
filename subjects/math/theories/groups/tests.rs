@@ -5,7 +5,7 @@
 
 use super::super::VariantSet;
 use super::definitions::*;
-use crate::subjects::math::theories::definitions::MetrizablePropertyVariant;
+use crate::subjects::math::theories::groups::definitions::MetrizablePropertyVariant;
 use crate::subjects::math::theories::groups::definitions::{
     LieGroupProperty, ReductivePropertyVariant, SemisimplePropertyVariant, TopologicalGroupProperty,
 };
@@ -13,8 +13,8 @@ use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, T
 use crate::subjects::math::theories::topology::{
     CompactnessPropertyVariant, ConnectednessPropertyVariant,
 };
-use crate::subjects::math::theories::zfc::set::CardinalityPropertyVariant;
-use crate::subjects::math::theories::zfc::set::{Set, SetProperty};
+use crate::subjects::math::theories::zfc::definitions::CardinalityPropertyVariant;
+use crate::subjects::math::theories::zfc::definitions::{Set, SetProperty};
 use serde_json::{from_str, to_string};
 use std::cmp::PartialEq;
 use std::collections::HashMap;

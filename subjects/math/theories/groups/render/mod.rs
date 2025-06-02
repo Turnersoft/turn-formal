@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, HashMap};
 use crate::subjects::math::export::unified_exporter::TheoryExporter;
 use crate::subjects::math::formalism::expressions::Identifier;
 use crate::subjects::math::formalism::extract::Parametrizable;
-use crate::subjects::math::theories::definitions::{
+use crate::subjects::math::theories::groups::definitions::{
     CenterGroup, CommutatorSubgroup, GroupHomomorphism, SylowSubgroup,
 };
 //--- Imports from crate::turn_render ---
@@ -25,7 +25,7 @@ use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::fields::definitions::Field;
 use crate::subjects::math::theories::fields::{FieldBasic, render::*};
 use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
-use crate::subjects::math::theories::zfc::set::Set;
+use crate::subjects::math::theories::zfc::definitions::Set;
 
 //--- Imports from groups definitions ---
 use crate::subjects::math::theories::groups::definitions::{
@@ -282,7 +282,7 @@ impl ToTurnMath for GroupExpression {
             },
             GroupExpression::Inverse { group, element } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::UnaryPrefix {
+                content: Box::new(MathNodeContent::UnaryPrefixOperation {
                     parameter: Box::new(MathNode {
                         id: format!("{}-operand", master_id),
                         content: Box::new(MathNodeContent::Text("g".to_string())),

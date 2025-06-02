@@ -1,0 +1,2422 @@
+{
+  "theory_name": "Probability Theory",
+  "content_type": "theorems",
+  "version": "1.0.0",
+  "exported_at": "1748840843",
+  "content": [
+    {
+      "id": "probability.weak_law_of_large_numbers-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Weak Law of Large Numbers",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.weak_law_of_large_numbers-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.weak_law_of_large_numbers-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.weak_law_of_large_numbers-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.weak_law_of_large_numbers-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.weak_law_of_large_numbers-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Weak Law of Large Numbers"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.weak_law_of_large_numbers",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: converges_in_probability",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.weak_law_of_large_numbers-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.weak_law_of_large_numbers-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.weak_law_of_large_numbers-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.weak_law_of_large_numbers"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.strong_law_of_large_numbers-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Strong Law of Large Numbers",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.strong_law_of_large_numbers-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.strong_law_of_large_numbers-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.strong_law_of_large_numbers-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.strong_law_of_large_numbers-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.strong_law_of_large_numbers-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Strong Law of Large Numbers"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.strong_law_of_large_numbers",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: converges_almost_surely",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.strong_law_of_large_numbers-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.strong_law_of_large_numbers-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.strong_law_of_large_numbers-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.strong_law_of_large_numbers"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.central_limit_theorem-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Central Limit Theorem",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.central_limit_theorem-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.central_limit_theorem-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.central_limit_theorem-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.central_limit_theorem-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.central_limit_theorem-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Central Limit Theorem"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.central_limit_theorem",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: converges_in_distribution",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.central_limit_theorem-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.central_limit_theorem-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.central_limit_theorem-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.central_limit_theorem"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.bayes_theorem-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Bayes' Theorem",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.bayes_theorem-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Mathematical equation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.bayes_theorem-abstract",
+                      "content": {
+                        "Relationship": {
+                          "lhs": {
+                            "id": "probability.bayes_theorem-abstract_left",
+                            "content": {
+                              "Identifier": {
+                                "body": "a",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
+                          },
+                          "rhs": {
+                            "id": "probability.bayes_theorem-abstract_right",
+                            "content": {
+                              "Identifier": {
+                                "body": "b",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
+                          },
+                          "operator": "Equal"
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.bayes_theorem-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Bayes' Theorem"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.bayes_theorem",
+                        "statement": {
+                          "Equality": {
+                            "left": {
+                              "Variable": {
+                                "name": "P(A|B)",
+                                "subscript": "1",
+                                "superscript": null
+                              }
+                            },
+                            "right": {
+                              "Variable": {
+                                "name": "P(B|A)P(A)/P(B)",
+                                "subscript": "2",
+                                "superscript": null
+                              }
+                            },
+                            "justification": null
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Mathematical equation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.bayes_theorem-main",
+                        "content": {
+                          "Relationship": {
+                            "lhs": {
+                              "id": "probability.bayes_theorem-main_left",
+                              "content": {
+                                "Identifier": {
+                                  "body": "a",
+                                  "pre_script": null,
+                                  "mid_script": null,
+                                  "post_script": null,
+                                  "primes": 0,
+                                  "is_function": false
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "id": "probability.bayes_theorem-main_right",
+                              "content": {
+                                "Identifier": {
+                                  "body": "b",
+                                  "pre_script": null,
+                                  "mid_script": null,
+                                  "post_script": null,
+                                  "primes": 0,
+                                  "is_function": false
+                                }
+                              }
+                            },
+                            "operator": "Equal"
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.bayes_theorem"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.law_of_total_probability-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Law of Total Probability",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.law_of_total_probability-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Mathematical equation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.law_of_total_probability-abstract",
+                      "content": {
+                        "Relationship": {
+                          "lhs": {
+                            "id": "probability.law_of_total_probability-abstract_left",
+                            "content": {
+                              "Identifier": {
+                                "body": "a",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
+                          },
+                          "rhs": {
+                            "id": "probability.law_of_total_probability-abstract_right",
+                            "content": {
+                              "Identifier": {
+                                "body": "b",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
+                          },
+                          "operator": "Equal"
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.law_of_total_probability-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Law of Total Probability"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.law_of_total_probability",
+                        "statement": {
+                          "Equality": {
+                            "left": {
+                              "Variable": {
+                                "name": "P(A)",
+                                "subscript": "1",
+                                "superscript": null
+                              }
+                            },
+                            "right": {
+                              "Variable": {
+                                "name": "Σ P(A|B_i)P(B_i)",
+                                "subscript": "2",
+                                "superscript": null
+                              }
+                            },
+                            "justification": null
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Mathematical equation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.law_of_total_probability-main",
+                        "content": {
+                          "Relationship": {
+                            "lhs": {
+                              "id": "probability.law_of_total_probability-main_left",
+                              "content": {
+                                "Identifier": {
+                                  "body": "a",
+                                  "pre_script": null,
+                                  "mid_script": null,
+                                  "post_script": null,
+                                  "primes": 0,
+                                  "is_function": false
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "id": "probability.law_of_total_probability-main_right",
+                              "content": {
+                                "Identifier": {
+                                  "body": "b",
+                                  "pre_script": null,
+                                  "mid_script": null,
+                                  "post_script": null,
+                                  "primes": 0,
+                                  "is_function": false
+                                }
+                              }
+                            },
+                            "operator": "Equal"
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.law_of_total_probability"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.chebyshev_inequality-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Chebyshev's Inequality",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.chebyshev_inequality-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.chebyshev_inequality-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.chebyshev_inequality-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.chebyshev_inequality-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.chebyshev_inequality-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Chebyshev's Inequality"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.chebyshev_inequality",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: probability_bound",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.chebyshev_inequality-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.chebyshev_inequality-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.chebyshev_inequality-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.chebyshev_inequality"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.markov_inequality-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Markov's Inequality",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.markov_inequality-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.markov_inequality-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.markov_inequality-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.markov_inequality-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.markov_inequality-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Markov's Inequality"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.markov_inequality",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: probability_bound",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.markov_inequality-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.markov_inequality-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.markov_inequality-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.markov_inequality"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.jensen_inequality-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Jensen's Inequality",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.jensen_inequality-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.jensen_inequality-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.jensen_inequality-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.jensen_inequality-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.jensen_inequality-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Jensen's Inequality"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.jensen_inequality",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: inequality",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.jensen_inequality-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.jensen_inequality-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.jensen_inequality-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.jensen_inequality"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.martingale_convergence-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Martingale Convergence Theorem",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.martingale_convergence-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Set membership: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.martingale_convergence-abstract",
+                      "content": {
+                        "Relationship": {
+                          "lhs": {
+                            "id": "probability.martingale_convergence-abstract_x",
+                            "content": {
+                              "Identifier": {
+                                "body": "x",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
+                          },
+                          "rhs": {
+                            "id": "probability.martingale_convergence-abstract_s",
+                            "content": {
+                              "Identifier": {
+                                "body": "S",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
+                          },
+                          "operator": "ElementOf"
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.martingale_convergence-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Martingale Convergence Theorem"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.martingale_convergence",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: converges_almost_surely",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Set membership: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.martingale_convergence-main",
+                        "content": {
+                          "Relationship": {
+                            "lhs": {
+                              "id": "probability.martingale_convergence-main_x",
+                              "content": {
+                                "Identifier": {
+                                  "body": "x",
+                                  "pre_script": null,
+                                  "mid_script": null,
+                                  "post_script": null,
+                                  "primes": 0,
+                                  "is_function": false
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "id": "probability.martingale_convergence-main_s",
+                              "content": {
+                                "Identifier": {
+                                  "body": "S",
+                                  "pre_script": null,
+                                  "mid_script": null,
+                                  "post_script": null,
+                                  "primes": 0,
+                                  "is_function": false
+                                }
+                              }
+                            },
+                            "operator": "ElementOf"
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.martingale_convergence"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.optional_stopping-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Optional Stopping Theorem",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.optional_stopping-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.optional_stopping-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.optional_stopping-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.optional_stopping-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.optional_stopping-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Optional Stopping Theorem"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.optional_stopping",
+                        "statement": {
+                          "Equality": {
+                            "left": {
+                              "Variable": {
+                                "name": "E[X_τ]",
+                                "subscript": "1",
+                                "superscript": null
+                              }
+                            },
+                            "right": {
+                              "Variable": {
+                                "name": "E[X_0]",
+                                "subscript": "2",
+                                "superscript": null
+                              }
+                            },
+                            "justification": null
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.optional_stopping-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.optional_stopping-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.optional_stopping-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.optional_stopping"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.kolmogorov_three_series-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Kolmogorov's Three-Series Theorem",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.kolmogorov_three_series-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Product operation: "
+                      }
+                    ],
+                    "alignment": null
+                  }
+                },
+                {
+                  "MathBlock": {
+                    "math": {
+                      "id": "probability.kolmogorov_three_series-abstract",
+                      "content": {
+                        "Multiplications": {
+                          "terms": [
+                            [
+                              "None",
+                              {
+                                "id": "probability.kolmogorov_three_series-abstract_left",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "a",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ],
+                            [
+                              "None",
+                              {
+                                "id": "probability.kolmogorov_three_series-abstract_right",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "b",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "label": null,
+                    "caption": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.kolmogorov_three_series-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Kolmogorov's Three-Series Theorem"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.kolmogorov_three_series",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: series_convergence_equivalence",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Product operation: "
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "MathBlock": {
+                      "math": {
+                        "id": "probability.kolmogorov_three_series-main",
+                        "content": {
+                          "Multiplications": {
+                            "terms": [
+                              [
+                                "None",
+                                {
+                                  "id": "probability.kolmogorov_three_series-main_left",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "a",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ],
+                              [
+                                "None",
+                                {
+                                  "id": "probability.kolmogorov_three_series-main_right",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "b",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "label": null,
+                      "caption": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.kolmogorov_three_series"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability.glivenko_cantelli-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Glivenko-Cantelli Theorem",
+          "paper_type": "Research",
+          "venue": "Mathematical Theorems",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Theorems",
+            "doi": null,
+            "keywords": [
+              "theorem"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability.glivenko_cantelli-abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "The empirical distribution function converges uniformly to the true distribution function almost surely."
+                      }
+                    ],
+                    "alignment": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability.glivenko_cantelli-main-main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Glivenko-Cantelli Theorem"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "StructuredTheoremLike": {
+                        "kind": "Theorem",
+                        "label": "probability.glivenko_cantelli",
+                        "statement": {
+                          "Todo": {
+                            "description": "Todo relation: uniform_convergence",
+                            "context": [
+                              "expression",
+                              "expression"
+                            ]
+                          }
+                        },
+                        "proof": null,
+                        "abstraction_meta": null
+                      }
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "The empirical distribution function converges uniformly to the true distribution function almost surely."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "theorem"
+                  ],
+                  [
+                    "theorem_id",
+                    "probability.glivenko_cantelli"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    }
+  ]
+}

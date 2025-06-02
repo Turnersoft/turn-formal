@@ -1,5 +1,5 @@
 use crate::subjects::math::formalism::complexity::Complexity;
-use crate::subjects::math::theories::zfc::set::{Set, SetElement};
+use crate::subjects::math::theories::zfc::definitions::{Set, SetElement};
 
 impl Complexity for Set {
     fn complexity(&self) -> usize {

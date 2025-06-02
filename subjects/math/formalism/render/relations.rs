@@ -136,7 +136,7 @@ impl ToTurnMath for MathRelation {
                 // Use proper prefix notation with negation symbol
                 MathNode {
                     id: master_id,
-                    content: Box::new(MathNodeContent::UnaryPrefix {
+                    content: Box::new(MathNodeContent::UnaryPrefixOperation {
                         parameter: Box::new(inner),
                         operator: "¬".to_string(), // Logical NOT symbol
                     }),

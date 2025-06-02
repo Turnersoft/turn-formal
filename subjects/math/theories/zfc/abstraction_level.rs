@@ -1,6 +1,6 @@
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::zfc::set::{
+use crate::subjects::math::theories::zfc::definitions::{
     CardinalityPropertyVariant, Set, SetElement, SetExpression, SetProperty, SetRelation,
 };
 

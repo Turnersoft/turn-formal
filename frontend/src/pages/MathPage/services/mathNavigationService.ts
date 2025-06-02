@@ -381,6 +381,7 @@ export class MathNavigationService {
     // Map theory contexts to their data files
     const theoryFileMap: { [key: string]: string } = {
       'GroupTheory': 'group_theory.definitions.json',
+      'ProbabilityTheory': 'probability_theory.definitions.json',
       'FieldTheory': 'field_theory.definitions.json',
       'RingTheory': 'ring_theory.definitions.json',
       'TopologyTheory': 'topology.definitions.json',
@@ -396,6 +397,7 @@ export class MathNavigationService {
   static getTheoremFileForTheory(theoryContext: string): string {
     const theoryFileMap: { [key: string]: string } = {
       'GroupTheory': 'group_theory.theorems.json',
+      'ProbabilityTheory': 'probability_theory.theorems.json',
       'FieldTheory': 'field_theory.theorems.json',
       'RingTheory': 'ring_theory.theorems.json',
       'TopologyTheory': 'topology.theorems.json',

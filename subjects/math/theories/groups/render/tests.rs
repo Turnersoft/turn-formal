@@ -13,7 +13,7 @@ mod tests {
     use crate::subjects::math::theories::topology::definitions::{
         TopologicalSpace, Topology, TopologyProperty,
     };
-    use crate::subjects::math::theories::zfc::set::{Set, SetElement};
+    use crate::subjects::math::theories::zfc::definitions::{Set, SetElement};
     use crate::turn_render::section_node::ToSectionNode;
 
     #[test]

@@ -1,0 +1,296 @@
+{
+  "theory_name": "Probability Theory",
+  "content_type": "definitions",
+  "version": "1.0.0",
+  "exported_at": "1748840843",
+  "content": [
+    {
+      "id": "probability_theory.object_0.generic.schema.doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Probability Space Schema",
+          "paper_type": "Research",
+          "venue": "Mathematical Schemas",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Schemas",
+            "doi": null,
+            "keywords": [
+              "probability",
+              "schema"
+            ]
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability_theory.object_0.generic.schema",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Probability Space Schema"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability_theory.expression_0",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Probability Expression",
+          "paper_type": "Research",
+          "venue": "Mathematical Expressions",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Expressions",
+            "doi": null,
+            "keywords": [
+              "probability",
+              "expression"
+            ]
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability_theory.expression_0.main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Expression"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Probability expression: EventProbability { event: Variable(Name(\"A\", 1)), probability_space: Variable(Name(\"Ω\", 1)) }"
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability_theory.expression_1",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Probability Expression",
+          "paper_type": "Research",
+          "venue": "Mathematical Expressions",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Expressions",
+            "doi": null,
+            "keywords": [
+              "probability",
+              "expression"
+            ]
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability_theory.expression_1.main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Expression"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Probability expression: ExpectedValue { variable: Variable(Name(\"X\", 1)) }"
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "probability_theory.relation_0",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Probability Relation",
+          "paper_type": "Research",
+          "venue": "Mathematical Relations",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Relations",
+            "doi": null,
+            "keywords": [
+              "probability",
+              "relation"
+            ]
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability_theory.relation_0.main",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Relation"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Probability relation: EventsAreIndependent { events: [Variable(Name(\"A\", 1)), Variable(Name(\"B\", 1))], probability_space: Variable(Name(\"Ω\", 1)) }"
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    }
+  ]
+}

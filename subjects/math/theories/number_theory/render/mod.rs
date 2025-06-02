@@ -183,7 +183,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     // For more than 2 parameters, create a custom function
                     MathNode {
                         id: master_id.clone(),
-                        content: Box::new(MathNodeContent::CustomFunction {
+                        content: Box::new(MathNodeContent::FunctionCall {
                             name: Box::new(MathNode {
                                 id: format!("{}:func_name", master_id),
                                 content: Box::new(MathNodeContent::Text(name.clone())),

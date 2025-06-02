@@ -10,7 +10,7 @@ use crate::subjects::math::theories::groups::definitions::{
     TopologicalGroup, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
-use crate::subjects::math::theories::zfc::set::Set;
+use crate::subjects::math::theories::zfc::definitions::Set;
 
 /// Implementation of abstraction levels for Group Theory objects
 

@@ -1,6 +1,6 @@
 use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::common::spaces::*;
-use super::super::super::super::math::theories::zfc::set::Set;
+use super::super::super::super::math::theories::zfc::definitions::Set;
 use serde::{Deserialize, Serialize};
 
 /// Topology structure

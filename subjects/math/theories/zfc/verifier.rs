@@ -1,6 +1,6 @@
 use super::axioms::{SatisfiesZFC, ZFCAxioms};
 use super::is_subset_of;
-use super::set::{Set, SetElement};
+use super::definitions::{Set, SetElement};
 
 /// ZFC Axiom Verification Implementation
 pub struct ZFCVerifier;

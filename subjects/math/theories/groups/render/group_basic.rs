@@ -1301,7 +1301,7 @@ impl GenericGroup {
         // Create a * b using CustomFunction
         let product = MathNode {
             id: format!("{}_product", node_id),
-            content: Box::new(MathNodeContent::CustomFunction {
+            content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_op", node_id),
                     content: Box::new(MathNodeContent::Identifier {
@@ -1431,7 +1431,7 @@ impl GenericGroup {
         // Create a * b using CustomFunction
         let ab = MathNode {
             id: format!("{}_ab", node_id),
-            content: Box::new(MathNodeContent::CustomFunction {
+            content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_op1", node_id),
                     content: Box::new(MathNodeContent::Identifier {
@@ -1450,7 +1450,7 @@ impl GenericGroup {
         // Create (a * b) * c
         let left_assoc = MathNode {
             id: format!("{}_left", node_id),
-            content: Box::new(MathNodeContent::CustomFunction {
+            content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_op2", node_id),
                     content: Box::new(MathNodeContent::Identifier {
@@ -1469,7 +1469,7 @@ impl GenericGroup {
         // Create b * c
         let bc = MathNode {
             id: format!("{}_bc", node_id),
-            content: Box::new(MathNodeContent::CustomFunction {
+            content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_op3", node_id),
                     content: Box::new(MathNodeContent::Identifier {
@@ -1488,7 +1488,7 @@ impl GenericGroup {
         // Create a * (b * c)
         let right_assoc = MathNode {
             id: format!("{}_right", node_id),
-            content: Box::new(MathNodeContent::CustomFunction {
+            content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_op4", node_id),
                     content: Box::new(MathNodeContent::Identifier {

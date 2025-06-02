@@ -19,7 +19,7 @@ use wasm_bindgen::prelude::*;
 
 // Removed unused imports from the refactored traversal module
 // use self::traversal::{PotentialTheoremTarget, TargetCollector};
-use super::super::theories::zfc::set::SetRelation;
+use super::super::theories::zfc::definitions::SetRelation;
 use super::expressions::{Identifier, MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
 use super::relations::{MathRelation, RelationDetail};

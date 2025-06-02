@@ -7,7 +7,7 @@ use super::super::super::formalism::relations::MathRelation;
 use super::super::VariantSet;
 use super::super::fields::definitions::Field;
 use super::super::topology::definitions::TopologicalSpace;
-use super::super::zfc::set::{Set, SetProperty};
+use super::super::zfc::definitions::{Set, SetProperty};
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

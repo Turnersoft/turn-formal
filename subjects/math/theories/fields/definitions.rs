@@ -1,7 +1,7 @@
 use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::zfc::set::Set;
+use crate::subjects::math::theories::zfc::definitions::Set;
 // Placeholder imports for Topology/Order types - adjust if real types exist
 use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 // Assuming an OrderRelation type might be defined elsewhere or needs definition

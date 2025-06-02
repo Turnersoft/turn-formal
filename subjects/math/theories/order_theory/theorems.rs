@@ -5,7 +5,7 @@ use super::super::super::super::{
             BooleanAlgebra, Lattice, OrderComparison, OrderProperty, PartiallyOrderedSet,
             TotallyOrderedSet,
         },
-        zfc::set::Set,
+        zfc::definitions::Set,
     },
 };
 use serde::{Deserialize, Serialize};

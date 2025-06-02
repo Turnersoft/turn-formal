@@ -3,7 +3,7 @@ use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::proof::collect::CollectSubExpressions;
 use crate::subjects::math::formalism::proof::path_index::{PathError, ReplaceableAtPath};
 
-use super::set::SetRelation;
+use super::definitions::SetRelation;
 
 impl SetRelation {
     pub fn collect_contained_expressions(

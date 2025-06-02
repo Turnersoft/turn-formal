@@ -9,12 +9,12 @@ pub mod render;
 
 pub mod abstraction_level;
 pub mod complexity;
-pub mod set;
+pub mod definitions;
 pub mod verifier;
 
 pub use axioms::{SatisfiesZFC, ZFCAxioms};
 // Keep the legacy relation export, but also export the new one
-pub use set::{CardinalityPropertyVariant, Set, SetElement, SetExpression, SetRelation};
+pub use definitions::{CardinalityPropertyVariant, Set, SetElement, SetExpression, SetRelation};
 pub use verifier::ZFCVerifier;
 
 // Import VariantSet directly from the theories module

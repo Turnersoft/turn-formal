@@ -53,7 +53,7 @@ impl ToTurnMath for Field {
             },
             Field::Function(_func_field) => MathNode {
                 id: format!("{}-field-function", master_id),
-                content: Box::new(MathNodeContent::CustomFunction {
+                content: Box::new(MathNodeContent::FunctionCall {
                     name: Box::new(MathNode {
                         id: format!("{}-field-function-name", master_id),
                         content: Box::new(MathNodeContent::Identifier {

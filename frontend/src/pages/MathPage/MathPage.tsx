@@ -68,7 +68,8 @@ export const MathPage: React.FC = () => {
       if (target.type === 'theory') {
         console.log('🏛️ Handling theory overview navigation for:', target.theory);
         // For theory overview, load the overview file
-        dataFile = `group_theory.overview.json`;
+        const theoryName = target.theory.toLowerCase().replace('theory', '').replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+        dataFile = `${theoryName}_theory.overview.json`;
         
         // Load the overview data file
         const data = await mathDataService.loadMathData(dataFile);
@@ -203,7 +204,7 @@ export const MathPage: React.FC = () => {
       // For definitions/theorems files, clear navigation state first
       console.log('📂 Handling JSON file selection, clearing navigation target first');
       
-      // Use React Router to navigate to a clean URL to clear the navigation target
+      // Navigate to a clean URL to clear the navigation target
       navigate('/math'); // Clear the navigation target
       
       // Then set the file after a brief delay to let the navigation target clear
@@ -265,9 +266,20 @@ export const MathPage: React.FC = () => {
 
   const getTheoryContextFromFilename = (filename: string): string => {
     if (filename.includes('group_theory')) return 'GroupTheory';
+    if (filename.includes('probability_theory')) return 'ProbabilityTheory';
     if (filename.includes('field_theory')) return 'FieldTheory';
     if (filename.includes('ring_theory')) return 'RingTheory';
-    return 'GroupTheory'; // default
+    
+    // Extract theory name from filename as fallback
+    const match = filename.match(/^([a-z_]+)_theory\./);
+    if (match) {
+      const theoryName = match[1].split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join('') + 'Theory';
+      return theoryName;
+    }
+    
+    return 'GroupTheory'; // final fallback
   };
 
   const loadFileAndNavigateToFirst = async (filename: string, theoryContext: string, type: 'definition' | 'theorem') => {

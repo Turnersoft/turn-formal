@@ -1,0 +1,246 @@
+{
+  "theory_name": "Probability Theory",
+  "content_type": "theory_overview",
+  "version": "1.0.0",
+  "exported_at": "1748840843",
+  "content": [
+    {
+      "id": "probability_theory.overview",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Probability Theory",
+          "paper_type": "Survey",
+          "venue": "Mathematical Survey",
+          "peer_reviewed": true,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [
+              "Turn-Formal System"
+            ],
+            "date_published": null,
+            "date_modified": null,
+            "venue": "Mathematical Survey",
+            "doi": null,
+            "keywords": [
+              "probability",
+              "random variables",
+              "stochastic processes"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "probability_theory.overview.abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Probability theory provides a rigorous mathematical framework for analyzing randomness and uncertainty. This comprehensive overview covers probability spaces, random variables, distributions, and stochastic processes."
+                      }
+                    ],
+                    "alignment": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "probability_theory.overview.fundamental",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Fundamental Concepts"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Basic probability spaces and measures."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Fundamental Concepts"
+                          }
+                        ],
+                        "formal_term": null,
+                        "label": "Fundamental probability concepts",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Basic probability spaces and measures."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": null,
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "probability_theory.overview.continuous",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Continuous Probability"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Continuous probability spaces and measure theory."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Continuous Probability"
+                          }
+                        ],
+                        "formal_term": null,
+                        "label": "Continuous probability theory",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Continuous probability spaces and measure theory."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": null,
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "probability_theory.overview.processes",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Stochastic Processes"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Time-dependent random phenomena and processes."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Stochastic Processes"
+                          }
+                        ],
+                        "formal_term": null,
+                        "label": "Stochastic processes and Markov chains",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Time-dependent random phenomena and processes."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": null,
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [
+              "probability_theory.object_0.generic.schema.doc",
+              "probability_theory.expression_0",
+              "probability_theory.expression_1",
+              "probability_theory.relation_0",
+              "probability.weak_law_of_large_numbers-doc",
+              "probability.strong_law_of_large_numbers-doc",
+              "probability.central_limit_theorem-doc",
+              "probability.bayes_theorem-doc",
+              "probability.law_of_total_probability-doc",
+              "probability.chebyshev_inequality-doc",
+              "probability.markov_inequality-doc",
+              "probability.jensen_inequality-doc",
+              "probability.martingale_convergence-doc",
+              "probability.optional_stopping-doc",
+              "probability.kolmogorov_three_series-doc",
+              "probability.glivenko_cantelli-doc"
+            ],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    }
+  ]
+}

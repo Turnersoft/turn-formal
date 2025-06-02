@@ -2,10 +2,10 @@
   "theory_name": "Group Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1748703516",
+  "exported_at": "1748840843",
   "content": [
     {
-      "id": "group_theory.generic-l1-doc",
+      "id": "group_theory.def.generic_group.generic-l1-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Basic Group",
@@ -29,7 +29,7 @@
           },
           "structure": {
             "abstract_content": {
-              "id": "group_theory.generic-l1-abstract",
+              "id": "group_theory.def.generic_group.generic-l1-abstract",
               "title": null,
               "content": [
                 {
@@ -49,7 +49,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.generic-main-groupbasic-section",
+                "id": "group_theory.def.generic_group.generic-main.main_section",
                 "title": {
                   "segments": [
                     {
@@ -71,7 +71,7 @@
                   },
                   {
                     "SubSection": {
-                      "id": "group_theory.generic-main-definition-section",
+                      "id": "group_theory.def.generic_group.generic-main.definition_section",
                       "title": {
                         "segments": [
                           {
@@ -94,24 +94,24 @@
                         {
                           "MathBlock": {
                             "math": {
-                              "id": "group_theory.generic-main-closure",
+                              "id": "group_theory.def.generic_group.generic-main-closure",
                               "content": {
                                 "QuantifiedExpression": {
                                   "quantifier": "Universal",
                                   "variables": [],
                                   "domain": {
-                                    "id": "group_theory.generic-main-closure_membership",
+                                    "id": "group_theory.def.generic_group.generic-main-closure_membership",
                                     "content": {
                                       "Relationship": {
                                         "lhs": {
-                                          "id": "group_theory.generic-main-closure_var_list",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_var_list",
                                           "content": {
                                             "Multiplications": {
                                               "terms": [
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-closure_a",
+                                                    "id": "group_theory.def.generic_group.generic-main-closure_a",
                                                     "content": {
                                                       "Identifier": {
                                                         "body": "a",
@@ -127,7 +127,7 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-closure_comma",
+                                                    "id": "group_theory.def.generic_group.generic-main-closure_comma",
                                                     "content": {
                                                       "Identifier": {
                                                         "body": ",",
@@ -143,7 +143,7 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-closure_b",
+                                                    "id": "group_theory.def.generic_group.generic-main-closure_b",
                                                     "content": {
                                                       "Identifier": {
                                                         "body": "b",
@@ -161,7 +161,7 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.generic-main-closure_g",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_g",
                                           "content": {
                                             "Identifier": {
                                               "body": "G",
@@ -178,15 +178,15 @@
                                     }
                                   },
                                   "predicate": {
-                                    "id": "group_theory.generic-main-closure_result",
+                                    "id": "group_theory.def.generic_group.generic-main-closure_result",
                                     "content": {
                                       "Relationship": {
                                         "lhs": {
-                                          "id": "group_theory.generic-main-closure_product",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_product",
                                           "content": {
                                             "CustomFunction": {
                                               "name": {
-                                                "id": "group_theory.generic-main-closure_op",
+                                                "id": "group_theory.def.generic_group.generic-main-closure_op",
                                                 "content": {
                                                   "Identifier": {
                                                     "body": "∘",
@@ -200,7 +200,7 @@
                                               },
                                               "parameters": [
                                                 {
-                                                  "id": "group_theory.generic-main-closure_a",
+                                                  "id": "group_theory.def.generic_group.generic-main-closure_a",
                                                   "content": {
                                                     "Identifier": {
                                                       "body": "a",
@@ -213,7 +213,7 @@
                                                   }
                                                 },
                                                 {
-                                                  "id": "group_theory.generic-main-closure_b",
+                                                  "id": "group_theory.def.generic_group.generic-main-closure_b",
                                                   "content": {
                                                     "Identifier": {
                                                       "body": "b",
@@ -230,7 +230,7 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.generic-main-closure_g",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_g",
                                           "content": {
                                             "Identifier": {
                                               "body": "G",
@@ -256,24 +256,24 @@
                         {
                           "MathBlock": {
                             "math": {
-                              "id": "group_theory.generic-main-assoc",
+                              "id": "group_theory.def.generic_group.generic-main-assoc",
                               "content": {
                                 "QuantifiedExpression": {
                                   "quantifier": "Universal",
                                   "variables": [],
                                   "domain": {
-                                    "id": "group_theory.generic-main-assoc_membership",
+                                    "id": "group_theory.def.generic_group.generic-main-assoc_membership",
                                     "content": {
                                       "Relationship": {
                                         "lhs": {
-                                          "id": "group_theory.generic-main-assoc_var_list",
+                                          "id": "group_theory.def.generic_group.generic-main-assoc_var_list",
                                           "content": {
                                             "Multiplications": {
                                               "terms": [
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-assoc_a",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_a",
                                                     "content": {
                                                       "Identifier": {
                                                         "body": "a",
@@ -289,7 +289,7 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-assoc_comma1",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_comma1",
                                                     "content": {
                                                       "Text": ","
                                                     }
@@ -298,7 +298,7 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-assoc_b",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_b",
                                                     "content": {
                                                       "Identifier": {
                                                         "body": "b",
@@ -314,7 +314,7 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-assoc_comma2",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_comma2",
                                                     "content": {
                                                       "Text": ","
                                                     }
@@ -323,7 +323,7 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.generic-main-assoc_c",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_c",
                                                     "content": {
                                                       "Identifier": {
                                                         "body": "c",
@@ -341,7 +341,7 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.generic-main-assoc_g",
+                                          "id": "group_theory.def.generic_group.generic-main-assoc_g",
                                           "content": {
                                             "Identifier": {
                                               "body": "G",
@@ -358,15 +358,15 @@
                                     }
                                   },
                                   "predicate": {
-                                    "id": "group_theory.generic-main-assoc_eq",
+                                    "id": "group_theory.def.generic_group.generic-main-assoc_eq",
                                     "content": {
                                       "Relationship": {
                                         "lhs": {
-                                          "id": "group_theory.generic-main-assoc_left",
+                                          "id": "group_theory.def.generic_group.generic-main-assoc_left",
                                           "content": {
                                             "CustomFunction": {
                                               "name": {
-                                                "id": "group_theory.generic-main-assoc_op2",
+                                                "id": "group_theory.def.generic_group.generic-main-assoc_op2",
                                                 "content": {
                                                   "Identifier": {
                                                     "body": "∘",
@@ -380,11 +380,11 @@
                                               },
                                               "parameters": [
                                                 {
-                                                  "id": "group_theory.generic-main-assoc_ab",
+                                                  "id": "group_theory.def.generic_group.generic-main-assoc_ab",
                                                   "content": {
                                                     "CustomFunction": {
                                                       "name": {
-                                                        "id": "group_theory.generic-main-assoc_op1",
+                                                        "id": "group_theory.def.generic_group.generic-main-assoc_op1",
                                                         "content": {
                                                           "Identifier": {
                                                             "body": "∘",
@@ -398,7 +398,7 @@
                                                       },
                                                       "parameters": [
                                                         {
-                                                          "id": "group_theory.generic-main-assoc_a",
+                                                          "id": "group_theory.def.generic_group.generic-main-assoc_a",
                                                           "content": {
                                                             "Identifier": {
                                                               "body": "a",
@@ -411,7 +411,7 @@
                                                           }
                                                         },
                                                         {
-                                                          "id": "group_theory.generic-main-assoc_b",
+                                                          "id": "group_theory.def.generic_group.generic-main-assoc_b",
                                                           "content": {
                                                             "Identifier": {
                                                               "body": "b",
@@ -428,7 +428,7 @@
                                                   }
                                                 },
                                                 {
-                                                  "id": "group_theory.generic-main-assoc_c",
+                                                  "id": "group_theory.def.generic_group.generic-main-assoc_c",
                                                   "content": {
                                                     "Identifier": {
                                                       "body": "c",
@@ -445,11 +445,11 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.generic-main-assoc_right",
+                                          "id": "group_theory.def.generic_group.generic-main-assoc_right",
                                           "content": {
                                             "CustomFunction": {
                                               "name": {
-                                                "id": "group_theory.generic-main-assoc_op4",
+                                                "id": "group_theory.def.generic_group.generic-main-assoc_op4",
                                                 "content": {
                                                   "Identifier": {
                                                     "body": "∘",
@@ -463,7 +463,7 @@
                                               },
                                               "parameters": [
                                                 {
-                                                  "id": "group_theory.generic-main-assoc_a",
+                                                  "id": "group_theory.def.generic_group.generic-main-assoc_a",
                                                   "content": {
                                                     "Identifier": {
                                                       "body": "a",
@@ -476,11 +476,11 @@
                                                   }
                                                 },
                                                 {
-                                                  "id": "group_theory.generic-main-assoc_bc",
+                                                  "id": "group_theory.def.generic_group.generic-main-assoc_bc",
                                                   "content": {
                                                     "CustomFunction": {
                                                       "name": {
-                                                        "id": "group_theory.generic-main-assoc_op3",
+                                                        "id": "group_theory.def.generic_group.generic-main-assoc_op3",
                                                         "content": {
                                                           "Identifier": {
                                                             "body": "∘",
@@ -494,7 +494,7 @@
                                                       },
                                                       "parameters": [
                                                         {
-                                                          "id": "group_theory.generic-main-assoc_b",
+                                                          "id": "group_theory.def.generic_group.generic-main-assoc_b",
                                                           "content": {
                                                             "Identifier": {
                                                               "body": "b",
@@ -507,7 +507,7 @@
                                                           }
                                                         },
                                                         {
-                                                          "id": "group_theory.generic-main-assoc_c",
+                                                          "id": "group_theory.def.generic_group.generic-main-assoc_c",
                                                           "content": {
                                                             "Identifier": {
                                                               "body": "c",
@@ -541,7 +541,7 @@
                         {
                           "MathBlock": {
                             "math": {
-                              "id": "group_theory.generic-main-identity",
+                              "id": "group_theory.def.generic_group.generic-main-identity",
                               "content": {
                                 "Text": "∃ e ∈ G : ∀ a ∈ G : e ∘ a = a ∘ e = a"
                               }
@@ -553,7 +553,7 @@
                         {
                           "MathBlock": {
                             "math": {
-                              "id": "group_theory.generic-main-inverse",
+                              "id": "group_theory.def.generic_group.generic-main-inverse",
                               "content": {
                                 "Text": "∀ a ∈ G : ∃ a⁻¹ ∈ G : a ∘ a⁻¹ = a⁻¹ ∘ a = e"
                               }
@@ -569,7 +569,7 @@
                   },
                   {
                     "SubSection": {
-                      "id": "group_theory.generic-main-properties-section",
+                      "id": "group_theory.def.generic_group.generic-main.properties_section",
                       "title": {
                         "segments": [
                           {
@@ -646,7 +646,7 @@
                   },
                   {
                     "SubSection": {
-                      "id": "group_theory.generic-main-examples-section",
+                      "id": "group_theory.def.generic_group.generic-main.examples_section",
                       "title": {
                         "segments": [
                           {
@@ -750,7 +750,7 @@
       }
     },
     {
-      "id": "group_theory.topological-doc",
+      "id": "group_theory.def.topological_group.topological-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Topological Group ",
@@ -777,7 +777,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.topological-main-topologicalgroup-section",
+                "id": "group_theory.def.topological_group.topological-main.main_section",
                 "title": {
                   "segments": [
                     {
@@ -785,7 +785,7 @@
                     },
                     {
                       "Math": {
-                        "id": "group_theory.topological-main-title-math",
+                        "id": "group_theory.def.topological_group.topological-main-title-math",
                         "content": {
                           "Text": "(G, \\tau)"
                         }
@@ -804,7 +804,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.topological-main-formalTerm",
+                          "id": "group_theory.def.topological_group.topological-main-formalTerm",
                           "content": {
                             "Text": "(Parametric { parameters: {}, description: \"Abstract group set\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }, τ on Parametric { parameters: {}, description: \"Abstract topological space\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } })"
                           }
@@ -846,7 +846,7 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.topological-main-groupbasic-section",
+                                        "term_id": "group_theory.def.generic_group.main_section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
@@ -875,7 +875,7 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.topological-main-topology-section",
+                                        "term_id": "group_theory.def.topological_group.topological-main-topology-section",
                                         "theory_context": "Topology"
                                       }
                                     },
@@ -1025,7 +1025,7 @@
       }
     },
     {
-      "id": "group_theory.lie-doc",
+      "id": "group_theory.def.lie_group.lie-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "(G, τ)",
@@ -1052,7 +1052,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.lie-main-liegroup-section",
+                "id": "group_theory.def.lie_group.lie-main-liegroup-section",
                 "title": {
                   "segments": [
                     {
@@ -1071,7 +1071,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.lie-main-formalTerm",
+                          "id": "group_theory.def.lie_group.lie-main-formalTerm",
                           "content": {
                             "Text": "Lie(Parametric { parameters: {}, description: \"Abstract group set\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }, τ)"
                           }
@@ -1143,11 +1143,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.lie-main-groupbasic-section",
+                                        "term_id": "group_theory.def.lie_group.lie-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.lie-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.def.lie_group.lie-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -1225,7 +1225,7 @@
       }
     },
     {
-      "id": "group_theory.cyclic-doc",
+      "id": "group_theory.def.cyclic_group.cyclic-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "ℤ",
@@ -1252,7 +1252,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.cyclic-main-cyclicgroup-section",
+                "id": "group_theory.def.cyclic_group.cyclic-main-cyclicgroup-section",
                 "title": {
                   "segments": [
                     {
@@ -1271,11 +1271,11 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.cyclic-main-formalTerm",
+                          "id": "group_theory.def.cyclic_group.cyclic-main-formalTerm",
                           "content": {
                             "Bracketed": {
                               "inner": {
-                                "id": "group_theory.cyclic-main-formalTerm-gen",
+                                "id": "group_theory.def.cyclic_group.cyclic-main-formalTerm-gen",
                                 "content": {
                                   "Text": "g"
                                 }
@@ -1362,11 +1362,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.cyclic-main-groupbasic-section",
+                                        "term_id": "group_theory.def.cyclic_group.cyclic-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.cyclic-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.def.cyclic_group.cyclic-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -1434,7 +1434,7 @@
       }
     },
     {
-      "id": "group_theory.symmetric-doc",
+      "id": "group_theory.def.symmetric_group.symmetric-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Symmetric Group ",
@@ -1461,7 +1461,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.symmetric-main-symmetricgroup-section",
+                "id": "group_theory.def.symmetric_group.symmetric-main-symmetricgroup-section",
                 "title": {
                   "segments": [
                     {
@@ -1469,14 +1469,14 @@
                     },
                     {
                       "Math": {
-                        "id": "group_theory.symmetric-main-title-math",
+                        "id": "group_theory.def.symmetric_group.symmetric-main-title-math",
                         "content": {
                           "Identifier": {
                             "body": "S",
                             "pre_script": null,
                             "mid_script": null,
                             "post_script": {
-                              "id": "group_theory.symmetric-main-title-math-subscript",
+                              "id": "group_theory.def.symmetric_group.symmetric-main-title-math-subscript",
                               "content": {
                                 "Text": "n"
                               }
@@ -1500,14 +1500,14 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.symmetric-main-formalTerm",
+                          "id": "group_theory.def.symmetric_group.symmetric-main-formalTerm",
                           "content": {
                             "Identifier": {
                               "body": "S",
                               "pre_script": null,
                               "mid_script": null,
                               "post_script": {
-                                "id": "group_theory.symmetric-main-formalTerm_subscript",
+                                "id": "group_theory.def.symmetric_group.symmetric-main-formalTerm_subscript",
                                 "content": {
                                   "Quantity": {
                                     "number": "0",
@@ -1557,11 +1557,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.symmetric-main-groupbasic-section",
+                                        "term_id": "group_theory.def.symmetric_group.symmetric-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.symmetric-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.def.symmetric_group.symmetric-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -1651,7 +1651,7 @@
       }
     },
     {
-      "id": "group_theory.dihedral-doc",
+      "id": "group_theory.def.dihedral_group.dihedral-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Dihedral Group ",
@@ -1678,7 +1678,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.dihedral-main-dihedralgroup-section",
+                "id": "group_theory.def.dihedral_group.dihedral-main-dihedralgroup-section",
                 "title": {
                   "segments": [
                     {
@@ -1686,14 +1686,14 @@
                     },
                     {
                       "Math": {
-                        "id": "group_theory.dihedral-main-title-math",
+                        "id": "group_theory.def.dihedral_group.dihedral-main-title-math",
                         "content": {
                           "Identifier": {
                             "body": "D",
                             "pre_script": null,
                             "mid_script": null,
                             "post_script": {
-                              "id": "group_theory.dihedral-main-title-math-subscript",
+                              "id": "group_theory.def.dihedral_group.dihedral-main-title-math-subscript",
                               "content": {
                                 "Text": "n"
                               }
@@ -1717,14 +1717,14 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.dihedral-main-formalTerm",
+                          "id": "group_theory.def.dihedral_group.dihedral-main-formalTerm",
                           "content": {
                             "Identifier": {
                               "body": "D",
                               "pre_script": null,
                               "mid_script": null,
                               "post_script": {
-                                "id": "group_theory.dihedral-main-formalTerm_subscript",
+                                "id": "group_theory.def.dihedral_group.dihedral-main-formalTerm_subscript",
                                 "content": {
                                   "Quantity": {
                                     "number": "0",
@@ -1774,11 +1774,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.dihedral-main-groupbasic-section",
+                                        "term_id": "group_theory.def.dihedral_group.dihedral-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.dihedral-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.def.dihedral_group.dihedral-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -1857,7 +1857,7 @@
       }
     },
     {
-      "id": "group_theory.general_linear-doc",
+      "id": "group_theory.def.general_linear_group.general_linear-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "General Linear Group GL(n,F)",
@@ -1884,7 +1884,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.general_linear-generallinear-section",
+                "id": "group_theory.def.general_linear_group.general_linear-generallinear-section",
                 "title": {
                   "segments": [
                     {
@@ -1903,7 +1903,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.general_linear-formalTerm",
+                          "id": "group_theory.def.general_linear_group.general_linear-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -1976,7 +1976,7 @@
       }
     },
     {
-      "id": "group_theory.special_linear-doc",
+      "id": "group_theory.def.special_linear_group.special_linear-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Special Linear Group SL(n,F)",
@@ -2003,7 +2003,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.special_linear-speciallinear-section",
+                "id": "group_theory.def.special_linear_group.special_linear-speciallinear-section",
                 "title": {
                   "segments": [
                     {
@@ -2022,7 +2022,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.special_linear-formalTerm",
+                          "id": "group_theory.def.special_linear_group.special_linear-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2095,7 +2095,7 @@
       }
     },
     {
-      "id": "group_theory.orthogonal-doc",
+      "id": "group_theory.def.orthogonal_group.orthogonal-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Orthogonal Group O(n)",
@@ -2122,7 +2122,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.orthogonal-orthogonal-section",
+                "id": "group_theory.def.orthogonal_group.orthogonal-orthogonal-section",
                 "title": {
                   "segments": [
                     {
@@ -2141,7 +2141,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.orthogonal-formalTerm",
+                          "id": "group_theory.def.orthogonal_group.orthogonal-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2204,7 +2204,7 @@
       }
     },
     {
-      "id": "group_theory.special_orthogonal-doc",
+      "id": "group_theory.def.special_orthogonal_group.special_orthogonal-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Special Orthogonal Group SO(n)",
@@ -2231,7 +2231,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.special_orthogonal-specialorthogonal-section",
+                "id": "group_theory.def.special_orthogonal_group.special_orthogonal-specialorthogonal-section",
                 "title": {
                   "segments": [
                     {
@@ -2250,7 +2250,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.special_orthogonal-formalTerm",
+                          "id": "group_theory.def.special_orthogonal_group.special_orthogonal-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2313,7 +2313,7 @@
       }
     },
     {
-      "id": "group_theory.unitary-doc",
+      "id": "group_theory.def.unitary_group.unitary-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Unitary Group U(n)",
@@ -2340,7 +2340,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.unitary-unitary-section",
+                "id": "group_theory.def.unitary_group.unitary-unitary-section",
                 "title": {
                   "segments": [
                     {
@@ -2359,7 +2359,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.unitary-formalTerm",
+                          "id": "group_theory.def.unitary_group.unitary-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2422,7 +2422,7 @@
       }
     },
     {
-      "id": "group_theory.special_unitary-doc",
+      "id": "group_theory.def.special_unitary_group.special_unitary-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Special Unitary Group SU(n)",
@@ -2449,7 +2449,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.special_unitary-specialunitary-section",
+                "id": "group_theory.def.special_unitary_group.special_unitary-specialunitary-section",
                 "title": {
                   "segments": [
                     {
@@ -2468,7 +2468,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.special_unitary-formalTerm",
+                          "id": "group_theory.def.special_unitary_group.special_unitary-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2531,7 +2531,7 @@
       }
     },
     {
-      "id": "group_theory.alternating-doc",
+      "id": "group_theory.def.alternating_group.alternating-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Alternating Group ",
@@ -2558,7 +2558,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.alternating-main-alternatinggroup-section",
+                "id": "group_theory.def.alternating_group.alternating-main-alternatinggroup-section",
                 "title": {
                   "segments": [
                     {
@@ -2566,14 +2566,14 @@
                     },
                     {
                       "Math": {
-                        "id": "group_theory.alternating-main-title-math",
+                        "id": "group_theory.def.alternating_group.alternating-main-title-math",
                         "content": {
                           "Identifier": {
                             "body": "A",
                             "pre_script": null,
                             "mid_script": null,
                             "post_script": {
-                              "id": "group_theory.alternating-main-title-math-subscript",
+                              "id": "group_theory.def.alternating_group.alternating-main-title-math-subscript",
                               "content": {
                                 "Text": "n"
                               }
@@ -2597,14 +2597,14 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.alternating-main-formalTerm",
+                          "id": "group_theory.def.alternating_group.alternating-main-formalTerm",
                           "content": {
                             "Identifier": {
                               "body": "A",
                               "pre_script": null,
                               "mid_script": null,
                               "post_script": {
-                                "id": "group_theory.alternating-main-formalTerm_subscript",
+                                "id": "group_theory.def.alternating_group.alternating-main-formalTerm_subscript",
                                 "content": {
                                   "Quantity": {
                                     "number": "0",
@@ -2654,11 +2654,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.alternating-main-groupbasic-section",
+                                        "term_id": "group_theory.def.alternating_group.alternating-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.alternating-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.def.alternating_group.alternating-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -2758,7 +2758,7 @@
       }
     },
     {
-      "id": "group_theory.modular_additive-doc",
+      "id": "group_theory.def.modular_additive_group.modular_additive-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "ℤ/nℤ",
@@ -2785,7 +2785,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.modular_additive-modularadditive-section",
+                "id": "group_theory.def.modular_additive_group.modular_additive-modularadditive-section",
                 "title": {
                   "segments": [
                     {
@@ -2804,7 +2804,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.modular_additive-formalTerm",
+                          "id": "group_theory.def.modular_additive_group.modular_additive-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2877,7 +2877,7 @@
       }
     },
     {
-      "id": "group_theory.modular_multiplicative-doc",
+      "id": "group_theory.def.modular_multiplicative_group.modular_multiplicative-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "(ℤ/nℤ)*",
@@ -2904,7 +2904,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.modular_multiplicative-modularmultiplicative-section",
+                "id": "group_theory.def.modular_multiplicative_group.modular_multiplicative-modularmultiplicative-section",
                 "title": {
                   "segments": [
                     {
@@ -2923,7 +2923,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.modular_multiplicative-formalTerm",
+                          "id": "group_theory.def.modular_multiplicative_group.modular_multiplicative-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -2996,7 +2996,7 @@
       }
     },
     {
-      "id": "group_theory.free-doc",
+      "id": "group_theory.def.free_group.free-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "F_0",
@@ -3023,7 +3023,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.free-free-section",
+                "id": "group_theory.def.free_group.free-free-section",
                 "title": {
                   "segments": [
                     {
@@ -3042,7 +3042,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.free-formalTerm",
+                          "id": "group_theory.def.free_group.free-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -3115,7 +3115,7 @@
       }
     },
     {
-      "id": "group_theory.trivial-doc",
+      "id": "group_theory.def.trivial_group.trivial-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "1",
@@ -3142,7 +3142,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.trivial-trivial-section",
+                "id": "group_theory.def.trivial_group.trivial-trivial-section",
                 "title": {
                   "segments": [
                     {
@@ -3161,7 +3161,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.trivial-formalTerm",
+                          "id": "group_theory.def.trivial_group.trivial-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -3234,7 +3234,7 @@
       }
     },
     {
-      "id": "group_theory.product-doc",
+      "id": "group_theory.def.product_group.product-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Product Group ",
@@ -3261,7 +3261,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.product-main-productgroup-section",
+                "id": "group_theory.def.product_group.product-main-productgroup-section",
                 "title": {
                   "segments": [
                     {
@@ -3269,7 +3269,7 @@
                     },
                     {
                       "Math": {
-                        "id": "group_theory.product-main-title-math",
+                        "id": "group_theory.def.product_group.product-main-title-math",
                         "content": {
                           "Text": "G_1 \\times G_2 \\times \\cdots \\times G_n"
                         }
@@ -3288,7 +3288,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.product-main-formalTerm",
+                          "id": "group_theory.def.product_group.product-main-formalTerm",
                           "content": {
                             "Identifier": {
                               "body": "∅",
@@ -3327,11 +3327,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.product-main-groupbasic-section",
+                                        "term_id": "group_theory.def.product_group.product-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.product-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.def.product_group.product-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -3410,7 +3410,7 @@
       }
     },
     {
-      "id": "group_theory.quotient-doc",
+      "id": "group_theory.def.quotient_group.quotient-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "G/N",
@@ -3437,7 +3437,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.quotient-quotient-section",
+                "id": "group_theory.def.quotient_group.quotient-quotient-section",
                 "title": {
                   "segments": [
                     {
@@ -3456,7 +3456,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.quotient-formalTerm",
+                          "id": "group_theory.def.quotient_group.quotient-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -3529,7 +3529,7 @@
       }
     },
     {
-      "id": "group_theory.kernel-doc",
+      "id": "group_theory.def.kernel_group.kernel-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "ker(φ)",
@@ -3556,7 +3556,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.kernel-kernel-section",
+                "id": "group_theory.def.kernel_group.kernel-kernel-section",
                 "title": {
                   "segments": [
                     {
@@ -3575,7 +3575,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.kernel-formalTerm",
+                          "id": "group_theory.def.kernel_group.kernel-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -3648,7 +3648,7 @@
       }
     },
     {
-      "id": "group_theory.image-doc",
+      "id": "group_theory.def.image_group.image-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "im(φ)",
@@ -3675,7 +3675,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.image-image-section",
+                "id": "group_theory.def.image_group.image-image-section",
                 "title": {
                   "segments": [
                     {
@@ -3694,7 +3694,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.image-formalTerm",
+                          "id": "group_theory.def.image_group.image-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -3767,7 +3767,7 @@
       }
     },
     {
-      "id": "group_theory.center-doc",
+      "id": "group_theory.def.center_group.center-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Z(G)",
@@ -3794,7 +3794,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.center-center-section",
+                "id": "group_theory.def.center_group.center-center-section",
                 "title": {
                   "segments": [
                     {
@@ -3813,7 +3813,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.center-formalTerm",
+                          "id": "group_theory.def.center_group.center-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -3886,7 +3886,7 @@
       }
     },
     {
-      "id": "group_theory.generated_subgroup-doc",
+      "id": "group_theory.def.generated_subgroup.generated_subgroup-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "⟨g⟩",
@@ -3913,7 +3913,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.generated_subgroup-generated-section",
+                "id": "group_theory.def.generated_subgroup.generated_subgroup-generated-section",
                 "title": {
                   "segments": [
                     {
@@ -3932,7 +3932,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.generated_subgroup-formalTerm",
+                          "id": "group_theory.def.generated_subgroup.generated_subgroup-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4005,7 +4005,7 @@
       }
     },
     {
-      "id": "group_theory.normalizer-doc",
+      "id": "group_theory.def.normalizer_group.normalizer-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "N_G(H)",
@@ -4032,7 +4032,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.normalizer-normalizer-section",
+                "id": "group_theory.def.normalizer_group.normalizer-normalizer-section",
                 "title": {
                   "segments": [
                     {
@@ -4051,7 +4051,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.normalizer-formalTerm",
+                          "id": "group_theory.def.normalizer_group.normalizer-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4124,7 +4124,7 @@
       }
     },
     {
-      "id": "group_theory.centralizer-doc",
+      "id": "group_theory.def.centralizer_group.centralizer-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "C_G(x)",
@@ -4151,7 +4151,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.centralizer-centralizer-section",
+                "id": "group_theory.def.centralizer_group.centralizer-centralizer-section",
                 "title": {
                   "segments": [
                     {
@@ -4170,7 +4170,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.centralizer-formalTerm",
+                          "id": "group_theory.def.centralizer_group.centralizer-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4243,7 +4243,7 @@
       }
     },
     {
-      "id": "group_theory.commutator_subgroup-doc",
+      "id": "group_theory.def.commutator_subgroup.commutator_subgroup-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "[G,G]",
@@ -4270,7 +4270,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.commutator_subgroup-commutator-section",
+                "id": "group_theory.def.commutator_subgroup.commutator_subgroup-commutator-section",
                 "title": {
                   "segments": [
                     {
@@ -4289,7 +4289,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.commutator_subgroup-formalTerm",
+                          "id": "group_theory.def.commutator_subgroup.commutator_subgroup-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4362,7 +4362,7 @@
       }
     },
     {
-      "id": "group_theory.sylow_subgroup-doc",
+      "id": "group_theory.def.sylow_subgroup.sylow_subgroup-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Syl_0(G)",
@@ -4389,7 +4389,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.sylow_subgroup-sylow-section",
+                "id": "group_theory.def.sylow_subgroup.sylow_subgroup-sylow-section",
                 "title": {
                   "segments": [
                     {
@@ -4408,7 +4408,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.sylow_subgroup-formalTerm",
+                          "id": "group_theory.def.sylow_subgroup.sylow_subgroup-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4481,7 +4481,7 @@
       }
     },
     {
-      "id": "group_theory.wreath_product-doc",
+      "id": "group_theory.def.wreath_product_group.wreath_product-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "G ≀ H",
@@ -4508,7 +4508,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.wreath_product-wreathproduct-section",
+                "id": "group_theory.def.wreath_product_group.wreath_product-wreathproduct-section",
                 "title": {
                   "segments": [
                     {
@@ -4527,7 +4527,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.wreath_product-formalTerm",
+                          "id": "group_theory.def.wreath_product_group.wreath_product-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4600,7 +4600,7 @@
       }
     },
     {
-      "id": "group_theory.central_product-doc",
+      "id": "group_theory.def.central_product_group.central_product-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "G ∘ H",
@@ -4627,7 +4627,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.central_product-centralproduct-section",
+                "id": "group_theory.def.central_product_group.central_product-centralproduct-section",
                 "title": {
                   "segments": [
                     {
@@ -4646,7 +4646,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.central_product-formalTerm",
+                          "id": "group_theory.def.central_product_group.central_product-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4719,7 +4719,7 @@
       }
     },
     {
-      "id": "group_theory.pullback-doc",
+      "id": "group_theory.def.pullback_group.pullback-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "G ×_H K",
@@ -4746,7 +4746,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.pullback-pullback-section",
+                "id": "group_theory.def.pullback_group.pullback-pullback-section",
                 "title": {
                   "segments": [
                     {
@@ -4765,7 +4765,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.pullback-formalTerm",
+                          "id": "group_theory.def.pullback_group.pullback-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }
@@ -4838,7 +4838,7 @@
       }
     },
     {
-      "id": "group_theory.restriction-doc",
+      "id": "group_theory.def.restriction_group.restriction-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "G|_S",
@@ -4865,7 +4865,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.restriction-restriction-section",
+                "id": "group_theory.def.restriction_group.restriction-restriction-section",
                 "title": {
                   "segments": [
                     {
@@ -4884,7 +4884,7 @@
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.restriction-formalTerm",
+                          "id": "group_theory.def.restriction_group.restriction-formalTerm",
                           "content": {
                             "Text": "(∅, ×)"
                           }

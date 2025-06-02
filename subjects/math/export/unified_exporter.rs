@@ -10,16 +10,17 @@ use crate::subjects::math::formalism::expressions::Identifier;
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::theorem::Theorem;
 use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::definitions::{Group, GroupExpression, GroupRelation};
 use crate::subjects::math::theories::fields::definitions::{Field, FieldBasic};
+use crate::subjects::math::theories::groups::definitions::{Group, GroupExpression, GroupRelation};
 
 use crate::subjects::math::theories::groups::render::GroupTheoryExporter;
+use crate::subjects::math::theories::probability::render::ProbabilityTheoryExporter;
 use crate::subjects::math::theories::theorems::{
     prove_abelian_squared_criterion, prove_example_chaining_theorems, prove_inverse_product_rule,
     prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
 };
 use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
-use crate::subjects::math::theories::zfc::set::Set;
+use crate::subjects::math::theories::zfc::definitions::Set;
 use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, MathematicalContent, MathematicalContentType, PaperType, ParagraphNode,
@@ -86,6 +87,62 @@ pub trait TheoryExporter<O, E, R> {
     fn export_theorems(&self) -> Vec<MathematicalContent>;
 }
 
+/// **TYPE-ERASED THEORY EXPORTER** - Allows working with different theory types
+/// This trait erases the type parameters to enable dynamic dispatch
+pub trait AnyTheoryExporter {
+    fn theory_id(&self) -> &str;
+    fn theory_name(&self) -> &str;
+    fn export_theory_overview(&self) -> MathematicalContent;
+    fn export_definitions(&self) -> Vec<MathematicalContent>;
+    fn export_theorems(&self) -> Vec<MathematicalContent>;
+}
+
+/// **WRAPPER STRUCT** - Wraps any TheoryExporter to implement AnyTheoryExporter
+pub struct TheoryExporterWrapper<T, O, E, R>
+where
+    T: TheoryExporter<O, E, R>,
+{
+    exporter: T,
+    _phantom: std::marker::PhantomData<(O, E, R)>,
+}
+
+impl<T, O, E, R> TheoryExporterWrapper<T, O, E, R>
+where
+    T: TheoryExporter<O, E, R>,
+{
+    pub fn new(exporter: T) -> Self {
+        Self {
+            exporter,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+
+impl<T, O, E, R> AnyTheoryExporter for TheoryExporterWrapper<T, O, E, R>
+where
+    T: TheoryExporter<O, E, R>,
+{
+    fn theory_id(&self) -> &str {
+        self.exporter.theory_id()
+    }
+
+    fn theory_name(&self) -> &str {
+        self.exporter.theory_name()
+    }
+
+    fn export_theory_overview(&self) -> MathematicalContent {
+        self.exporter.export_theory_overview()
+    }
+
+    fn export_definitions(&self) -> Vec<MathematicalContent> {
+        self.exporter.export_definitions()
+    }
+
+    fn export_theorems(&self) -> Vec<MathematicalContent> {
+        self.exporter.export_theorems()
+    }
+}
+
 /// **COMPREHENSIVE EXPORTER FOR ALL MATHEMATICAL THEORIES**
 /// This discovers available theories dynamically and exports them
 pub struct UnifiedExporter;
@@ -108,14 +165,21 @@ impl UnifiedExporter {
         };
 
         // **GENERIC THEORY DISCOVERY** - Add available theory exporters here
-        let available_theories: Vec<
-            Box<dyn TheoryExporter<Group, GroupExpression, GroupRelation>>,
-        > = vec![
-            Box::new(GroupTheoryExporter),
+        // Now we can use different theory types thanks to the AnyTheoryExporter trait
+        let available_theories: Vec<Box<dyn AnyTheoryExporter>> = vec![
+            Box::new(TheoryExporterWrapper::new(GroupTheoryExporter)),
+            // Add probability theory exporter
+            Box::new(TheoryExporterWrapper::new(ProbabilityTheoryExporter)),
             // Add other theories when they become available:
-            // Box::new(FieldTheoryExporter),
-            // Box::new(NumberTheoryExporter),
-            // Box::new(ZFCTheoryExporter),
+            // Box::new(TheoryExporterWrapper::new(FieldTheoryExporter)),
+            // Box::new(TheoryExporterWrapper::new(NumberTheoryExporter)),
+            // Box::new(TheoryExporterWrapper::new(ZFCTheoryExporter)),
+
+            // **EXAMPLE**: To add a field theory exporter, you would:
+            // 1. Create a FieldTheoryExporter struct
+            // 2. Implement TheoryExporter<Field, FieldExpression, FieldRelation> for it
+            // 3. Add it here: Box::new(TheoryExporterWrapper::new(FieldTheoryExporter))
+            // The export_theory_to_files function will work automatically!
         ];
 
         // Export each discovered theory
@@ -140,10 +204,11 @@ impl UnifiedExporter {
         Ok(())
     }
 
-    /// Generic method to export any theory using the TheoryExporter trait
+    /// **GENERIC METHOD** - Export any theory using the type-erased AnyTheoryExporter trait
+    /// This now works for ALL theory types, not just group theory
     fn export_theory_to_files(
         output_dir: &str,
-        theory: &dyn TheoryExporter<Group, GroupExpression, GroupRelation>,
+        theory: &dyn AnyTheoryExporter,
     ) -> Result<TheoryManifest> {
         let mut theory_manifest = TheoryManifest {
             theory_id: theory.theory_id().to_string(),

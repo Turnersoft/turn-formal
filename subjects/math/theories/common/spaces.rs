@@ -13,7 +13,7 @@ use super::super::super::super::math::theories::{
     rings::definitions::{Field, Ring},
     symplectic_geometry::definitions::SymplecticManifold,
     topology::definitions::{MetricSpace, TopologicalSpace},
-    zfc::set::Set,
+    zfc::definitions::Set,
 };
 
 use serde::{Deserialize, Serialize};
