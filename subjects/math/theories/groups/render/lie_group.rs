@@ -26,17 +26,43 @@ impl ToSectionNode for LieGroup {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         let formalism_obj_level: AbstractionLevel = self.level();
 
-        // Create title for the Lie Group
-        let title = format!("Lie Group on {:?}", self.core.base_set);
+        // **ABSTRACT MATHEMATICAL NOTATION** - Use proper mathematical notation
+        let title = "(G, τ)".to_string(); // G for group, τ for topology
 
-        // Create content nodes
-        let mut content_nodes = vec![SectionContentNode::Paragraph(ParagraphNode {
-            segments: vec![RichTextSegment::Text(
-                "A Lie group is a group that is also a differentiable manifold, with the property that \
-                 the group operations are compatible with the smooth structure.".to_string(),
-            )],
-            alignment: None,
-        })];
+        // **DETAILED MATHEMATICAL EXPLANATION**
+        let mut content_nodes = vec![
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "A Lie group is a group that is also a differentiable manifold, with the property that \
+                     the group operations (multiplication and inversion) are smooth (infinitely differentiable) functions.".to_string(),
+                )],
+                alignment: None,
+            }),
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "Definition: A Lie group is a set G equipped with both a group structure and a smooth manifold structure such that the group operations μ: G × G → G (multiplication) and ι: G → G (inversion) are smooth maps.".to_string(),
+                )],
+                alignment: None,
+            }),
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "Key Properties: Every Lie group is locally Euclidean, and near the identity element, the group structure is determined by its Lie algebra.".to_string(),
+                )],
+                alignment: None,
+            }),
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "Classical Examples: GL(n, ℝ) (general linear group), SL(n, ℝ) (special linear group), O(n) (orthogonal group), SO(n) (special orthogonal group), U(n) (unitary group), SU(n) (special unitary group).".to_string(),
+                )],
+                alignment: None,
+            }),
+            SectionContentNode::Paragraph(ParagraphNode {
+                segments: vec![RichTextSegment::Text(
+                    "Applications: Lie groups are fundamental in differential geometry, physics (symmetries of physical systems), representation theory, and the study of differential equations.".to_string(),
+                )],
+                alignment: None,
+            }),
+        ];
 
         // Link to group basic information instead of embedding it directly
         content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {

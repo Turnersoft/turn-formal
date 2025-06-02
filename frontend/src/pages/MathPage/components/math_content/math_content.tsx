@@ -1,13 +1,20 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import styles from "./math_content.module.scss";
-import { MathContent, Definition, Member, Theorem } from "../../models/math";
+import { 
+  MathContent, 
+  Definition, 
+  Theorem
+} from "../../models/math";
+// Import the binding type directly
+import type { MathematicalContent } from '../turn-render/bindings/MathematicalContent';
 import DependencyGraph from "../dependency_graph/dependency_graph";
 import DebugDisplay from "../debug_display/debug_display";
 import DefinitionDetail from "../definition_detail/definition_detail";
 import TheoremDetail from "../theorem_detail/theorem_detail";
 import AbstractionViewer from './abstraction_viewer';
+import { DocumentRenderer } from '../binding-renderers';
 import { fetchGroupTheoryAbstractionData } from '../../../../services/mathAbstractionService';
 
 // Helper function to extract all type names from a type string
@@ -66,7 +73,39 @@ const formatTheoryName = (name: string): string => {
 };
 
 /**
- * Component that displays the definitions section
+ * Component that displays mathematical content from ContentBundle format
+ */
+const MathematicalContentSection = ({ 
+  mathematicalContent, 
+  title 
+}: { 
+  mathematicalContent: MathematicalContent[], 
+  title: string 
+}) => {
+  if (!mathematicalContent || mathematicalContent.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={styles.mathematicalContentSection}>
+      <h2 className={styles.sectionHeader}>
+        {title}
+        <span className={styles.count}>({mathematicalContent.length})</span>
+      </h2>
+      
+      <div className={styles.contentGrid}>
+        {mathematicalContent.map((content, index) => (
+          <div key={content.id || index} className={styles.contentItem}>
+            <DocumentRenderer content={content} className={styles.documentRenderer} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Component that displays the definitions section (legacy format for backward compatibility)
  */
 const DefinitionsSection = ({ 
   definitions, 
@@ -169,7 +208,7 @@ const DefinitionsSection = ({
 };
 
 /**
- * Component that displays the theorems section
+ * Component that displays the theorems section (legacy format for backward compatibility)
  */
 const TheoremsSection = ({ 
   theorems,
@@ -204,49 +243,40 @@ const TheoremsSection = ({
       <h2 className={styles.sectionHeader}>
         Theorems
         <span className={styles.count}>({theorems.length})</span>
-        {theorems.length > 0 && 
-          <small className={styles.debugInfo}>
-            <span title={`${theoremsWithProofSteps} theorems have formal proof steps`}>
-              ✓ {theoremsWithProofSteps > 0 && 
-                  <span className={styles.proofStepsBadge}>{theoremsWithProofSteps} with proofs</span>}
-            </span>
-          </small>
-        }
       </h2>
+      
       <div className={styles.theoremsGrid}>
-        {theorems.map((theorem: Theorem, index: number) => {
-          console.log(`Rendering theorem at index ${index}:`, theorem.id || 'unknown');
-          return <TheoremDetail key={index} theorem={theorem} index={index} />;
-        })}
+        {theorems.map((theorem, index) => (
+          <TheoremDetail
+            key={theorem.id || index}
+            theorem={theorem}
+            index={index}
+          />
+        ))}
       </div>
     </div>
   );
 };
 
-/**
- * Main component to display mathematical content from JSON files
- */
 const MathContentComponent: React.FC<MathContentComponentProps> = ({
   content,
   loading,
   error,
 }) => {
-  // State hooks - declare all hooks up front
-  const [contentReady, setContentReady] = useState(false);
-  const [showJsonView] = useState(false);
-  const [showTheorems, setShowTheorems] = useState(false);
-  const theoremsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const [showAbstractionViewer, setShowAbstractionViewer] = useState(false);
+  const theoremsRef = useRef<HTMLDivElement>(null);
+  const [showTheorems, setShowTheorems] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
+  
+  // Abstraction viewer state
   const [abstractionData, setAbstractionData] = useState<Record<string, any>>({});
+  const [showAbstractionViewer, setShowAbstractionViewer] = useState(false);
   const [abstractionLoading, setAbstractionLoading] = useState(false);
 
-  // Function to scroll to a definition when clicked
   const scrollToDefinition = (name: string) => {
-    const element = document.getElementById(`definition-${name}`);
+    const element = document.getElementById(`def-${name}`);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
-      // Add a highlight effect
       element.classList.add(styles.highlightedDefinition);
       setTimeout(() => {
         element.classList.remove(styles.highlightedDefinition);
@@ -303,142 +333,6 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     }
     return map;
   }, [content]);
-
-  // Order definitions to show dependencies first
-  const orderedDefinitions = useMemo(() => {
-    if (!content || !content.definitions || content.definitions.length === 0) {
-      return [];
-    }
-
-    // Create a dependency graph
-    const dependencyGraph = new Map<string, Set<string>>();
-    const defMap = new Map<string, Definition>();
-
-    // Initialize graph
-    content.definitions.forEach((def: Definition) => {
-      dependencyGraph.set(def.name, new Set());
-      defMap.set(def.name, def);
-    });
-
-    // Build dependencies
-    content.definitions.forEach((def: Definition) => {
-      if (def.members) {
-        def.members.forEach((member: Member) => {
-          // Process both type and type_info fields
-          const typeFields = [];
-          if (typeof member.type === "string") typeFields.push(member.type);
-          if (typeof member.type_info === "string")
-            typeFields.push(member.type_info);
-
-          // Process each type field
-          typeFields.forEach((typeField) => {
-            // Extract all type names including from complex nested types
-            const typeNames = extractTypeNames(typeField);
-
-            // Add dependencies for each found type
-            typeNames.forEach((typeName) => {
-              if (defMap.has(typeName) && typeName !== def.name) {
-                // This definition depends on typeName
-                const dependencies = dependencyGraph.get(def.name);
-                if (dependencies) {
-                  dependencies.add(typeName);
-                }
-              }
-            });
-          });
-        });
-      }
-    });
-
-    // Topological sort to order definitions
-    const result: Definition[] = [];
-    const visited = new Set<string>();
-    const visiting = new Set<string>();
-
-    function visit(name: string) {
-      if (visited.has(name)) return;
-      if (visiting.has(name)) return; // Handle cycles
-
-      visiting.add(name);
-
-      // Visit dependencies first
-      const dependencies = dependencyGraph.get(name);
-      if (dependencies) {
-        dependencies.forEach((dep) => visit(dep));
-      }
-
-      visiting.delete(name);
-      visited.add(name);
-
-      const def = defMap.get(name);
-      if (def) result.push(def);
-    }
-
-    // Visit all nodes
-    defMap.forEach((_, name) => {
-      if (!visited.has(name)) {
-        visit(name);
-      }
-    });
-
-    return result;
-  }, [content]);
-
-  // Calculate dependencies for graph visualization
-  const dependencyStructure = useMemo(() => {
-    if (!content || !content.definitions || content.definitions.length === 0) {
-      return { nodes: [], links: [] };
-    }
-
-    // Extract nodes and links for the dependency graph
-    const nodes: Array<{ id: string; kind: string }> = [];
-    const links: Array<{ source: string; target: string }> = [];
-    const processedLinks = new Set<string>();
-
-    // Add all definitions as nodes
-    content.definitions.forEach((def: Definition) => {
-      nodes.push({
-        id: def.name,
-        kind: def.kind,
-      });
-    });
-
-    // Find dependencies from member types
-    content.definitions.forEach((def: Definition) => {
-      if (def.members) {
-        def.members.forEach((member: Member) => {
-          // Process both type and type_info fields
-          const typeFields = [];
-          if (typeof member.type === "string") typeFields.push(member.type);
-          if (typeof member.type_info === "string")
-            typeFields.push(member.type_info);
-
-          // Process each type field
-          typeFields.forEach((typeField) => {
-            // Extract all type names including from complex nested types
-            const typeNames = extractTypeNames(typeField);
-
-            // Add links for each found type
-            typeNames.forEach((typeName) => {
-              if (definitionMap.has(typeName) && typeName !== def.name) {
-                // Create a link if we haven't already processed this pair
-                const linkKey = `${def.name}-${typeName}`;
-                if (!processedLinks.has(linkKey)) {
-                  links.push({
-                    source: def.name,
-                    target: typeName,
-                  });
-                  processedLinks.add(linkKey);
-                }
-              }
-            });
-          });
-        });
-      }
-    });
-
-    return { nodes, links };
-  }, [content, definitionMap]);
 
   // Check if the current URL contains "theorem" to auto-focus on theorems section
   useEffect(() => {
@@ -518,6 +412,15 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
     );
   }
 
+  // Get mathematical content from new format if available
+  const definitionMathContent = content.mathematicalContent?.filter(mc => 
+    content.contentBundles?.definitions?.content.some(c => c.id === mc.id)
+  ) || [];
+  
+  const theoremMathContent = content.mathematicalContent?.filter(mc => 
+    content.contentBundles?.theorems?.content.some(c => c.id === mc.id)
+  ) || [];
+
   // Main render output
   return (
     <div
@@ -548,36 +451,49 @@ const MathContentComponent: React.FC<MathContentComponentProps> = ({
         )}
         
         <div className={styles.contentGrid}>
-          {/* Only show structured content if not showing JSON view */}
-          {!showJsonView && (
-            <>
-              {/* Definitions Section */}
-              {!showTheorems && content.definitions && content.definitions.length > 0 && (
-                <DefinitionsSection 
-                  definitions={content.definitions} 
-                  onScroll={scrollToDefinition} 
-                />
-              )}
+          {/* Only show structured content */}
+          <>
+            {/* NEW FORMAT: Mathematical Content from ContentBundle */}
+            {definitionMathContent.length > 0 && !showTheorems && (
+              <MathematicalContentSection 
+                mathematicalContent={definitionMathContent} 
+                title="Mathematical Definitions" 
+              />
+            )}
+            
+            {theoremMathContent.length > 0 && (
+              <MathematicalContentSection 
+                mathematicalContent={theoremMathContent} 
+                title="Theorems" 
+              />
+            )}
 
-              {/* Theorems Section */}
-              {content.theorems && content.theorems.length > 0 && (
-                <TheoremsSection 
-                  theorems={content.theorems} 
-                  theoremsRef={theoremsRef} 
-                />
-              )}
+            {/* LEGACY FORMAT: Fallback for backward compatibility */}
+            {definitionMathContent.length === 0 && !showTheorems && content.definitions && content.definitions.length > 0 && (
+              <DefinitionsSection 
+                definitions={content.definitions} 
+                onScroll={scrollToDefinition} 
+              />
+            )}
 
-              {/* Empty State */}
-              {(!content.theorems || content.theorems.length === 0) &&
-                (!content.definitions || content.definitions.length === 0) &&
-                !showAbstractionViewer && (
-                  <div className={styles.emptyState}>
-                    No content found in this theory. The JSON files may be
-                    empty.
-                  </div>
-                )}
-            </>
-          )}
+            {theoremMathContent.length === 0 && content.theorems && content.theorems.length > 0 && (
+              <TheoremsSection 
+                theorems={content.theorems} 
+                theoremsRef={theoremsRef} 
+              />
+            )}
+
+            {/* Empty State */}
+            {definitionMathContent.length === 0 && theoremMathContent.length === 0 &&
+              (!content.theorems || content.theorems.length === 0) &&
+              (!content.definitions || content.definitions.length === 0) &&
+              !showAbstractionViewer && (
+                <div className={styles.emptyState}>
+                  No content found in this theory. The JSON files may be
+                  empty.
+                </div>
+              )}
+          </>
         </div>
       </div>
     </div>

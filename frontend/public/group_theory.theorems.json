@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1748442762",
+  "exported_at": "1748703516",
   "content": [
     {
       "id": "group_theory.inverse_uniqueness-doc",
@@ -302,144 +302,6 @@
                                       "description": null
                                     }
                                   ],
-                                  "variable_bindings": [
-                                    {
-                                      "variable_name": "var_c3c666a5-c7f5-4489-ad7a-38303ba5c63b",
-                                      "value": {
-                                        "Variable": {
-                                          "name": "e",
-                                          "subscript": "50",
-                                          "superscript": null
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    }
-                                  ],
-                                  "statement": {
-                                    "Todo": {
-                                      "description": "Todo relation: FailedApplication:group_axiom_identity",
-                                      "context": []
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": {
-                                  "TheoremApplication": {
-                                    "theorem_name": "group_axiom_identity",
-                                    "instantiation": [
-                                      [
-                                        "x_1",
-                                        {
-                                          "Variable": {
-                                            "name": "h1",
-                                            "subscript": "2",
-                                            "superscript": null
-                                          }
-                                        }
-                                      ]
-                                    ],
-                                    "target": null
-                                  }
-                                },
-                                "status": "Abandoned"
-                              }
-                            },
-                            {
-                              "StructuredStatement": {
-                                "goal": {
-                                  "quantified_objects": [
-                                    {
-                                      "variable": "g",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "h1",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "h2",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    }
-                                  ],
-                                  "variable_bindings": [
-                                    {
-                                      "variable_name": "var_c3c666a5-c7f5-4489-ad7a-38303ba5c63b",
-                                      "value": {
-                                        "Variable": {
-                                          "name": "e",
-                                          "subscript": "50",
-                                          "superscript": null
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    },
-                                    {
-                                      "variable_name": "var_e419f484-fcbb-4248-970a-d9cf3863a9f3",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    }
-                                  ],
-                                  "statement": {
-                                    "Todo": {
-                                      "description": "Todo relation: FailedApplication:group_axiom_identity",
-                                      "context": []
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": {
-                                  "Introduction": {
-                                    "variable": "var_e419f484-fcbb-4248-970a-d9cf3863a9f3",
-                                    "assumption": {
-                                      "Todo": {
-                                        "description": "Expression assumption",
-                                        "context": []
-                                      }
-                                    }
-                                  }
-                                },
-                                "status": "Complete"
-                              }
-                            },
-                            {
-                              "StructuredStatement": {
-                                "goal": {
-                                  "quantified_objects": [
-                                    {
-                                      "variable": "g",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "h1",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "h2",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    }
-                                  ],
                                   "variable_bindings": [],
                                   "statement": {
                                     "Implication": {
@@ -640,7 +502,145 @@
                                   ],
                                   "variable_bindings": [
                                     {
-                                      "variable_name": "var_c3c666a5-c7f5-4489-ad7a-38303ba5c63b",
+                                      "variable_name": "var_49fae413-235a-4569-96bc-7ff4321596c0",
+                                      "value": {
+                                        "Variable": {
+                                          "name": "e",
+                                          "subscript": "50",
+                                          "superscript": null
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    },
+                                    {
+                                      "variable_name": "var_81edcd2c-ec5b-4d6e-be9b-0ace97859268",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    }
+                                  ],
+                                  "statement": {
+                                    "Todo": {
+                                      "description": "Todo relation: FailedApplication:group_axiom_identity",
+                                      "context": []
+                                    }
+                                  },
+                                  "goal_type": "Prove"
+                                },
+                                "tactic": {
+                                  "Introduction": {
+                                    "variable": "var_81edcd2c-ec5b-4d6e-be9b-0ace97859268",
+                                    "assumption": {
+                                      "Todo": {
+                                        "description": "Expression assumption",
+                                        "context": []
+                                      }
+                                    }
+                                  }
+                                },
+                                "status": "Complete"
+                              }
+                            },
+                            {
+                              "StructuredStatement": {
+                                "goal": {
+                                  "quantified_objects": [
+                                    {
+                                      "variable": "g",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "h1",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "h2",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    }
+                                  ],
+                                  "variable_bindings": [
+                                    {
+                                      "variable_name": "var_49fae413-235a-4569-96bc-7ff4321596c0",
+                                      "value": {
+                                        "Variable": {
+                                          "name": "e",
+                                          "subscript": "50",
+                                          "superscript": null
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    }
+                                  ],
+                                  "statement": {
+                                    "Todo": {
+                                      "description": "Todo relation: FailedApplication:group_axiom_identity",
+                                      "context": []
+                                    }
+                                  },
+                                  "goal_type": "Prove"
+                                },
+                                "tactic": {
+                                  "TheoremApplication": {
+                                    "theorem_name": "group_axiom_identity",
+                                    "instantiation": [
+                                      [
+                                        "x_1",
+                                        {
+                                          "Variable": {
+                                            "name": "h1",
+                                            "subscript": "2",
+                                            "superscript": null
+                                          }
+                                        }
+                                      ]
+                                    ],
+                                    "target": null
+                                  }
+                                },
+                                "status": "Abandoned"
+                              }
+                            },
+                            {
+                              "StructuredStatement": {
+                                "goal": {
+                                  "quantified_objects": [
+                                    {
+                                      "variable": "g",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "h1",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "h2",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    }
+                                  ],
+                                  "variable_bindings": [
+                                    {
+                                      "variable_name": "var_49fae413-235a-4569-96bc-7ff4321596c0",
                                       "value": {
                                         "Variable": {
                                           "name": "e",
@@ -812,7 +812,7 @@
                                 },
                                 "tactic": {
                                   "Introduction": {
-                                    "variable": "var_c3c666a5-c7f5-4489-ad7a-38303ba5c63b",
+                                    "variable": "var_49fae413-235a-4569-96bc-7ff4321596c0",
                                     "assumption": {
                                       "Todo": {
                                         "description": "Expression assumption",
@@ -852,7 +852,7 @@
                                   ],
                                   "variable_bindings": [
                                     {
-                                      "variable_name": "var_c3c666a5-c7f5-4489-ad7a-38303ba5c63b",
+                                      "variable_name": "var_49fae413-235a-4569-96bc-7ff4321596c0",
                                       "value": {
                                         "Variable": {
                                           "name": "e",
@@ -886,21 +886,21 @@
                                         }
                                       ],
                                       [
-                                        "x_1",
-                                        {
-                                          "Variable": {
-                                            "name": "h1",
-                                            "subscript": "2",
-                                            "superscript": null
-                                          }
-                                        }
-                                      ],
-                                      [
                                         "y_1",
                                         {
                                           "Variable": {
                                             "name": "g",
                                             "subscript": "1",
+                                            "superscript": null
+                                          }
+                                        }
+                                      ],
+                                      [
+                                        "x_1",
+                                        {
+                                          "Variable": {
+                                            "name": "h1",
+                                            "subscript": "2",
                                             "superscript": null
                                           }
                                         }
@@ -3456,161 +3456,7 @@
                                   ],
                                   "variable_bindings": [
                                     {
-                                      "variable_name": "var_89af9040-a801-482a-bae6-0df0bd22bb73",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    },
-                                    {
-                                      "variable_name": "var_a74d8e76-561d-462f-ac55-7a36ff7953e9",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    }
-                                  ],
-                                  "statement": {
-                                    "Todo": {
-                                      "description": "Todo relation: FailedExtraction:inverse_uniqueness",
-                                      "context": []
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": {
-                                  "Introduction": {
-                                    "variable": "From a*b = e, deduce a = b⁻¹ by inverse uniqueness",
-                                    "assumption": {
-                                      "Todo": {
-                                        "description": "Expression assumption",
-                                        "context": []
-                                      }
-                                    }
-                                  }
-                                },
-                                "status": "Abandoned"
-                              }
-                            },
-                            {
-                              "StructuredStatement": {
-                                "goal": {
-                                  "quantified_objects": [
-                                    {
-                                      "variable": "a",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "b",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "c",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    }
-                                  ],
-                                  "variable_bindings": [
-                                    {
-                                      "variable_name": "var_89af9040-a801-482a-bae6-0df0bd22bb73",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    },
-                                    {
-                                      "variable_name": "var_a74d8e76-561d-462f-ac55-7a36ff7953e9",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    },
-                                    {
-                                      "variable_name": "var_58965139-6e02-4cd1-b77b-54c1d0baa22e",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    }
-                                  ],
-                                  "statement": {
-                                    "Todo": {
-                                      "description": "Todo relation: FailedExtraction:inverse_uniqueness",
-                                      "context": []
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": {
-                                  "Introduction": {
-                                    "variable": "var_58965139-6e02-4cd1-b77b-54c1d0baa22e",
-                                    "assumption": {
-                                      "Todo": {
-                                        "description": "Expression assumption",
-                                        "context": []
-                                      }
-                                    }
-                                  }
-                                },
-                                "status": "Complete"
-                              }
-                            },
-                            {
-                              "StructuredStatement": {
-                                "goal": {
-                                  "quantified_objects": [
-                                    {
-                                      "variable": "a",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "b",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "c",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    }
-                                  ],
-                                  "variable_bindings": [
-                                    {
-                                      "variable_name": "var_89af9040-a801-482a-bae6-0df0bd22bb73",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    },
-                                    {
-                                      "variable_name": "var_a74d8e76-561d-462f-ac55-7a36ff7953e9",
+                                      "variable_name": "var_c49fe33e-c600-44b9-afe9-40a67eac4f9b",
                                       "value": {
                                         "Placeholder": {
                                           "description": "Mathematical relation"
@@ -3802,7 +3648,393 @@
                                 },
                                 "tactic": {
                                   "Introduction": {
-                                    "variable": "var_a74d8e76-561d-462f-ac55-7a36ff7953e9",
+                                    "variable": "var_c49fe33e-c600-44b9-afe9-40a67eac4f9b",
+                                    "assumption": {
+                                      "Todo": {
+                                        "description": "Expression assumption",
+                                        "context": []
+                                      }
+                                    }
+                                  }
+                                },
+                                "status": "InProgress"
+                              }
+                            },
+                            {
+                              "StructuredStatement": {
+                                "goal": {
+                                  "quantified_objects": [
+                                    {
+                                      "variable": "a",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "b",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "c",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    }
+                                  ],
+                                  "variable_bindings": [
+                                    {
+                                      "variable_name": "var_c49fe33e-c600-44b9-afe9-40a67eac4f9b",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    },
+                                    {
+                                      "variable_name": "var_09d9cf00-a9c6-47c4-8c3e-3a4b791bf799",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    },
+                                    {
+                                      "variable_name": "var_7c756d5b-6dfb-4f88-ba35-6af68ebf4180",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    }
+                                  ],
+                                  "statement": {
+                                    "Todo": {
+                                      "description": "Todo relation: FailedExtraction:inverse_uniqueness",
+                                      "context": []
+                                    }
+                                  },
+                                  "goal_type": "Prove"
+                                },
+                                "tactic": {
+                                  "Introduction": {
+                                    "variable": "var_7c756d5b-6dfb-4f88-ba35-6af68ebf4180",
+                                    "assumption": {
+                                      "Todo": {
+                                        "description": "Expression assumption",
+                                        "context": []
+                                      }
+                                    }
+                                  }
+                                },
+                                "status": "Complete"
+                              }
+                            },
+                            {
+                              "StructuredStatement": {
+                                "goal": {
+                                  "quantified_objects": [
+                                    {
+                                      "variable": "a",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "b",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "c",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    }
+                                  ],
+                                  "variable_bindings": [
+                                    {
+                                      "variable_name": "var_c49fe33e-c600-44b9-afe9-40a67eac4f9b",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    },
+                                    {
+                                      "variable_name": "var_09d9cf00-a9c6-47c4-8c3e-3a4b791bf799",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    }
+                                  ],
+                                  "statement": {
+                                    "Todo": {
+                                      "description": "Todo relation: FailedExtraction:inverse_uniqueness",
+                                      "context": []
+                                    }
+                                  },
+                                  "goal_type": "Prove"
+                                },
+                                "tactic": {
+                                  "Introduction": {
+                                    "variable": "From a*b = e, deduce a = b⁻¹ by inverse uniqueness",
+                                    "assumption": {
+                                      "Todo": {
+                                        "description": "Expression assumption",
+                                        "context": []
+                                      }
+                                    }
+                                  }
+                                },
+                                "status": "Abandoned"
+                              }
+                            },
+                            {
+                              "StructuredStatement": {
+                                "goal": {
+                                  "quantified_objects": [
+                                    {
+                                      "variable": "a",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "b",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    },
+                                    {
+                                      "variable": "c",
+                                      "quantifier_type": "Universal",
+                                      "object_type": "Element",
+                                      "constraints": [],
+                                      "description": null
+                                    }
+                                  ],
+                                  "variable_bindings": [
+                                    {
+                                      "variable_name": "var_c49fe33e-c600-44b9-afe9-40a67eac4f9b",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    },
+                                    {
+                                      "variable_name": "var_09d9cf00-a9c6-47c4-8c3e-3a4b791bf799",
+                                      "value": {
+                                        "Placeholder": {
+                                          "description": "Mathematical relation"
+                                        }
+                                      },
+                                      "binding_type": "Let"
+                                    }
+                                  ],
+                                  "statement": {
+                                    "Implication": {
+                                      "premise": {
+                                        "Conjunction": {
+                                          "statements": [
+                                            {
+                                              "Equality": {
+                                                "left": {
+                                                  "GroupExpression": {
+                                                    "expression": {
+                                                      "Operation": {
+                                                        "group": {
+                                                          "Placeholder": {
+                                                            "description": "G"
+                                                          }
+                                                        },
+                                                        "left": {
+                                                          "GroupExpression": {
+                                                            "expression": {
+                                                              "Element": {
+                                                                "group": {
+                                                                  "Placeholder": {
+                                                                    "description": "G"
+                                                                  }
+                                                                },
+                                                                "element": {
+                                                                  "Symbol": "a"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "right": {
+                                                          "GroupExpression": {
+                                                            "expression": {
+                                                              "Element": {
+                                                                "group": {
+                                                                  "Placeholder": {
+                                                                    "description": "G"
+                                                                  }
+                                                                },
+                                                                "element": {
+                                                                  "Symbol": "b"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "operation_type": "Multiplication"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "right": {
+                                                  "GroupExpression": {
+                                                    "expression": {
+                                                      "Identity": {
+                                                        "group": {
+                                                          "Placeholder": {
+                                                            "description": "G"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "justification": null
+                                              }
+                                            },
+                                            {
+                                              "Equality": {
+                                                "left": {
+                                                  "GroupExpression": {
+                                                    "expression": {
+                                                      "Operation": {
+                                                        "group": {
+                                                          "Placeholder": {
+                                                            "description": "G"
+                                                          }
+                                                        },
+                                                        "left": {
+                                                          "GroupExpression": {
+                                                            "expression": {
+                                                              "Element": {
+                                                                "group": {
+                                                                  "Placeholder": {
+                                                                    "description": "G"
+                                                                  }
+                                                                },
+                                                                "element": {
+                                                                  "Symbol": "b"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "right": {
+                                                          "GroupExpression": {
+                                                            "expression": {
+                                                              "Element": {
+                                                                "group": {
+                                                                  "Placeholder": {
+                                                                    "description": "G"
+                                                                  }
+                                                                },
+                                                                "element": {
+                                                                  "Symbol": "c"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "operation_type": "Multiplication"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "right": {
+                                                  "GroupExpression": {
+                                                    "expression": {
+                                                      "Identity": {
+                                                        "group": {
+                                                          "Placeholder": {
+                                                            "description": "G"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "justification": null
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "conclusion": {
+                                        "Equality": {
+                                          "left": {
+                                            "Variable": {
+                                              "name": "a",
+                                              "subscript": "301",
+                                              "superscript": null
+                                            }
+                                          },
+                                          "right": {
+                                            "GroupExpression": {
+                                              "expression": {
+                                                "Inverse": {
+                                                  "group": {
+                                                    "Placeholder": {
+                                                      "description": "G"
+                                                    }
+                                                  },
+                                                  "element": {
+                                                    "GroupExpression": {
+                                                      "expression": {
+                                                        "Element": {
+                                                          "group": {
+                                                            "Placeholder": {
+                                                              "description": "G"
+                                                            }
+                                                          },
+                                                          "element": {
+                                                            "Symbol": "c"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "justification": null
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "goal_type": "Prove"
+                                },
+                                "tactic": {
+                                  "Introduction": {
+                                    "variable": "var_09d9cf00-a9c6-47c4-8c3e-3a4b791bf799",
                                     "assumption": {
                                       "Todo": {
                                         "description": "Expression assumption",
@@ -4062,7 +4294,7 @@
                                   ],
                                   "variable_bindings": [
                                     {
-                                      "variable_name": "var_89af9040-a801-482a-bae6-0df0bd22bb73",
+                                      "variable_name": "var_c49fe33e-c600-44b9-afe9-40a67eac4f9b",
                                       "value": {
                                         "Placeholder": {
                                           "description": "Mathematical relation"
@@ -4071,7 +4303,7 @@
                                       "binding_type": "Let"
                                     },
                                     {
-                                      "variable_name": "var_a74d8e76-561d-462f-ac55-7a36ff7953e9",
+                                      "variable_name": "var_09d9cf00-a9c6-47c4-8c3e-3a4b791bf799",
                                       "value": {
                                         "Placeholder": {
                                           "description": "Mathematical relation"
@@ -4100,238 +4332,6 @@
                                   }
                                 },
                                 "status": "Abandoned"
-                              }
-                            },
-                            {
-                              "StructuredStatement": {
-                                "goal": {
-                                  "quantified_objects": [
-                                    {
-                                      "variable": "a",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "b",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    },
-                                    {
-                                      "variable": "c",
-                                      "quantifier_type": "Universal",
-                                      "object_type": "Element",
-                                      "constraints": [],
-                                      "description": null
-                                    }
-                                  ],
-                                  "variable_bindings": [
-                                    {
-                                      "variable_name": "var_89af9040-a801-482a-bae6-0df0bd22bb73",
-                                      "value": {
-                                        "Placeholder": {
-                                          "description": "Mathematical relation"
-                                        }
-                                      },
-                                      "binding_type": "Let"
-                                    }
-                                  ],
-                                  "statement": {
-                                    "Implication": {
-                                      "premise": {
-                                        "Conjunction": {
-                                          "statements": [
-                                            {
-                                              "Equality": {
-                                                "left": {
-                                                  "GroupExpression": {
-                                                    "expression": {
-                                                      "Operation": {
-                                                        "group": {
-                                                          "Placeholder": {
-                                                            "description": "G"
-                                                          }
-                                                        },
-                                                        "left": {
-                                                          "GroupExpression": {
-                                                            "expression": {
-                                                              "Element": {
-                                                                "group": {
-                                                                  "Placeholder": {
-                                                                    "description": "G"
-                                                                  }
-                                                                },
-                                                                "element": {
-                                                                  "Symbol": "a"
-                                                                }
-                                                              }
-                                                            }
-                                                          }
-                                                        },
-                                                        "right": {
-                                                          "GroupExpression": {
-                                                            "expression": {
-                                                              "Element": {
-                                                                "group": {
-                                                                  "Placeholder": {
-                                                                    "description": "G"
-                                                                  }
-                                                                },
-                                                                "element": {
-                                                                  "Symbol": "b"
-                                                                }
-                                                              }
-                                                            }
-                                                          }
-                                                        },
-                                                        "operation_type": "Multiplication"
-                                                      }
-                                                    }
-                                                  }
-                                                },
-                                                "right": {
-                                                  "GroupExpression": {
-                                                    "expression": {
-                                                      "Identity": {
-                                                        "group": {
-                                                          "Placeholder": {
-                                                            "description": "G"
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                },
-                                                "justification": null
-                                              }
-                                            },
-                                            {
-                                              "Equality": {
-                                                "left": {
-                                                  "GroupExpression": {
-                                                    "expression": {
-                                                      "Operation": {
-                                                        "group": {
-                                                          "Placeholder": {
-                                                            "description": "G"
-                                                          }
-                                                        },
-                                                        "left": {
-                                                          "GroupExpression": {
-                                                            "expression": {
-                                                              "Element": {
-                                                                "group": {
-                                                                  "Placeholder": {
-                                                                    "description": "G"
-                                                                  }
-                                                                },
-                                                                "element": {
-                                                                  "Symbol": "b"
-                                                                }
-                                                              }
-                                                            }
-                                                          }
-                                                        },
-                                                        "right": {
-                                                          "GroupExpression": {
-                                                            "expression": {
-                                                              "Element": {
-                                                                "group": {
-                                                                  "Placeholder": {
-                                                                    "description": "G"
-                                                                  }
-                                                                },
-                                                                "element": {
-                                                                  "Symbol": "c"
-                                                                }
-                                                              }
-                                                            }
-                                                          }
-                                                        },
-                                                        "operation_type": "Multiplication"
-                                                      }
-                                                    }
-                                                  }
-                                                },
-                                                "right": {
-                                                  "GroupExpression": {
-                                                    "expression": {
-                                                      "Identity": {
-                                                        "group": {
-                                                          "Placeholder": {
-                                                            "description": "G"
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                },
-                                                "justification": null
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      "conclusion": {
-                                        "Equality": {
-                                          "left": {
-                                            "Variable": {
-                                              "name": "a",
-                                              "subscript": "301",
-                                              "superscript": null
-                                            }
-                                          },
-                                          "right": {
-                                            "GroupExpression": {
-                                              "expression": {
-                                                "Inverse": {
-                                                  "group": {
-                                                    "Placeholder": {
-                                                      "description": "G"
-                                                    }
-                                                  },
-                                                  "element": {
-                                                    "GroupExpression": {
-                                                      "expression": {
-                                                        "Element": {
-                                                          "group": {
-                                                            "Placeholder": {
-                                                              "description": "G"
-                                                            }
-                                                          },
-                                                          "element": {
-                                                            "Symbol": "c"
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          },
-                                          "justification": null
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": {
-                                  "Introduction": {
-                                    "variable": "var_89af9040-a801-482a-bae6-0df0bd22bb73",
-                                    "assumption": {
-                                      "Todo": {
-                                        "description": "Expression assumption",
-                                        "context": []
-                                      }
-                                    }
-                                  }
-                                },
-                                "status": "InProgress"
                               }
                             }
                           ],

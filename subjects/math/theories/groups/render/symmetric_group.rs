@@ -37,8 +37,34 @@ impl ToSectionNode for SymmetricGroup {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         let formalism_obj_level: AbstractionLevel = self.level();
 
-        // Create title
-        let title = format!("Symmetric Group S_{}", self.degree);
+        // Create title with abstract notation
+        let title_segments = vec![
+            RichTextSegment::Text("Symmetric Group ".to_string()),
+            RichTextSegment::Math(MathNode {
+                id: format!("{}-title-math", id_prefix),
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "S".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: Some(Box::new(MathNode {
+                        id: format!("{}-title-math-subscript", id_prefix),
+                        content: Box::new(MathNodeContent::Text("n".to_string())),
+                    })),
+                    primes: 0,
+                    is_function: false,
+                }),
+            }),
+        ];
+
+        // Helper function to convert title_segments to a simple string for labels
+        let title_text = title_segments
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "[Math]".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
 
         // Create content nodes
         let mut content_nodes = vec![
@@ -223,14 +249,14 @@ impl ToSectionNode for SymmetricGroup {
         Section {
             id: format!("{}-symmetricgroup-section", id_prefix),
             title: Some(ParagraphNode {
-                segments: vec![RichTextSegment::Text(title.clone())],
+                segments: title_segments,
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathContentNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: vec![RichTextSegment::Text(title_text.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
+                    label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
                     abstraction_meta: Some(AbstractionMetadata {
                         level: Some(formalism_obj_level as u8),

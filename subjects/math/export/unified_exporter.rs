@@ -6,25 +6,25 @@ use std::fs;
 use std::path::Path;
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::expressions::Identifier;
+use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::theorem::Theorem;
 use crate::subjects::math::theories::VariantSet;
-use crate::subjects::math::theories::fields::definitions::Field;
-use crate::subjects::math::theories::groups::definitions::{
-    AlternatingGroup, CenterGroup, CentralProductGroup, CentralizerGroup, CommutatorSubgroup,
-    CyclicGroup, DihedralGroup, FreeGroup, GeneralLinearGroup, GeneratedSubgroup, GenericGroup,
-    Group, GroupElement, ImageGroup, KernelGroup, LieGroup, ModularAdditiveGroup,
-    ModularMultiplicativeGroup, NormalizerGroup, OrthogonalGroup, ProductGroup, ProductOperation,
-    PullbackGroup, QuotientGroup, RestrictionGroup, SpecialLinearGroup, SpecialOrthogonalGroup,
-    SpecialUnitaryGroup, SylowSubgroup, SymmetricGroup, TopologicalGroup, TrivialGroup,
-    UnitaryGroup, WreathProductGroup,
-};
+use crate::subjects::math::theories::definitions::{Group, GroupExpression, GroupRelation};
+use crate::subjects::math::theories::fields::definitions::{Field, FieldBasic};
+
+use crate::subjects::math::theories::groups::render::GroupTheoryExporter;
 use crate::subjects::math::theories::theorems::{
     prove_abelian_squared_criterion, prove_example_chaining_theorems, prove_inverse_product_rule,
     prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
 };
 use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
 use crate::subjects::math::theories::zfc::set::Set;
-use crate::turn_render::section_node::{MathematicalContent, ToSectionNode};
+use crate::turn_render::section_node::{
+    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
+    DocumentStructure, MathematicalContent, MathematicalContentType, PaperType, ParagraphNode,
+    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, ToSectionNode,
+};
 
 /// Content manifest for efficient loading across ALL theories
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -64,105 +64,26 @@ pub struct ContentBundle {
 }
 
 /// **THEORY EXPORTER TRAIT** - Generic interface for theory exports
-pub trait TheoryExporter {
+pub trait TheoryExporter<O, E, R> {
     fn theory_id(&self) -> &str;
     fn theory_name(&self) -> &str;
-    fn generate_definitions(&self) -> Vec<MathematicalContent>;
-    fn generate_theorems(&self) -> Vec<MathematicalContent>;
-}
 
-/// Group Theory Exporter Implementation
-pub struct GroupTheoryExporter;
+    // **MAIN THEORY ENTRANCE PAGE** - serves as the theory overview and navigation hub
+    fn export_theory_overview(&self) -> MathematicalContent;
 
-impl TheoryExporter for GroupTheoryExporter {
-    fn theory_id(&self) -> &str {
-        "group_theory"
-    }
-    fn theory_name(&self) -> &str {
-        "Group Theory"
-    }
+    // definitions - separate from the overview
+    fn export_definitions(&self) -> Vec<MathematicalContent>;
+    // intermediate steps to prepare type instances
+    fn generate_object_definitions(&self) -> Vec<O>;
+    fn generate_expression_definitions(&self) -> Vec<E>;
+    fn generate_relation_definitions(&self) -> Vec<R>;
 
-    fn generate_definitions(&self) -> Vec<MathematicalContent> {
-        let mut content = Vec::new();
-
-        // Generate sample instances for L1 definitions using our enhanced implementations
-
-        // Basic group
-        let basic_group = GenericGroup::default();
-        content.push(basic_group.to_math_document("group_theory.basic.l1"));
-
-        // Topological group with our enhanced content
-        let topological_group = TopologicalGroup {
-            core: GenericGroup::default(),
-            topology: TopologicalSpace {
-                base_set: Set::empty(),
-                topology: Topology {
-                    properties: VariantSet::new(),
-                },
-                properties: vec![],
-            },
-            props: VariantSet::new(),
-        };
-        content.push(topological_group.to_math_document("group_theory.topological.l1"));
-
-        // Cyclic group (Z/12Z as example)
-        let cyclic_group = CyclicGroup {
-            core: GenericGroup::default(),
-            generator: GroupElement::Integer(1),
-            order: Some(12),
-        };
-        content.push(cyclic_group.to_math_document("group_theory.cyclic.l1"));
-
-        // Symmetric group (S_4 as example)
-        let symmetric_group = SymmetricGroup {
-            core: GenericGroup::default(),
-            degree: 4,
-        };
-        content.push(symmetric_group.to_math_document("group_theory.symmetric.l1"));
-
-        // Lie group
-        let lie_group = LieGroup {
-            core: GenericGroup::default(),
-            topology: TopologicalSpace {
-                base_set: Set::empty(),
-                topology: Topology {
-                    properties: VariantSet::new(),
-                },
-                properties: vec![],
-            },
-            charts: vec!["chart1".to_string()],
-            props: VariantSet::new(),
-        };
-        content.push(lie_group.to_math_document("group_theory.lie.l1"));
-
-        content
-    }
-
-    fn generate_theorems(&self) -> Vec<MathematicalContent> {
-        let mut content = vec![
-            prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
-            prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
-            prove_abelian_squared_criterion()
-                .to_math_document("group_theory.abelian_squared_criterion"),
-            prove_lagrange_theorem().to_math_document("group_theory.lagrange_theorem"),
-            prove_example_chaining_theorems()
-                .to_math_document("group_theory.example_chaining_theorems"),
-            prove_theorem_extraction_example()
-                .to_math_document("group_theory.theorem_extraction_example"),
-        ];
-
-        // Generate theorem examples using our enhanced content
-        // For now, we can create placeholder theorems or use actual theorem implementations if available
-
-        // Placeholder for Haar measure theorem
-        // content.insert(
-        //     "group_theory.haar_measure_theorem".to_string(),
-        //     // Would need theorem implementation
-        // );
-
-        // For now, return empty until we have theorem implementations
-        content
-    }
+    // work on the type instances for export
+    fn export_object_definitions(&self, objects: Vec<O>) -> Vec<MathematicalContent>;
+    fn export_expression_definitions(&self, expressions: Vec<E>) -> Vec<MathematicalContent>;
+    fn export_relation_definitions(&self, relations: Vec<R>) -> Vec<MathematicalContent>;
+    // theorems - separate from the overview
+    fn export_theorems(&self) -> Vec<MathematicalContent>;
 }
 
 /// **COMPREHENSIVE EXPORTER FOR ALL MATHEMATICAL THEORIES**
@@ -187,7 +108,9 @@ impl UnifiedExporter {
         };
 
         // **GENERIC THEORY DISCOVERY** - Add available theory exporters here
-        let available_theories: Vec<Box<dyn TheoryExporter>> = vec![
+        let available_theories: Vec<
+            Box<dyn TheoryExporter<Group, GroupExpression, GroupRelation>>,
+        > = vec![
             Box::new(GroupTheoryExporter),
             // Add other theories when they become available:
             // Box::new(FieldTheoryExporter),
@@ -220,7 +143,7 @@ impl UnifiedExporter {
     /// Generic method to export any theory using the TheoryExporter trait
     fn export_theory_to_files(
         output_dir: &str,
-        theory: &dyn TheoryExporter,
+        theory: &dyn TheoryExporter<Group, GroupExpression, GroupRelation>,
     ) -> Result<TheoryManifest> {
         let mut theory_manifest = TheoryManifest {
             theory_id: theory.theory_id().to_string(),
@@ -229,8 +152,27 @@ impl UnifiedExporter {
             item_count: 0,
         };
 
-        // Export L1 Definitions
-        let definition_content = theory.generate_definitions();
+        // **THEORY OVERVIEW** - Main entrance page for the theory
+        let theory_overview = theory.export_theory_overview();
+        let overview_filename = format!("{}.overview.json", theory.theory_id());
+        Self::write_content_bundle(
+            output_dir,
+            &overview_filename,
+            theory.theory_name(),
+            "theory_overview",
+            vec![theory_overview.clone()],
+        )?;
+
+        theory_manifest.files.push(ContentFile {
+            file_path: overview_filename,
+            content_type: "theory_overview".to_string(),
+            item_count: 1,
+            items: vec![theory_overview.id],
+        });
+        theory_manifest.item_count += 1;
+
+        // Export Definitions - separate from overview
+        let definition_content = theory.export_definitions();
         if !definition_content.is_empty() {
             let filename = format!("{}.definitions.json", theory.theory_id());
             Self::write_content_bundle(
@@ -250,8 +192,8 @@ impl UnifiedExporter {
             theory_manifest.item_count += definition_content.len();
         }
 
-        // Export Theorems
-        let theorems_content = theory.generate_theorems();
+        // Export Theorems - separate from overview
+        let theorems_content = theory.export_theorems();
         if !theorems_content.is_empty() {
             let filename = format!("{}.theorems.json", theory.theory_id());
             Self::write_content_bundle(

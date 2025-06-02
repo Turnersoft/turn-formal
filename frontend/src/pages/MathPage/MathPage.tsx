@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DataNavigationSidebar } from './components/binding-renderers/core/DataNavigationSidebar';
 import { DocumentRenderer } from './components/binding-renderers/core/DocumentRenderer';
 import { StatsView } from './components/binding-renderers/core/StatsView';
 import { mathDataService, type MathDataExport } from './services/mathDataService';
+import { MathNavigationService, useMathNavigationState, useMathNavigation } from './services/mathNavigationService';
 import type { MathematicalContent } from './components/binding-renderers';
 import styles from './MathPage.module.scss';
 
 type ViewMode = 'content' | 'stats';
 
 export const MathPage: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const navigationTarget = useMathNavigationState(location);
+  const mathNavigation = useMathNavigation();
+  
   // Data state
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
@@ -21,35 +28,137 @@ export const MathPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [contentIndex, setContentIndex] = useState<any[]>([]);
 
-  // Load content when file/content selection changes
+  // Handle URL-based navigation
   useEffect(() => {
-    if (selectedFile && selectedContentId) {
-      loadSpecificContent();
-    } else if (selectedFile) {
-      loadFileData();
+    console.log('🎯 URL navigation useEffect - navigationTarget:', navigationTarget);
+    if (navigationTarget) {
+      handleNavigationTarget(navigationTarget);
     }
-  }, [selectedFile, selectedContentId]);
+  }, [navigationTarget]);
+
+  // Load content when file/content selection changes (only for non-URL navigation)
+  useEffect(() => {
+    console.log('🔄 File loading useEffect triggered - navigationTarget:', navigationTarget, 'selectedFile:', selectedFile, 'selectedContentId:', selectedContentId);
+    
+    if (!navigationTarget && selectedFile && selectedContentId) {
+      console.log('📄 Calling loadSpecificContent()');
+      loadSpecificContent();
+    } else if (!navigationTarget && selectedFile) {
+      console.log('📁 Calling loadFileData()');
+      loadFileData();
+    } else {
+      console.log('⚠️ useEffect conditions not met:', {
+        navigationTargetExists: !!navigationTarget,
+        selectedFileExists: !!selectedFile,
+        selectedContentIdExists: !!selectedContentId
+      });
+    }
+  }, [selectedFile, selectedContentId, navigationTarget]);
+
+  const handleNavigationTarget = async (target: any) => {
+    console.log('🎯 handleNavigationTarget called with target:', target);
+    console.log('🔍 Target type:', target.type, 'Target theory:', target.theory);
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      let dataFile: string;
+      
+      if (target.type === 'theory') {
+        console.log('🏛️ Handling theory overview navigation for:', target.theory);
+        // For theory overview, load the overview file
+        dataFile = `group_theory.overview.json`;
+        
+        // Load the overview data file
+        const data = await mathDataService.loadMathData(dataFile);
+        setDataExport(data);
+        setSelectedFile(dataFile);
+        
+        // Load content index
+        const index = await mathDataService.getContentIndex(dataFile);
+        setContentIndex(index);
+        
+        // Auto-select first content if available
+        if (Object.keys(data.content).length > 0) {
+          const firstContentId = Object.keys(data.content)[0];
+          setSelectedContentId(firstContentId);
+          setCurrentContent(data.content[firstContentId]);
+        }
+        
+        setLoading(false);
+        return;
+      }
+      
+      if (target.type === 'definition') {
+        dataFile = MathNavigationService.getDataFileForTheory(target.theory);
+      } else if (target.type === 'theorem') {
+        dataFile = MathNavigationService.getTheoremFileForTheory(target.theory);
+      } else {
+        throw new Error(`Unknown navigation target type: ${target.type}`);
+      }
+      
+      // Load the appropriate data file
+      const data = await mathDataService.loadMathData(dataFile);
+      setDataExport(data);
+      setSelectedFile(dataFile);
+      
+      // Load content index
+      const index = await mathDataService.getContentIndex(dataFile);
+      setContentIndex(index);
+      
+      // Find and load the specific content
+      const contentId = target.id;
+      if (data.content[contentId]) {
+        setSelectedContentId(contentId);
+        setCurrentContent(data.content[contentId]);
+      } else {
+        // If exact ID not found, try to find a matching one
+        const matchingId = Object.keys(data.content).find(id => 
+          id.includes(contentId) || contentId.includes(id)
+        );
+        if (matchingId) {
+          setSelectedContentId(matchingId);
+          setCurrentContent(data.content[matchingId]);
+        } else {
+          setError(`Content not found: ${contentId} in ${dataFile}`);
+        }
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load content');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadFileData = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      console.log('⚠️ loadFileData called but no selectedFile');
+      return;
+    }
 
-      setLoading(true);
+    console.log('📁 Loading file data for:', selectedFile);
+    setLoading(true);
     setError(null);
     try {
       const data = await mathDataService.loadMathData(selectedFile);
+      console.log('✅ File data loaded successfully:', selectedFile, 'with', Object.keys(data.content).length, 'items');
       setDataExport(data);
       
       // Load content index for the content sidebar
       const index = await mathDataService.getContentIndex(selectedFile);
+      console.log('📋 Content index loaded with', index.length, 'items');
       setContentIndex(index);
       
       // Auto-select first content item if none selected
       if (!selectedContentId && Object.keys(data.content).length > 0) {
         const firstContentId = Object.keys(data.content)[0];
+        console.log('🎯 Auto-selecting first content:', firstContentId);
         setSelectedContentId(firstContentId);
         setCurrentContent(data.content[firstContentId]);
       }
     } catch (err) {
+      console.error('❌ Failed to load file data for:', selectedFile, err);
       setError(err instanceof Error ? err.message : 'Failed to load data');
       setDataExport(null);
       setCurrentContent(null);
@@ -63,28 +172,130 @@ export const MathPage: React.FC = () => {
     if (!selectedFile || !selectedContentId) return;
 
     setLoading(true);
-        setError(null);
+    setError(null);
     try {
       const content = await mathDataService.getContentById(selectedFile, selectedContentId);
       setCurrentContent(content);
-      } catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load content');
       setCurrentContent(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  const handleFileSelect = (filename: string) => {
-    setSelectedFile(filename);
-    setSelectedContentId(null);
-    setCurrentContent(null);
-    setViewMode('content');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleContentSelect = (contentId: string) => {
-    setSelectedContentId(contentId);
-    setViewMode('content');
+  const handleFileSelect = (filename: string) => {
+    console.log('🔍 Primary sidebar file selected:', filename);
+    console.log('🔍 File type checks:', {
+      includesOverview: filename.includes('overview'),
+      endsWithJson: filename.endsWith('.json'),
+      actualFilename: filename
+    });
+    
+    if (filename.includes('overview')) {
+      // For overview files, navigate to theory URL
+      console.log('🏠 Handling overview file via URL navigation');
+      const theoryContext = getTheoryContextFromFilename(filename);
+      console.log('🎯 Theory context determined:', theoryContext);
+      console.log('📍 About to call mathNavigation.navigateToTheory with:', theoryContext);
+      mathNavigation.navigateToTheory(theoryContext);
+    } else if (filename.endsWith('.json')) {
+      // For definitions/theorems files, clear navigation state first
+      console.log('📂 Handling JSON file selection, clearing navigation target first');
+      
+      // Use React Router to navigate to a clean URL to clear the navigation target
+      navigate('/math'); // Clear the navigation target
+      
+      // Then set the file after a brief delay to let the navigation target clear
+      setTimeout(() => {
+        setSelectedFile(filename);
+        setSelectedContentId(null);
+        setCurrentContent(null);
+        setViewMode('content');
+        console.log('📄 File state set after navigation clear, useEffect should trigger loadFileData()');
+      }, 50);
+    } else {
+      // For other legacy files
+      console.log('🏠 Handling overview/legacy file directly:', filename);
+      
+      // Clear any existing navigation by navigating to a clean URL using React Router
+      console.log('🔄 Clearing URL navigation to allow direct file loading');
+      
+      // Add a small delay to let the navigation state update
+      setTimeout(() => {
+        setSelectedFile(filename);
+        setSelectedContentId(null);
+        setCurrentContent(null);
+        setViewMode('content');
+        console.log('📄 Overview file state set after URL clear, useEffect should trigger loadFileData()');
+      }, 50);
+    }
+  };
+
+  const handleContentSelect = async (contentId: string) => {
+    console.log('🔍 Sidebar clicked for content:', contentId, 'selectedFile:', selectedFile);
+    
+    if (selectedFile) {
+      const theoryContext = getTheoryContextFromFilename(selectedFile);
+      
+      try {
+        if (selectedFile.includes('definitions')) {
+          await mathNavigation.navigateToDefinition({
+            term_id: contentId,
+            theory_context: theoryContext
+          });
+        } else if (selectedFile.includes('theorems')) {
+          await mathNavigation.navigateToTheorem({
+            theorem_id: contentId,
+            theory_context: theoryContext
+          });
+        } else {
+          // Legacy behavior for non-routed content
+          setSelectedContentId(contentId);
+          setViewMode('content');
+        }
+      } catch (error) {
+        console.error('❌ Navigation failed:', error);
+        // Fallback to local state update
+        setSelectedContentId(contentId);
+        setViewMode('content');
+      }
+    }
+  };
+
+  const getTheoryContextFromFilename = (filename: string): string => {
+    if (filename.includes('group_theory')) return 'GroupTheory';
+    if (filename.includes('field_theory')) return 'FieldTheory';
+    if (filename.includes('ring_theory')) return 'RingTheory';
+    return 'GroupTheory'; // default
+  };
+
+  const loadFileAndNavigateToFirst = async (filename: string, theoryContext: string, type: 'definition' | 'theorem') => {
+    try {
+      const data = await mathDataService.loadMathData(filename);
+      const firstContentId = Object.keys(data.content)[0];
+      
+      if (firstContentId) {
+        if (type === 'definition') {
+          await mathNavigation.navigateToDefinition({
+            term_id: firstContentId,
+            theory_context: theoryContext
+          });
+        } else {
+          await mathNavigation.navigateToTheorem({
+            theorem_id: firstContentId,
+            theory_context: theoryContext
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load file:', error);
+      // Fallback to legacy behavior
+      setSelectedFile(filename);
+      setSelectedContentId(null);
+      setCurrentContent(null);
+      setViewMode('content');
+    }
   };
 
   const handleStatsView = () => {

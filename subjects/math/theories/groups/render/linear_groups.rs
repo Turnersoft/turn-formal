@@ -6,8 +6,8 @@ use crate::turn_render::math_node::{
 };
 use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathematicalContent, MathematicalContentType, PaperType,
-    ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
+    DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
+    PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
     StructuredMathContentNode, ToSectionNode,
 };
 
@@ -107,18 +107,40 @@ impl ToSectionNode for GeneralLinearGroup {
         }]
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
-        let main_section = self.to_section_node(id_prefix);
-        let title = format!(
-            "GL({}, {})",
-            self.dimension,
-            "𝔽" // Simple field placeholder instead of calling content_as_text
-        );
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
 
-        MathematicalContent {
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            vec![
+                RichTextSegment::Text("General Linear Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("GL(n, F)".to_string())),
+                }),
+            ]
+        } else {
+            vec![RichTextSegment::Text(format!(
+                "GL({}, {})",
+                self.dimension, "𝔽"
+            ))]
+        };
+
+        let title_text = title
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "GL(n,F)".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
+
+        let main_section = self.to_section_node(id_prefix);
+
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title,
+                title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
@@ -182,6 +204,28 @@ impl ToSectionNode for GeneralLinearGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for GeneralLinearGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("GL(n, F)".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!(
+                    "GL({}, {})",
+                    self.dimension, "𝔽"
+                ))),
+            }
         }
     }
 }
@@ -281,18 +325,40 @@ impl ToSectionNode for SpecialLinearGroup {
         }]
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
-        let main_section = self.to_section_node(id_prefix);
-        let title = format!(
-            "SL({}, {})",
-            self.general_linear.dimension,
-            "𝔽" // Simple field placeholder instead of calling content_as_text
-        );
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
 
-        MathematicalContent {
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            vec![
+                RichTextSegment::Text("Special Linear Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("SL(n, F)".to_string())),
+                }),
+            ]
+        } else {
+            vec![RichTextSegment::Text(format!(
+                "SL({}, {})",
+                self.general_linear.dimension, "𝔽"
+            ))]
+        };
+
+        let title_text = title
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "SL(n,F)".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
+
+        let main_section = self.to_section_node(id_prefix);
+
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title,
+                title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
@@ -356,6 +422,28 @@ impl ToSectionNode for SpecialLinearGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for SpecialLinearGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("SL(n, F)".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!(
+                    "SL({}, {})",
+                    self.general_linear.dimension, "𝔽"
+                ))),
+            }
         }
     }
 }
@@ -427,14 +515,37 @@ impl ToSectionNode for OrthogonalGroup {
         }]
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
-        let main_section = self.to_section_node(id_prefix);
-        let title = format!("O({})", self.dimension);
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
 
-        MathematicalContent {
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            vec![
+                RichTextSegment::Text("Orthogonal Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("O(n)".to_string())),
+                }),
+            ]
+        } else {
+            vec![RichTextSegment::Text(format!("O({})", self.dimension))]
+        };
+
+        let title_text = title
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "O(n)".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
+
+        let main_section = self.to_section_node(id_prefix);
+
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title,
+                title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
@@ -490,6 +601,25 @@ impl ToSectionNode for OrthogonalGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for OrthogonalGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("O(n)".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!("O({})", self.dimension))),
+            }
         }
     }
 }
@@ -569,14 +699,40 @@ impl ToSectionNode for SpecialOrthogonalGroup {
         }]
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
-        let main_section = self.to_section_node(id_prefix);
-        let title = format!("SO({})", self.orthogonal.dimension);
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
 
-        MathematicalContent {
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            vec![
+                RichTextSegment::Text("Special Orthogonal Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("SO(n)".to_string())),
+                }),
+            ]
+        } else {
+            vec![RichTextSegment::Text(format!(
+                "SO({})",
+                self.orthogonal.dimension
+            ))]
+        };
+
+        let title_text = title
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "SO(n)".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
+
+        let main_section = self.to_section_node(id_prefix);
+
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title,
+                title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
@@ -632,6 +788,28 @@ impl ToSectionNode for SpecialOrthogonalGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for SpecialOrthogonalGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("SO(n)".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!(
+                    "SO({})",
+                    self.orthogonal.dimension
+                ))),
+            }
         }
     }
 }
@@ -700,14 +878,37 @@ impl ToSectionNode for UnitaryGroup {
         }]
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
-        let main_section = self.to_section_node(id_prefix);
-        let title = format!("U({})", self.dimension);
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
 
-        MathematicalContent {
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            vec![
+                RichTextSegment::Text("Unitary Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("U(n)".to_string())),
+                }),
+            ]
+        } else {
+            vec![RichTextSegment::Text(format!("U({})", self.dimension))]
+        };
+
+        let title_text = title
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "U(n)".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
+
+        let main_section = self.to_section_node(id_prefix);
+
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title,
+                title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
@@ -763,6 +964,25 @@ impl ToSectionNode for UnitaryGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for UnitaryGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("U(n)".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!("U({})", self.dimension))),
+            }
         }
     }
 }
@@ -841,14 +1061,40 @@ impl ToSectionNode for SpecialUnitaryGroup {
         }]
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
-        let main_section = self.to_section_node(id_prefix);
-        let title = format!("SU({})", self.unitary.dimension);
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
 
-        MathematicalContent {
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            vec![
+                RichTextSegment::Text("Special Unitary Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("SU(n)".to_string())),
+                }),
+            ]
+        } else {
+            vec![RichTextSegment::Text(format!(
+                "SU({})",
+                self.unitary.dimension
+            ))]
+        };
+
+        let title_text = title
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "SU(n)".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
+
+        let main_section = self.to_section_node(id_prefix);
+
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title,
+                title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
@@ -904,6 +1150,28 @@ impl ToSectionNode for SpecialUnitaryGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for SpecialUnitaryGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("SU(n)".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!(
+                    "SU({})",
+                    self.unitary.dimension
+                ))),
+            }
         }
     }
 }

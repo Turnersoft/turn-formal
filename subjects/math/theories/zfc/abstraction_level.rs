@@ -57,8 +57,16 @@ impl GetAbstractionLevel for Set {
             | Set::Separation { .. }
             | Set::Replacement { .. }
             | Set::OrderedPair { .. }
-            | Set::Complement { .. }
-            | Set::Parametric { .. } => AbstractionLevel::Level3,
+            | Set::Complement { .. } => AbstractionLevel::Level3,
+
+            // **FIXED**: Parametric sets can be L1 schemas when they have no specific parameters
+            Set::Parametric { parameters, .. } => {
+                if parameters.is_empty() {
+                    AbstractionLevel::Level1 // Abstract schema like "x ∈ G"
+                } else {
+                    AbstractionLevel::Level3 // Parametrized construction
+                }
+            }
             // Note: Parametric, NaturalNumbers, Integers, etc., variants were removed from Set enum.
             // If any new variants are added, they need to be handled here.
         }

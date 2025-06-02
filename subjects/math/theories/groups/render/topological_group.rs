@@ -40,8 +40,21 @@ impl ToSectionNode for TopologicalGroup {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         let formalism_obj_level: AbstractionLevel = self.level();
 
-        // Create title from core group and topology
-        let title = format!("Topological Group on {:?}", self.core.base_set);
+        // Create title with abstract notation
+        let title_segments = vec![
+            RichTextSegment::Text("Topological Group ".to_string()),
+            RichTextSegment::Math(MathNode {
+                id: format!("{}-title-math", id_prefix),
+                content: Box::new(MathNodeContent::Text("(G, \\tau)".to_string())),
+            }),
+        ];
+
+        // Helper function to convert title_segments to a simple string for labels
+        let title_text = title_segments.iter().map(|seg| match seg {
+            RichTextSegment::Text(t) => t.clone(),
+            RichTextSegment::Math(_) => "[Math]".to_string(),
+            _ => "".to_string(),
+        }).collect::<String>();
 
         // Create comprehensive content nodes with rich mathematical explanations
         let mut content_nodes = vec![
@@ -68,7 +81,7 @@ impl ToSectionNode for TopologicalGroup {
                     RichTextSegment::Link {
                         content: vec![RichTextSegment::Text("Group Theory".to_string())],
                         target: LinkTarget::DefinitionId {
-                            term_id: format!("{}-groupbasic-section", id_prefix),
+                            term_id: "group_theory.def.generic_group.main_section".to_string(),
                             theory_context: Some("GroupTheory".to_string()),
                         },
                         tooltip: Some("View the underlying group structure with closure, associativity, identity, and inverses".to_string()),
@@ -397,16 +410,16 @@ impl ToSectionNode for TopologicalGroup {
         }
 
         Section {
-            id: format!("{}-topologicalgroup-section", id_prefix),
+            id: format!("{}.main_section", id_prefix),
             title: Some(ParagraphNode {
-                segments: vec![RichTextSegment::Text(title.clone())],
+                segments: title_segments,
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathContentNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: vec![RichTextSegment::Text(title_text.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
+                    label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
                     abstraction_meta: Some(AbstractionMetadata {
                         level: Some(formalism_obj_level as u8),
@@ -498,16 +511,15 @@ impl ToSectionNode for TopologicalGroup {
     }
 
     fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("Topological Group on {:?}", self.core.base_set);
-
+        let name = "(G, τ)";
         vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
+            content: vec![RichTextSegment::Text(name.to_string())],
             target: LinkTarget::DefinitionId {
-                term_id: format!("{}-topologicalgroup-section", id_prefix),
+                term_id: format!("{}.main_section", id_prefix),
                 theory_context: Some("GroupTheory".to_string()),
             },
             tooltip: Some(format!(
-                "View definition of {}-topologicalgroup-section",
+                "View definition of {}.main_section",
                 id_prefix
             )),
         }]

@@ -1,4 +1,5 @@
 // Types for the math theory JSON data
+import type { MathematicalContent } from '../components/turn-render/bindings/MathematicalContent';
 
 // Definition JSON structures
 export interface Member {
@@ -25,6 +26,115 @@ export interface Definition {
   examples?: string[];
   source?: string;
   [key: string]: any; // Allow additional properties
+}
+
+// NEW JSON FORMAT TYPES - From ContentBundle structure
+
+export interface ContentMetadata {
+  language?: string;
+  version?: string;
+  created_at?: string;
+  last_modified?: string;
+  content_hash?: string;
+}
+
+export interface AcademicMetadata {
+  authors: string[];
+  date_published?: string;
+  date_modified?: string;
+  venue?: string;
+  doi?: string;
+  keywords: string[];
+}
+
+export interface RichTextSegment {
+  Text?: string;
+  Link?: { url: string; text: string };
+  Math?: MathNode;
+  [key: string]: any;
+}
+
+export interface ParagraphNode {
+  segments: RichTextSegment[];
+  alignment?: string;
+}
+
+export interface MathBlock {
+  math: MathNode;
+  label?: string;
+  caption?: string;
+}
+
+export interface SectionContentNode {
+  Paragraph?: ParagraphNode;
+  MathBlock?: MathBlock;
+  StructuredMath?: any; // Will contain theorem structures
+  [key: string]: any;
+}
+
+export interface Section {
+  id: string;
+  title?: ParagraphNode;
+  content: SectionContentNode[];
+  metadata: any[];
+  display_options?: any;
+}
+
+export interface DocumentStructure {
+  abstract_content?: Section;
+  table_of_contents?: any;
+  body: Section[];
+  footnotes: any[];
+  glossary: any[];
+  bibliography: any[];
+}
+
+export interface DocumentRelationships {
+  parent_documents: string[];
+  child_documents: string[];
+  related_concepts: string[];
+  cross_references: string[];
+  dependency_graph?: any;
+}
+
+export interface ScientificPaperContent {
+  title: string;
+  paper_type: "Research" | "Review" | "Survey";
+  venue?: string;
+  peer_reviewed: boolean;
+  content_metadata: ContentMetadata;
+  academic_metadata: AcademicMetadata;
+  structure: DocumentStructure;
+  relationships: DocumentRelationships;
+}
+
+export interface ContentBundle {
+  theory_name: string;
+  content_type: "definitions" | "theorems";
+  version: string;
+  exported_at: string;
+  content: MathematicalContent[];
+}
+
+export interface ContentFile {
+  file_path: string;
+  content_type: string;
+  item_count: number;
+  items: string[];
+}
+
+export interface TheoryManifest {
+  theory_id: string;
+  theory_name: string;
+  files: ContentFile[];
+  item_count: number;
+}
+
+export interface ContentManifest {
+  theories: TheoryManifest[];
+  total_items: number;
+  generated_at: string;
+  version: string;
 }
 
 // Nested structures from theorems.json
@@ -106,7 +216,7 @@ export interface Reference {
   [key: string]: any; // Allow additional properties
 }
 
-// Overall math content structure
+// Overall math content structure - UPDATED to support both formats
 export interface MathContent {
   definitions: Definition[];
   theorems: Theorem[];
@@ -122,6 +232,12 @@ export interface MathContent {
     summary?: string;
     [key: string]: any; // Allow additional properties
   };
+  // NEW: Support for ContentBundle format
+  contentBundles?: {
+    definitions?: ContentBundle;
+    theorems?: ContentBundle;
+  };
+  mathematicalContent?: MathematicalContent[]; // Direct access to new format
   [key: string]: any; // Allow additional properties
 }
 
@@ -145,4 +261,63 @@ export interface TheoryContentResponse {
   theorems: Theorem[];
   theory: string;
   [key: string]: any; // Allow additional properties
+}
+
+// Helper function to extract text content from RichTextSegment
+export function extractTextFromSegments(segments: any[]): string {
+  return segments
+    .map(segment => {
+      if (segment.Text) return segment.Text;
+      if (segment.Link) return segment.Link.text;
+      return '';
+    })
+    .join('');
+}
+
+// Helper function to convert MathematicalContent to legacy Definition format
+export function convertMathematicalContentToDefinition(content: MathematicalContent): Definition | null {
+  if (!content.content_type || typeof content.content_type !== 'object') return null;
+  
+  // Handle the ScientificPaper variant
+  if ('ScientificPaper' in content.content_type) {
+    const paper = content.content_type.ScientificPaper;
+    
+    return {
+      name: content.id,
+      docs: paper.structure.abstract_content ? 
+        extractTextFromSegments(paper.structure.abstract_content.content
+          .filter((c: any) => c.Paragraph)
+          .flatMap((c: any) => c.Paragraph.segments)) : 
+        paper.title,
+      kind: "Document",
+      members: [],
+      source: "ContentBundle"
+    };
+  }
+
+  return null;
+}
+
+// Helper function to convert MathematicalContent to legacy Theorem format
+export function convertMathematicalContentToTheorem(content: MathematicalContent): Theorem | null {
+  if (!content.content_type || typeof content.content_type !== 'object') return null;
+  
+  // Handle the ScientificPaper variant
+  if ('ScientificPaper' in content.content_type) {
+    const paper = content.content_type.ScientificPaper;
+    
+    return {
+      id: content.id,
+      name: paper.title,
+      description: paper.structure.abstract_content ? 
+        extractTextFromSegments(paper.structure.abstract_content.content
+          .filter((c: any) => c.Paragraph)
+          .flatMap((c: any) => c.Paragraph.segments)) : 
+        '',
+      tags: paper.academic_metadata.keywords,
+      is_proven: true
+    };
+  }
+
+  return null;
 }

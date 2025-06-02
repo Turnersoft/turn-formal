@@ -2,13 +2,13 @@
   "theory_name": "Group Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1748442762",
+  "exported_at": "1748703516",
   "content": [
     {
-      "id": "group_theory.basic.l1-l4-doc",
+      "id": "group_theory.generic-l1-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Concrete Group: Group on set ∅",
+          "title": "Basic Group",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -29,14 +29,14 @@
           },
           "structure": {
             "abstract_content": {
-              "id": "group_theory.basic.l1-l4-abstract",
+              "id": "group_theory.generic-l1-abstract",
               "title": null,
               "content": [
                 {
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "A document describing a concrete group instance on set Empty with explicit elements and structure."
+                        "Text": "A comprehensive document covering the general theory of groups, including definitions, properties, and examples."
                       }
                     ],
                     "alignment": null
@@ -49,139 +49,676 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.basic.l1-main-groupbasic-section",
+                "id": "group_theory.generic-main-groupbasic-section",
                 "title": {
                   "segments": [
                     {
-                      "Text": "Group on set ∅"
+                      "Text": "Group Theory"
                     }
                   ],
                   "alignment": null
                 },
                 "content": [
                   {
-                    "StructuredMath": {
-                      "Definition": {
-                        "term_display": [
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "A group is an algebraic structure consisting of a set with a binary operation that satisfies four fundamental properties: closure, associativity, identity, and invertibility."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "SubSection": {
+                      "id": "group_theory.generic-main-definition-section",
+                      "title": {
+                        "segments": [
                           {
-                            "Text": "Group on set ∅"
+                            "Text": "Definition"
                           }
                         ],
-                        "formal_term": {
-                          "id": "group_theory.basic.l1-main-formalTerm",
-                          "content": {
-                            "Text": "(∅, ×)"
+                        "alignment": null
+                      },
+                      "content": [
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "A group (G, *) consists of a set G and a binary operation * such that:"
+                              }
+                            ],
+                            "alignment": null
                           }
                         },
-                        "label": "Concrete Group (Group on set ∅)",
-                        "body": [
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Concrete group on set Empty with explicit structure:"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Operation: Multiplication (Infix(Times))"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Identity element: One"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Inverse rule: MultiplicativeInverse"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Elements: Empty"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "For the abstract specification, see "
-                                },
-                                {
-                                  "Link": {
-                                    "content": [
-                                      {
-                                        "Text": "Group Type"
+                        {
+                          "MathBlock": {
+                            "math": {
+                              "id": "group_theory.generic-main-closure",
+                              "content": {
+                                "QuantifiedExpression": {
+                                  "quantifier": "Universal",
+                                  "variables": [],
+                                  "domain": {
+                                    "id": "group_theory.generic-main-closure_membership",
+                                    "content": {
+                                      "Relationship": {
+                                        "lhs": {
+                                          "id": "group_theory.generic-main-closure_var_list",
+                                          "content": {
+                                            "Multiplications": {
+                                              "terms": [
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-closure_a",
+                                                    "content": {
+                                                      "Identifier": {
+                                                        "body": "a",
+                                                        "pre_script": null,
+                                                        "mid_script": null,
+                                                        "post_script": null,
+                                                        "primes": 0,
+                                                        "is_function": false
+                                                      }
+                                                    }
+                                                  }
+                                                ],
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-closure_comma",
+                                                    "content": {
+                                                      "Identifier": {
+                                                        "body": ",",
+                                                        "pre_script": null,
+                                                        "mid_script": null,
+                                                        "post_script": null,
+                                                        "primes": 0,
+                                                        "is_function": false
+                                                      }
+                                                    }
+                                                  }
+                                                ],
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-closure_b",
+                                                    "content": {
+                                                      "Identifier": {
+                                                        "body": "b",
+                                                        "pre_script": null,
+                                                        "mid_script": null,
+                                                        "post_script": null,
+                                                        "primes": 0,
+                                                        "is_function": false
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "rhs": {
+                                          "id": "group_theory.generic-main-closure_g",
+                                          "content": {
+                                            "Identifier": {
+                                              "body": "G",
+                                              "pre_script": null,
+                                              "mid_script": null,
+                                              "post_script": null,
+                                              "primes": 0,
+                                              "is_function": false
+                                            }
+                                          }
+                                        },
+                                        "operator": "ElementOf"
                                       }
-                                    ],
-                                    "target": {
-                                      "DefinitionId": {
-                                        "term_id": "group_theory.basic.l1-main-l2-doc",
-                                        "theory_context": "GroupTheory"
+                                    }
+                                  },
+                                  "predicate": {
+                                    "id": "group_theory.generic-main-closure_result",
+                                    "content": {
+                                      "Relationship": {
+                                        "lhs": {
+                                          "id": "group_theory.generic-main-closure_product",
+                                          "content": {
+                                            "CustomFunction": {
+                                              "name": {
+                                                "id": "group_theory.generic-main-closure_op",
+                                                "content": {
+                                                  "Identifier": {
+                                                    "body": "∘",
+                                                    "pre_script": null,
+                                                    "mid_script": null,
+                                                    "post_script": null,
+                                                    "primes": 0,
+                                                    "is_function": false
+                                                  }
+                                                }
+                                              },
+                                              "parameters": [
+                                                {
+                                                  "id": "group_theory.generic-main-closure_a",
+                                                  "content": {
+                                                    "Identifier": {
+                                                      "body": "a",
+                                                      "pre_script": null,
+                                                      "mid_script": null,
+                                                      "post_script": null,
+                                                      "primes": 0,
+                                                      "is_function": false
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "id": "group_theory.generic-main-closure_b",
+                                                  "content": {
+                                                    "Identifier": {
+                                                      "body": "b",
+                                                      "pre_script": null,
+                                                      "mid_script": null,
+                                                      "post_script": null,
+                                                      "primes": 0,
+                                                      "is_function": false
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "rhs": {
+                                          "id": "group_theory.generic-main-closure_g",
+                                          "content": {
+                                            "Identifier": {
+                                              "body": "G",
+                                              "pre_script": null,
+                                              "mid_script": null,
+                                              "post_script": null,
+                                              "primes": 0,
+                                              "is_function": false
+                                            }
+                                          }
+                                        },
+                                        "operator": "ElementOf"
                                       }
-                                    },
-                                    "tooltip": "View definition of group_theory.basic.l1-main-l2-doc"
+                                    }
                                   }
-                                },
-                                {
-                                  "Text": ". For construction methods, see "
-                                },
-                                {
-                                  "Link": {
-                                    "content": [
-                                      {
-                                        "Text": "Group Constructors"
-                                      }
-                                    ],
-                                    "target": {
-                                      "DefinitionId": {
-                                        "term_id": "group_theory.basic.l1-main-l3-doc",
-                                        "theory_context": "GroupTheory"
-                                      }
-                                    },
-                                    "tooltip": "View definition of group_theory.basic.l1-main-l3-doc"
-                                  }
-                                },
-                                {
-                                  "Text": "."
                                 }
-                              ],
-                              "alignment": null
-                            }
+                              }
+                            },
+                            "label": "Closure",
+                            "caption": null
+                          }
+                        },
+                        {
+                          "MathBlock": {
+                            "math": {
+                              "id": "group_theory.generic-main-assoc",
+                              "content": {
+                                "QuantifiedExpression": {
+                                  "quantifier": "Universal",
+                                  "variables": [],
+                                  "domain": {
+                                    "id": "group_theory.generic-main-assoc_membership",
+                                    "content": {
+                                      "Relationship": {
+                                        "lhs": {
+                                          "id": "group_theory.generic-main-assoc_var_list",
+                                          "content": {
+                                            "Multiplications": {
+                                              "terms": [
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-assoc_a",
+                                                    "content": {
+                                                      "Identifier": {
+                                                        "body": "a",
+                                                        "pre_script": null,
+                                                        "mid_script": null,
+                                                        "post_script": null,
+                                                        "primes": 0,
+                                                        "is_function": false
+                                                      }
+                                                    }
+                                                  }
+                                                ],
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-assoc_comma1",
+                                                    "content": {
+                                                      "Text": ","
+                                                    }
+                                                  }
+                                                ],
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-assoc_b",
+                                                    "content": {
+                                                      "Identifier": {
+                                                        "body": "b",
+                                                        "pre_script": null,
+                                                        "mid_script": null,
+                                                        "post_script": null,
+                                                        "primes": 0,
+                                                        "is_function": false
+                                                      }
+                                                    }
+                                                  }
+                                                ],
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-assoc_comma2",
+                                                    "content": {
+                                                      "Text": ","
+                                                    }
+                                                  }
+                                                ],
+                                                [
+                                                  "None",
+                                                  {
+                                                    "id": "group_theory.generic-main-assoc_c",
+                                                    "content": {
+                                                      "Identifier": {
+                                                        "body": "c",
+                                                        "pre_script": null,
+                                                        "mid_script": null,
+                                                        "post_script": null,
+                                                        "primes": 0,
+                                                        "is_function": false
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "rhs": {
+                                          "id": "group_theory.generic-main-assoc_g",
+                                          "content": {
+                                            "Identifier": {
+                                              "body": "G",
+                                              "pre_script": null,
+                                              "mid_script": null,
+                                              "post_script": null,
+                                              "primes": 0,
+                                              "is_function": false
+                                            }
+                                          }
+                                        },
+                                        "operator": "ElementOf"
+                                      }
+                                    }
+                                  },
+                                  "predicate": {
+                                    "id": "group_theory.generic-main-assoc_eq",
+                                    "content": {
+                                      "Relationship": {
+                                        "lhs": {
+                                          "id": "group_theory.generic-main-assoc_left",
+                                          "content": {
+                                            "CustomFunction": {
+                                              "name": {
+                                                "id": "group_theory.generic-main-assoc_op2",
+                                                "content": {
+                                                  "Identifier": {
+                                                    "body": "∘",
+                                                    "pre_script": null,
+                                                    "mid_script": null,
+                                                    "post_script": null,
+                                                    "primes": 0,
+                                                    "is_function": false
+                                                  }
+                                                }
+                                              },
+                                              "parameters": [
+                                                {
+                                                  "id": "group_theory.generic-main-assoc_ab",
+                                                  "content": {
+                                                    "CustomFunction": {
+                                                      "name": {
+                                                        "id": "group_theory.generic-main-assoc_op1",
+                                                        "content": {
+                                                          "Identifier": {
+                                                            "body": "∘",
+                                                            "pre_script": null,
+                                                            "mid_script": null,
+                                                            "post_script": null,
+                                                            "primes": 0,
+                                                            "is_function": false
+                                                          }
+                                                        }
+                                                      },
+                                                      "parameters": [
+                                                        {
+                                                          "id": "group_theory.generic-main-assoc_a",
+                                                          "content": {
+                                                            "Identifier": {
+                                                              "body": "a",
+                                                              "pre_script": null,
+                                                              "mid_script": null,
+                                                              "post_script": null,
+                                                              "primes": 0,
+                                                              "is_function": false
+                                                            }
+                                                          }
+                                                        },
+                                                        {
+                                                          "id": "group_theory.generic-main-assoc_b",
+                                                          "content": {
+                                                            "Identifier": {
+                                                              "body": "b",
+                                                              "pre_script": null,
+                                                              "mid_script": null,
+                                                              "post_script": null,
+                                                              "primes": 0,
+                                                              "is_function": false
+                                                            }
+                                                          }
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "id": "group_theory.generic-main-assoc_c",
+                                                  "content": {
+                                                    "Identifier": {
+                                                      "body": "c",
+                                                      "pre_script": null,
+                                                      "mid_script": null,
+                                                      "post_script": null,
+                                                      "primes": 0,
+                                                      "is_function": false
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "rhs": {
+                                          "id": "group_theory.generic-main-assoc_right",
+                                          "content": {
+                                            "CustomFunction": {
+                                              "name": {
+                                                "id": "group_theory.generic-main-assoc_op4",
+                                                "content": {
+                                                  "Identifier": {
+                                                    "body": "∘",
+                                                    "pre_script": null,
+                                                    "mid_script": null,
+                                                    "post_script": null,
+                                                    "primes": 0,
+                                                    "is_function": false
+                                                  }
+                                                }
+                                              },
+                                              "parameters": [
+                                                {
+                                                  "id": "group_theory.generic-main-assoc_a",
+                                                  "content": {
+                                                    "Identifier": {
+                                                      "body": "a",
+                                                      "pre_script": null,
+                                                      "mid_script": null,
+                                                      "post_script": null,
+                                                      "primes": 0,
+                                                      "is_function": false
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "id": "group_theory.generic-main-assoc_bc",
+                                                  "content": {
+                                                    "CustomFunction": {
+                                                      "name": {
+                                                        "id": "group_theory.generic-main-assoc_op3",
+                                                        "content": {
+                                                          "Identifier": {
+                                                            "body": "∘",
+                                                            "pre_script": null,
+                                                            "mid_script": null,
+                                                            "post_script": null,
+                                                            "primes": 0,
+                                                            "is_function": false
+                                                          }
+                                                        }
+                                                      },
+                                                      "parameters": [
+                                                        {
+                                                          "id": "group_theory.generic-main-assoc_b",
+                                                          "content": {
+                                                            "Identifier": {
+                                                              "body": "b",
+                                                              "pre_script": null,
+                                                              "mid_script": null,
+                                                              "post_script": null,
+                                                              "primes": 0,
+                                                              "is_function": false
+                                                            }
+                                                          }
+                                                        },
+                                                        {
+                                                          "id": "group_theory.generic-main-assoc_c",
+                                                          "content": {
+                                                            "Identifier": {
+                                                              "body": "c",
+                                                              "pre_script": null,
+                                                              "mid_script": null,
+                                                              "post_script": null,
+                                                              "primes": 0,
+                                                              "is_function": false
+                                                            }
+                                                          }
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "operator": "Equal"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "label": "Associativity",
+                            "caption": null
+                          }
+                        },
+                        {
+                          "MathBlock": {
+                            "math": {
+                              "id": "group_theory.generic-main-identity",
+                              "content": {
+                                "Text": "∃ e ∈ G : ∀ a ∈ G : e ∘ a = a ∘ e = a"
+                              }
+                            },
+                            "label": "Identity Element",
+                            "caption": null
+                          }
+                        },
+                        {
+                          "MathBlock": {
+                            "math": {
+                              "id": "group_theory.generic-main-inverse",
+                              "content": {
+                                "Text": "∀ a ∈ G : ∃ a⁻¹ ∈ G : a ∘ a⁻¹ = a⁻¹ ∘ a = e"
+                              }
+                            },
+                            "label": "Inverse Elements",
+                            "caption": null
+                          }
+                        }
+                      ],
+                      "metadata": [],
+                      "display_options": null
+                    }
+                  },
+                  {
+                    "SubSection": {
+                      "id": "group_theory.generic-main-properties-section",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Properties"
                           }
                         ],
-                        "abstraction_meta": {
-                          "level": 3,
-                          "source_template_id": "group_theory.basic.l1-main-l2-doc",
-                          "specified_parameters": [],
-                          "universally_quantified_properties": []
+                        "alignment": null
+                      },
+                      "content": [
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "Groups can have various properties:"
+                              }
+                            ],
+                            "alignment": null
+                          }
                         },
-                        "selectable_properties": []
-                      }
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Abelian/Commutative: If a * b = b * a for all a, b ∈ G"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Finite/Infinite: Whether the group has a finite or infinite number of elements"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Simple: If the group has no proper normal subgroups"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Solvable: If the group has a subnormal series with abelian factors"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Nilpotent: If the lower central series terminates at the identity"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        }
+                      ],
+                      "metadata": [],
+                      "display_options": null
+                    }
+                  },
+                  {
+                    "SubSection": {
+                      "id": "group_theory.generic-main-examples-section",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Examples"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": [
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "Common examples of groups include:"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Integers under addition: (Z, +)"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Non-zero rational numbers under multiplication: (Q\\{0}, ×)"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Symmetric groups: S_n (permutations of n elements)"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Cyclic groups: Z_n or C_n (integers modulo n)"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        },
+                        {
+                          "Paragraph": {
+                            "segments": [
+                              {
+                                "Text": "- Matrix groups: GL(n, F) (n×n invertible matrices over a field F)"
+                              }
+                            ],
+                            "alignment": null
+                          }
+                        }
+                      ],
+                      "metadata": [],
+                      "display_options": null
                     }
                   }
                 ],
@@ -192,7 +729,7 @@
                   ],
                   [
                     "abstraction_level",
-                    "4"
+                    "1"
                   ]
                 ],
                 "display_options": null
@@ -213,10 +750,10 @@
       }
     },
     {
-      "id": "group_theory.topological.l1-doc",
+      "id": "group_theory.topological-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Topological Group on Empty",
+          "title": "Topological Group ",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -240,11 +777,19 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.topological.l1-main-topologicalgroup-section",
+                "id": "group_theory.topological-main-topologicalgroup-section",
                 "title": {
                   "segments": [
                     {
-                      "Text": "Topological Group on Empty"
+                      "Text": "Topological Group "
+                    },
+                    {
+                      "Math": {
+                        "id": "group_theory.topological-main-title-math",
+                        "content": {
+                          "Text": "(G, \\tau)"
+                        }
+                      }
                     }
                   ],
                   "alignment": null
@@ -255,16 +800,16 @@
                       "Definition": {
                         "term_display": [
                           {
-                            "Text": "Topological Group on Empty"
+                            "Text": "Topological Group [Math]"
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.topological.l1-main-formalTerm",
+                          "id": "group_theory.topological-main-formalTerm",
                           "content": {
-                            "Text": "(Empty, τ)"
+                            "Text": "(Parametric { parameters: {}, description: \"Abstract group set\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }, τ on Parametric { parameters: {}, description: \"Abstract topological space\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } })"
                           }
                         },
-                        "label": "Definition (Topological Group on Empty)",
+                        "label": "Definition (Topological Group [Math])",
                         "body": [
                           {
                             "Paragraph": {
@@ -301,7 +846,7 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.topological.l1-main-groupbasic-section",
+                                        "term_id": "group_theory.topological-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
@@ -330,7 +875,7 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.topological.l1-main-topology-section",
+                                        "term_id": "group_theory.topological-main-topology-section",
                                         "theory_context": "Topology"
                                       }
                                     },
@@ -378,7 +923,7 @@
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "This specific topological group is constructed on the set Empty:"
+                                  "Text": "This specific topological group is constructed on the set Parametric { parameters: {}, description: \"Abstract group set\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }:"
                                 }
                               ],
                               "alignment": null
@@ -480,10 +1025,10 @@
       }
     },
     {
-      "id": "group_theory.cyclic.l1-doc",
+      "id": "group_theory.lie-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Cyclic Group C_12 generated by Integer(1)",
+          "title": "(G, τ)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -507,11 +1052,11 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.cyclic.l1-main-cyclicgroup-section",
+                "id": "group_theory.lie-main-liegroup-section",
                 "title": {
                   "segments": [
                     {
-                      "Text": "Cyclic Group C_12 generated by Integer(1)"
+                      "Text": "(G, τ)"
                     }
                   ],
                   "alignment": null
@@ -522,37 +1067,22 @@
                       "Definition": {
                         "term_display": [
                           {
-                            "Text": "Cyclic Group C_12 generated by Integer(1)"
+                            "Text": "(G, τ)"
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.cyclic.l1-main-formalTerm",
+                          "id": "group_theory.lie-main-formalTerm",
                           "content": {
-                            "Identifier": {
-                              "body": "C",
-                              "pre_script": null,
-                              "mid_script": null,
-                              "post_script": {
-                                "id": "group_theory.cyclic.l1-main-formalTerm_order",
-                                "content": {
-                                  "Quantity": {
-                                    "number": "12",
-                                    "unit": null
-                                  }
-                                }
-                              },
-                              "primes": 0,
-                              "is_function": false
-                            }
+                            "Text": "Lie(Parametric { parameters: {}, description: \"Abstract group set\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }, τ)"
                           }
                         },
-                        "label": "Definition (Cyclic Group C_12 generated by Integer(1))",
+                        "label": "Definition ((G, τ))",
                         "body": [
                           {
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "Generator: Integer(1)"
+                                  "Text": "A Lie group is a group that is also a differentiable manifold, with the property that the group operations (multiplication and inversion) are smooth (infinitely differentiable) functions."
                                 }
                               ],
                               "alignment": null
@@ -562,7 +1092,37 @@
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "Order: 12"
+                                  "Text": "Definition: A Lie group is a set G equipped with both a group structure and a smooth manifold structure such that the group operations μ: G × G → G (multiplication) and ι: G → G (inversion) are smooth maps."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Key Properties: Every Lie group is locally Euclidean, and near the identity element, the group structure is determined by its Lie algebra."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Classical Examples: GL(n, ℝ) (general linear group), SL(n, ℝ) (special linear group), O(n) (orthogonal group), SO(n) (special orthogonal group), U(n) (unitary group), SU(n) (special unitary group)."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Applications: Lie groups are fundamental in differential geometry, physics (symmetries of physical systems), representation theory, and the study of differential equations."
                                 }
                               ],
                               "alignment": null
@@ -583,11 +1143,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.cyclic.l1-main-groupbasic-section",
+                                        "term_id": "group_theory.lie-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.cyclic.l1-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.lie-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -601,7 +1161,17 @@
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "This is L4: A concrete cyclic group with fully specified generator and elements."
+                                  "Text": "Manifold Topology: Parametric { parameters: {}, description: \"Abstract Lie group manifold\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L1: A general schema for any Lie group."
                                 }
                               ],
                               "alignment": null
@@ -609,7 +1179,216 @@
                           }
                         ],
                         "abstraction_meta": {
-                          "level": 3,
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": [
+                          {
+                            "name": "Connected",
+                            "current_variant": "Connected",
+                            "all_variants": [
+                              "Connected",
+                              "Disconnected"
+                            ],
+                            "description": "Connectedness property",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "LieGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.cyclic-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "ℤ",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.cyclic-main-cyclicgroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "ℤ"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "ℤ"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.cyclic-main-formalTerm",
+                          "content": {
+                            "Bracketed": {
+                              "inner": {
+                                "id": "group_theory.cyclic-main-formalTerm-gen",
+                                "content": {
+                                  "Text": "g"
+                                }
+                              },
+                              "style": "Angle",
+                              "size": "Auto"
+                            }
+                          }
+                        },
+                        "label": "Definition (ℤ)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "A cyclic group is a group that is generated by a single element. Every element in the group can be expressed as a power of this generator."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Definition: A group G is cyclic if there exists an element g ∈ G such that G = ⟨g⟩ = {g^n | n ∈ ℤ}."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Infinite Cyclic Group: ℤ represents the infinite cyclic group of integers under addition."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Properties: ℤ is the unique (up to isomorphism) infinite cyclic group."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Generator: Symbol(\"g\")"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Applications: Cyclic groups appear in modular arithmetic, crystallography, Fourier analysis, and as building blocks for more complex algebraic structures."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the underlying group structure, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.cyclic-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.cyclic-main-groupbasic-section"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L1: A general schema for any cyclic group."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
                           "source_template_id": null,
                           "specified_parameters": [],
                           "universally_quantified_properties": []
@@ -617,7 +1396,7 @@
                         "selectable_properties": [
                           {
                             "name": "Order",
-                            "current_variant": "Finite(12)",
+                            "current_variant": "Infinite",
                             "all_variants": [
                               "Finite(n)",
                               "Infinite"
@@ -655,10 +1434,10 @@
       }
     },
     {
-      "id": "group_theory.symmetric.l1-doc",
+      "id": "group_theory.symmetric-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Symmetric Group S_4",
+          "title": "Symmetric Group ",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -682,11 +1461,31 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.symmetric.l1-main-symmetricgroup-section",
+                "id": "group_theory.symmetric-main-symmetricgroup-section",
                 "title": {
                   "segments": [
                     {
-                      "Text": "Symmetric Group S_4"
+                      "Text": "Symmetric Group "
+                    },
+                    {
+                      "Math": {
+                        "id": "group_theory.symmetric-main-title-math",
+                        "content": {
+                          "Identifier": {
+                            "body": "S",
+                            "pre_script": null,
+                            "mid_script": null,
+                            "post_script": {
+                              "id": "group_theory.symmetric-main-title-math-subscript",
+                              "content": {
+                                "Text": "n"
+                              }
+                            },
+                            "primes": 0,
+                            "is_function": false
+                          }
+                        }
+                      }
                     }
                   ],
                   "alignment": null
@@ -697,21 +1496,21 @@
                       "Definition": {
                         "term_display": [
                           {
-                            "Text": "Symmetric Group S_4"
+                            "Text": "Symmetric Group [Math]"
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.symmetric.l1-main-formalTerm",
+                          "id": "group_theory.symmetric-main-formalTerm",
                           "content": {
                             "Identifier": {
                               "body": "S",
                               "pre_script": null,
                               "mid_script": null,
                               "post_script": {
-                                "id": "group_theory.symmetric.l1-main-formalTerm_subscript",
+                                "id": "group_theory.symmetric-main-formalTerm_subscript",
                                 "content": {
                                   "Quantity": {
-                                    "number": "4",
+                                    "number": "0",
                                     "unit": null
                                   }
                                 }
@@ -721,13 +1520,13 @@
                             }
                           }
                         },
-                        "label": "Definition (Symmetric Group S_4)",
+                        "label": "Definition (Symmetric Group [Math])",
                         "body": [
                           {
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "Degree: 4"
+                                  "Text": "Degree: 0"
                                 }
                               ],
                               "alignment": null
@@ -737,7 +1536,7 @@
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "Order: 24"
+                                  "Text": "Order: 1"
                                 }
                               ],
                               "alignment": null
@@ -758,11 +1557,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.symmetric.l1-main-groupbasic-section",
+                                        "term_id": "group_theory.symmetric-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.symmetric.l1-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.symmetric-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -776,7 +1575,7 @@
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "This is L4: A concrete symmetric group with fully specified degree and elements."
+                                  "Text": "This is L1: A general schema for any symmetric group."
                                 }
                               ],
                               "alignment": null
@@ -784,7 +1583,7 @@
                           }
                         ],
                         "abstraction_meta": {
-                          "level": 3,
+                          "level": 0,
                           "source_template_id": null,
                           "specified_parameters": [],
                           "universally_quantified_properties": []
@@ -792,7 +1591,7 @@
                         "selectable_properties": [
                           {
                             "name": "Abelian",
-                            "current_variant": "NonAbelian",
+                            "current_variant": "Abelian",
                             "all_variants": [
                               "Abelian",
                               "NonAbelian"
@@ -803,7 +1602,7 @@
                           },
                           {
                             "name": "Order",
-                            "current_variant": "Finite(24)",
+                            "current_variant": "Finite(1)",
                             "all_variants": [
                               "Finite(n)",
                               "Infinite"
@@ -852,10 +1651,10 @@
       }
     },
     {
-      "id": "group_theory.lie.l1-doc",
+      "id": "group_theory.dihedral-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Lie Group on Empty",
+          "title": "Dihedral Group ",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -879,11 +1678,31 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.lie.l1-main-liegroup-section",
+                "id": "group_theory.dihedral-main-dihedralgroup-section",
                 "title": {
                   "segments": [
                     {
-                      "Text": "Lie Group on Empty"
+                      "Text": "Dihedral Group "
+                    },
+                    {
+                      "Math": {
+                        "id": "group_theory.dihedral-main-title-math",
+                        "content": {
+                          "Identifier": {
+                            "body": "D",
+                            "pre_script": null,
+                            "mid_script": null,
+                            "post_script": {
+                              "id": "group_theory.dihedral-main-title-math-subscript",
+                              "content": {
+                                "Text": "n"
+                              }
+                            },
+                            "primes": 0,
+                            "is_function": false
+                          }
+                        }
+                      }
                     }
                   ],
                   "alignment": null
@@ -894,22 +1713,47 @@
                       "Definition": {
                         "term_display": [
                           {
-                            "Text": "Lie Group on Empty"
+                            "Text": "Dihedral Group [Math]"
                           }
                         ],
                         "formal_term": {
-                          "id": "group_theory.lie.l1-main-formalTerm",
+                          "id": "group_theory.dihedral-main-formalTerm",
                           "content": {
-                            "Text": "Lie(Empty, τ)"
+                            "Identifier": {
+                              "body": "D",
+                              "pre_script": null,
+                              "mid_script": null,
+                              "post_script": {
+                                "id": "group_theory.dihedral-main-formalTerm_subscript",
+                                "content": {
+                                  "Quantity": {
+                                    "number": "0",
+                                    "unit": null
+                                  }
+                                }
+                              },
+                              "primes": 0,
+                              "is_function": false
+                            }
                           }
                         },
-                        "label": "Definition (Lie Group on Empty)",
+                        "label": "Definition (Dihedral Group [Math])",
                         "body": [
                           {
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "A Lie group is a group that is also a differentiable manifold, with the property that the group operations are compatible with the smooth structure."
+                                  "Text": "Regular n-gon: n = 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Order: 0"
                                 }
                               ],
                               "alignment": null
@@ -930,11 +1774,11 @@
                                     ],
                                     "target": {
                                       "DefinitionId": {
-                                        "term_id": "group_theory.lie.l1-main-groupbasic-section",
+                                        "term_id": "group_theory.dihedral-main-groupbasic-section",
                                         "theory_context": "GroupTheory"
                                       }
                                     },
-                                    "tooltip": "View definition of group_theory.lie.l1-main-groupbasic-section"
+                                    "tooltip": "View definition of group_theory.dihedral-main-groupbasic-section"
                                   }
                                 },
                                 {
@@ -948,27 +1792,7 @@
                             "Paragraph": {
                               "segments": [
                                 {
-                                  "Text": "Manifold Topology: Empty"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Charts: chart1"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "This is L1: A general schema for any Lie group."
+                                  "Text": "This is L1: A general schema for any dihedral group."
                                 }
                               ],
                               "alignment": null
@@ -983,13 +1807,24 @@
                         },
                         "selectable_properties": [
                           {
-                            "name": "Connected",
-                            "current_variant": "Connected",
+                            "name": "Abelian",
+                            "current_variant": "Abelian",
                             "all_variants": [
-                              "Connected",
-                              "Disconnected"
+                              "Abelian",
+                              "NonAbelian"
                             ],
-                            "description": "Connectedness property",
+                            "description": "Commutativity property",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          },
+                          {
+                            "name": "Order",
+                            "current_variant": "Finite(0)",
+                            "all_variants": [
+                              "Finite(n)",
+                              "Infinite"
+                            ],
+                            "description": "Order of the group (number of elements)",
                             "variant_descriptions": null,
                             "property_type_def_id": null
                           }
@@ -1001,7 +1836,3107 @@
                 "metadata": [
                   [
                     "type",
-                    "LieGroupDefinition"
+                    "DihedralGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.general_linear-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "General Linear Group GL(n,F)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.general_linear-generallinear-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "GL(0, 𝔽)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "GL(0, 𝔽)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.general_linear-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (GL(0, 𝔽))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Dimension: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Field: 𝔽"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "General linear group of invertible matrices over the given field."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "GeneralLinearGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.special_linear-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Special Linear Group SL(n,F)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.special_linear-speciallinear-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "SL(0, 𝔽)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "SL(0, 𝔽)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.special_linear-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (SL(0, 𝔽))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Dimension: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Field: 𝔽"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Special linear group of matrices with determinant 1 over the given field."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "SpecialLinearGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.orthogonal-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Orthogonal Group O(n)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.orthogonal-orthogonal-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "O(0)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "O(0)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.orthogonal-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (O(0))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Dimension: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Orthogonal group preserving the standard inner product."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "OrthogonalGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.special_orthogonal-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Special Orthogonal Group SO(n)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.special_orthogonal-specialorthogonal-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "SO(0)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "SO(0)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.special_orthogonal-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (SO(0))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Dimension: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Special orthogonal group of orthogonal matrices with determinant 1."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "SpecialOrthogonalGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.unitary-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Unitary Group U(n)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.unitary-unitary-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "U(0)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "U(0)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.unitary-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (U(0))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Dimension: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Unitary group of unitary matrices over the complex numbers."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "UnitaryGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.special_unitary-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Special Unitary Group SU(n)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.special_unitary-specialunitary-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "SU(0)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "SU(0)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.special_unitary-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (SU(0))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Dimension: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Special unitary group of unitary matrices with determinant 1."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "SpecialUnitaryGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.alternating-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Alternating Group ",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.alternating-main-alternatinggroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Alternating Group "
+                    },
+                    {
+                      "Math": {
+                        "id": "group_theory.alternating-main-title-math",
+                        "content": {
+                          "Identifier": {
+                            "body": "A",
+                            "pre_script": null,
+                            "mid_script": null,
+                            "post_script": {
+                              "id": "group_theory.alternating-main-title-math-subscript",
+                              "content": {
+                                "Text": "n"
+                              }
+                            },
+                            "primes": 0,
+                            "is_function": false
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Alternating Group [Math]"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.alternating-main-formalTerm",
+                          "content": {
+                            "Identifier": {
+                              "body": "A",
+                              "pre_script": null,
+                              "mid_script": null,
+                              "post_script": {
+                                "id": "group_theory.alternating-main-formalTerm_subscript",
+                                "content": {
+                                  "Quantity": {
+                                    "number": "0",
+                                    "unit": null
+                                  }
+                                }
+                              },
+                              "primes": 0,
+                              "is_function": false
+                            }
+                          }
+                        },
+                        "label": "Definition (Alternating Group [Math])",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Degree: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Order: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the underlying group structure, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.alternating-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.alternating-main-groupbasic-section"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The alternating group consists of all even permutations on n elements."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L1: A general schema for any alternating group."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": [
+                          {
+                            "name": "Abelian",
+                            "current_variant": "Abelian",
+                            "all_variants": [
+                              "Abelian",
+                              "NonAbelian"
+                            ],
+                            "description": "Commutativity property",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          },
+                          {
+                            "name": "Order",
+                            "current_variant": "Finite(0)",
+                            "all_variants": [
+                              "Finite(n)",
+                              "Infinite"
+                            ],
+                            "description": "Order of the group (number of elements)",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          },
+                          {
+                            "name": "Simple",
+                            "current_variant": "NonSimple",
+                            "all_variants": [
+                              "Simple",
+                              "NonSimple"
+                            ],
+                            "description": "Simplicity property (no normal subgroups)",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "AlternatingGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.modular_additive-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "ℤ/nℤ",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.modular_additive-modularadditive-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "ℤ/0"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "ℤ/0"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.modular_additive-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (ℤ/0)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Modulus: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Additive group of integers modulo n under addition."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is a cyclic group of order 0."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "ModularAdditiveGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.modular_multiplicative-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "(ℤ/nℤ)*",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.modular_multiplicative-modularmultiplicative-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "(ℤ/0)×"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "(ℤ/0)×"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.modular_multiplicative-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition ((ℤ/0)×)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Modulus: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Multiplicative group of units modulo n under multiplication."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This group consists of integers coprime to the modulus."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "ModularMultiplicativeGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.free-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "F_0",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.free-free-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "F_0"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "F_0"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.free-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (F_0)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Rank: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Free group on the given number of generators."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The most general group with the given generators, subject only to the group axioms."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "FreeGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.trivial-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "1",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.trivial-trivial-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "1"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "1"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.trivial-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (1)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Order: 1"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The trivial group with only one element (the identity)."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the unique group of order 1."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 3,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "TrivialGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.product-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Product Group ",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.product-main-productgroup-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Product Group "
+                    },
+                    {
+                      "Math": {
+                        "id": "group_theory.product-main-title-math",
+                        "content": {
+                          "Text": "G_1 \\times G_2 \\times \\cdots \\times G_n"
+                        }
+                      }
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Product Group [Math]"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.product-main-formalTerm",
+                          "content": {
+                            "Identifier": {
+                              "body": "∅",
+                              "pre_script": null,
+                              "mid_script": null,
+                              "post_script": null,
+                              "primes": 0,
+                              "is_function": false
+                            }
+                          }
+                        },
+                        "label": "Definition (Product Group [Math])",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Number of components: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "For the underlying group structure, see "
+                                },
+                                {
+                                  "Link": {
+                                    "content": [
+                                      {
+                                        "Text": "Group Theory"
+                                      }
+                                    ],
+                                    "target": {
+                                      "DefinitionId": {
+                                        "term_id": "group_theory.product-main-groupbasic-section",
+                                        "theory_context": "GroupTheory"
+                                      }
+                                    },
+                                    "tooltip": "View definition of group_theory.product-main-groupbasic-section"
+                                  }
+                                },
+                                {
+                                  "Text": "."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is L1: A general schema for any product group."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": [
+                          {
+                            "name": "Abelian",
+                            "current_variant": "Depends on components",
+                            "all_variants": [
+                              "Abelian",
+                              "NonAbelian"
+                            ],
+                            "description": "Abelian if and only if all component groups are abelian",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          },
+                          {
+                            "name": "Order",
+                            "current_variant": "Product of component orders",
+                            "all_variants": [
+                              "Finite",
+                              "Infinite"
+                            ],
+                            "description": "Order is the product of orders of component groups",
+                            "variant_descriptions": null,
+                            "property_type_def_id": null
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "ProductGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.quotient-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "G/N",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.quotient-quotient-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "G/N"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "G/N"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.quotient-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (G/N)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Parent Group: G"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Normal Subgroup: N"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Quotient group formed by the cosets of the normal subgroup."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "QuotientGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.kernel-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "ker(φ)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.kernel-kernel-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "ker(φ)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "ker(φ)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.kernel-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (ker(φ))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The kernel of a group homomorphism φ."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the set of elements that map to the identity in the codomain."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The kernel is always a normal subgroup of the domain."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "KernelGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.image-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "im(φ)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.image-image-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "im(φ)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "im(φ)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.image-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (im(φ))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The image of a group homomorphism φ."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the set of all elements in the codomain that have a preimage."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The image is always a subgroup of the codomain."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "ImageGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.center-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Z(G)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.center-center-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Z(G)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Z(G)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.center-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (Z(G))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The center Z(G) of a group G."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the set of elements that commute with every element of G."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The center is always a normal subgroup."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "CenterGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.generated_subgroup-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "⟨g⟩",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.generated_subgroup-generated-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "⟨g⟩"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "⟨g⟩"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.generated_subgroup-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (⟨g⟩)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Number of generators: 1"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The subgroup generated by the given elements."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the smallest subgroup containing all the generators."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "GeneratedSubgroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.normalizer-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "N_G(H)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.normalizer-normalizer-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "N_G(H)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "N_G(H)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.normalizer-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (N_G(H))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The normalizer N_G(H) of a subgroup H in G."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the largest subgroup of G in which H is normal."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The normalizer always contains H as a normal subgroup."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "NormalizerGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.centralizer-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "C_G(x)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.centralizer-centralizer-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "C_G(x)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "C_G(x)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.centralizer-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (C_G(x))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The centralizer C_G(x) of an element x in G."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the set of elements in G that commute with x."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The centralizer is always a subgroup of G."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "CentralizerGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.commutator_subgroup-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "[G,G]",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.commutator_subgroup-commutator-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "[G,G]"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "[G,G]"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.commutator_subgroup-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition ([G,G])",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The commutator subgroup [G,G] of a group G."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is the subgroup generated by all commutators [g,h] = ghg⁻¹h⁻¹."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The commutator subgroup is always normal, and G/[G,G] is abelian."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "CommutatorSubgroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.sylow_subgroup-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Syl_0(G)",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.sylow_subgroup-sylow-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Syl_0(G)"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "Syl_0(G)"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.sylow_subgroup-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (Syl_0(G))",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Prime: 0"
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "A Sylow p-subgroup of the given group."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is a maximal p-subgroup, where the order is a power of the prime."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "SylowSubgroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.wreath_product-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "G ≀ H",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.wreath_product-wreathproduct-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "G ≀ H"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "G ≀ H"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.wreath_product-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (G ≀ H)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The wreath product G ≀ H of groups G and H."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This construction combines the direct product with a group action."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Elements are pairs (f, h) where f: H → G is a function and h ∈ H."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "WreathProductGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.central_product-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "G ∘ H",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.central_product-centralproduct-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "G ∘ H"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "G ∘ H"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.central_product-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (G ∘ H)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "A central product group G ∘ H."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is formed by identifying the centers of component groups."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The construction allows for combining groups while maintaining certain structural properties."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "CentralProductGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.pullback-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "G ×_H K",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.pullback-pullback-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "G ×_H K"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "G ×_H K"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.pullback-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (G ×_H K)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The pullback (fibered product) G ×_H K of groups over a common target H."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This is a universal construction in the category of groups."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "Elements are pairs (g, k) where g ∈ G and k ∈ K such that φ(g) = ψ(k)."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "PullbackGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.restriction-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "G|_S",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": null,
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.restriction-restriction-section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "G|_S"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": [
+                          {
+                            "Text": "G|_S"
+                          }
+                        ],
+                        "formal_term": {
+                          "id": "group_theory.restriction-formalTerm",
+                          "content": {
+                            "Text": "(∅, ×)"
+                          }
+                        },
+                        "label": "Definition (G|_S)",
+                        "body": [
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The restriction G|_S of a group G to a subset S."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "This construction restricts the group operation to a specific subset."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          },
+                          {
+                            "Paragraph": {
+                              "segments": [
+                                {
+                                  "Text": "The subset S must satisfy specific conditions to form a valid subgroup."
+                                }
+                              ],
+                              "alignment": null
+                            }
+                          }
+                        ],
+                        "abstraction_meta": {
+                          "level": 0,
+                          "source_template_id": null,
+                          "specified_parameters": [],
+                          "universally_quantified_properties": []
+                        },
+                        "selectable_properties": []
+                      }
+                    }
+                  }
+                ],
+                "metadata": [
+                  [
+                    "type",
+                    "RestrictionGroupDefinition"
                   ]
                 ],
                 "display_options": null

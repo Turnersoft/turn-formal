@@ -1,0 +1,139 @@
+/* Base link styles */
+.link {
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 1px 3px;
+  transition: all 0.2s ease;
+  display: inline;
+  position: relative;
+}
+
+.link:hover {
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.link:focus {
+  outline: 2px solid #007acc;
+  outline-offset: 2px;
+}
+
+/* Link type specific styles */
+.definitionLink {
+  color: #0066cc;
+  background-color: rgba(0, 102, 204, 0.05);
+  border-bottom: 1px dotted #0066cc;
+}
+
+.definitionLink:hover {
+  background-color: rgba(0, 102, 204, 0.1);
+  color: #004499;
+}
+
+.theoremLink {
+  color: #cc6600;
+  background-color: rgba(204, 102, 0, 0.05);
+  border-bottom: 1px dotted #cc6600;
+}
+
+.theoremLink:hover {
+  background-color: rgba(204, 102, 0, 0.1);
+  color: #994400;
+}
+
+.urlLink {
+  color: #0066ff;
+  background-color: rgba(0, 102, 255, 0.05);
+}
+
+.urlLink:hover {
+  background-color: rgba(0, 102, 255, 0.1);
+  color: #0044cc;
+}
+
+.urlLink::after {
+  content: ' 🔗';
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.internalLink {
+  color: #009900;
+  background-color: rgba(0, 153, 0, 0.05);
+  border-bottom: 1px dotted #009900;
+}
+
+.internalLink:hover {
+  background-color: rgba(0, 153, 0, 0.1);
+  color: #006600;
+}
+
+.glossaryLink {
+  color: #9900cc;
+  background-color: rgba(153, 0, 204, 0.05);
+  border-bottom: 1px dotted #9900cc;
+}
+
+.glossaryLink:hover {
+  background-color: rgba(153, 0, 204, 0.1);
+  color: #660099;
+}
+
+.defaultLink {
+  color: #666666;
+  background-color: rgba(102, 102, 102, 0.05);
+  border-bottom: 1px dotted #666666;
+}
+
+.defaultLink:hover {
+  background-color: rgba(102, 102, 102, 0.1);
+  color: #444444;
+}
+
+/* Highlight effect for scrolled-to elements */
+.highlighted {
+  background-color: rgba(255, 255, 0, 0.3) !important;
+  animation: highlightFade 2s ease-out;
+}
+
+@keyframes highlightFade {
+  0% {
+    background-color: rgba(255, 255, 0, 0.6);
+  }
+  100% {
+    background-color: rgba(255, 255, 0, 0.1);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+  
+  .link:hover {
+    transform: none;
+  }
+  
+  .highlighted {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .link {
+    border-bottom-width: 2px;
+  }
+  
+  .definitionLink {
+    color: #0000ff;
+    border-bottom-color: #0000ff;
+  }
+  
+  .theoremLink {
+    color: #ff6600;
+    border-bottom-color: #ff6600;
+  }
+} 

@@ -492,4 +492,32 @@
   }
 }
 
+// =====================================================
+// HIGHLIGHTED SECTIONS FOR NAVIGATION
+// =====================================================
+
+:global(.highlighted-section) {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%) !important;
+  border: 2px solid rgba(59, 130, 246, 0.4) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;
+  transition: all 0.3s ease !important;
+  animation: highlightPulse 2s ease-in-out !important;
+}
+
+@keyframes highlightPulse {
+  0% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
+  }
+}
+
 

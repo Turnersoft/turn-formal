@@ -48,6 +48,8 @@
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   margin: 0.5rem 1rem 1rem;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .section h3 {
@@ -59,7 +61,122 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* File List */
+/* Theory List and Directory Structure */
+.theoryList {
+  padding: 0.5rem;
+}
+
+.theoryFolder {
+  margin-bottom: 0.5rem;
+}
+
+.theoryHeader {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+
+.theoryHeader:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+
+.expandIcon {
+  font-size: 1.1rem;
+  min-width: 1.2rem;
+}
+
+.theoryName {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.theoryCount {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+}
+
+/* Theory Content */
+.theoryContent {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.contentFile {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.3rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.contentFile:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+
+.contentFile.selected {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fileIcon {
+  font-size: 1rem;
+  min-width: 1.2rem;
+}
+
+.fileName {
+  flex: 1;
+  font-weight: 500;
+}
+
+.fileCount {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
+  color: #FFD700;
+}
+
+/* Loading State */
+.loadingFiles {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.loadingFiles p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* Legacy File List (for backwards compatibility) */
 .fileList {
   display: flex;
   flex-direction: column;
@@ -95,6 +212,20 @@
 .fileName {
   font-weight: 500;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.newFormatBadge {
+  background: #00d4aa;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .fileSize {
@@ -187,26 +318,23 @@
 }
 
 .filterSelect option {
-  background: #4a5568;
+  background: #444;
   color: white;
 }
 
 .resultsCount {
-  padding: 0.5rem 1rem;
   font-size: 0.8rem;
   opacity: 0.8;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 0.5rem 1rem 0;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0.5rem;
 }
 
 /* Content List */
 .contentList {
-  flex: 1;
+  max-height: 400px;
   overflow-y: auto;
-  padding: 1rem;
-  max-height: 300px;
+  padding: 0 1rem;
 }
 
 .contentItem {
@@ -221,13 +349,12 @@
 
 .contentItem:hover {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateX(2px);
+  transform: translateY(-1px);
 }
 
 .contentItem.selected {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .contentHeader {
@@ -240,42 +367,40 @@
 .contentTitle {
   margin: 0;
   font-size: 0.9rem;
-  font-weight: 500;
-  line-height: 1.3;
+  font-weight: 600;
   flex: 1;
   margin-right: 0.5rem;
 }
 
 .contentMeta {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: flex-end;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .level {
-  background: rgba(255, 215, 0, 0.8);
+  background: #FFD700;
   color: #333;
-  padding: 0.15rem 0.4rem;
-  border-radius: 10px;
   font-size: 0.7rem;
   font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
 }
 
 .sections {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   opacity: 0.7;
 }
 
 .contentPreview {
   margin: 0;
   font-size: 0.8rem;
-  line-height: 1.4;
   opacity: 0.8;
-  overflow: hidden;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Pagination */
@@ -284,13 +409,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pageButton {
   background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: none;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -301,7 +425,6 @@
 
 .pageButton:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
 }
 
 .pageButton:disabled {
@@ -311,50 +434,47 @@
 
 .pageInfo {
   font-size: 0.85rem;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 /* Loading and Error States */
 .loading {
-  text-align: center;
   padding: 2rem 1rem;
+  text-align: center;
   opacity: 0.8;
-  font-style: italic;
 }
 
 .error {
   padding: 1rem;
-  background: rgba(220, 38, 38, 0.2);
-  border: 1px solid rgba(220, 38, 38, 0.4);
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
   border-radius: 6px;
-  margin: 0 1rem;
+  margin: 1rem;
 }
 
 .error p {
-  margin: 0 0 1rem;
-  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  color: #ff6b6b;
 }
 
 .retryButton {
-  background: rgba(220, 38, 38, 0.8);
-  border: none;
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid rgba(255, 0, 0, 0.3);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background 0.3s ease;
 }
 
 .retryButton:hover {
-  background: rgba(220, 38, 38, 1);
+  background: rgba(255, 0, 0, 0.3);
 }
 
 /* Quick Actions */
 .quickActions {
   padding: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.1);
   display: flex;
   gap: 0.5rem;
 }
@@ -364,16 +484,15 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 0.75rem;
-  border-radius: 6px;
+  padding: 0.5rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: all 0.3s ease;
 }
 
 .actionButton:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
 }
 
 .actionButton:disabled {
@@ -381,7 +500,7 @@
   cursor: not-allowed;
 }
 
-/* Custom Scrollbar for Content List */
+/* Scrollbar Styling */
 .contentList::-webkit-scrollbar {
   width: 6px;
 }
@@ -400,7 +519,7 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Responsive Design */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
@@ -417,23 +536,20 @@
   }
 
   .section {
-    margin: 0.25rem 0.5rem 0.75rem;
+    margin: 0.25rem 0.5rem 0.5rem;
   }
 
   .section h3 {
-    font-size: 0.9rem;
-    padding: 0.75rem 0.75rem 0.25rem;
-  }
-
-  .fileList,
-  .filters,
-  .contentList {
     padding: 0.75rem;
   }
 
+  .fileList,
+  .theoryList {
+    padding: 0.5rem;
+  }
+
   .searchInput {
-    margin: 0.75rem;
-    margin-bottom: 0.5rem;
+    margin: 0.5rem;
   }
 
   .contentList {
@@ -441,11 +557,10 @@
   }
 
   .quickActions {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
 
   .actionButton {
-    padding: 0.5rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 } 

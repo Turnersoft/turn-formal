@@ -1,24 +1,20 @@
 import React from 'react';
 import { renderMathNode } from '../../turn-render/turn-math';
 import { cleanSegmentText } from '../../../../../utils/mathNotationCleaner';
+import { RichTextRenderer } from './RichTextRenderer';
+import type { RichTextSegment } from '../../turn-render/bindings/RichTextSegment';
 import styles from './SectionContentRenderer.module.css';
 
 // Type definitions based on the JSON structure
-interface ParagraphSegment {
-  Text?: string;
-  MathInline?: any;
-  MathBlock?: any;
-}
-
 interface ParagraphNode {
-  segments: ParagraphSegment[];
+  segments: RichTextSegment[];
   alignment?: string | null;
 }
 
 interface SubSectionNode {
   id: string;
   title?: {
-    segments: ParagraphSegment[];
+    segments: RichTextSegment[];
     alignment?: string | null;
   };
   content: SectionContentNode[];
@@ -88,7 +84,7 @@ interface SectionContentNode {
 interface SectionNode {
   id: string;
   title?: {
-    segments: ParagraphSegment[];
+    segments: RichTextSegment[];
     alignment?: string | null;
   };
   content: SectionContentNode[];
@@ -130,7 +126,7 @@ const SectionRenderer: React.FC<{ section: SectionNode }> = ({ section }) => {
       {section.title && (
         <header className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>
-            <ParagraphSegmentRenderer segments={section.title.segments} />
+            <RichTextRenderer segments={section.title.segments} />
           </h2>
           {section.metadata.length > 0 && (
             <div className={styles.sectionMeta}>
@@ -156,7 +152,7 @@ const ContentNodeRenderer: React.FC<{ node: SectionContentNode }> = ({ node }) =
   if (node.Paragraph) {
     return (
       <div className={`${styles.paragraph} ${node.Paragraph.alignment ? styles[node.Paragraph.alignment] : ''}`}>
-        <ParagraphSegmentRenderer segments={node.Paragraph.segments} />
+        <RichTextRenderer segments={node.Paragraph.segments} />
       </div>
     );
   }
@@ -166,7 +162,7 @@ const ContentNodeRenderer: React.FC<{ node: SectionContentNode }> = ({ node }) =
       <div className={styles.subsection}>
         {node.SubSection.title && (
           <h3 className={styles.subsectionTitle}>
-            <ParagraphSegmentRenderer segments={node.SubSection.title.segments} />
+            <RichTextRenderer segments={node.SubSection.title.segments} />
           </h3>
         )}
         <div className={styles.subsectionContent}>
@@ -305,40 +301,6 @@ const ContentNodeRenderer: React.FC<{ node: SectionContentNode }> = ({ node }) =
         [Unknown content type: {Object.keys(node)[0]}]
       </span>
     </div>
-  );
-};
-
-const ParagraphSegmentRenderer: React.FC<{ segments: ParagraphSegment[] }> = ({ segments }) => {
-  return (
-    <>
-      {segments.map((segment, index) => {
-        if (segment.Text) {
-          return <span key={index}>{cleanSegmentText(segment.Text)}</span>;
-        }
-        
-        if (segment.MathInline) {
-          return (
-            <span key={index} className={styles.inlineMath}>
-              {renderMathNode(segment.MathInline)}
-            </span>
-          );
-        }
-        
-        if (segment.MathBlock) {
-          return (
-            <div key={index} className={styles.blockMath}>
-              {renderMathNode(segment.MathBlock)}
-            </div>
-          );
-        }
-        
-        return (
-          <span key={index} className={styles.unknownSegment}>
-            [Unknown segment]
-          </span>
-        );
-      })}
-    </>
   );
 };
 

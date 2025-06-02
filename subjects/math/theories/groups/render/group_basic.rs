@@ -31,7 +31,208 @@ impl ToTurnMath for GenericGroup {
 impl ToSectionNode for GenericGroup {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         let formalism_obj_level: AbstractionLevel = self.level();
-        let title = "Group on set ∅".to_string();
+
+        // Generate a more specific title based on the id_prefix to avoid duplicates
+        let title_segments = if id_prefix.contains("generic") {
+            vec![RichTextSegment::Text("Generic Group".to_string())]
+        } else if id_prefix.contains("general_linear") {
+            vec![
+                RichTextSegment::Text("General Linear Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("GL(n, F)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("special_linear") {
+            vec![
+                RichTextSegment::Text("Special Linear Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("SL(n, F)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("orthogonal") {
+            vec![
+                RichTextSegment::Text("Orthogonal Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("O(n)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("special_orthogonal") {
+            vec![
+                RichTextSegment::Text("Special Orthogonal Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("SO(n)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("unitary") {
+            vec![
+                RichTextSegment::Text("Unitary Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("U(n)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("special_unitary") {
+            vec![
+                RichTextSegment::Text("Special Unitary Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("SU(n)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("trivial") {
+            vec![
+                RichTextSegment::Text("Trivial Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("\\{e\\}".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("modular_additive") {
+            vec![
+                RichTextSegment::Text("Modular Additive Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text(
+                        "\\mathbb{Z}/n\\mathbb{Z}".to_string(),
+                    )),
+                }),
+            ]
+        } else if id_prefix.contains("modular_multiplicative") {
+            vec![
+                RichTextSegment::Text("Modular Multiplicative Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text(
+                        "(\\mathbb{Z}/n\\mathbb{Z})^*".to_string(),
+                    )),
+                }),
+            ]
+        } else if id_prefix.contains("free") {
+            vec![
+                RichTextSegment::Text("Free Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("F_n".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("quotient") {
+            vec![
+                RichTextSegment::Text("Quotient Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("G/N".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("kernel") {
+            vec![
+                RichTextSegment::Text("Kernel Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("\\ker(\\phi)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("image") {
+            vec![
+                RichTextSegment::Text("Image Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("\\text{im}(\\phi)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("center") {
+            vec![
+                RichTextSegment::Text("Center Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("Z(G)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("generated_subgroup") {
+            vec![
+                RichTextSegment::Text("Generated Subgroup ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("\\langle S \\rangle".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("normalizer") {
+            vec![
+                RichTextSegment::Text("Normalizer Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("N_G(H)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("centralizer") {
+            vec![
+                RichTextSegment::Text("Centralizer Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("C_G(x)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("commutator_subgroup") {
+            vec![
+                RichTextSegment::Text("Commutator Subgroup ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("[G,G]".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("sylow_subgroup") {
+            vec![
+                RichTextSegment::Text("Sylow Subgroup ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("\\text{Syl}_p(G)".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("wreath_product") {
+            vec![
+                RichTextSegment::Text("Wreath Product ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("G \\wr H".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("central_product") {
+            vec![
+                RichTextSegment::Text("Central Product ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("G \\times_Z H".to_string())),
+                }),
+            ]
+        } else if id_prefix.contains("pullback") {
+            vec![RichTextSegment::Text("Pullback Group".to_string())]
+        } else if id_prefix.contains("restriction") {
+            vec![RichTextSegment::Text("Restriction Group".to_string())]
+        } else if id_prefix.contains("product") {
+            vec![
+                RichTextSegment::Text("Product Group ".to_string()),
+                RichTextSegment::Math(MathNode {
+                    id: format!("{}-title-math", id_prefix),
+                    content: Box::new(MathNodeContent::Text("G \\times H".to_string())),
+                }),
+            ]
+        } else {
+            // Fallback to the original hardcoded title
+            vec![RichTextSegment::Text("Group".to_string())]
+        };
+
+        // Helper function to convert title_segments to a simple string for labels
+        let title_text = title_segments
+            .iter()
+            .map(|seg| match seg {
+                RichTextSegment::Text(t) => t.clone(),
+                RichTextSegment::Math(_) => "[Math]".to_string(),
+                _ => "".to_string(),
+            })
+            .collect::<String>();
 
         // Handle different abstraction levels accordingly
         match formalism_obj_level {
@@ -46,9 +247,9 @@ impl ToSectionNode for GenericGroup {
                 })];
 
                 Section {
-                    id: format!("{}-groupbasic-section", id_prefix),
+                    id: format!("{}.main_section", id_prefix),
                     title: Some(ParagraphNode {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+                        segments: title_segments,
                         alignment: None,
                     }),
                     content: content_nodes,
@@ -200,18 +401,18 @@ impl ToSectionNode for GenericGroup {
                 }
 
                 Section {
-                    id: format!("{}-groupbasic-section", id_prefix),
+                    id: format!("{}.main_section", id_prefix),
                     title: Some(ParagraphNode {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+                        segments: title_segments.clone(),
                         alignment: None,
                     }),
                     content: vec![SectionContentNode::StructuredMath(
                         StructuredMathContentNode::Definition {
-                            term_display: vec![RichTextSegment::Text(title.clone())],
+                            term_display: title_segments,
                             formal_term: Some(
                                 self.to_turn_math(format!("{}-formalTerm", id_prefix)),
                             ),
-                            label: Some(format!("Definition ({})", title)),
+                            label: Some(format!("Definition ({})", title_text)),
                             body: content_nodes,
                             abstraction_meta: Some(AbstractionMetadata {
                                 level: Some(formalism_obj_level as u8),
@@ -254,7 +455,7 @@ impl ToSectionNode for GenericGroup {
                 ];
 
                 Section {
-                    id: format!("{}-groupbasic-section", id_prefix),
+                    id: format!("{}.main_section", id_prefix),
                     title: Some(ParagraphNode {
                         segments: vec![RichTextSegment::Text(title)],
                         alignment: None,
@@ -432,18 +633,18 @@ impl ToSectionNode for GenericGroup {
                 }
 
                 Section {
-                    id: format!("{}-groupbasic-section", id_prefix),
+                    id: format!("{}.main_section", id_prefix),
                     title: Some(ParagraphNode {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+                        segments: title_segments.clone(),
                         alignment: None,
                     }),
                     content: vec![SectionContentNode::StructuredMath(
                         StructuredMathContentNode::Definition {
-                            term_display: vec![RichTextSegment::Text(title.clone())],
+                            term_display: title_segments,
                             formal_term: Some(
                                 self.to_turn_math(format!("{}-formalTerm", id_prefix)),
                             ),
-                            label: Some(format!("Concrete Group ({})", title)),
+                            label: Some(format!("Concrete Group ({})", title_text)),
                             body: content_nodes,
                             abstraction_meta: Some(AbstractionMetadata {
                                 level: Some(formalism_obj_level as u8),
@@ -474,65 +675,8 @@ impl ToSectionNode for GenericGroup {
         // Create different documents based on abstraction level
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                // L1 should now be handled by render_as_l1_schema_document, not here
-                // Return a warning document that indicates the caller should use render_as_l1_schema_document
-                let warning_section = Section {
-                    id: format!("{}-warning-section", id_prefix),
-                    title: Some(ParagraphNode {
-                        segments: vec![RichTextSegment::Text("Warning".to_string())],
-                        alignment: None,
-                    }),
-                    content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                        segments: vec![RichTextSegment::Text(
-                            "For Level 1 schema document, please use render_as_l1_schema_document() instead of to_math_document().".to_string(),
-                        )],
-                        alignment: None,
-                    })],
-                    metadata: vec![],
-                    display_options: None,
-                };
-
-                MathDocument {
-                    id: format!("{}-warning-doc", id_prefix),
-                    content_type: MathematicalContentType::ScientificPaper(
-                        ScientificPaperContent {
-                            title: "Warning: Incorrect Method Used".to_string(),
-                            paper_type: PaperType::Research,
-                            venue: None,
-                            peer_reviewed: false,
-                            content_metadata: ContentMetadata {
-                                language: Some("en-US".to_string()),
-                                version: Some("1.0".to_string()),
-                                created_at: None,
-                                last_modified: None,
-                                content_hash: None,
-                            },
-                            academic_metadata: AcademicMetadata {
-                                authors: vec![],
-                                date_published: None,
-                                date_modified: None,
-                                venue: None,
-                                doi: None,
-                                keywords: vec![],
-                            },
-                            structure: DocumentStructure {
-                                abstract_content: Some(warning_section.clone()),
-                                table_of_contents: None,
-                                body: vec![warning_section],
-                                footnotes: vec![],
-                                glossary: vec![],
-                                bibliography: vec![],
-                            },
-                            relationships: DocumentRelationships {
-                                parent_documents: vec![],
-                                child_documents: vec![],
-                                related_concepts: vec![],
-                                cross_references: vec![],
-                                dependency_graph: None,
-                            },
-                        },
-                    ),
-                }
+                // Use L1 schema rendering for L1 groups
+                self.render_as_l1_schema_document(id_prefix)
             }
 
             AbstractionLevel::Level2 => {
@@ -700,24 +844,21 @@ impl ToSectionNode for GenericGroup {
                     id: format!("{}-l4-doc", id_prefix),
                     content_type: MathematicalContentType::ScientificPaper(
                         ScientificPaperContent {
-                            title: format!(
-                                "Concrete Group: {}",
-                                main_section
-                                    .title
-                                    .as_ref()
-                                    .map_or("Group".to_string(), |p| {
-                                        p.segments
-                                            .iter()
-                                            .map(|s| match s {
-                                                RichTextSegment::Text(t) => t.clone(),
-                                                RichTextSegment::StyledText { text, .. } => {
-                                                    text.clone()
-                                                }
-                                                _ => "".to_string(),
-                                            })
-                                            .collect::<String>()
-                                    })
-                            ),
+                            title: main_section
+                                .title
+                                .as_ref()
+                                .map_or("Group".to_string(), |p| {
+                                    p.segments
+                                        .iter()
+                                        .map(|s| match s {
+                                            RichTextSegment::Text(t) => t.clone(),
+                                            RichTextSegment::StyledText { text, .. } => {
+                                                text.clone()
+                                            }
+                                            _ => "".to_string(),
+                                        })
+                                        .collect::<String>()
+                                }),
                             paper_type: PaperType::Research,
                             venue: None,
                             peer_reviewed: false,
@@ -898,7 +1039,7 @@ impl ToSectionNode for GenericGroup {
 
         // Create subsections as SectionContentNode::SubSection
         let definition_section = Section {
-            id: format!("{}-definition-section", id_prefix),
+            id: format!("{}.definition_section", id_prefix),
             title: Some(ParagraphNode {
                 segments: vec![RichTextSegment::Text("Definition".to_string())],
                 alignment: None,
@@ -941,7 +1082,7 @@ impl ToSectionNode for GenericGroup {
         };
 
         let properties_section = Section {
-            id: format!("{}-properties-section", id_prefix),
+            id: format!("{}.properties_section", id_prefix),
             title: Some(ParagraphNode {
                 segments: vec![RichTextSegment::Text("Properties".to_string())],
                 alignment: None,
@@ -987,7 +1128,7 @@ impl ToSectionNode for GenericGroup {
         };
 
         let examples_section = Section {
-            id: format!("{}-examples-section", id_prefix),
+            id: format!("{}.examples_section", id_prefix),
             title: Some(ParagraphNode {
                 segments: vec![RichTextSegment::Text("Examples".to_string())],
                 alignment: None,
@@ -1041,7 +1182,7 @@ impl ToSectionNode for GenericGroup {
         content_nodes.push(SectionContentNode::SubSection(Box::new(examples_section)));
 
         Section {
-            id: format!("{}-groupbasic-section", id_prefix),
+            id: format!("{}.main_section", id_prefix),
             title: Some(ParagraphNode {
                 segments: vec![RichTextSegment::Text(title)],
                 alignment: None,
@@ -1062,43 +1203,43 @@ impl ToSectionNode for GenericGroup {
         MathDocument {
             id: format!("{}-l1-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
-                title: "Group Theory".to_string(),
+            title: "Basic Group".to_string(),
                 paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
                 content_metadata: ContentMetadata {
-                    language: Some("en-US".to_string()),
-                    version: Some("1.0".to_string()),
+            language: Some("en-US".to_string()),
+            version: Some("1.0".to_string()),
                     created_at: None,
                     last_modified: None,
                     content_hash: None,
                 },
                 academic_metadata: AcademicMetadata {
-                    authors: vec![],
-                    date_published: None,
-                    date_modified: None,
+            authors: vec![],
+            date_published: None,
+            date_modified: None,
                     venue: None,
                     doi: None,
                     keywords: vec![],
                 },
                 structure: DocumentStructure {
-                    abstract_content: Some(Section {
-                        id: format!("{}-l1-abstract", id_prefix),
-                        title: None,
+            abstract_content: Some(Section {
+                id: format!("{}-l1-abstract", id_prefix),
+                title: None,
                         content: vec![SectionContentNode::Paragraph(ParagraphNode {
                             segments: vec![RichTextSegment::Text(
                                 "A comprehensive document covering the general theory of groups, including definitions, properties, and examples.".to_string(),
                             )],
                             alignment: None,
                         })],
-                        metadata: vec![],
-                        display_options: None,
-                    }),
-                    table_of_contents: None,
-                    body: vec![main_section],
-                    footnotes: vec![],
-                    glossary: vec![],
-                    bibliography: vec![],
+                metadata: vec![],
+                display_options: None,
+            }),
+            table_of_contents: None,
+            body: vec![main_section],
+            footnotes: vec![],
+            glossary: vec![],
+            bibliography: vec![],
                 },
                 relationships: DocumentRelationships {
                     parent_documents: vec![],

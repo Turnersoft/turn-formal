@@ -11,6 +11,7 @@ use super::super::zfc::set::{Set, SetProperty};
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fmt;
 use std::hash::Hash;
 use std::hash::Hasher;
 use thiserror::Error;
@@ -189,9 +190,14 @@ pub struct GenericGroup {
 impl Default for GenericGroup {
     fn default() -> Self {
         GenericGroup {
-            base_set: Set::empty(),
+            base_set: Set::Parametric {
+                parameters: std::collections::HashMap::new(),
+                description: "Abstract group set".to_string(),
+                membership_condition: "x ∈ G".to_string(),
+                properties: crate::subjects::math::theories::VariantSet::new(),
+            },
             operation: GroupOperation::default(),
-            props: VariantSet::new(),
+            props: crate::subjects::math::theories::VariantSet::new(),
         }
     }
 }
@@ -1662,7 +1668,7 @@ pub struct OrthogonalGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
     /// The dimension
-    pub dimension: u32,
+    pub dimension: u32, // todo: make it natural number
     /// Matrix specific properties
     pub matrix_props: VariantSet<MatrixProperty>,
 }

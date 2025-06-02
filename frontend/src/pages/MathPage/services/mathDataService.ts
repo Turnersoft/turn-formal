@@ -7,6 +7,14 @@ export interface MathDataExport {
   content: Record<string, MathematicalContent>;
 }
 
+// Raw data format from JSON files (can have content as array or object)
+interface RawMathDataExport {
+  theory_name: string;
+  version: string;
+  exported_at: string;
+  content: MathematicalContent[] | Record<string, MathematicalContent>;
+}
+
 export interface MathDataIndex {
   id: string;
   title: string;
@@ -29,6 +37,33 @@ export class MathDataService {
   }
 
   /**
+   * Convert array content format to object format
+   */
+  private normalizeContentFormat(rawData: RawMathDataExport): MathDataExport {
+    let content: Record<string, MathematicalContent>;
+    
+    if (Array.isArray(rawData.content)) {
+      // Convert array to object using the id field
+      content = {};
+      for (const item of rawData.content) {
+        if (item && typeof item === 'object' && 'id' in item) {
+          content[item.id] = item;
+        }
+      }
+    } else {
+      // Already in object format
+      content = rawData.content;
+    }
+
+    return {
+      theory_name: rawData.theory_name,
+      version: rawData.version,
+      exported_at: rawData.exported_at,
+      content
+    };
+  }
+
+  /**
    * Load and parse JSON data from public folder
    */
   async loadMathData(filename: string): Promise<MathDataExport> {
@@ -42,13 +77,15 @@ export class MathDataService {
         throw new Error(`Failed to load ${filename}: ${response.statusText}`);
       }
 
-      const data: MathDataExport = await response.json();
-      this.dataCache.set(filename, data);
+      const rawData: RawMathDataExport = await response.json();
+      const normalizedData = this.normalizeContentFormat(rawData);
+      
+      this.dataCache.set(filename, normalizedData);
       
       // Generate index for navigation
-      this.generateDataIndex(filename, data);
+      this.generateDataIndex(filename, normalizedData);
       
-      return data;
+      return normalizedData;
     } catch (error) {
       console.error(`Error loading math data from ${filename}:`, error);
       throw error;
@@ -63,8 +100,45 @@ export class MathDataService {
       'math_content.json',
       'group_theory_l1_definitions.json', 
       'group_theory_theorems.json',
-      'group_theory_l3_constructors.json'
+      'group_theory_l3_constructors.json',
+      // New manifest-based files
+      'group_theory.definitions.json',
+      'group_theory.theorems.json'
     ];
+  }
+
+  /**
+   * Load manifest-based data from the new JSON format
+   */
+  async loadFromManifest(): Promise<string[]> {
+    try {
+      const response = await fetch('/manifest.json');
+      if (!response.ok) {
+        console.warn('Manifest file not found, using legacy file list');
+        return this.getAvailableDataFiles();
+      }
+
+      const manifest = await response.json();
+      const availableFiles: string[] = [];
+      
+      for (const theory of manifest.theories) {
+        for (const file of theory.files) {
+          availableFiles.push(file.file_path);
+        }
+      }
+      
+      return [...this.getAvailableDataFiles(), ...availableFiles];
+    } catch (error) {
+      console.warn('Failed to load manifest, using legacy file list:', error);
+      return this.getAvailableDataFiles();
+    }
+  }
+
+  /**
+   * Get all available data files including manifest-based files
+   */
+  async getAvailableDataFilesAsync(): Promise<string[]> {
+    return await this.loadFromManifest();
   }
 
   /**

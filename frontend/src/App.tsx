@@ -6,6 +6,7 @@ import DeveloperPage from "./pages/DeveloperPage/DeveloperPage";
 import NotFound from "./pages/NotFound/NotFound";
 import Navigation from "./components/navigation";
 import usePreventNavigationGesture from "./hooks/usePreventNavigationGesture";
+import { RoutingTest } from "./pages/MathPage/components/binding-renderers/examples/RoutingTest";
 import styles from "./App.module.scss";
 
 export const App: React.FC = () => {
@@ -19,11 +20,16 @@ export const App: React.FC = () => {
         <main className={styles.mainContent}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            {/* Math section routes - use wildcard to handle nested theory paths */}
+            {/* Math section routes - include specific content routes */}
             <Route path="/math" element={<MathPage />} />
+            <Route path="/math/definition/:theory/:termId" element={<MathPage />} />
+            <Route path="/math/theorem/:theory/:theoremId" element={<MathPage />} />
+            <Route path="/math/theory/:theoryName" element={<MathPage />} />
             <Route path="/math/*" element={<MathPage />} />
             {/* Developer section */}
             <Route path="/developer" element={<DeveloperPage />} />
+            {/* Test route for routing system */}
+            <Route path="/routing-test" element={<RoutingTest />} />
             {/* Catch-all for not found pages */}
             <Route path="*" element={<NotFound />} />
           </Routes>

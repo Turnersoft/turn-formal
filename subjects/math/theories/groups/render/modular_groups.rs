@@ -6,8 +6,8 @@ use crate::turn_render::math_node::{
 };
 use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathematicalContent, MathematicalContentType, PaperType,
-    ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
+    DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
+    PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
     StructuredMathContentNode, ToSectionNode,
 };
 
@@ -90,16 +90,19 @@ impl ToSectionNode for ModularAdditiveGroup {
         }]
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            "ℤ/nℤ".to_string()
+        } else {
+            format!("ℤ/{}", self.modulus)
+        };
+
         let main_section = self.to_section_node(id_prefix);
-        let title = format!("ℤ/{}", self.modulus);
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
                 title,
@@ -235,16 +238,19 @@ impl ToSectionNode for ModularMultiplicativeGroup {
         }]
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        let title = if level == AbstractionLevel::Level1 {
+            "(ℤ/nℤ)*".to_string()
+        } else {
+            format!("(ℤ/{})×", self.modulus)
+        };
+
         let main_section = self.to_section_node(id_prefix);
-        let title = format!("(ℤ/{})×", self.modulus);
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
             content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
                 title,
@@ -303,6 +309,44 @@ impl ToSectionNode for ModularMultiplicativeGroup {
             })],
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
+        }
+    }
+}
+
+impl ToTurnMath for ModularAdditiveGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("ℤ/nℤ".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!("ℤ/{}", self.modulus))),
+            }
+        }
+    }
+}
+
+impl ToTurnMath for ModularMultiplicativeGroup {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        let level = self.level();
+
+        // Use abstract notation for L1 groups
+        if level == AbstractionLevel::Level1 {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text("(ℤ/nℤ)*".to_string())),
+            }
+        } else {
+            MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Text(format!("(ℤ/{})×", self.modulus))),
+            }
         }
     }
 }

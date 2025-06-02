@@ -130,7 +130,10 @@ impl GetAbstractionLevel for CyclicGroup {
         let generator_level = self.generator.level(); // L4 for a concrete element
         let order_defined = self.order.is_some();
 
-        if core_level == AbstractionLevel::Level4
+        // If core is L1 and order is None (abstract), stay at L1
+        if core_level == AbstractionLevel::Level1 && !order_defined {
+            AbstractionLevel::Level1
+        } else if core_level == AbstractionLevel::Level4
             && generator_level == AbstractionLevel::Level4
             && order_defined
         {
@@ -260,31 +263,48 @@ impl GetAbstractionLevel for GroupExpression {
 }
 
 // Helper for standard group types that wrap a core and add structural identity.
-// They are at least L2 because they name a specific kind of group structure.
-// If their defining parameters (degree, etc.) and core are L4, they are L4.
+// For L1 abstract definitions, these should remain L1 if they use abstract parameters
 fn level_for_standard_group_wrapper(core_level: AbstractionLevel) -> AbstractionLevel {
     match core_level {
         AbstractionLevel::Level4 => AbstractionLevel::Level4,
         AbstractionLevel::Level3 => AbstractionLevel::Level3, // e.g. SymmetricGroup on an L3 Set
-        _ => AbstractionLevel::Level2, // L1 or L2 core results in an L2 specific group type
+        AbstractionLevel::Level1 => AbstractionLevel::Level1, // L1 core with abstract parameters stays L1
+        _ => AbstractionLevel::Level2, // L2 core results in an L2 specific group type
     }
 }
 
 impl GetAbstractionLevel for SymmetricGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If degree is 0, it represents abstract S_n - stay at L1
+        // If degree is concrete, it becomes L2 (specific symmetric group type)
+        if core_level == AbstractionLevel::Level1 && self.degree == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for DihedralGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If order is 0, it represents abstract D_n - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.order == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for GeneralLinearGroup {
     fn level(&self) -> AbstractionLevel {
-        // If self.field were abstract (e.g. Parametrizable<Field>), its level would also be a factor.
-        // Assuming field is part of what makes self.core what it is.
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If dimension is 0, it represents abstract GL(n,F) - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.dimension == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for SpecialLinearGroup {
@@ -294,7 +314,13 @@ impl GetAbstractionLevel for SpecialLinearGroup {
 } // Defers
 impl GetAbstractionLevel for OrthogonalGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If dimension is 0, it represents abstract O(n) - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.dimension == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for SpecialOrthogonalGroup {
@@ -304,7 +330,13 @@ impl GetAbstractionLevel for SpecialOrthogonalGroup {
 } // Defers
 impl GetAbstractionLevel for UnitaryGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If dimension is 0, it represents abstract U(n) - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.dimension == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for SpecialUnitaryGroup {
@@ -314,22 +346,46 @@ impl GetAbstractionLevel for SpecialUnitaryGroup {
 } // Defers
 impl GetAbstractionLevel for AlternatingGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If degree is 0, it represents abstract A_n - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.degree == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for ModularAdditiveGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If modulus is 0, it represents abstract ℤ/nℤ - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.modulus == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
-} // Z_n set would be L4 via core.level()
+}
 impl GetAbstractionLevel for ModularMultiplicativeGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If modulus is 0, it represents abstract (ℤ/nℤ)* - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.modulus == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for FreeGroup {
     fn level(&self) -> AbstractionLevel {
-        level_for_standard_group_wrapper(self.core.level())
+        let core_level = self.core.level();
+        // If rank is 0, it represents abstract F_n - stay at L1
+        if core_level == AbstractionLevel::Level1 && self.rank == 0 {
+            AbstractionLevel::Level1
+        } else {
+            level_for_standard_group_wrapper(core_level)
+        }
     }
 }
 impl GetAbstractionLevel for TrivialGroup {
@@ -349,12 +405,15 @@ fn level_for_constructor_struct(
             overall_level = comp_level;
         }
     }
-    // If all components (including core) are L4, the specific constructed group is L4.
-    // Otherwise, it's an L3 constructor.
-    if overall_level == AbstractionLevel::Level4 {
-        AbstractionLevel::Level4
+    // **FIXED LOGIC**: If all components (including core) are L1, this is an L1 abstract schema
+    // If all components are L4, this is an L4 concrete construction
+    // Otherwise, it's an L3 constructor with mixed abstraction levels
+    if overall_level == AbstractionLevel::Level1 {
+        AbstractionLevel::Level1 // L1 abstract schemas stay L1
+    } else if overall_level == AbstractionLevel::Level4 {
+        AbstractionLevel::Level4 // L4 concrete constructions stay L4
     } else {
-        AbstractionLevel::Level3
+        AbstractionLevel::Level3 // Mixed or L2/L3 components become L3 constructors
     }
 }
 

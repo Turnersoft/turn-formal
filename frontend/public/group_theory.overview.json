@@ -1,0 +1,394 @@
+{
+  "theory_name": "Group Theory",
+  "content_type": "theory_overview",
+  "version": "1.0.0",
+  "exported_at": "1748703516",
+  "content": [
+    {
+      "id": "group_theory.theory_overview.main",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Group Theory: Mathematical Framework Overview",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": [
+              "group theory",
+              "abstract algebra",
+              "symmetry"
+            ]
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "group_theory.theory_overview.abstract",
+              "title": null,
+              "content": [
+                {
+                  "Paragraph": {
+                    "segments": [
+                      {
+                        "Text": "Welcome to the comprehensive Group Theory framework. This theory encompasses 31 distinct group objects, 0 expressions, 0 relations, and 6 fundamental theorems. Navigate through the organized sections below to explore the complete mathematical landscape of group theory, from basic algebraic structures to advanced constructions."
+                      }
+                    ],
+                    "alignment": null
+                  }
+                }
+              ],
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.navigation.definitions",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "📚 Group Definitions"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Explore 31 group definitions organized by mathematical category:"
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.fundamental",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Fundamental Groups"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "2 basic group structures that establish foundational algebraic properties."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.enriched",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Groups with Additional Structure"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "2 groups enhanced with topological or geometric structure."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.concrete",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Concrete Group Constructions"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "4 groups arising from symmetries and permutations."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.matrix",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Matrix Groups"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "6 groups defined through linear transformations and matrix properties."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.modular",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Modular Arithmetic Groups"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "2 groups based on modular arithmetic and number theory."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.operations",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Group Operations & Constructions"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "6 constructions that build new groups from existing ones."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.subgroups",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Subgroup Constructions"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "6 subgroup constructions that reveal internal structure."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.advanced",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "• Advanced Constructions"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "4 sophisticated group constructions for advanced mathematical analysis."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.theorems",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "🔬 Fundamental Theorems"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Discover 6 fundamental theorems that establish the theoretical foundation of group theory, providing essential insights into group structure and behavior."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              },
+              {
+                "id": "group_theory.navigation.mathematical_framework",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "🌐 Complete Mathematical Framework"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": [
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "This comprehensive framework demonstrates the interconnected nature of group theory, where each mathematical object contributes to a unified understanding of algebraic structure and symmetry."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  },
+                  {
+                    "Paragraph": {
+                      "segments": [
+                        {
+                          "Text": "Use the organized navigation above to explore specific areas of interest, or dive into the complete collection to experience the full scope of group-theoretic mathematics."
+                        }
+                      ],
+                      "alignment": null
+                    }
+                  }
+                ],
+                "metadata": [],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [
+              "group_theory.generic-l1-doc",
+              "group_theory.topological-doc",
+              "group_theory.lie-doc",
+              "group_theory.cyclic-doc",
+              "group_theory.symmetric-doc",
+              "group_theory.dihedral-doc",
+              "group_theory.general_linear-doc",
+              "group_theory.special_linear-doc",
+              "group_theory.orthogonal-doc",
+              "group_theory.special_orthogonal-doc",
+              "group_theory.unitary-doc",
+              "group_theory.special_unitary-doc",
+              "group_theory.alternating-doc",
+              "group_theory.modular_additive-doc",
+              "group_theory.modular_multiplicative-doc",
+              "group_theory.free-doc",
+              "group_theory.trivial-doc",
+              "group_theory.product-doc",
+              "group_theory.quotient-doc",
+              "group_theory.kernel-doc",
+              "group_theory.image-doc",
+              "group_theory.center-doc",
+              "group_theory.generated_subgroup-doc",
+              "group_theory.normalizer-doc",
+              "group_theory.centralizer-doc",
+              "group_theory.commutator_subgroup-doc",
+              "group_theory.sylow_subgroup-doc",
+              "group_theory.wreath_product-doc",
+              "group_theory.central_product-doc",
+              "group_theory.pullback-doc",
+              "group_theory.restriction-doc",
+              "group_theory.inverse_uniqueness-doc",
+              "group_theory.inverse_product_rule-doc",
+              "group_theory.abelian_squared_criterion-doc",
+              "group_theory.lagrange_theorem-doc",
+              "group_theory.example_chaining_theorems-doc",
+              "group_theory.theorem_extraction_example-doc"
+            ],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    }
+  ]
+}
