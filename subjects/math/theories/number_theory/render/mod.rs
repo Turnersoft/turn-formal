@@ -1,6 +1,6 @@
 use crate::turn_render::{
-    MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation, RelationOperatorNode,
-    ToTurnMath, UnaryRelationOperatorNode,
+    IdentifierNode, MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation,
+    RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
 
 use super::NumberTheoryRelation;
@@ -184,10 +184,14 @@ impl ToTurnMath for NumberTheoryRelation {
                     MathNode {
                         id: master_id.clone(),
                         content: Box::new(MathNodeContent::FunctionCall {
-                            name: Box::new(MathNode {
-                                id: format!("{}:func_name", master_id),
-                                content: Box::new(MathNodeContent::Text(name.clone())),
-                            }),
+                            name: IdentifierNode {
+                                body: name.clone(),
+                                pre_script: None,
+                                mid_script: None,
+                                post_script: None,
+                                primes: 0,
+                                is_function: true,
+                            },
                             parameters: parameters
                                 .iter()
                                 .enumerate()

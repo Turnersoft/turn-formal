@@ -15,95 +15,17 @@ impl<T: ToTurnMath> ToTurnMath for Parametrizable<T> {
 impl ToTurnMath for Identifier {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            Identifier::O(o) => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "O".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}_subscript", master_id),
-                        content: Box::new(MathNodeContent::Quantity {
-                            number: o.to_string(),
-                            unit: None,
-                        }),
-                    })),
-                    primes: 0,
-                    is_function: false,
-                }),
-            },
-            Identifier::M(m) => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "M".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}_subscript", master_id),
-                        content: Box::new(MathNodeContent::Quantity {
-                            number: m.to_string(),
-                            unit: None,
-                        }),
-                    })),
-                    primes: 0,
-                    is_function: false,
-                }),
-            },
-            Identifier::E(e) => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "E".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}_subscript", master_id),
-                        content: Box::new(MathNodeContent::Quantity {
-                            number: e.to_string(),
-                            unit: None,
-                        }),
-                    })),
-                    primes: 0,
-                    is_function: false,
-                }),
-            },
-            Identifier::N(n) => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "N".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}_subscript", master_id),
-                        content: Box::new(MathNodeContent::Quantity {
-                            number: n.to_string(),
-                            unit: None,
-                        }),
-                    })),
-                    primes: 0,
-                    is_function: false,
-                }),
-            },
-            Identifier::Name(name, index) => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: name.clone(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: if *index == 0 {
-                        None // No subscript for index 0
-                    } else {
-                        Some(Box::new(MathNode {
-                            id: format!("{}_subscript", master_id),
-                            content: Box::new(MathNodeContent::Quantity {
-                                number: index.to_string(),
-                                unit: None,
-                            }),
-                        }))
-                    },
-                    primes: 0,
-                    is_function: false,
-                }),
-            },
+            Identifier::O(o) => MathNode::identifier(format!("O_{}", o)),
+            Identifier::M(m) => MathNode::identifier(format!("M_{}", m)),
+            Identifier::E(e) => MathNode::identifier(format!("E_{}", e)),
+            Identifier::N(n) => MathNode::identifier(format!("N_{}", n)),
+            Identifier::Name(name, index) => {
+                if *index == 0 {
+                    MathNode::identifier(name.clone())
+                } else {
+                    MathNode::identifier(format!("{}_{}", name, index))
+                }
+            }
         }
     }
 }

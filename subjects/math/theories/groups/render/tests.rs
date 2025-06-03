@@ -5,8 +5,8 @@ mod tests {
     };
     use crate::subjects::math::theories::VariantSet;
     use crate::subjects::math::theories::groups::definitions::{
-        AbelianPropertyVariant, CyclicGroup, FinitePropertyVariant, Group, GroupElement,
-        GenericGroup, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
+        AbelianPropertyVariant, CyclicGroup, FinitePropertyVariant, GenericGroup, Group,
+        GroupElement, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
         GroupOperation, GroupOperationProperty, GroupOperationVariant, GroupProperty, GroupSymbol,
         SymmetricGroup, TopologicalGroup,
     };
@@ -252,7 +252,7 @@ mod tests {
 
         // Extract and print the abstraction metadata levels for debugging
         if let crate::turn_render::section_node::SectionContentNode::StructuredMath(
-            crate::turn_render::section_node::StructuredMathContentNode::Definition {
+            crate::turn_render::section_node::StructuredMathNode::Definition {
                 abstraction_meta: Some(meta),
                 ..
             },
@@ -262,7 +262,7 @@ mod tests {
         }
 
         if let crate::turn_render::section_node::SectionContentNode::StructuredMath(
-            crate::turn_render::section_node::StructuredMathContentNode::Definition {
+            crate::turn_render::section_node::StructuredMathNode::Definition {
                 abstraction_meta: Some(meta),
                 ..
             },
@@ -272,7 +272,7 @@ mod tests {
         }
 
         if let crate::turn_render::section_node::SectionContentNode::StructuredMath(
-            crate::turn_render::section_node::StructuredMathContentNode::Definition {
+            crate::turn_render::section_node::StructuredMathNode::Definition {
                 abstraction_meta: Some(meta),
                 ..
             },
@@ -283,7 +283,7 @@ mod tests {
 
         // Check that abstraction metadata in sections contains the correct levels
         if let crate::turn_render::section_node::SectionContentNode::StructuredMath(
-            crate::turn_render::section_node::StructuredMathContentNode::Definition {
+            crate::turn_render::section_node::StructuredMathNode::Definition {
                 abstraction_meta: Some(meta),
                 ..
             },
@@ -295,7 +295,7 @@ mod tests {
         }
 
         if let crate::turn_render::section_node::SectionContentNode::StructuredMath(
-            crate::turn_render::section_node::StructuredMathContentNode::Definition {
+            crate::turn_render::section_node::StructuredMathNode::Definition {
                 abstraction_meta: Some(meta),
                 ..
             },
@@ -307,7 +307,7 @@ mod tests {
         }
 
         if let crate::turn_render::section_node::SectionContentNode::StructuredMath(
-            crate::turn_render::section_node::StructuredMathContentNode::Definition {
+            crate::turn_render::section_node::StructuredMathNode::Definition {
                 abstraction_meta: Some(meta),
                 ..
             },

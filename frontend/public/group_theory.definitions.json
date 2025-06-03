@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1748840843",
+  "exported_at": "1748925268",
   "content": [
     {
       "id": "group_theory.def.generic_group.generic-l1-doc",
@@ -92,7 +92,7 @@
                           }
                         },
                         {
-                          "MathBlock": {
+                          "MathNode": {
                             "math": {
                               "id": "group_theory.def.generic_group.generic-main-closure",
                               "content": {
@@ -111,16 +111,9 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.def.generic_group.generic-main-closure_a",
+                                                    "id": "group_theory.def.generic_group.generic-main-closure_el_a",
                                                     "content": {
-                                                      "Identifier": {
-                                                        "body": "a",
-                                                        "pre_script": null,
-                                                        "mid_script": null,
-                                                        "post_script": null,
-                                                        "primes": 0,
-                                                        "is_function": false
-                                                      }
+                                                      "Text": "a"
                                                     }
                                                   }
                                                 ],
@@ -143,16 +136,9 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.def.generic_group.generic-main-closure_b",
+                                                    "id": "group_theory.def.generic_group.generic-main-closure_el_b",
                                                     "content": {
-                                                      "Identifier": {
-                                                        "body": "b",
-                                                        "pre_script": null,
-                                                        "mid_script": null,
-                                                        "post_script": null,
-                                                        "primes": 0,
-                                                        "is_function": false
-                                                      }
+                                                      "Text": "b"
                                                     }
                                                   }
                                                 ]
@@ -161,16 +147,9 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.def.generic_group.generic-main-closure_g",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_set_g",
                                           "content": {
-                                            "Identifier": {
-                                              "body": "G",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
+                                            "Text": "G"
                                           }
                                         },
                                         "operator": "ElementOf"
@@ -182,47 +161,28 @@
                                     "content": {
                                       "Relationship": {
                                         "lhs": {
-                                          "id": "group_theory.def.generic_group.generic-main-closure_product",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_ab",
                                           "content": {
-                                            "CustomFunction": {
+                                            "FunctionCall": {
                                               "name": {
-                                                "id": "group_theory.def.generic_group.generic-main-closure_op",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "∘",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
+                                                "body": "∘",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
                                               },
                                               "parameters": [
                                                 {
-                                                  "id": "group_theory.def.generic_group.generic-main-closure_a",
+                                                  "id": "group_theory.def.generic_group.generic-main-closure_el_a",
                                                   "content": {
-                                                    "Identifier": {
-                                                      "body": "a",
-                                                      "pre_script": null,
-                                                      "mid_script": null,
-                                                      "post_script": null,
-                                                      "primes": 0,
-                                                      "is_function": false
-                                                    }
+                                                    "Text": "a"
                                                   }
                                                 },
                                                 {
-                                                  "id": "group_theory.def.generic_group.generic-main-closure_b",
+                                                  "id": "group_theory.def.generic_group.generic-main-closure_el_b",
                                                   "content": {
-                                                    "Identifier": {
-                                                      "body": "b",
-                                                      "pre_script": null,
-                                                      "mid_script": null,
-                                                      "post_script": null,
-                                                      "primes": 0,
-                                                      "is_function": false
-                                                    }
+                                                    "Text": "b"
                                                   }
                                                 }
                                               ]
@@ -230,16 +190,9 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.def.generic_group.generic-main-closure_g",
+                                          "id": "group_theory.def.generic_group.generic-main-closure_set_g",
                                           "content": {
-                                            "Identifier": {
-                                              "body": "G",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
+                                            "Text": "G"
                                           }
                                         },
                                         "operator": "ElementOf"
@@ -254,7 +207,7 @@
                           }
                         },
                         {
-                          "MathBlock": {
+                          "MathNode": {
                             "math": {
                               "id": "group_theory.def.generic_group.generic-main-assoc",
                               "content": {
@@ -273,16 +226,9 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.def.generic_group.generic-main-assoc_a",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_el_a",
                                                     "content": {
-                                                      "Identifier": {
-                                                        "body": "a",
-                                                        "pre_script": null,
-                                                        "mid_script": null,
-                                                        "post_script": null,
-                                                        "primes": 0,
-                                                        "is_function": false
-                                                      }
+                                                      "Text": "a"
                                                     }
                                                   }
                                                 ],
@@ -298,16 +244,9 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.def.generic_group.generic-main-assoc_b",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_el_b",
                                                     "content": {
-                                                      "Identifier": {
-                                                        "body": "b",
-                                                        "pre_script": null,
-                                                        "mid_script": null,
-                                                        "post_script": null,
-                                                        "primes": 0,
-                                                        "is_function": false
-                                                      }
+                                                      "Text": "b"
                                                     }
                                                   }
                                                 ],
@@ -323,16 +262,9 @@
                                                 [
                                                   "None",
                                                   {
-                                                    "id": "group_theory.def.generic_group.generic-main-assoc_c",
+                                                    "id": "group_theory.def.generic_group.generic-main-assoc_el_c",
                                                     "content": {
-                                                      "Identifier": {
-                                                        "body": "c",
-                                                        "pre_script": null,
-                                                        "mid_script": null,
-                                                        "post_script": null,
-                                                        "primes": 0,
-                                                        "is_function": false
-                                                      }
+                                                      "Text": "c"
                                                     }
                                                   }
                                                 ]
@@ -341,16 +273,9 @@
                                           }
                                         },
                                         "rhs": {
-                                          "id": "group_theory.def.generic_group.generic-main-assoc_g",
+                                          "id": "group_theory.def.generic_group.generic-main-assoc_set_g",
                                           "content": {
-                                            "Identifier": {
-                                              "body": "G",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
+                                            "Text": "G"
                                           }
                                         },
                                         "operator": "ElementOf"
@@ -364,167 +289,13 @@
                                         "lhs": {
                                           "id": "group_theory.def.generic_group.generic-main-assoc_left",
                                           "content": {
-                                            "CustomFunction": {
-                                              "name": {
-                                                "id": "group_theory.def.generic_group.generic-main-assoc_op2",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "∘",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "parameters": [
-                                                {
-                                                  "id": "group_theory.def.generic_group.generic-main-assoc_ab",
-                                                  "content": {
-                                                    "CustomFunction": {
-                                                      "name": {
-                                                        "id": "group_theory.def.generic_group.generic-main-assoc_op1",
-                                                        "content": {
-                                                          "Identifier": {
-                                                            "body": "∘",
-                                                            "pre_script": null,
-                                                            "mid_script": null,
-                                                            "post_script": null,
-                                                            "primes": 0,
-                                                            "is_function": false
-                                                          }
-                                                        }
-                                                      },
-                                                      "parameters": [
-                                                        {
-                                                          "id": "group_theory.def.generic_group.generic-main-assoc_a",
-                                                          "content": {
-                                                            "Identifier": {
-                                                              "body": "a",
-                                                              "pre_script": null,
-                                                              "mid_script": null,
-                                                              "post_script": null,
-                                                              "primes": 0,
-                                                              "is_function": false
-                                                            }
-                                                          }
-                                                        },
-                                                        {
-                                                          "id": "group_theory.def.generic_group.generic-main-assoc_b",
-                                                          "content": {
-                                                            "Identifier": {
-                                                              "body": "b",
-                                                              "pre_script": null,
-                                                              "mid_script": null,
-                                                              "post_script": null,
-                                                              "primes": 0,
-                                                              "is_function": false
-                                                            }
-                                                          }
-                                                        }
-                                                      ]
-                                                    }
-                                                  }
-                                                },
-                                                {
-                                                  "id": "group_theory.def.generic_group.generic-main-assoc_c",
-                                                  "content": {
-                                                    "Identifier": {
-                                                      "body": "c",
-                                                      "pre_script": null,
-                                                      "mid_script": null,
-                                                      "post_script": null,
-                                                      "primes": 0,
-                                                      "is_function": false
-                                                    }
-                                                  }
-                                                }
-                                              ]
-                                            }
+                                            "Text": "(a ∘ b) ∘ c"
                                           }
                                         },
                                         "rhs": {
                                           "id": "group_theory.def.generic_group.generic-main-assoc_right",
                                           "content": {
-                                            "CustomFunction": {
-                                              "name": {
-                                                "id": "group_theory.def.generic_group.generic-main-assoc_op4",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "∘",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "parameters": [
-                                                {
-                                                  "id": "group_theory.def.generic_group.generic-main-assoc_a",
-                                                  "content": {
-                                                    "Identifier": {
-                                                      "body": "a",
-                                                      "pre_script": null,
-                                                      "mid_script": null,
-                                                      "post_script": null,
-                                                      "primes": 0,
-                                                      "is_function": false
-                                                    }
-                                                  }
-                                                },
-                                                {
-                                                  "id": "group_theory.def.generic_group.generic-main-assoc_bc",
-                                                  "content": {
-                                                    "CustomFunction": {
-                                                      "name": {
-                                                        "id": "group_theory.def.generic_group.generic-main-assoc_op3",
-                                                        "content": {
-                                                          "Identifier": {
-                                                            "body": "∘",
-                                                            "pre_script": null,
-                                                            "mid_script": null,
-                                                            "post_script": null,
-                                                            "primes": 0,
-                                                            "is_function": false
-                                                          }
-                                                        }
-                                                      },
-                                                      "parameters": [
-                                                        {
-                                                          "id": "group_theory.def.generic_group.generic-main-assoc_b",
-                                                          "content": {
-                                                            "Identifier": {
-                                                              "body": "b",
-                                                              "pre_script": null,
-                                                              "mid_script": null,
-                                                              "post_script": null,
-                                                              "primes": 0,
-                                                              "is_function": false
-                                                            }
-                                                          }
-                                                        },
-                                                        {
-                                                          "id": "group_theory.def.generic_group.generic-main-assoc_c",
-                                                          "content": {
-                                                            "Identifier": {
-                                                              "body": "c",
-                                                              "pre_script": null,
-                                                              "mid_script": null,
-                                                              "post_script": null,
-                                                              "primes": 0,
-                                                              "is_function": false
-                                                            }
-                                                          }
-                                                        }
-                                                      ]
-                                                    }
-                                                  }
-                                                }
-                                              ]
-                                            }
+                                            "Text": "a ∘ (b ∘ c)"
                                           }
                                         },
                                         "operator": "Equal"
@@ -539,7 +310,7 @@
                           }
                         },
                         {
-                          "MathBlock": {
+                          "MathNode": {
                             "math": {
                               "id": "group_theory.def.generic_group.generic-main-identity",
                               "content": {
@@ -551,7 +322,7 @@
                           }
                         },
                         {
-                          "MathBlock": {
+                          "MathNode": {
                             "math": {
                               "id": "group_theory.def.generic_group.generic-main-inverse",
                               "content": {
@@ -1471,19 +1242,7 @@
                       "Math": {
                         "id": "group_theory.def.symmetric_group.symmetric-main-title-math",
                         "content": {
-                          "Identifier": {
-                            "body": "S",
-                            "pre_script": null,
-                            "mid_script": null,
-                            "post_script": {
-                              "id": "group_theory.def.symmetric_group.symmetric-main-title-math-subscript",
-                              "content": {
-                                "Text": "n"
-                              }
-                            },
-                            "primes": 0,
-                            "is_function": false
-                          }
+                          "Text": "S_n"
                         }
                       }
                     }
@@ -1502,22 +1261,7 @@
                         "formal_term": {
                           "id": "group_theory.def.symmetric_group.symmetric-main-formalTerm",
                           "content": {
-                            "Identifier": {
-                              "body": "S",
-                              "pre_script": null,
-                              "mid_script": null,
-                              "post_script": {
-                                "id": "group_theory.def.symmetric_group.symmetric-main-formalTerm_subscript",
-                                "content": {
-                                  "Quantity": {
-                                    "number": "0",
-                                    "unit": null
-                                  }
-                                }
-                              },
-                              "primes": 0,
-                              "is_function": false
-                            }
+                            "Text": "S_0"
                           }
                         },
                         "label": "Definition (Symmetric Group [Math])",
@@ -1688,19 +1432,7 @@
                       "Math": {
                         "id": "group_theory.def.dihedral_group.dihedral-main-title-math",
                         "content": {
-                          "Identifier": {
-                            "body": "D",
-                            "pre_script": null,
-                            "mid_script": null,
-                            "post_script": {
-                              "id": "group_theory.def.dihedral_group.dihedral-main-title-math-subscript",
-                              "content": {
-                                "Text": "n"
-                              }
-                            },
-                            "primes": 0,
-                            "is_function": false
-                          }
+                          "Text": "D_n"
                         }
                       }
                     }
@@ -1719,22 +1451,7 @@
                         "formal_term": {
                           "id": "group_theory.def.dihedral_group.dihedral-main-formalTerm",
                           "content": {
-                            "Identifier": {
-                              "body": "D",
-                              "pre_script": null,
-                              "mid_script": null,
-                              "post_script": {
-                                "id": "group_theory.def.dihedral_group.dihedral-main-formalTerm_subscript",
-                                "content": {
-                                  "Quantity": {
-                                    "number": "0",
-                                    "unit": null
-                                  }
-                                }
-                              },
-                              "primes": 0,
-                              "is_function": false
-                            }
+                            "Text": "D_0"
                           }
                         },
                         "label": "Definition (Dihedral Group [Math])",
@@ -2573,10 +2290,15 @@
                             "pre_script": null,
                             "mid_script": null,
                             "post_script": {
-                              "id": "group_theory.def.alternating_group.alternating-main-title-math-subscript",
-                              "content": {
-                                "Text": "n"
-                              }
+                              "subscripts": [
+                                {
+                                  "id": "group_theory.def.alternating_group.alternating-main-title-math-subscript",
+                                  "content": {
+                                    "String": "n"
+                                  }
+                                }
+                              ],
+                              "superscripts": []
                             },
                             "primes": 0,
                             "is_function": false
@@ -2604,13 +2326,15 @@
                               "pre_script": null,
                               "mid_script": null,
                               "post_script": {
-                                "id": "group_theory.def.alternating_group.alternating-main-formalTerm_subscript",
-                                "content": {
-                                  "Quantity": {
-                                    "number": "0",
-                                    "unit": null
+                                "subscripts": [
+                                  {
+                                    "id": "group_theory.def.alternating_group.alternating-main-formalTerm_subscript",
+                                    "content": {
+                                      "String": "0"
+                                    }
                                   }
-                                }
+                                ],
+                                "superscripts": []
                               },
                               "primes": 0,
                               "is_function": false
@@ -3290,14 +3014,7 @@
                         "formal_term": {
                           "id": "group_theory.def.product_group.product-main-formalTerm",
                           "content": {
-                            "Identifier": {
-                              "body": "∅",
-                              "pre_script": null,
-                              "mid_script": null,
-                              "post_script": null,
-                              "primes": 0,
-                              "is_function": false
-                            }
+                            "Text": "∅"
                           }
                         },
                         "label": "Definition (Product Group [Math])",

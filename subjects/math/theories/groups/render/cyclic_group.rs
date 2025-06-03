@@ -9,7 +9,7 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 impl ToTurnMath for CyclicGroup {
@@ -27,19 +27,16 @@ impl ToTurnMath for CyclicGroup {
         // For finite cyclic group (Z_n), add order information
         let final_content = if let Some(order) = self.order {
             // Use proper mathematical notation C_n with subscript for finite cyclic groups
-            Box::new(MathNodeContent::Identifier {
-                body: "C".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: Some(Box::new(MathNode {
+            Box::new(MathNodeContent::Power {
+                base: Box::new(MathNode::identifier("C".to_string())),
+                exponent: Box::new(MathNode {
                     id: format!("{}_order", master_id),
                     content: Box::new(MathNodeContent::Quantity {
                         number: order.to_string(),
+                        scientific_notation: None,
                         unit: None,
                     }),
-                })),
-                primes: 0,
-                is_function: false,
+                }),
             })
         } else {
             Box::new(content)
@@ -223,7 +220,7 @@ impl ToSectionNode for CyclicGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),

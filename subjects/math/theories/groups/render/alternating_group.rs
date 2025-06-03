@@ -7,28 +7,29 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
+use crate::turn_render::{IdentifierNode, ScriptNode};
 
 impl ToTurnMath for AlternatingGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         // Use proper mathematical notation A_n with subscript
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier {
+            content: Box::new(MathNodeContent::Identifier(IdentifierNode {
                 body: "A".to_string(),
                 pre_script: None,
                 mid_script: None,
-                post_script: Some(Box::new(MathNode {
-                    id: format!("{}_subscript", master_id),
-                    content: Box::new(MathNodeContent::Quantity {
-                        number: self.degree.to_string(),
-                        unit: None,
-                    }),
-                })),
+                post_script: Some(ScriptNode {
+                    subscripts: vec![MathNode {
+                        id: format!("{}_subscript", master_id),
+                        content: Box::new(MathNodeContent::String(self.degree.to_string())),
+                    }],
+                    superscripts: vec![],
+                }),
                 primes: 0,
                 is_function: false,
-            }),
+            })),
         }
     }
 }
@@ -42,17 +43,20 @@ impl ToSectionNode for AlternatingGroup {
             RichTextSegment::Text("Alternating Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
                     body: "A".to_string(),
                     pre_script: None,
                     mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}-title-math-subscript", id_prefix),
-                        content: Box::new(MathNodeContent::Text("n".to_string())),
-                    })),
+                    post_script: Some(ScriptNode {
+                        subscripts: vec![MathNode {
+                            id: format!("{}-title-math-subscript", id_prefix),
+                            content: Box::new(MathNodeContent::String("n".to_string())),
+                        }],
+                        superscripts: vec![],
+                    }),
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             }),
         ];
 
@@ -259,7 +263,7 @@ impl ToSectionNode for AlternatingGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title_text.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),

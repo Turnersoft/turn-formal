@@ -7,29 +7,16 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 impl ToTurnMath for DihedralGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        // Use proper mathematical notation D_n with subscript
+        // Use proper mathematical notation D_n
         let n = self.order / 2; // Dihedral group D_n has order 2n
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "D".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: Some(Box::new(MathNode {
-                    id: format!("{}_subscript", master_id),
-                    content: Box::new(MathNodeContent::Quantity {
-                        number: n.to_string(),
-                        unit: None,
-                    }),
-                })),
-                primes: 0,
-                is_function: false,
-            }),
+            content: Box::new(MathNodeContent::Text(format!("D_{}", n))),
         }
     }
 }
@@ -43,17 +30,7 @@ impl ToSectionNode for DihedralGroup {
             RichTextSegment::Text("Dihedral Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "D".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}-title-math-subscript", id_prefix),
-                        content: Box::new(MathNodeContent::Text("n".to_string())),
-                    })),
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Text("D_n".to_string())),
             }),
         ];
 
@@ -207,7 +184,7 @@ impl ToSectionNode for DihedralGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title_text.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),

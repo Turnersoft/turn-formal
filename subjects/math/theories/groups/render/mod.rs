@@ -16,7 +16,7 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
     PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    SelectableProperty, StructuredMathContentNode, TheoremLikeKind, ToSectionNode,
+    SelectableProperty, StructuredMathNode, TheoremLikeKind, ToSectionNode,
 };
 
 //--- Imports from this crate (subjects) ---
@@ -282,12 +282,28 @@ impl ToTurnMath for GroupExpression {
             },
             GroupExpression::Inverse { group, element } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::UnaryPrefixOperation {
-                    parameter: Box::new(MathNode {
+                content: Box::new(MathNodeContent::Power {
+                    base: Box::new(MathNode {
                         id: format!("{}-operand", master_id),
                         content: Box::new(MathNodeContent::Text("g".to_string())),
                     }),
-                    operator: "^{-1}".to_string(),
+                    exponent: Box::new(MathNode {
+                        id: format!("{}_inverse_exp", master_id),
+                        content: Box::new(MathNodeContent::UnaryPrefixOperation {
+                            parameter: Box::new(MathNode {
+                                id: format!("{}_one", master_id),
+                                content: Box::new(MathNodeContent::Quantity {
+                                    number: "1".to_string(),
+                                    scientific_notation: None,
+                                    unit: None,
+                                }),
+                            }),
+                            operator: Box::new(MathNode {
+                                id: format!("{}_minus_op", master_id),
+                                content: Box::new(MathNodeContent::String("−".to_string())),
+                            }),
+                        }),
+                    }),
                 }),
             },
             _ => MathNode {

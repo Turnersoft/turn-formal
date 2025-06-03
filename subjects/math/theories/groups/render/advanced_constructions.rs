@@ -6,7 +6,7 @@ use crate::turn_render::math_node::{
 };
 use crate::turn_render::section_node::{
     AbstractionMetadata, LinkTarget, ParagraphNode, RichTextSegment, Section, SectionContentNode,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -48,7 +48,7 @@ impl ToSectionNode for WreathProductGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
@@ -192,7 +192,7 @@ impl ToSectionNode for CentralProductGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
@@ -340,7 +340,7 @@ impl ToSectionNode for PullbackGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
@@ -483,7 +483,7 @@ impl ToSectionNode for RestrictionGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),

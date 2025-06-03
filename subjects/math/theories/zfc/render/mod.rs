@@ -2,7 +2,7 @@ use crate::turn_render::math_node::{MathNode, MathNodeContent};
 use crate::turn_render::section_node::{
     AbstractionMetadata, CompletenessLevel, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, ParagraphNode,
-    RichTextSegment, Section, SectionContentNode, SelectableProperty, StructuredMathContentNode,
+    RichTextSegment, Section, SectionContentNode, SelectableProperty, StructuredMathNode,
     ToSectionNode, WikiPageContent,
 };
 
@@ -120,7 +120,7 @@ impl ToSectionNode for Set {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title_text.clone())],
                     formal_term: None,
                     label: Some(format!("Definition ({})", title_text)),

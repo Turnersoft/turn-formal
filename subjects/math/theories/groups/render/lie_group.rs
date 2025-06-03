@@ -7,7 +7,7 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 impl ToTurnMath for LieGroup {
@@ -196,7 +196,7 @@ impl ToSectionNode for LieGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),

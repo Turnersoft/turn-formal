@@ -8,71 +8,33 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 impl ToTurnMath for ProductGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        let components_count = self.components.len();
-        // Use proper mathematical notation G₁ × G₂ × ... × Gₙ with subscripts
-        if components_count == 0 {
+        if self.components.is_empty() {
             return MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "∅".to_string(), // Empty set
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::Text("∅".to_string())),
             };
         }
 
-        // Create terms for G₁ × G₂ × ...
-        let mut terms = Vec::new();
-        for (i, _component) in self.components.iter().enumerate() {
-            let g_node = MathNode {
-                id: format!("{}_group_{}", master_id, i),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "G".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: Some(Box::new(MathNode {
-                        id: format!("{}_group_{}_subscript", master_id, i),
-                        content: Box::new(MathNodeContent::Quantity {
-                            number: (i + 1).to_string(),
-                            unit: None,
-                        }),
-                    })),
-                    primes: 0,
-                    is_function: false,
-                }),
+        if self.components.len() == 1 {
+            return MathNode {
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::Text("G_1".to_string())),
             };
-
-            if i == 0 {
-                terms.push((RefinedMulOrDivOperation::None, g_node));
-            } else {
-                // Add × symbol between groups
-                let times_symbol = MathNode {
-                    id: format!("{}_times_{}", master_id, i),
-                    content: Box::new(MathNodeContent::Identifier {
-                        body: "×".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    }),
-                };
-                terms.push((RefinedMulOrDivOperation::None, times_symbol));
-                terms.push((RefinedMulOrDivOperation::None, g_node));
-            }
         }
+
+        // For multiple groups, create a product notation like G₁ × G₂ × ...
+        let group_names: Vec<String> = (0..self.components.len())
+            .map(|i| format!("G_{}", i + 1))
+            .collect();
 
         MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Multiplications { terms }),
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Text(group_names.join(" × "))),
         }
     }
 }
@@ -217,7 +179,7 @@ impl ToSectionNode for ProductGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title_text.clone())],
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),

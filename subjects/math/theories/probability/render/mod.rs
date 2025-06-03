@@ -14,7 +14,7 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
     PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    SelectableProperty, StructuredMathContentNode, TheoremLikeKind, ToSectionNode,
+    SelectableProperty, StructuredMathNode, TheoremLikeKind, ToSectionNode,
 };
 
 //--- Imports from this crate (subjects) ---
@@ -462,7 +462,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                                     alignment: None,
                                 }),
                                 SectionContentNode::StructuredMath(
-                                    StructuredMathContentNode::Definition {
+                                    StructuredMathNode::Definition {
                                         term_display: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
                                         formal_term: None,
                                         label: Some("Fundamental probability concepts".to_string()),
@@ -490,7 +490,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                                     alignment: None,
                                 }),
                                 SectionContentNode::StructuredMath(
-                                    StructuredMathContentNode::Definition {
+                                    StructuredMathNode::Definition {
                                         term_display: vec![RichTextSegment::Text("Continuous Probability".to_string())],
                                         formal_term: None,
                                         label: Some("Continuous probability theory".to_string()),
@@ -518,7 +518,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                                     alignment: None,
                                 }),
                                 SectionContentNode::StructuredMath(
-                                    StructuredMathContentNode::Definition {
+                                    StructuredMathNode::Definition {
                                         term_display: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
                                         formal_term: None,
                                         label: Some("Stochastic processes and Markov chains".to_string()),

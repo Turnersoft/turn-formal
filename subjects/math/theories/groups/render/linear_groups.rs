@@ -8,7 +8,7 @@ use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
     PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -57,7 +57,7 @@ impl ToSectionNode for GeneralLinearGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
@@ -271,7 +271,7 @@ impl ToSectionNode for SpecialLinearGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(
                         self.general_linear
@@ -476,7 +476,7 @@ impl ToSectionNode for OrthogonalGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
@@ -653,7 +653,7 @@ impl ToSectionNode for SpecialOrthogonalGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(
                         self.orthogonal
@@ -842,7 +842,7 @@ impl ToSectionNode for UnitaryGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
@@ -1015,7 +1015,7 @@ impl ToSectionNode for SpecialUnitaryGroup {
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
-                StructuredMathContentNode::Definition {
+                StructuredMathNode::Definition {
                     term_display: vec![RichTextSegment::Text(title.clone())],
                     formal_term: Some(
                         self.unitary

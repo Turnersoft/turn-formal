@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1748840843",
+  "exported_at": "1748925268",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -40,57 +40,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.weak_law_of_large_numbers-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.weak_law_of_large_numbers-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.weak_law_of_large_numbers-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -112,16 +65,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.weak_law_of_large_numbers",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: converges_in_probability",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.weak_law_of_large_numbers-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? converges_in_probability",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -133,57 +92,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.weak_law_of_large_numbers-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.weak_law_of_large_numbers-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.weak_law_of_large_numbers-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -250,57 +162,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges almost surely to the population mean."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.strong_law_of_large_numbers-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.strong_law_of_large_numbers-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.strong_law_of_large_numbers-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -322,16 +187,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.strong_law_of_large_numbers",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: converges_almost_surely",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.strong_law_of_large_numbers-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? converges_almost_surely",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -343,57 +214,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges almost surely to the population mean."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.strong_law_of_large_numbers-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.strong_law_of_large_numbers-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.strong_law_of_large_numbers-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -460,57 +284,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For independent identically distributed random variables with finite second moment, the standardized sum converges in distribution to a standard normal distribution."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.central_limit_theorem-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.central_limit_theorem-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.central_limit_theorem-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -532,16 +309,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.central_limit_theorem",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: converges_in_distribution",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.central_limit_theorem-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? converges_in_distribution",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -553,57 +336,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For independent identically distributed random variables with finite second moment, the standardized sum converges in distribution to a standard normal distribution."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.central_limit_theorem-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.central_limit_theorem-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.central_limit_theorem-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -670,50 +406,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Mathematical equation: "
+                        "Text": "For events A and B with P(B) > 0, P(A|B) = P(B|A)P(A)/P(B)."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.bayes_theorem-abstract",
-                      "content": {
-                        "Relationship": {
-                          "lhs": {
-                            "id": "probability.bayes_theorem-abstract_left",
-                            "content": {
-                              "Identifier": {
-                                "body": "a",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
-                            }
-                          },
-                          "rhs": {
-                            "id": "probability.bayes_theorem-abstract_right",
-                            "content": {
-                              "Identifier": {
-                                "body": "b",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
-                            }
-                          },
-                          "operator": "Equal"
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -735,26 +431,43 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.bayes_theorem",
                         "statement": {
-                          "Equality": {
-                            "left": {
-                              "Variable": {
-                                "name": "P(A|B)",
-                                "subscript": "1",
-                                "superscript": null
+                          "Mathematical": {
+                            "id": "probability.bayes_theorem-main-statement",
+                            "content": {
+                              "Relationship": {
+                                "lhs": {
+                                  "id": "P(A|B)",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "P(A|B)",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "rhs": {
+                                  "id": "P(B|A)P(A)/P(B)",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "P(B|A)P(A)/P(B)",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "operator": "Equal"
                               }
-                            },
-                            "right": {
-                              "Variable": {
-                                "name": "P(B|A)P(A)/P(B)",
-                                "subscript": "2",
-                                "superscript": null
-                              }
-                            },
-                            "justification": null
+                            }
                           }
                         },
                         "proof": null,
@@ -766,50 +479,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Mathematical equation: "
+                          "Text": "For events A and B with P(B) > 0, P(A|B) = P(B|A)P(A)/P(B)."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.bayes_theorem-main",
-                        "content": {
-                          "Relationship": {
-                            "lhs": {
-                              "id": "probability.bayes_theorem-main_left",
-                              "content": {
-                                "Identifier": {
-                                  "body": "a",
-                                  "pre_script": null,
-                                  "mid_script": null,
-                                  "post_script": null,
-                                  "primes": 0,
-                                  "is_function": false
-                                }
-                              }
-                            },
-                            "rhs": {
-                              "id": "probability.bayes_theorem-main_right",
-                              "content": {
-                                "Identifier": {
-                                  "body": "b",
-                                  "pre_script": null,
-                                  "mid_script": null,
-                                  "post_script": null,
-                                  "primes": 0,
-                                  "is_function": false
-                                }
-                              }
-                            },
-                            "operator": "Equal"
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -876,50 +549,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Mathematical equation: "
+                        "Text": "For a partition of the sample space {B_i}, P(A) = Σ P(A|B_i)P(B_i)."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.law_of_total_probability-abstract",
-                      "content": {
-                        "Relationship": {
-                          "lhs": {
-                            "id": "probability.law_of_total_probability-abstract_left",
-                            "content": {
-                              "Identifier": {
-                                "body": "a",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
-                            }
-                          },
-                          "rhs": {
-                            "id": "probability.law_of_total_probability-abstract_right",
-                            "content": {
-                              "Identifier": {
-                                "body": "b",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
-                            }
-                          },
-                          "operator": "Equal"
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -941,26 +574,43 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.law_of_total_probability",
                         "statement": {
-                          "Equality": {
-                            "left": {
-                              "Variable": {
-                                "name": "P(A)",
-                                "subscript": "1",
-                                "superscript": null
+                          "Mathematical": {
+                            "id": "probability.law_of_total_probability-main-statement",
+                            "content": {
+                              "Relationship": {
+                                "lhs": {
+                                  "id": "P(A)",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "P(A)",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "rhs": {
+                                  "id": "Σ P(A|B_i)P(B_i)",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "Σ P(A|B_i)P(B_i)",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "operator": "Equal"
                               }
-                            },
-                            "right": {
-                              "Variable": {
-                                "name": "Σ P(A|B_i)P(B_i)",
-                                "subscript": "2",
-                                "superscript": null
-                              }
-                            },
-                            "justification": null
+                            }
                           }
                         },
                         "proof": null,
@@ -972,50 +622,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Mathematical equation: "
+                          "Text": "For a partition of the sample space {B_i}, P(A) = Σ P(A|B_i)P(B_i)."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.law_of_total_probability-main",
-                        "content": {
-                          "Relationship": {
-                            "lhs": {
-                              "id": "probability.law_of_total_probability-main_left",
-                              "content": {
-                                "Identifier": {
-                                  "body": "a",
-                                  "pre_script": null,
-                                  "mid_script": null,
-                                  "post_script": null,
-                                  "primes": 0,
-                                  "is_function": false
-                                }
-                              }
-                            },
-                            "rhs": {
-                              "id": "probability.law_of_total_probability-main_right",
-                              "content": {
-                                "Identifier": {
-                                  "body": "b",
-                                  "pre_script": null,
-                                  "mid_script": null,
-                                  "post_script": null,
-                                  "primes": 0,
-                                  "is_function": false
-                                }
-                              }
-                            },
-                            "operator": "Equal"
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -1082,57 +692,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For a random variable X with finite variance σ², P(|X - μ| ≥ kσ) ≤ 1/k²."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.chebyshev_inequality-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.chebyshev_inequality-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.chebyshev_inequality-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -1154,16 +717,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.chebyshev_inequality",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: probability_bound",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.chebyshev_inequality-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? probability_bound",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -1175,57 +744,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For a random variable X with finite variance σ², P(|X - μ| ≥ kσ) ≤ 1/k²."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.chebyshev_inequality-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.chebyshev_inequality-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.chebyshev_inequality-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -1292,57 +814,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For a non-negative random variable X with finite expectation, P(X ≥ a) ≤ E[X]/a."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.markov_inequality-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.markov_inequality-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.markov_inequality-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -1364,16 +839,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.markov_inequality",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: probability_bound",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.markov_inequality-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? probability_bound",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -1385,57 +866,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For a non-negative random variable X with finite expectation, P(X ≥ a) ≤ E[X]/a."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.markov_inequality-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.markov_inequality-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.markov_inequality-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -1502,57 +936,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For a convex function φ and integrable random variable X, φ(E[X]) ≤ E[φ(X)]."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.jensen_inequality-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.jensen_inequality-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.jensen_inequality-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -1574,16 +961,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.jensen_inequality",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: inequality",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.jensen_inequality-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? inequality",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -1595,57 +988,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For a convex function φ and integrable random variable X, φ(E[X]) ≤ E[φ(X)]."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.jensen_inequality-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.jensen_inequality-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.jensen_inequality-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -1712,50 +1058,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Set membership: "
+                        "Text": "A martingale bounded in L¹ converges almost surely."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.martingale_convergence-abstract",
-                      "content": {
-                        "Relationship": {
-                          "lhs": {
-                            "id": "probability.martingale_convergence-abstract_x",
-                            "content": {
-                              "Identifier": {
-                                "body": "x",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
-                            }
-                          },
-                          "rhs": {
-                            "id": "probability.martingale_convergence-abstract_s",
-                            "content": {
-                              "Identifier": {
-                                "body": "S",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
-                            }
-                          },
-                          "operator": "ElementOf"
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -1777,16 +1083,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.martingale_convergence",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: converges_almost_surely",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.martingale_convergence-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? converges_almost_surely",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -1798,50 +1110,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Set membership: "
+                          "Text": "A martingale bounded in L¹ converges almost surely."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.martingale_convergence-main",
-                        "content": {
-                          "Relationship": {
-                            "lhs": {
-                              "id": "probability.martingale_convergence-main_x",
-                              "content": {
-                                "Identifier": {
-                                  "body": "x",
-                                  "pre_script": null,
-                                  "mid_script": null,
-                                  "post_script": null,
-                                  "primes": 0,
-                                  "is_function": false
-                                }
-                              }
-                            },
-                            "rhs": {
-                              "id": "probability.martingale_convergence-main_s",
-                              "content": {
-                                "Identifier": {
-                                  "body": "S",
-                                  "pre_script": null,
-                                  "mid_script": null,
-                                  "post_script": null,
-                                  "primes": 0,
-                                  "is_function": false
-                                }
-                              }
-                            },
-                            "operator": "ElementOf"
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -1908,57 +1180,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For a martingale and stopping time satisfying integrability conditions, E[X_τ] = E[X_0]."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.optional_stopping-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.optional_stopping-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.optional_stopping-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -1980,26 +1205,43 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.optional_stopping",
                         "statement": {
-                          "Equality": {
-                            "left": {
-                              "Variable": {
-                                "name": "E[X_τ]",
-                                "subscript": "1",
-                                "superscript": null
+                          "Mathematical": {
+                            "id": "probability.optional_stopping-main-statement",
+                            "content": {
+                              "Relationship": {
+                                "lhs": {
+                                  "id": "E[X_τ]",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "E[X_τ]",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "rhs": {
+                                  "id": "E[X_0]",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "E[X_0]",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "operator": "Equal"
                               }
-                            },
-                            "right": {
-                              "Variable": {
-                                "name": "E[X_0]",
-                                "subscript": "2",
-                                "superscript": null
-                              }
-                            },
-                            "justification": null
+                            }
                           }
                         },
                         "proof": null,
@@ -2011,57 +1253,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For a martingale and stopping time satisfying integrability conditions, E[X_τ] = E[X_0]."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.optional_stopping-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.optional_stopping-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.optional_stopping-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -2128,57 +1323,10 @@
                   "Paragraph": {
                     "segments": [
                       {
-                        "Text": "Product operation: "
+                        "Text": "For independent random variables, the series Σ X_n converges almost surely if and only if three associated series converge."
                       }
                     ],
                     "alignment": null
-                  }
-                },
-                {
-                  "MathBlock": {
-                    "math": {
-                      "id": "probability.kolmogorov_three_series-abstract",
-                      "content": {
-                        "Multiplications": {
-                          "terms": [
-                            [
-                              "None",
-                              {
-                                "id": "probability.kolmogorov_three_series-abstract_left",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "a",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ],
-                            [
-                              "None",
-                              {
-                                "id": "probability.kolmogorov_three_series-abstract_right",
-                                "content": {
-                                  "Identifier": {
-                                    "body": "b",
-                                    "pre_script": null,
-                                    "mid_script": null,
-                                    "post_script": null,
-                                    "primes": 0,
-                                    "is_function": false
-                                  }
-                                }
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    },
-                    "label": null,
-                    "caption": null
                   }
                 }
               ],
@@ -2200,16 +1348,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.kolmogorov_three_series",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: series_convergence_equivalence",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.kolmogorov_three_series-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? series_convergence_equivalence",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,
@@ -2221,57 +1375,10 @@
                     "Paragraph": {
                       "segments": [
                         {
-                          "Text": "Product operation: "
+                          "Text": "For independent random variables, the series Σ X_n converges almost surely if and only if three associated series converge."
                         }
                       ],
                       "alignment": null
-                    }
-                  },
-                  {
-                    "MathBlock": {
-                      "math": {
-                        "id": "probability.kolmogorov_three_series-main",
-                        "content": {
-                          "Multiplications": {
-                            "terms": [
-                              [
-                                "None",
-                                {
-                                  "id": "probability.kolmogorov_three_series-main_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "a",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ],
-                              [
-                                "None",
-                                {
-                                  "id": "probability.kolmogorov_three_series-main_right",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "b",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                }
-                              ]
-                            ]
-                          }
-                        }
-                      },
-                      "label": null,
-                      "caption": null
                     }
                   }
                 ],
@@ -2363,16 +1470,22 @@
                 "content": [
                   {
                     "StructuredMath": {
-                      "StructuredTheoremLike": {
+                      "TheoremLike": {
                         "kind": "Theorem",
                         "label": "probability.glivenko_cantelli",
                         "statement": {
-                          "Todo": {
-                            "description": "Todo relation: uniform_convergence",
-                            "context": [
-                              "expression",
-                              "expression"
-                            ]
+                          "Mathematical": {
+                            "id": "probability.glivenko_cantelli-main-statement",
+                            "content": {
+                              "Identifier": {
+                                "body": "? uniform_convergence",
+                                "pre_script": null,
+                                "mid_script": null,
+                                "post_script": null,
+                                "primes": 0,
+                                "is_function": false
+                              }
+                            }
                           }
                         },
                         "proof": null,

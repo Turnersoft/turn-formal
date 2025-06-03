@@ -59,7 +59,7 @@ export const MathPage: React.FC = () => {
     console.log('🎯 handleNavigationTarget called with target:', target);
     console.log('🔍 Target type:', target.type, 'Target theory:', target.theory);
     
-    setLoading(true);
+      setLoading(true);
     setError(null);
     
     try {
@@ -128,9 +128,9 @@ export const MathPage: React.FC = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load content');
     } finally {
-      setLoading(false);
-    }
-  };
+        setLoading(false);
+      }
+    };
 
   const loadFileData = async () => {
     if (!selectedFile) {
@@ -293,7 +293,7 @@ export const MathPage: React.FC = () => {
             term_id: firstContentId,
             theory_context: theoryContext
           });
-        } else {
+    } else {
           await mathNavigation.navigateToTheorem({
             theorem_id: firstContentId,
             theory_context: theoryContext
@@ -316,7 +316,7 @@ export const MathPage: React.FC = () => {
 
   const renderMainContent = () => {
     if (viewMode === 'stats') {
-      return (
+  return (
         <StatsView 
           selectedFile={selectedFile}
           onClose={() => setViewMode('content')}

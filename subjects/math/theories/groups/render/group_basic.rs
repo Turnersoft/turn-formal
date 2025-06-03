@@ -5,13 +5,13 @@ use crate::subjects::math::theories::groups::definitions::{
     AbelianPropertyVariant, FinitePropertyVariant, GenericGroup, GroupProperty,
 };
 use crate::turn_render::math_node::{
-    MathNode, MathNodeContent, RefinedMulOrDivOperation, ToTurnMath,
+    IdentifierNode, MathNode, MathNodeContent, RefinedMulOrDivOperation, ToTurnMath,
 };
 use crate::turn_render::section_node::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
     DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathContentNode, ToSectionNode,
+    StructuredMathNode, ToSectionNode,
 };
 
 impl ToTurnMath for GenericGroup {
@@ -407,7 +407,7 @@ impl ToSectionNode for GenericGroup {
                         alignment: None,
                     }),
                     content: vec![SectionContentNode::StructuredMath(
-                        StructuredMathContentNode::Definition {
+                        StructuredMathNode::Definition {
                             term_display: title_segments,
                             formal_term: Some(
                                 self.to_turn_math(format!("{}-formalTerm", id_prefix)),
@@ -639,7 +639,7 @@ impl ToSectionNode for GenericGroup {
                         alignment: None,
                     }),
                     content: vec![SectionContentNode::StructuredMath(
-                        StructuredMathContentNode::Definition {
+                        StructuredMathNode::Definition {
                             term_display: title_segments,
                             formal_term: Some(
                                 self.to_turn_math(format!("{}-formalTerm", id_prefix)),
@@ -1053,25 +1053,25 @@ impl ToSectionNode for GenericGroup {
                     alignment: None,
                 }),
                 // Closure axiom using structured format
-                SectionContentNode::MathBlock {
+                SectionContentNode::MathNode {
                     math: self.create_closure_axiom(&format!("{}-closure", id_prefix)),
                     label: Some("Closure".to_string()),
                     caption: None,
                 },
                 // Associativity axiom using structured format
-                SectionContentNode::MathBlock {
+                SectionContentNode::MathNode {
                     math: self.create_associativity_axiom(&format!("{}-assoc", id_prefix)),
                     label: Some("Associativity".to_string()),
                     caption: None,
                 },
                 // Identity axiom using structured format
-                SectionContentNode::MathBlock {
+                SectionContentNode::MathNode {
                     math: self.create_identity_axiom(&format!("{}-identity", id_prefix)),
                     label: Some("Identity Element".to_string()),
                     caption: None,
                 },
                 // Inverse axiom using structured format
-                SectionContentNode::MathBlock {
+                SectionContentNode::MathNode {
                     math: self.create_inverse_axiom(&format!("{}-inverse", id_prefix)),
                     label: Some("Inverse Elements".to_string()),
                     caption: None,
@@ -1262,58 +1262,34 @@ impl GenericGroup {
         };
 
         // Create variables a and b
-        let a_var = MathNode {
-            id: format!("{}_a", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "a".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+        let a_el = MathNode {
+            id: format!("{}_el_a", node_id),
+            content: Box::new(MathNodeContent::Text("a".to_string())),
         };
 
-        let b_var = MathNode {
-            id: format!("{}_b", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "b".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+        let b_el = MathNode {
+            id: format!("{}_el_b", node_id),
+            content: Box::new(MathNodeContent::Text("b".to_string())),
         };
 
         let g_set = MathNode {
-            id: format!("{}_g", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "G".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+            id: format!("{}_set_g", node_id),
+            content: Box::new(MathNodeContent::Text("G".to_string())),
         };
 
         // Create a * b using CustomFunction
-        let product = MathNode {
-            id: format!("{}_product", node_id),
+        let ab = MathNode {
+            id: format!("{}_ab", node_id),
             content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
-                    id: format!("{}_op", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
-                        body: "∘".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    }),
-                }),
-                parameters: vec![a_var.clone(), b_var.clone()],
+                name: IdentifierNode {
+                    body: "∘".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                },
+                parameters: vec![a_el.clone(), b_el.clone()],
             }),
         };
 
@@ -1321,7 +1297,7 @@ impl GenericGroup {
         let result_membership = MathNode {
             id: format!("{}_result", node_id),
             content: Box::new(MathNodeContent::Relationship {
-                lhs: Box::new(product),
+                lhs: Box::new(ab),
                 rhs: Box::new(g_set.clone()),
                 operator: RelationOperatorNode::ElementOf,
             }),
@@ -1332,22 +1308,22 @@ impl GenericGroup {
             id: format!("{}_var_list", node_id),
             content: Box::new(MathNodeContent::Multiplications {
                 terms: vec![
-                    (RefinedMulOrDivOperation::None, a_var),
+                    (RefinedMulOrDivOperation::None, a_el),
                     (
                         RefinedMulOrDivOperation::None,
                         MathNode {
                             id: format!("{}_comma", node_id),
-                            content: Box::new(MathNodeContent::Identifier {
+                            content: Box::new(MathNodeContent::Identifier(IdentifierNode {
                                 body: ",".to_string(),
                                 pre_script: None,
                                 mid_script: None,
                                 post_script: None,
                                 primes: 0,
                                 is_function: false,
-                            }),
+                            })),
                         },
                     ),
-                    (RefinedMulOrDivOperation::None, b_var),
+                    (RefinedMulOrDivOperation::None, b_el),
                 ],
             }),
         };
@@ -1380,128 +1356,58 @@ impl GenericGroup {
         };
 
         // Create variables
-        let a_var = MathNode {
-            id: format!("{}_a", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "a".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+        let a_el = MathNode {
+            id: format!("{}_el_a", node_id),
+            content: Box::new(MathNodeContent::Text("a".to_string())),
         };
 
-        let b_var = MathNode {
-            id: format!("{}_b", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "b".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+        let b_el = MathNode {
+            id: format!("{}_el_b", node_id),
+            content: Box::new(MathNodeContent::Text("b".to_string())),
         };
 
-        let c_var = MathNode {
-            id: format!("{}_c", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "c".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+        let c_el = MathNode {
+            id: format!("{}_el_c", node_id),
+            content: Box::new(MathNodeContent::Text("c".to_string())),
         };
 
         let g_set = MathNode {
-            id: format!("{}_g", node_id),
-            content: Box::new(MathNodeContent::Identifier {
-                body: "G".to_string(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+            id: format!("{}_set_g", node_id),
+            content: Box::new(MathNodeContent::Text("G".to_string())),
         };
 
         // Create a * b using CustomFunction
         let ab = MathNode {
             id: format!("{}_ab", node_id),
             content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
-                    id: format!("{}_op1", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
-                        body: "∘".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    }),
-                }),
-                parameters: vec![a_var.clone(), b_var.clone()],
+                name: IdentifierNode {
+                    body: "∘".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                },
+                parameters: vec![a_el.clone(), b_el.clone()],
             }),
         };
 
-        // Create (a * b) * c
+        // Create (a * b) * c - simplified as text
         let left_assoc = MathNode {
             id: format!("{}_left", node_id),
-            content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
-                    id: format!("{}_op2", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
-                        body: "∘".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    }),
-                }),
-                parameters: vec![ab, c_var.clone()],
-            }),
+            content: Box::new(MathNodeContent::Text("(a ∘ b) ∘ c".to_string())),
         };
 
-        // Create b * c
+        // Create b * c - simplified as text
         let bc = MathNode {
             id: format!("{}_bc", node_id),
-            content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
-                    id: format!("{}_op3", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
-                        body: "∘".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    }),
-                }),
-                parameters: vec![b_var.clone(), c_var.clone()],
-            }),
+            content: Box::new(MathNodeContent::Text("b ∘ c".to_string())),
         };
 
-        // Create a * (b * c)
+        // Create a * (b * c) - simplified as text
         let right_assoc = MathNode {
             id: format!("{}_right", node_id),
-            content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
-                    id: format!("{}_op4", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
-                        body: "∘".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    }),
-                }),
-                parameters: vec![a_var.clone(), bc],
-            }),
+            content: Box::new(MathNodeContent::Text("a ∘ (b ∘ c)".to_string())),
         };
 
         // Create equation
@@ -1519,7 +1425,7 @@ impl GenericGroup {
             id: format!("{}_var_list", node_id),
             content: Box::new(MathNodeContent::Multiplications {
                 terms: vec![
-                    (RefinedMulOrDivOperation::None, a_var),
+                    (RefinedMulOrDivOperation::None, a_el),
                     (
                         RefinedMulOrDivOperation::None,
                         MathNode {
@@ -1527,7 +1433,7 @@ impl GenericGroup {
                             content: Box::new(MathNodeContent::Text(",".to_string())),
                         },
                     ),
-                    (RefinedMulOrDivOperation::None, b_var),
+                    (RefinedMulOrDivOperation::None, b_el),
                     (
                         RefinedMulOrDivOperation::None,
                         MathNode {
@@ -1535,7 +1441,7 @@ impl GenericGroup {
                             content: Box::new(MathNodeContent::Text(",".to_string())),
                         },
                     ),
-                    (RefinedMulOrDivOperation::None, c_var),
+                    (RefinedMulOrDivOperation::None, c_el),
                 ],
             }),
         };
