@@ -4,12 +4,7 @@ use std::collections::{BTreeMap, HashMap};
 use crate::turn_render::math_node::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
 };
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
-    PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    StructuredMathNode, ToSectionNode,
-};
+use crate::turn_render::*;
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::{
@@ -104,7 +99,7 @@ impl ToSectionNode for ModularAdditiveGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -252,7 +247,7 @@ impl ToSectionNode for ModularMultiplicativeGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,

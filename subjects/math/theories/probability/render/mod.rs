@@ -10,12 +10,7 @@ use crate::turn_render::math_node::{
     BracketSize, BracketStyle, IntegralType, MathNode, MathNodeContent, MulSymbol,
     RefinedMulOrDivOperation, RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
-    PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    SelectableProperty, StructuredMathNode, TheoremLikeKind, ToSectionNode,
-};
+use crate::turn_render::*;
 
 //--- Imports from this crate (subjects) ---
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -347,7 +342,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
         "Probability Theory"
     }
 
-    fn export_theory_overview(&self) -> MathematicalContent {
+    fn export_theory_overview(&self) -> MathDocument {
         // Get ALL actual exported content to maximize references
         let all_definitions = self.export_object_definitions(self.generate_object_definitions());
         let all_expressions =
@@ -409,9 +404,9 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
         ]
         .concat();
 
-        MathematicalContent {
+        MathDocument {
             id: "probability_theory.overview".to_string(),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: "Probability Theory".to_string(),
                 paper_type: PaperType::Survey,
                 venue: Some("Mathematical Survey".to_string()),
@@ -550,7 +545,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
         }
     }
 
-    fn export_definitions(&self) -> Vec<MathematicalContent> {
+    fn export_definitions(&self) -> Vec<MathDocument> {
         let mut definitions = Vec::new();
         definitions.extend(self.export_object_definitions(self.generate_object_definitions()));
         definitions
@@ -559,7 +554,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
         definitions
     }
 
-    fn export_theorems(&self) -> Vec<MathematicalContent> {
+    fn export_theorems(&self) -> Vec<MathDocument> {
         let theorems = all_probability_theorems();
         theorems
             .into_iter()
@@ -567,10 +562,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
             .collect()
     }
 
-    fn export_object_definitions(
-        &self,
-        objects: Vec<ProbabilitySpace>,
-    ) -> Vec<MathematicalContent> {
+    fn export_object_definitions(&self, objects: Vec<ProbabilitySpace>) -> Vec<MathDocument> {
         objects
             .into_iter()
             .enumerate()
@@ -610,7 +602,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     fn export_expression_definitions(
         &self,
         expressions: Vec<ProbabilityExpression>,
-    ) -> Vec<MathematicalContent> {
+    ) -> Vec<MathDocument> {
         expressions
             .into_iter()
             .enumerate()
@@ -632,46 +624,44 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                     display_options: None,
                 };
 
-                MathematicalContent {
+                MathDocument {
                     id: format!("probability_theory.expression_{}", i),
-                    content_type: MathematicalContentType::ScientificPaper(
-                        ScientificPaperContent {
-                            title: "Probability Expression".to_string(),
-                            paper_type: PaperType::Research,
-                            venue: Some("Mathematical Expressions".to_string()),
-                            peer_reviewed: true,
-                            content_metadata: ContentMetadata {
-                                language: Some("en-US".to_string()),
-                                version: Some("1.0".to_string()),
-                                created_at: None,
-                                last_modified: None,
-                                content_hash: None,
-                            },
-                            academic_metadata: AcademicMetadata {
-                                authors: vec!["Turn-Formal System".to_string()],
-                                date_published: None,
-                                date_modified: None,
-                                venue: Some("Mathematical Expressions".to_string()),
-                                doi: None,
-                                keywords: vec!["probability".to_string(), "expression".to_string()],
-                            },
-                            structure: DocumentStructure {
-                                abstract_content: None,
-                                table_of_contents: None,
-                                body: vec![main_section],
-                                footnotes: vec![],
-                                glossary: vec![],
-                                bibliography: vec![],
-                            },
-                            relationships: DocumentRelationships {
-                                parent_documents: vec![],
-                                child_documents: vec![],
-                                related_concepts: vec![],
-                                dependency_graph: None,
-                                cross_references: vec![],
-                            },
+                    content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
+                        title: "Probability Expression".to_string(),
+                        paper_type: PaperType::Research,
+                        venue: Some("Mathematical Expressions".to_string()),
+                        peer_reviewed: true,
+                        content_metadata: ContentMetadata {
+                            language: Some("en-US".to_string()),
+                            version: Some("1.0".to_string()),
+                            created_at: None,
+                            last_modified: None,
+                            content_hash: None,
                         },
-                    ),
+                        academic_metadata: AcademicMetadata {
+                            authors: vec!["Turn-Formal System".to_string()],
+                            date_published: None,
+                            date_modified: None,
+                            venue: Some("Mathematical Expressions".to_string()),
+                            doi: None,
+                            keywords: vec!["probability".to_string(), "expression".to_string()],
+                        },
+                        structure: DocumentStructure {
+                            abstract_content: None,
+                            table_of_contents: None,
+                            body: vec![main_section],
+                            footnotes: vec![],
+                            glossary: vec![],
+                            bibliography: vec![],
+                        },
+                        relationships: DocumentRelationships {
+                            parent_documents: vec![],
+                            child_documents: vec![],
+                            related_concepts: vec![],
+                            dependency_graph: None,
+                            cross_references: vec![],
+                        },
+                    }),
                 }
             })
             .collect()
@@ -680,7 +670,7 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     fn export_relation_definitions(
         &self,
         relations: Vec<ProbabilityRelation>,
-    ) -> Vec<MathematicalContent> {
+    ) -> Vec<MathDocument> {
         relations
             .into_iter()
             .enumerate()
@@ -702,46 +692,44 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                     display_options: None,
                 };
 
-                MathematicalContent {
+                MathDocument {
                     id: format!("probability_theory.relation_{}", i),
-                    content_type: MathematicalContentType::ScientificPaper(
-                        ScientificPaperContent {
-                            title: "Probability Relation".to_string(),
-                            paper_type: PaperType::Research,
-                            venue: Some("Mathematical Relations".to_string()),
-                            peer_reviewed: true,
-                            content_metadata: ContentMetadata {
-                                language: Some("en-US".to_string()),
-                                version: Some("1.0".to_string()),
-                                created_at: None,
-                                last_modified: None,
-                                content_hash: None,
-                            },
-                            academic_metadata: AcademicMetadata {
-                                authors: vec!["Turn-Formal System".to_string()],
-                                date_published: None,
-                                date_modified: None,
-                                venue: Some("Mathematical Relations".to_string()),
-                                doi: None,
-                                keywords: vec!["probability".to_string(), "relation".to_string()],
-                            },
-                            structure: DocumentStructure {
-                                abstract_content: None,
-                                table_of_contents: None,
-                                body: vec![main_section],
-                                footnotes: vec![],
-                                glossary: vec![],
-                                bibliography: vec![],
-                            },
-                            relationships: DocumentRelationships {
-                                parent_documents: vec![],
-                                child_documents: vec![],
-                                related_concepts: vec![],
-                                dependency_graph: None,
-                                cross_references: vec![],
-                            },
+                    content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
+                        title: "Probability Relation".to_string(),
+                        paper_type: PaperType::Research,
+                        venue: Some("Mathematical Relations".to_string()),
+                        peer_reviewed: true,
+                        content_metadata: ContentMetadata {
+                            language: Some("en-US".to_string()),
+                            version: Some("1.0".to_string()),
+                            created_at: None,
+                            last_modified: None,
+                            content_hash: None,
                         },
-                    ),
+                        academic_metadata: AcademicMetadata {
+                            authors: vec!["Turn-Formal System".to_string()],
+                            date_published: None,
+                            date_modified: None,
+                            venue: Some("Mathematical Relations".to_string()),
+                            doi: None,
+                            keywords: vec!["probability".to_string(), "relation".to_string()],
+                        },
+                        structure: DocumentStructure {
+                            abstract_content: None,
+                            table_of_contents: None,
+                            body: vec![main_section],
+                            footnotes: vec![],
+                            glossary: vec![],
+                            bibliography: vec![],
+                        },
+                        relationships: DocumentRelationships {
+                            parent_documents: vec![],
+                            child_documents: vec![],
+                            related_concepts: vec![],
+                            dependency_graph: None,
+                            cross_references: vec![],
+                        },
+                    }),
                 }
             })
             .collect()

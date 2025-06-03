@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, HashMap};
 use crate::turn_render::math_node::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
 };
-use crate::turn_render::section_node::{
+use crate::turn_render::{
     AbstractionMetadata, LinkTarget, ParagraphNode, RichTextSegment, Section, SectionContentNode,
     StructuredMathNode, ToSectionNode,
 };
@@ -12,6 +12,10 @@ use crate::turn_render::section_node::{
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::{
     FreeGroup, GenericGroup, QuotientGroup, TrivialGroup,
+};
+use crate::turn_render::{
+    AcademicMetadata, ContentMetadata, DocumentRelationships, DocumentStructure, MathDocument,
+    MathDocumentType, PaperType, ScientificPaperContent,
 };
 
 impl ToSectionNode for QuotientGroup {
@@ -115,20 +119,15 @@ impl ToSectionNode for QuotientGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let group_name = "G";
         let normal_name = "N";
         let title = format!("{}/{}", group_name, normal_name);
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -254,18 +253,13 @@ impl ToSectionNode for FreeGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = format!("F_{}", self.rank);
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -392,18 +386,13 @@ impl ToSectionNode for TrivialGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "1".to_string();
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,

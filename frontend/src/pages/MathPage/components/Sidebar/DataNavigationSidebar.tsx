@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { mathDataService } from '../../../services/mathDataService';
-import styles from './DataNavigationSidebar.module.css';
+import { mathDataService } from '../../services/mathDataService';
+import styles from './DataNavigationSidebar.module.scss';
 
 interface TheoryData {
   theory_id: string;

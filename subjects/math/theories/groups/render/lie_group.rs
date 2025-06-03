@@ -3,12 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::LieGroup;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
-    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathNode, ToSectionNode,
-};
+use crate::turn_render::*;
 
 impl ToTurnMath for LieGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
@@ -237,7 +232,7 @@ impl ToSectionNode for LieGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,

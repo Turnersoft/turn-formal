@@ -1,9 +1,5 @@
 use crate::subjects::math::theories::probability::definitions::DiscreteProbabilitySpace;
-use crate::turn_render::section_node::{
-    AcademicMetadata, ContentMetadata, DocumentRelationships, DocumentStructure, MathDocument,
-    MathematicalContent, MathematicalContentType, PaperType, ParagraphNode, RichTextSegment,
-    ScientificPaperContent, Section, SectionContentNode, ToSectionNode,
-};
+use crate::turn_render::*;
 
 impl ToSectionNode for DiscreteProbabilitySpace {
     fn to_section_node(&self, id_prefix: &str) -> Section {
@@ -30,9 +26,9 @@ impl ToSectionNode for DiscreteProbabilitySpace {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
 
-        MathematicalContent {
+        MathDocument {
             id: format!("{}.doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: "Discrete Probability Space".to_string(),
                 paper_type: PaperType::Research,
                 venue: Some("Mathematical Probability".to_string()),

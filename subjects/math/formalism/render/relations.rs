@@ -1,7 +1,8 @@
+use leptos::attr::Src;
+
 use super::super::relations::MathRelation;
 use super::expressions::ToStructuredFormat;
-use crate::turn_render::math_node::IdentifierNode;
-use crate::turn_render::{MathNode, MathNodeContent, RelationOperatorNode, ToTurnMath};
+use crate::turn_render::*;
 use std::string::String;
 
 impl ToTurnMath for MathRelation {
@@ -22,25 +23,25 @@ impl ToTurnMath for MathRelation {
             }
             MathRelation::And(relations) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
+                content: Box::new(MathNodeContent::Identifier {
                     body: format!("∧({} relations)", relations.len()),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                })),
+                }),
             },
             MathRelation::Or(relations) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
+                content: Box::new(MathNodeContent::Identifier {
                     body: format!("∨({} relations)", relations.len()),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                })),
+                }),
             },
             MathRelation::Not(relation) => {
                 let inner_id = format!("{}_inner", master_id);
@@ -51,14 +52,14 @@ impl ToTurnMath for MathRelation {
                         parameter: Box::new(relation.to_turn_math(inner_id)),
                         operator: Box::new(MathNode {
                             id: neg_id,
-                            content: Box::new(MathNodeContent::Identifier(IdentifierNode {
+                            content: Box::new(MathNodeContent::Identifier {
                                 body: "¬".to_string(),
                                 pre_script: None,
                                 mid_script: None,
                                 post_script: None,
                                 primes: 0,
                                 is_function: false,
-                            })),
+                            }),
                         }),
                     }),
                 }
@@ -89,83 +90,13 @@ impl ToTurnMath for MathRelation {
                     }),
                 }
             }
-            MathRelation::NumberTheory(_) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: "ℕ ⊢ φ".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
-            MathRelation::SetTheory(_) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: "∈".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
-            MathRelation::GroupTheory(_) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: "G ⊢ φ".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
-            MathRelation::RingTheory(_) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: "R ⊢ φ".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
-            MathRelation::TopologyTheory(_) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: "τ ⊢ φ".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
-            MathRelation::CategoryTheory(_) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: "𝒞 ⊢ φ".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
-            MathRelation::Todo { name, .. } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
-                    body: format!("? {}", name),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                })),
-            },
+            MathRelation::NumberTheory(_) => todo!(),
+            MathRelation::SetTheory(sr) => todo!(),
+            MathRelation::GroupTheory(gr) => gr.to_turn_math(master_id),
+            MathRelation::RingTheory(rr) => todo!(),
+            MathRelation::TopologyTheory(tr) => todo!(),
+            MathRelation::CategoryTheory(cr) => todo!(),
+            MathRelation::Todo { name, .. } => todo!(),
         }
     }
 }

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DataNavigationSidebar } from './components/binding-renderers/core/DataNavigationSidebar';
-import { DocumentRenderer } from './components/binding-renderers/core/DocumentRenderer';
-import { StatsView } from './components/binding-renderers/core/StatsView';
+import { DocumentRenderer } from './components/turn-render/components/math_document/math_document';
+import { StatsView } from './components/stats_view/StatsView';
 import { mathDataService, type MathDataExport } from './services/mathDataService';
 import { MathNavigationService, useMathNavigationState, useMathNavigation } from './services/mathNavigationService';
-import type { MathematicalContent } from './components/binding-renderers';
 import styles from './MathPage.module.scss';
+import { MathDocument } from './components/turn-render/bindings/MathDocument';
+import DataNavigationSidebar from './components/Sidebar/DataNavigationSidebar';
+import ContentSidebar from './components/Sidebar/ContentSidebar';
 
 type ViewMode = 'content' | 'stats';
 
@@ -19,7 +20,7 @@ export const MathPage: React.FC = () => {
   // Data state
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
-  const [currentContent, setCurrentContent] = useState<MathematicalContent | null>(null);
+  const [currentContent, setCurrentContent] = useState<MathDocument | null>(null);
   const [dataExport, setDataExport] = useState<MathDataExport | null>(null);
   
   // UI state
@@ -282,33 +283,6 @@ export const MathPage: React.FC = () => {
     return 'GroupTheory'; // final fallback
   };
 
-  const loadFileAndNavigateToFirst = async (filename: string, theoryContext: string, type: 'definition' | 'theorem') => {
-    try {
-      const data = await mathDataService.loadMathData(filename);
-      const firstContentId = Object.keys(data.content)[0];
-      
-      if (firstContentId) {
-        if (type === 'definition') {
-          await mathNavigation.navigateToDefinition({
-            term_id: firstContentId,
-            theory_context: theoryContext
-          });
-    } else {
-          await mathNavigation.navigateToTheorem({
-            theorem_id: firstContentId,
-            theory_context: theoryContext
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load file:', error);
-      // Fallback to legacy behavior
-      setSelectedFile(filename);
-      setSelectedContentId(null);
-      setCurrentContent(null);
-      setViewMode('content');
-    }
-  };
 
   const handleStatsView = () => {
     setViewMode('stats');
@@ -431,39 +405,6 @@ export const MathPage: React.FC = () => {
     );
   };
 
-  const renderContentSidebar = () => {
-    if (!selectedFile || contentIndex.length === 0) {
-      return null;
-    }
-
-    return (
-      <div className={styles.contentSidebar}>
-        <div className={styles.contentHeader}>
-          <h3>📄 {selectedFile.replace('.json', '').replace(/_/g, ' ')}</h3>
-          <div className={styles.contentCount}>
-            {contentIndex.length} objects
-          </div>
-        </div>
-        
-        <div className={styles.contentList}>
-          {contentIndex.map(item => (
-            <div
-              key={item.id}
-              onClick={() => handleContentSelect(item.id)}
-              className={`${styles.contentItem} ${selectedContentId === item.id ? styles.selected : ''}`}
-            >
-              <div className={styles.contentTitle}>{item.title}</div>
-              <div className={styles.contentMeta}>
-                {item.level && <span className={styles.level}>L{item.level}</span>}
-                <span className={styles.sections}>{item.section_count} sections</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className={styles.mathPage}>
       <DataNavigationSidebar
@@ -472,7 +413,12 @@ export const MathPage: React.FC = () => {
         onStatsView={handleStatsView}
       />
       
-      {renderContentSidebar()}
+      <ContentSidebar
+        selectedFile={selectedFile}
+        contentIndex={contentIndex}
+        selectedContentId={selectedContentId}
+        onContentSelect={handleContentSelect}
+      />
       
       <main className={styles.mainContent}>
         {renderMainContent()}

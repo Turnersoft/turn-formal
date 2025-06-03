@@ -4,9 +4,9 @@ use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetA
 use crate::subjects::math::theories::groups::definitions::ProductGroup;
 use crate::turn_render::RefinedMulOrDivOperation;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
-use crate::turn_render::section_node::{
+use crate::turn_render::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
+    DocumentStructure, LinkTarget, MathDocument, MathDocumentType, PaperType, ParagraphNode,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
     StructuredMathNode, ToSectionNode,
 };
@@ -220,7 +220,7 @@ impl ToSectionNode for ProductGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,

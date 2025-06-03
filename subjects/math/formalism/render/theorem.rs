@@ -17,17 +17,7 @@ use crate::subjects::math::formalism::relations::MathRelation;
 // Import the conversion trait
 use crate::subjects::math::formalism::render::expressions::ToStructuredFormat;
 
-// Add imports for section_node types including the new structured proof types
-use crate::turn_render::section_node::{
-    AcademicMetadata, BindingType, ContentMetadata, DocumentRelationships, DocumentStructure, Goal,
-    GoalType, MathematicalContent, MathematicalContentType, NumberType, OperationType, PaperType,
-    ParagraphNode, ProofCase, ProofDisplayNode, ProofStepNode, ProofStepStatus, QuantifiedObject,
-    QuantifierType, RichTextSegment, ScientificPaperContent, Section, SectionContentNode, Step,
-    StructuredMathNode, StructuredProofDisplayNode, Tactic, TheoremLikeKind, TheoremStatement,
-    ToSectionNode, VariableBinding,
-};
-
-use crate::turn_render::math_node::IdentifierNode;
+use crate::turn_render::*;
 
 // Helper function to create placeholder MathNode for todo items
 fn create_todo_math_node(description: &str, id: &str) -> MathNode {
@@ -85,12 +75,12 @@ impl ToSectionNode for Theorem {
         }
     }
 
-    fn to_math_document(&self, id_prefix: &str) -> MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
 
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: self.name.clone(),
                 paper_type: PaperType::Research,
                 venue: Some("Mathematical Theorems".to_string()),
@@ -152,9 +142,9 @@ impl ToSectionNode for Theorem {
 }
 
 impl Theorem {
-    /// Create a StructuredProofDisplayNode for the theorem
-    fn create_structured_proof_display(&self) -> StructuredProofDisplayNode {
-        StructuredProofDisplayNode {
+    /// Create a ProofDisplayNode for the theorem
+    fn create_structured_proof_display(&self) -> ProofDisplayNode {
+        ProofDisplayNode {
             title: Some(ParagraphNode {
                 segments: vec![RichTextSegment::Text("Proof.".to_string())],
                 alignment: None,
@@ -165,31 +155,19 @@ impl Theorem {
         }
     }
 
-    /// Convert proof steps from the theorem's proof forest to Step structures
-    fn convert_proof_steps_structured(&self) -> Vec<Step> {
+    /// Convert proof steps from the theorem's proof forest to ProofStepNode structures
+    fn convert_proof_steps_structured(&self) -> Vec<ProofStepNode> {
         let mut steps = Vec::new();
 
         // Convert each proof node to a structured proof step
         for (node_id, node) in &self.proofs.nodes {
-            // Create a simple structured proof step
-            let step = Step::Statement {
-                goal: Goal {
-                    quantified_objects: vec![],
-                    variable_bindings: vec![],
-                    statement: node
-                        .state
-                        .statement
-                        .to_turn_math(format!("{}-goal", node_id)),
-                    goal_type: GoalType::Prove,
-                },
-                tactic: Tactic::DirectProof,
-                status: match node.status {
-                    ProofStatus::Complete => ProofStepStatus::Complete,
-                    ProofStatus::InProgress => ProofStepStatus::InProgress,
-                    ProofStatus::Todo => ProofStepStatus::Todo,
-                    ProofStatus::Wip => ProofStepStatus::WorkInProgress,
-                    ProofStatus::Abandoned => ProofStepStatus::Abandoned,
-                },
+            // Create a simple proof step using the original ProofStepNode structure
+            let step = ProofStepNode::Statement {
+                claim: vec![RichTextSegment::Text(format!(
+                    "Goal: {}",
+                    node_id // Simplified representation
+                ))],
+                justification: vec![RichTextSegment::Text("Direct proof".to_string())],
             };
 
             steps.push(step);
@@ -197,15 +175,9 @@ impl Theorem {
 
         // If no steps, add a placeholder
         if steps.is_empty() {
-            steps.push(Step::Statement {
-                goal: Goal {
-                    quantified_objects: vec![],
-                    variable_bindings: vec![],
-                    statement: create_todo_math_node("Proof completed", "proof-todo"),
-                    goal_type: GoalType::Prove,
-                },
-                tactic: Tactic::DirectProof,
-                status: ProofStepStatus::Complete,
+            steps.push(ProofStepNode::Statement {
+                claim: vec![RichTextSegment::Text("Proof completed.".to_string())],
+                justification: vec![RichTextSegment::Text("by construction".to_string())],
             });
         }
 

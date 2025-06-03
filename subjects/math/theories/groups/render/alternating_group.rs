@@ -3,20 +3,15 @@ use serde::{Deserialize, Serialize};
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::AlternatingGroup;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
-    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathNode, ToSectionNode,
-};
-use crate::turn_render::{IdentifierNode, ScriptNode};
+use crate::turn_render::*;
+use crate::turn_render::*;
 
 impl ToTurnMath for AlternatingGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         // Use proper mathematical notation A_n with subscript
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier(IdentifierNode {
+            content: Box::new(MathNodeContent::Identifier {
                 body: "A".to_string(),
                 pre_script: None,
                 mid_script: None,
@@ -29,7 +24,7 @@ impl ToTurnMath for AlternatingGroup {
                 }),
                 primes: 0,
                 is_function: false,
-            })),
+            }),
         }
     }
 }
@@ -43,7 +38,7 @@ impl ToSectionNode for AlternatingGroup {
             RichTextSegment::Text("Alternating Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Identifier(IdentifierNode {
+                content: Box::new(MathNodeContent::Identifier {
                     body: "A".to_string(),
                     pre_script: None,
                     mid_script: None,
@@ -56,7 +51,7 @@ impl ToSectionNode for AlternatingGroup {
                     }),
                     primes: 0,
                     is_function: false,
-                })),
+                }),
             }),
         ];
 
@@ -287,11 +282,6 @@ impl ToSectionNode for AlternatingGroup {
     }
 
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
-        use crate::turn_render::section_node::{
-            AcademicMetadata, ContentMetadata, DocumentRelationships, DocumentStructure,
-            MathematicalContentType, ScientificPaperContent,
-        };
-
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
         let title = main_section.title.as_ref().map_or_else(
             || "Alternating Group Document".to_string(),
@@ -309,9 +299,9 @@ impl ToSectionNode for AlternatingGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
-                paper_type: crate::turn_render::section_node::PaperType::Research,
+                paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
                 content_metadata: ContentMetadata {

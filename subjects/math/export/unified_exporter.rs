@@ -21,11 +21,7 @@ use crate::subjects::math::theories::theorems::{
 };
 use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
 use crate::subjects::math::theories::zfc::definitions::Set;
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, MathematicalContent, MathematicalContentType, PaperType, ParagraphNode,
-    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, ToSectionNode,
-};
+use crate::turn_render::*;
 
 /// Content manifest for efficient loading across ALL theories
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -61,7 +57,7 @@ pub struct ContentBundle {
     pub content_type: String,
     pub version: String,
     pub exported_at: String,
-    pub content: Vec<MathematicalContent>,
+    pub content: Vec<MathDocument>,
 }
 
 /// **THEORY EXPORTER TRAIT** - Generic interface for theory exports
@@ -70,21 +66,21 @@ pub trait TheoryExporter<O, E, R> {
     fn theory_name(&self) -> &str;
 
     // **MAIN THEORY ENTRANCE PAGE** - serves as the theory overview and navigation hub
-    fn export_theory_overview(&self) -> MathematicalContent;
+    fn export_theory_overview(&self) -> MathDocument;
 
     // definitions - separate from the overview
-    fn export_definitions(&self) -> Vec<MathematicalContent>;
+    fn export_definitions(&self) -> Vec<MathDocument>;
     // intermediate steps to prepare type instances
     fn generate_object_definitions(&self) -> Vec<O>;
     fn generate_expression_definitions(&self) -> Vec<E>;
     fn generate_relation_definitions(&self) -> Vec<R>;
 
     // work on the type instances for export
-    fn export_object_definitions(&self, objects: Vec<O>) -> Vec<MathematicalContent>;
-    fn export_expression_definitions(&self, expressions: Vec<E>) -> Vec<MathematicalContent>;
-    fn export_relation_definitions(&self, relations: Vec<R>) -> Vec<MathematicalContent>;
+    fn export_object_definitions(&self, objects: Vec<O>) -> Vec<MathDocument>;
+    fn export_expression_definitions(&self, expressions: Vec<E>) -> Vec<MathDocument>;
+    fn export_relation_definitions(&self, relations: Vec<R>) -> Vec<MathDocument>;
     // theorems - separate from the overview
-    fn export_theorems(&self) -> Vec<MathematicalContent>;
+    fn export_theorems(&self) -> Vec<MathDocument>;
 }
 
 /// **TYPE-ERASED THEORY EXPORTER** - Allows working with different theory types
@@ -92,9 +88,9 @@ pub trait TheoryExporter<O, E, R> {
 pub trait AnyTheoryExporter {
     fn theory_id(&self) -> &str;
     fn theory_name(&self) -> &str;
-    fn export_theory_overview(&self) -> MathematicalContent;
-    fn export_definitions(&self) -> Vec<MathematicalContent>;
-    fn export_theorems(&self) -> Vec<MathematicalContent>;
+    fn export_theory_overview(&self) -> MathDocument;
+    fn export_definitions(&self) -> Vec<MathDocument>;
+    fn export_theorems(&self) -> Vec<MathDocument>;
 }
 
 /// **WRAPPER STRUCT** - Wraps any TheoryExporter to implement AnyTheoryExporter
@@ -130,15 +126,15 @@ where
         self.exporter.theory_name()
     }
 
-    fn export_theory_overview(&self) -> MathematicalContent {
+    fn export_theory_overview(&self) -> MathDocument {
         self.exporter.export_theory_overview()
     }
 
-    fn export_definitions(&self) -> Vec<MathematicalContent> {
+    fn export_definitions(&self) -> Vec<MathDocument> {
         self.exporter.export_definitions()
     }
 
-    fn export_theorems(&self) -> Vec<MathematicalContent> {
+    fn export_theorems(&self) -> Vec<MathDocument> {
         self.exporter.export_theorems()
     }
 }
@@ -287,7 +283,7 @@ impl UnifiedExporter {
         filename: &str,
         theory_name: &str,
         content_type: &str,
-        content: Vec<MathematicalContent>,
+        content: Vec<MathDocument>,
     ) -> Result<()> {
         let bundle = ContentBundle {
             theory_name: theory_name.to_string(),

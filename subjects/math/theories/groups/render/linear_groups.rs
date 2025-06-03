@@ -1,15 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
-use crate::turn_render::math_node::{
-    BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
-};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
-    PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    StructuredMathNode, ToSectionNode,
-};
+use crate::turn_render::*;
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::{
@@ -139,7 +131,7 @@ impl ToSectionNode for GeneralLinearGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -357,7 +349,7 @@ impl ToSectionNode for SpecialLinearGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -544,7 +536,7 @@ impl ToSectionNode for OrthogonalGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -731,7 +723,7 @@ impl ToSectionNode for SpecialOrthogonalGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -907,7 +899,7 @@ impl ToSectionNode for UnitaryGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -1093,7 +1085,7 @@ impl ToSectionNode for SpecialUnitaryGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: title_text,
                 paper_type: PaperType::Research,
                 venue: None,

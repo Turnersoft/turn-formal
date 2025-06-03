@@ -11,7 +11,7 @@ import {
   type TheoryManifest, 
   type ContentBundle 
 } from '../services/mathContentService';
-import { MathematicalContent } from '../pages/MathPage/components/turn-render/bindings/MathematicalContent';
+import { MathDocument } from '../pages/MathPage/components/turn-render/bindings/MathDocument';
 
 export interface UseMathContentState {
   isInitialized: boolean;
@@ -25,8 +25,8 @@ export interface UseMathContentResult {
   state: UseMathContentState;
   
   // Content Access
-  getContentById: (id: string) => Promise<MathematicalContent | null>;
-  getAllLoadedContent: () => Map<string, MathematicalContent>;
+  getContentById: (id: string) => Promise<MathDocument | null>;
+  getAllLoadedContent: () => Map<string, MathDocument>;
   
   // Theory Operations  
   loadTheory: (theoryId: string, contentType?: string) => Promise<ContentBundle | Map<string, ContentBundle>>;
@@ -119,7 +119,7 @@ export function useMathContent(): UseMathContentResult {
   }, []);
 
   // Content operations
-  const getContentById = useCallback(async (id: string): Promise<MathematicalContent | null> => {
+  const getContentById = useCallback(async (id: string): Promise<MathDocument | null> => {
     if (!state.isInitialized) {
       console.warn('⚠️ Service not initialized yet');
       return null;
@@ -133,7 +133,7 @@ export function useMathContent(): UseMathContentResult {
     }
   }, [state.isInitialized]);
 
-  const getAllLoadedContent = useCallback((): Map<string, MathematicalContent> => {
+  const getAllLoadedContent = useCallback((): Map<string, MathDocument> => {
     return mathContentService.getAllLoadedContent();
   }, []);
 
@@ -325,7 +325,7 @@ export function useContentItem(contentId: string) {
   const [itemState, setItemState] = useState<{
     isLoading: boolean;
     error: string | null;
-    content: MathematicalContent | null;
+    content: MathDocument | null;
   }>({
     isLoading: false,
     error: null,

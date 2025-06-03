@@ -1,10 +1,11 @@
-import type { MathematicalContent } from '../components/binding-renderers';
+import { MathDocument } from "../components/turn-render/bindings/MathDocument";
+
 
 export interface MathDataExport {
   theory_name: string;
   version: string;
   exported_at: string;
-  content: Record<string, MathematicalContent>;
+  content: Record<string, MathDocument>;
 }
 
 // Raw data format from JSON files (can have content as array or object)
@@ -12,7 +13,7 @@ interface RawMathDataExport {
   theory_name: string;
   version: string;
   exported_at: string;
-  content: MathematicalContent[] | Record<string, MathematicalContent>;
+  content: MathDocument[] | Record<string, MathDocument>;
 }
 
 export interface MathDataIndex {
@@ -40,7 +41,7 @@ export class MathDataService {
    * Convert array content format to object format
    */
   private normalizeContentFormat(rawData: RawMathDataExport): MathDataExport {
-    let content: Record<string, MathematicalContent>;
+    let content: Record<string, MathDocument>;
     
     if (Array.isArray(rawData.content)) {
       // Convert array to object using the id field
@@ -157,7 +158,7 @@ export class MathDataService {
   /**
    * Get specific content by ID
    */
-  async getContentById(filename: string, contentId: string): Promise<MathematicalContent | null> {
+  async getContentById(filename: string, contentId: string): Promise<MathDocument | null> {
     const data = await this.loadMathData(filename);
     return data.content[contentId] || null;
   }
@@ -166,7 +167,7 @@ export class MathDataService {
    * Get paginated content for large datasets
    */
   async getPaginatedContent(filename: string, page: number = 1, pageSize: number = 10): Promise<{
-    content: Array<{ id: string; data: MathematicalContent }>;
+    content: Array<{ id: string; data: MathDocument }>;
     total: number;
     pages: number;
     currentPage: number;
@@ -193,9 +194,9 @@ export class MathDataService {
   /**
    * Search content by title or content text
    */
-  async searchContent(filename: string, query: string): Promise<Array<{ id: string; data: MathematicalContent; relevance: number }>> {
+  async searchContent(filename: string, query: string): Promise<Array<{ id: string; data: MathDocument; relevance: number }>> {
     const data = await this.loadMathData(filename);
-    const results: Array<{ id: string; data: MathematicalContent; relevance: number }> = [];
+    const results: Array<{ id: string; data: MathDocument; relevance: number }> = [];
 
     for (const [id, content] of Object.entries(data.content)) {
       let relevance = 0;

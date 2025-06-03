@@ -1,13 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
-use crate::turn_render::math_node::{
-    BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
-};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, LinkTarget, ParagraphNode, RichTextSegment, Section, SectionContentNode,
-    StructuredMathNode, ToSectionNode,
-};
+use crate::turn_render::*;
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::{
@@ -110,18 +104,13 @@ impl ToSectionNode for WreathProductGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G ≀ H".to_string();
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -254,18 +243,13 @@ impl ToSectionNode for CentralProductGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G ∘ H".to_string();
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -397,18 +381,13 @@ impl ToSectionNode for PullbackGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G ×_H K".to_string();
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,
@@ -542,18 +521,13 @@ impl ToSectionNode for RestrictionGroup {
         }
     }
 
-    fn to_math_document(
-        &self,
-        id_prefix: &str,
-    ) -> crate::turn_render::section_node::MathematicalContent {
+    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G|_S".to_string();
 
-        use crate::turn_render::section_node::*;
-
-        MathematicalContent {
+        MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
                 paper_type: PaperType::Research,
                 venue: None,

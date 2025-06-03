@@ -1,5 +1,5 @@
 // Types for the math theory JSON data
-import type { MathematicalContent } from '../components/turn-render/bindings/MathematicalContent';
+import type { MathDocument } from '../components/turn-render/bindings/MathDocument';
 
 // Definition JSON structures
 export interface Member {
@@ -113,7 +113,7 @@ export interface ContentBundle {
   content_type: "definitions" | "theorems";
   version: string;
   exported_at: string;
-  content: MathematicalContent[];
+  content: MathDocument[];
 }
 
 export interface ContentFile {
@@ -237,7 +237,7 @@ export interface MathContent {
     definitions?: ContentBundle;
     theorems?: ContentBundle;
   };
-  mathematicalContent?: MathematicalContent[]; // Direct access to new format
+  mathematicalContent?: MathDocument[]; // Direct access to new format
   [key: string]: any; // Allow additional properties
 }
 
@@ -274,50 +274,70 @@ export function extractTextFromSegments(segments: any[]): string {
     .join('');
 }
 
-// Helper function to convert MathematicalContent to legacy Definition format
-export function convertMathematicalContentToDefinition(content: MathematicalContent): Definition | null {
-  if (!content.content_type || typeof content.content_type !== 'object') return null;
-  
-  // Handle the ScientificPaper variant
+// Helper function to convert MathDocument to legacy Definition format
+export function convertMathematicalContentToDefinition(content: MathDocument): Definition | null {
+  try {
+    // Check if content_type has ScientificPaper variant
   if ('ScientificPaper' in content.content_type) {
     const paper = content.content_type.ScientificPaper;
     
     return {
-      name: content.id,
-      docs: paper.structure.abstract_content ? 
+        name: paper.title,
+        docs: paper.structure?.abstract_content ?
         extractTextFromSegments(paper.structure.abstract_content.content
-          .filter((c: any) => c.Paragraph)
-          .flatMap((c: any) => c.Paragraph.segments)) : 
-        paper.title,
-      kind: "Document",
+            ?.map((c: any) => c.Paragraph?.segments)
+            ?.filter(Boolean)
+            ?.flat() || [])
+          : '',
+        kind: 'class',
       members: [],
-      source: "ContentBundle"
+        description: paper.structure?.abstract_content ?
+          extractTextFromSegments(paper.structure.abstract_content.content
+            ?.map((c: any) => c.Paragraph?.segments)
+            ?.filter(Boolean)
+            ?.flat() || [])
+          : '',
+        source: 'mathematical_content',
+        tags: paper.academic_metadata?.keywords,
     };
   }
-
+    return null;
+  } catch (error) {
+    console.warn('Failed to convert MathDocument to Definition:', error);
   return null;
 }
-
-// Helper function to convert MathematicalContent to legacy Theorem format
-export function convertMathematicalContentToTheorem(content: MathematicalContent): Theorem | null {
-  if (!content.content_type || typeof content.content_type !== 'object') return null;
+}
   
-  // Handle the ScientificPaper variant
+// Helper function to convert MathDocument to legacy Theorem format  
+export function convertMathematicalContentToTheorem(content: MathDocument): Theorem | null {
+  try {
+    // Check if content_type has ScientificPaper variant
   if ('ScientificPaper' in content.content_type) {
     const paper = content.content_type.ScientificPaper;
     
     return {
       id: content.id,
       name: paper.title,
-      description: paper.structure.abstract_content ? 
+        statement: paper.structure?.abstract_content ?
+          extractTextFromSegments(paper.structure.abstract_content.content
+            ?.map((c: any) => c.Paragraph?.segments)
+            ?.filter(Boolean)
+            ?.flat() || [])
+          : '',
+        description: paper.structure?.abstract_content ?
         extractTextFromSegments(paper.structure.abstract_content.content
-          .filter((c: any) => c.Paragraph)
-          .flatMap((c: any) => c.Paragraph.segments)) : 
-        '',
-      tags: paper.academic_metadata.keywords,
-      is_proven: true
+            ?.map((c: any) => c.Paragraph?.segments)
+            ?.filter(Boolean)
+            ?.flat() || [])
+          : '',
+        tags: paper.academic_metadata?.keywords,
+        references: [],
+        proof_steps: [],
     };
   }
-
+    return null;
+  } catch (error) {
+    console.warn('Failed to convert MathDocument to Theorem:', error);
   return null;
+  }
 }

@@ -12,12 +12,7 @@ use crate::turn_render::math_node::{
     BracketSize, BracketStyle, IntegralType, MathNode, MathNodeContent, MulSymbol,
     RefinedMulOrDivOperation, RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContent, MathematicalContentType,
-    PaperType, ParagraphNode, RichTextSegment, ScientificPaperContent, Section, SectionContentNode,
-    SelectableProperty, StructuredMathNode, TheoremLikeKind, ToSectionNode,
-};
+use crate::turn_render::*;
 
 //--- Imports from this crate (subjects) ---
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -394,7 +389,7 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
         "Group Theory"
     }
 
-    fn export_theory_overview(&self) -> MathematicalContent {
+    fn export_theory_overview(&self) -> MathDocument {
         // **DRY PRINCIPLE**: Get ALL actual exported content to maximize references
         let all_definitions = self.export_object_definitions(self.generate_object_definitions());
         let all_expressions =
@@ -515,9 +510,9 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
         .concat();
 
         // Create comprehensive theory overview page as main entrance
-        MathematicalContent {
+        MathDocument {
             id: "group_theory.theory_overview.main".to_string(),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: "Group Theory: Mathematical Framework Overview".to_string(),
                 paper_type: PaperType::Research,
                 venue: None,
@@ -761,7 +756,7 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
         }
     }
 
-    fn export_definitions(&self) -> Vec<MathematicalContent> {
+    fn export_definitions(&self) -> Vec<MathDocument> {
         let mut content = Vec::new();
 
         // **OBJECT DEFINITIONS ONLY** - Theory overview is exported separately
@@ -772,7 +767,7 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
         content
     }
 
-    fn export_theorems(&self) -> Vec<MathematicalContent> {
+    fn export_theorems(&self) -> Vec<MathDocument> {
         let mut content = vec![
             prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
             prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
@@ -788,7 +783,7 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
         content
     }
 
-    fn export_object_definitions(&self, objects: Vec<Group>) -> Vec<MathematicalContent> {
+    fn export_object_definitions(&self, objects: Vec<Group>) -> Vec<MathDocument> {
         let mut content = Vec::new();
 
         // Export each variant instance to MathematicalContent
@@ -1059,16 +1054,13 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
     fn export_expression_definitions(
         &self,
         expressions: Vec<GroupExpression>,
-    ) -> Vec<MathematicalContent> {
+    ) -> Vec<MathDocument> {
         // For now, expressions are embedded in object definitions
         // We could later extract standalone expression documentation
         vec![]
     }
 
-    fn export_relation_definitions(
-        &self,
-        relations: Vec<GroupRelation>,
-    ) -> Vec<MathematicalContent> {
+    fn export_relation_definitions(&self, relations: Vec<GroupRelation>) -> Vec<MathDocument> {
         // For now, relations are embedded in object definitions
         // We could later extract standalone relation documentation
         vec![]

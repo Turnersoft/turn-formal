@@ -1,8 +1,8 @@
 import React from 'react';
-import type { LinkTarget } from '../../turn-render/bindings/LinkTarget';
-import type { RichTextSegment } from '../../turn-render/bindings/RichTextSegment';
-import { RichTextRenderer } from './RichTextRenderer';
-import { useMathNavigation } from '../../../services/mathNavigationService';
+import type { LinkTarget } from '../turn-render/bindings/LinkTarget';
+import type { RichTextSegment } from '../turn-render/bindings/RichTextSegment';
+import { RichTextRenderer } from '../turn-render/components/rich_text/rich_text';
+import { useMathNavigation } from '../../services/mathNavigationService';
 import styles from './LinkRenderer.module.css';
 
 interface LinkRendererProps {

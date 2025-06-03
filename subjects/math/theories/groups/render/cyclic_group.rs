@@ -2,15 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::CyclicGroup;
-use crate::turn_render::math_node::{
-    BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
-};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, ParagraphNode,
-    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathNode, ToSectionNode,
-};
+
+use crate::turn_render::*;
 
 impl ToTurnMath for CyclicGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
@@ -261,9 +254,9 @@ impl ToSectionNode for CyclicGroup {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title,
-                paper_type: crate::turn_render::section_node::PaperType::Research,
+                paper_type: PaperType::Research,
                 venue: None,
                 peer_reviewed: false,
                 content_metadata: ContentMetadata {

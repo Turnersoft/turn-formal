@@ -4,15 +4,8 @@ use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetA
 use crate::subjects::math::theories::groups::definitions::{
     AbelianPropertyVariant, FinitePropertyVariant, GenericGroup, GroupProperty,
 };
-use crate::turn_render::math_node::{
-    IdentifierNode, MathNode, MathNodeContent, RefinedMulOrDivOperation, ToTurnMath,
-};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, PaperType, ParagraphNode,
-    RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathNode, ToSectionNode,
-};
+
+use crate::turn_render::*;
 
 impl ToTurnMath for GenericGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
@@ -685,73 +678,71 @@ impl ToSectionNode for GenericGroup {
 
                 MathDocument {
                     id: format!("{}-l2-doc", id_prefix),
-                    content_type: MathematicalContentType::ScientificPaper(
-                        ScientificPaperContent {
-                            title: format!(
-                                "Group Type: {}",
-                                main_section
-                                    .title
-                                    .as_ref()
-                                    .map_or("Group".to_string(), |p| {
-                                        p.segments
-                                            .iter()
-                                            .map(|s| match s {
-                                                RichTextSegment::Text(t) => t.clone(),
-                                                RichTextSegment::StyledText { text, .. } => {
-                                                    text.clone()
-                                                }
-                                                _ => "".to_string(),
-                                            })
-                                            .collect::<String>()
-                                    })
-                            ),
-                            paper_type: PaperType::Research,
-                            venue: None,
-                            peer_reviewed: false,
-                            content_metadata: ContentMetadata {
-                                language: Some("en-US".to_string()),
-                                version: Some("1.0".to_string()),
-                                created_at: None,
-                                last_modified: None,
-                                content_hash: None,
-                            },
-                            academic_metadata: AcademicMetadata {
-                                authors: vec![],
-                                date_published: None,
-                                date_modified: None,
-                                venue: None,
-                                doi: None,
-                                keywords: vec![],
-                            },
-                            structure: DocumentStructure {
-                                abstract_content: Some(Section {
-                                    id: format!("{}-abstract", id_prefix),
-                                    title: None,
-                                    content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                                        segments: vec![RichTextSegment::Text(format!(
-                                            "A document describing a specific group type on set {:?} with its properties.",
-                                            self.base_set
-                                        ))],
-                                        alignment: None,
-                                    })],
-                                    metadata: vec![],
-                                    display_options: None,
-                                }),
-                                table_of_contents: None,
-                                body: vec![main_section],
-                                footnotes: vec![],
-                                glossary: vec![],
-                                bibliography: vec![],
-                            },
-                            relationships: DocumentRelationships {
-                                parent_documents: vec![],
-                                child_documents: vec![],
-                                related_concepts: vec![],
-                                cross_references: vec![],
-                                dependency_graph: None,
-                            },
+                    content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
+                        title: format!(
+                            "Group Type: {}",
+                            main_section
+                                .title
+                                .as_ref()
+                                .map_or("Group".to_string(), |p| {
+                                    p.segments
+                                        .iter()
+                                        .map(|s| match s {
+                                            RichTextSegment::Text(t) => t.clone(),
+                                            RichTextSegment::StyledText { text, .. } => {
+                                                text.clone()
+                                            }
+                                            _ => "".to_string(),
+                                        })
+                                        .collect::<String>()
+                                })
+                        ),
+                        paper_type: PaperType::Research,
+                        venue: None,
+                        peer_reviewed: false,
+                        content_metadata: ContentMetadata {
+                            language: Some("en-US".to_string()),
+                            version: Some("1.0".to_string()),
+                            created_at: None,
+                            last_modified: None,
+                            content_hash: None,
                         },
-                    ),
+                        academic_metadata: AcademicMetadata {
+                            authors: vec![],
+                            date_published: None,
+                            date_modified: None,
+                            venue: None,
+                            doi: None,
+                            keywords: vec![],
+                        },
+                        structure: DocumentStructure {
+                            abstract_content: Some(Section {
+                                id: format!("{}-abstract", id_prefix),
+                                title: None,
+                                content: vec![SectionContentNode::Paragraph(ParagraphNode {
+                                    segments: vec![RichTextSegment::Text(format!(
+                                        "A document describing a specific group type on set {:?} with its properties.",
+                                        self.base_set
+                                    ))],
+                                    alignment: None,
+                                })],
+                                metadata: vec![],
+                                display_options: None,
+                            }),
+                            table_of_contents: None,
+                            body: vec![main_section],
+                            footnotes: vec![],
+                            glossary: vec![],
+                            bibliography: vec![],
+                        },
+                        relationships: DocumentRelationships {
+                            parent_documents: vec![],
+                            child_documents: vec![],
+                            related_concepts: vec![],
+                            cross_references: vec![],
+                            dependency_graph: None,
+                        },
+                    }),
                 }
             }
 
@@ -783,56 +774,54 @@ impl ToSectionNode for GenericGroup {
 
                 MathDocument {
                     id: format!("{}-l3-doc", id_prefix),
-                    content_type: MathematicalContentType::ScientificPaper(
-                        ScientificPaperContent {
-                            title: "Group Constructor Reference".to_string(),
-                            paper_type: PaperType::Research,
-                            venue: None,
-                            peer_reviewed: false,
-                            content_metadata: ContentMetadata {
-                                language: Some("en-US".to_string()),
-                                version: Some("1.0".to_string()),
-                                created_at: None,
-                                last_modified: None,
-                                content_hash: None,
-                            },
-                            academic_metadata: AcademicMetadata {
-                                authors: vec![],
-                                date_published: None,
-                                date_modified: None,
-                                venue: None,
-                                doi: None,
-                                keywords: vec![],
-                            },
-                            structure: DocumentStructure {
-                                abstract_content: Some(Section {
-                                    id: format!("{}-l3-abstract", id_prefix),
-                                    title: None,
-                                    content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                                        segments: vec![RichTextSegment::Text(
-                                            "A reference document for group construction methods."
-                                                .to_string(),
-                                        )],
-                                        alignment: None,
-                                    })],
-                                    metadata: vec![],
-                                    display_options: None,
-                                }),
-                                table_of_contents: None,
-                                body: vec![dummy_section],
-                                footnotes: vec![],
-                                glossary: vec![],
-                                bibliography: vec![],
-                            },
-                            relationships: DocumentRelationships {
-                                parent_documents: vec![],
-                                child_documents: vec![],
-                                related_concepts: vec![],
-                                cross_references: vec![],
-                                dependency_graph: None,
-                            },
+                    content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
+                        title: "Group Constructor Reference".to_string(),
+                        paper_type: PaperType::Research,
+                        venue: None,
+                        peer_reviewed: false,
+                        content_metadata: ContentMetadata {
+                            language: Some("en-US".to_string()),
+                            version: Some("1.0".to_string()),
+                            created_at: None,
+                            last_modified: None,
+                            content_hash: None,
                         },
-                    ),
+                        academic_metadata: AcademicMetadata {
+                            authors: vec![],
+                            date_published: None,
+                            date_modified: None,
+                            venue: None,
+                            doi: None,
+                            keywords: vec![],
+                        },
+                        structure: DocumentStructure {
+                            abstract_content: Some(Section {
+                                id: format!("{}-l3-abstract", id_prefix),
+                                title: None,
+                                content: vec![SectionContentNode::Paragraph(ParagraphNode {
+                                    segments: vec![RichTextSegment::Text(
+                                        "A reference document for group construction methods."
+                                            .to_string(),
+                                    )],
+                                    alignment: None,
+                                })],
+                                metadata: vec![],
+                                display_options: None,
+                            }),
+                            table_of_contents: None,
+                            body: vec![dummy_section],
+                            footnotes: vec![],
+                            glossary: vec![],
+                            bibliography: vec![],
+                        },
+                        relationships: DocumentRelationships {
+                            parent_documents: vec![],
+                            child_documents: vec![],
+                            related_concepts: vec![],
+                            cross_references: vec![],
+                            dependency_graph: None,
+                        },
+                    }),
                 }
             }
 
@@ -842,70 +831,66 @@ impl ToSectionNode for GenericGroup {
 
                 MathDocument {
                     id: format!("{}-l4-doc", id_prefix),
-                    content_type: MathematicalContentType::ScientificPaper(
-                        ScientificPaperContent {
-                            title: main_section
-                                .title
-                                .as_ref()
-                                .map_or("Group".to_string(), |p| {
-                                    p.segments
-                                        .iter()
-                                        .map(|s| match s {
-                                            RichTextSegment::Text(t) => t.clone(),
-                                            RichTextSegment::StyledText { text, .. } => {
-                                                text.clone()
-                                            }
-                                            _ => "".to_string(),
-                                        })
-                                        .collect::<String>()
-                                }),
-                            paper_type: PaperType::Research,
-                            venue: None,
-                            peer_reviewed: false,
-                            content_metadata: ContentMetadata {
-                                language: Some("en-US".to_string()),
-                                version: Some("1.0".to_string()),
-                                created_at: None,
-                                last_modified: None,
-                                content_hash: None,
-                            },
-                            academic_metadata: AcademicMetadata {
-                                authors: vec![],
-                                date_published: None,
-                                date_modified: None,
-                                venue: None,
-                                doi: None,
-                                keywords: vec![],
-                            },
-                            structure: DocumentStructure {
-                                abstract_content: Some(Section {
-                                    id: format!("{}-l4-abstract", id_prefix),
-                                    title: None,
-                                    content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                                        segments: vec![RichTextSegment::Text(format!(
-                                            "A document describing a concrete group instance on set {:?} with explicit elements and structure.",
-                                            self.base_set
-                                        ))],
-                                        alignment: None,
-                                    })],
-                                    metadata: vec![],
-                                    display_options: None,
-                                }),
-                                table_of_contents: None,
-                                body: vec![main_section],
-                                footnotes: vec![],
-                                glossary: vec![],
-                                bibliography: vec![],
-                            },
-                            relationships: DocumentRelationships {
-                                parent_documents: vec![],
-                                child_documents: vec![],
-                                related_concepts: vec![],
-                                cross_references: vec![],
-                                dependency_graph: None,
-                            },
+                    content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
+                        title: main_section
+                            .title
+                            .as_ref()
+                            .map_or("Group".to_string(), |p| {
+                                p.segments
+                                    .iter()
+                                    .map(|s| match s {
+                                        RichTextSegment::Text(t) => t.clone(),
+                                        RichTextSegment::StyledText { text, .. } => text.clone(),
+                                        _ => "".to_string(),
+                                    })
+                                    .collect::<String>()
+                            }),
+                        paper_type: PaperType::Research,
+                        venue: None,
+                        peer_reviewed: false,
+                        content_metadata: ContentMetadata {
+                            language: Some("en-US".to_string()),
+                            version: Some("1.0".to_string()),
+                            created_at: None,
+                            last_modified: None,
+                            content_hash: None,
                         },
-                    ),
+                        academic_metadata: AcademicMetadata {
+                            authors: vec![],
+                            date_published: None,
+                            date_modified: None,
+                            venue: None,
+                            doi: None,
+                            keywords: vec![],
+                        },
+                        structure: DocumentStructure {
+                            abstract_content: Some(Section {
+                                id: format!("{}-l4-abstract", id_prefix),
+                                title: None,
+                                content: vec![SectionContentNode::Paragraph(ParagraphNode {
+                                    segments: vec![RichTextSegment::Text(format!(
+                                        "A document describing a concrete group instance on set {:?} with explicit elements and structure.",
+                                        self.base_set
+                                    ))],
+                                    alignment: None,
+                                })],
+                                metadata: vec![],
+                                display_options: None,
+                            }),
+                            table_of_contents: None,
+                            body: vec![main_section],
+                            footnotes: vec![],
+                            glossary: vec![],
+                            bibliography: vec![],
+                        },
+                        relationships: DocumentRelationships {
+                            parent_documents: vec![],
+                            child_documents: vec![],
+                            related_concepts: vec![],
+                            cross_references: vec![],
+                            dependency_graph: None,
+                        },
+                    }),
                 }
             }
         }
@@ -1202,7 +1187,7 @@ impl ToSectionNode for GenericGroup {
 
         MathDocument {
             id: format!("{}-l1-doc", id_prefix),
-            content_type: MathematicalContentType::ScientificPaper(ScientificPaperContent {
+            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
             title: "Basic Group".to_string(),
                 paper_type: PaperType::Research,
                 venue: None,
@@ -1281,14 +1266,17 @@ impl GenericGroup {
         let ab = MathNode {
             id: format!("{}_ab", node_id),
             content: Box::new(MathNodeContent::FunctionCall {
-                name: IdentifierNode {
-                    body: "∘".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                },
+                name: Box::new(MathNode {
+                    id: format!("{}_func", node_id),
+                    content: Box::new(MathNodeContent::Identifier {
+                        body: "∘".to_string(),
+                        pre_script: None,
+                        mid_script: None,
+                        post_script: None,
+                        primes: 0,
+                        is_function: false,
+                    }),
+                }),
                 parameters: vec![a_el.clone(), b_el.clone()],
             }),
         };
@@ -1313,14 +1301,14 @@ impl GenericGroup {
                         RefinedMulOrDivOperation::None,
                         MathNode {
                             id: format!("{}_comma", node_id),
-                            content: Box::new(MathNodeContent::Identifier(IdentifierNode {
+                            content: Box::new(MathNodeContent::Identifier {
                                 body: ",".to_string(),
                                 pre_script: None,
                                 mid_script: None,
                                 post_script: None,
                                 primes: 0,
                                 is_function: false,
-                            })),
+                            }),
                         },
                     ),
                     (RefinedMulOrDivOperation::None, b_el),
@@ -1380,14 +1368,17 @@ impl GenericGroup {
         let ab = MathNode {
             id: format!("{}_ab", node_id),
             content: Box::new(MathNodeContent::FunctionCall {
-                name: IdentifierNode {
-                    body: "∘".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                },
+                name: Box::new(MathNode {
+                    id: format!("{}_func", node_id),
+                    content: Box::new(MathNodeContent::Identifier {
+                        body: "∘".to_string(),
+                        pre_script: None,
+                        mid_script: None,
+                        post_script: None,
+                        primes: 0,
+                        is_function: false,
+                    }),
+                }),
                 parameters: vec![a_el.clone(), b_el.clone()],
             }),
         };

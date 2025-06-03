@@ -1,11 +1,3 @@
-use crate::turn_render::math_node::{MathNode, MathNodeContent};
-use crate::turn_render::section_node::{
-    AbstractionMetadata, CompletenessLevel, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathematicalContentType, ParagraphNode,
-    RichTextSegment, Section, SectionContentNode, SelectableProperty, StructuredMathNode,
-    ToSectionNode, WikiPageContent,
-};
-
 // This AbstractionLevel is for the GetAbstractionLevel trait implementations for ZFC types.
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::VariantSet;
@@ -13,7 +5,7 @@ use crate::subjects::math::theories::zfc::definitions::{
     CardinalityPropertyVariant, ElementCondition, Set, SetElement, SetExpression, SetMapping,
     SetProperty, SetRelation,
 };
-use crate::turn_render::DocumentType;
+use crate::turn_render::*;
 
 impl ToSectionNode for Set {
     fn to_section_node(&self, id_prefix: &str) -> Section {
@@ -164,7 +156,7 @@ impl ToSectionNode for Set {
 
         MathDocument {
             id: format!("{}-doc", id_prefix),
-            content_type: MathematicalContentType::WikiPage(WikiPageContent {
+            content_type: MathDocumentType::WikiPage(WikiPageContent {
                 title,
                 theory_domain: "ZFC Set Theory".to_string(),
                 completeness_level: CompletenessLevel::Basic,
