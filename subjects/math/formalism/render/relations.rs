@@ -21,17 +21,53 @@ impl ToTurnMath for MathRelation {
                     }),
                 }
             }
-            MathRelation::And(relations) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
-                    body: format!("∧({} relations)", relations.len()),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
-            },
+            MathRelation::And(relations) => {
+                if relations.len() == 1 {
+                    // Single relation, just return it directly
+                    relations[0].to_turn_math(master_id)
+                } else if relations.len() == 2 {
+                    // Binary conjunction: A ∧ B using multiplication terms with ∧ operator
+                    let lhs = relations[0].to_turn_math(format!("{}_left", master_id));
+                    let and_operator = MathNode {
+                        id: format!("{}_and", master_id),
+                        content: Box::new(MathNodeContent::Text(" ∧ ".to_string())),
+                    };
+                    let rhs = relations[1].to_turn_math(format!("{}_right", master_id));
+
+                    MathNode {
+                        id: master_id,
+                        content: Box::new(MathNodeContent::Multiplications {
+                            terms: vec![
+                                (RefinedMulOrDivOperation::None, lhs),
+                                (RefinedMulOrDivOperation::None, and_operator),
+                                (RefinedMulOrDivOperation::None, rhs),
+                            ],
+                        }),
+                    }
+                } else {
+                    // Multiple relations: create a chain with ∧ operators
+                    let mut terms = Vec::new();
+
+                    for (i, relation) in relations.iter().enumerate() {
+                        if i > 0 {
+                            // Add ∧ operator before each subsequent relation
+                            let and_op = MathNode {
+                                id: format!("{}_and{}", master_id, i),
+                                content: Box::new(MathNodeContent::Text(" ∧ ".to_string())),
+                            };
+                            terms.push((RefinedMulOrDivOperation::None, and_op));
+                        }
+
+                        let rel_node = relation.to_turn_math(format!("{}_rel{}", master_id, i));
+                        terms.push((RefinedMulOrDivOperation::None, rel_node));
+                    }
+
+                    MathNode {
+                        id: master_id,
+                        content: Box::new(MathNodeContent::Multiplications { terms }),
+                    }
+                }
+            }
             MathRelation::Or(relations) => MathNode {
                 id: master_id,
                 content: Box::new(MathNodeContent::Identifier {
@@ -96,7 +132,17 @@ impl ToTurnMath for MathRelation {
             MathRelation::RingTheory(rr) => todo!(),
             MathRelation::TopologyTheory(tr) => todo!(),
             MathRelation::CategoryTheory(cr) => todo!(),
-            MathRelation::Todo { name, .. } => todo!(),
+            MathRelation::Todo { name, .. } => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Identifier {
+                    body: format!("TODO: {}", name),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
+            },
         }
     }
 }

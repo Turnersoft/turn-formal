@@ -1,7 +1,7 @@
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::proof::collect::CollectSubExpressions;
 use crate::subjects::math::formalism::proof::path_index::{PathError, ReplaceableAtPath};
-use crate::subjects::math::theories::topology::relations::TopologyRelation;
+use crate::subjects::math::theories::topology::definitions::TopologyRelation;
 
 impl TopologyRelation {
     pub fn collect_contained_expressions(
@@ -202,95 +202,73 @@ impl ReplaceableAtPath for TopologyRelation {
         let remaining_path = &path[1..];
 
         match self {
-            TopologyRelation::IsOpen { entity, set, space } => match current_idx {
+            TopologyRelation::IsOpen { set, space } => match current_idx {
                 1 => Ok(TopologyRelation::IsOpen {
-                    entity,
                     set: set.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsOpen {
-                    entity,
                     set,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsClosed { entity, set, space } => match current_idx {
+            TopologyRelation::IsClosed { set, space } => match current_idx {
                 1 => Ok(TopologyRelation::IsClosed {
-                    entity,
                     set: set.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsClosed {
-                    entity,
                     set,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsNeighborhood {
-                entity,
-                set,
-                point,
-                space,
-            } => match current_idx {
+            TopologyRelation::IsNeighborhood { set, point, space } => match current_idx {
                 1 => Ok(TopologyRelation::IsNeighborhood {
-                    entity,
                     set: set.replace_at_path(remaining_path, replacement)?,
                     point,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsNeighborhood {
-                    entity,
                     set,
                     point: point.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 3 => Ok(TopologyRelation::IsNeighborhood {
-                    entity,
                     set,
                     point,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsBasis {
-                entity,
-                collection,
-                space,
-            } => match current_idx {
+            TopologyRelation::IsBasis { collection, space } => match current_idx {
                 1 => Ok(TopologyRelation::IsBasis {
-                    entity,
                     collection: collection.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsBasis {
-                    entity,
                     collection,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::IsClosure {
-                entity,
                 closure,
                 set,
                 space,
             } => match current_idx {
                 1 => Ok(TopologyRelation::IsClosure {
-                    entity,
                     closure: closure.replace_at_path(remaining_path, replacement)?,
                     set,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsClosure {
-                    entity,
                     closure,
                     set: set.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 3 => Ok(TopologyRelation::IsClosure {
-                    entity,
                     closure,
                     set,
                     space: space.replace_at_path(remaining_path, replacement)?,
@@ -298,25 +276,21 @@ impl ReplaceableAtPath for TopologyRelation {
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::IsInterior {
-                entity,
                 interior,
                 set,
                 space,
             } => match current_idx {
                 1 => Ok(TopologyRelation::IsInterior {
-                    entity,
                     interior: interior.replace_at_path(remaining_path, replacement)?,
                     set,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsInterior {
-                    entity,
                     interior,
                     set: set.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 3 => Ok(TopologyRelation::IsInterior {
-                    entity,
                     interior,
                     set,
                     space: space.replace_at_path(remaining_path, replacement)?,
@@ -324,100 +298,85 @@ impl ReplaceableAtPath for TopologyRelation {
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::IsBoundary {
-                entity,
                 boundary,
                 set,
                 space,
             } => match current_idx {
                 1 => Ok(TopologyRelation::IsBoundary {
-                    entity,
                     boundary: boundary.replace_at_path(remaining_path, replacement)?,
                     set,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsBoundary {
-                    entity,
                     boundary,
                     set: set.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 3 => Ok(TopologyRelation::IsBoundary {
-                    entity,
                     boundary,
                     set,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsConnected { entity, space } => match current_idx {
+            TopologyRelation::IsConnected { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsConnected {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsPathConnected { entity, space } => match current_idx {
+            TopologyRelation::IsPathConnected { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsPathConnected {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsCompact { entity, space } => match current_idx {
+            TopologyRelation::IsCompact { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsCompact {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsHausdorff { entity, space } => match current_idx {
+            TopologyRelation::IsHausdorff { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsHausdorff {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsLocallyCompact { entity, space } => match current_idx {
+            TopologyRelation::IsLocallyCompact { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsLocallyCompact {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsParacompact { entity, space } => match current_idx {
+            TopologyRelation::IsParacompact { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsParacompact {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsMetrizable { entity, space } => match current_idx {
+            TopologyRelation::IsMetrizable { space } => match current_idx {
                 1 => Ok(TopologyRelation::IsMetrizable {
-                    entity,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::IsContinuous {
-                entity,
                 function,
                 domain,
                 codomain,
             } => match current_idx {
                 1 => Ok(TopologyRelation::IsContinuous {
-                    entity,
                     function: function.replace_at_path(remaining_path, replacement)?,
                     domain,
                     codomain,
                 }),
                 2 => Ok(TopologyRelation::IsContinuous {
-                    entity,
                     function,
                     domain: domain.replace_at_path(remaining_path, replacement)?,
                     codomain,
                 }),
                 3 => Ok(TopologyRelation::IsContinuous {
-                    entity,
                     function,
                     domain,
                     codomain: codomain.replace_at_path(remaining_path, replacement)?,
@@ -425,127 +384,94 @@ impl ReplaceableAtPath for TopologyRelation {
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::IsHomeomorphism {
-                entity,
                 function,
                 domain,
                 codomain,
             } => match current_idx {
                 1 => Ok(TopologyRelation::IsHomeomorphism {
-                    entity,
                     function: function.replace_at_path(remaining_path, replacement)?,
                     domain,
                     codomain,
                 }),
                 2 => Ok(TopologyRelation::IsHomeomorphism {
-                    entity,
                     function,
                     domain: domain.replace_at_path(remaining_path, replacement)?,
                     codomain,
                 }),
                 3 => Ok(TopologyRelation::IsHomeomorphism {
-                    entity,
                     function,
                     domain,
                     codomain: codomain.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::AreHomeomorphic {
-                entity,
-                first,
-                second,
-            } => match current_idx {
+            TopologyRelation::AreHomeomorphic { first, second } => match current_idx {
                 1 => Ok(TopologyRelation::AreHomeomorphic {
-                    entity,
                     first: first.replace_at_path(remaining_path, replacement)?,
                     second,
                 }),
                 2 => Ok(TopologyRelation::AreHomeomorphic {
-                    entity,
                     first,
                     second: second.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::Converges {
-                entity,
                 sequence,
                 limit,
                 space,
             } => match current_idx {
                 1 => Ok(TopologyRelation::Converges {
-                    entity,
                     sequence: sequence.replace_at_path(remaining_path, replacement)?,
                     limit,
                     space,
                 }),
                 2 => Ok(TopologyRelation::Converges {
-                    entity,
                     sequence,
                     limit: limit.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 3 => Ok(TopologyRelation::Converges {
-                    entity,
                     sequence,
                     limit,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsSubspace {
-                entity,
-                subspace,
-                space,
-            } => match current_idx {
+            TopologyRelation::IsSubspace { subspace, space } => match current_idx {
                 1 => Ok(TopologyRelation::IsSubspace {
-                    entity,
                     subspace: subspace.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsSubspace {
-                    entity,
                     subspace,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::IsOpenCover {
-                entity,
-                cover,
-                space,
-            } => match current_idx {
+            TopologyRelation::IsOpenCover { cover, space } => match current_idx {
                 1 => Ok(TopologyRelation::IsOpenCover {
-                    entity,
                     cover: cover.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 2 => Ok(TopologyRelation::IsOpenCover {
-                    entity,
                     cover,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            TopologyRelation::HasFiniteSubcover {
-                entity,
-                cover,
-                space,
-            } => match current_idx {
+            TopologyRelation::HasFiniteSubcover { cover, space } => match current_idx {
                 1 => Ok(TopologyRelation::HasFiniteSubcover {
-                    entity,
                     cover: cover.replace_at_path(remaining_path, replacement)?,
                     space,
                 }),
                 2 => Ok(TopologyRelation::HasFiniteSubcover {
-                    entity,
                     cover,
                     space: space.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
             TopologyRelation::Custom {
-                entity,
                 name,
                 mut parameters,
             } => {
@@ -555,11 +481,7 @@ impl ReplaceableAtPath for TopologyRelation {
                         parameters[vec_idx] = parameters[vec_idx]
                             .clone()
                             .replace_at_path(remaining_path, replacement)?;
-                        Ok(TopologyRelation::Custom {
-                            entity,
-                            name,
-                            parameters,
-                        })
+                        Ok(TopologyRelation::Custom { name, parameters })
                     } else {
                         Err(PathError::InvalidPath)
                     }

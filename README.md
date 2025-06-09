@@ -1,23 +1,84 @@
-# Turn-Formal
+# Mathematical Proof Tactics System
 
-A unified formal framework for mathematics, logic, law, and algorithms verified using various foundational theories.
+This module provides a comprehensive tactic system for mathematical proof construction and manipulation.
 
 ## Overview
 
-Turn-Formal is a project for developing and exploring formal systems across multiple disciplines, with a foundation-agnostic approach. It allows formal reasoning to be verified across different foundational theories such as Type Theory, Set Theory, and Category Theory.
+The system provides **one clean way** to apply tactics: directly on `ProofNode` instances using `apply_tactic()`.
 
-Key capabilities:
+## Core Components
 
-- **Foundation-Agnostic Formalism**: Work with math definitions and proofs that can be interpreted across multiple foundations
-- **Multiple Subject Domains**: Support for mathematics, logic, legal reasoning, and algorithmic verification
-- **Rigorous Verification**: All formalisms can be automatically verified and checked for consistency
+### Single Application Method
+
+```rust
+// The ONLY way to apply tactics
+let new_node = proof_node.apply_tactic(tactic, &mut forest);
+```
+
+### Key Components
+
+- **`ProofNode`**: Main proof state container with single tactic application method
+- **`Tactic`**: Enumeration of all available tactics (Intro, Apply, Substitution, etc.)
+- **`TacticApplier`** and **`TacticMatcher`**: Clean trait-based implementation
+- **`SearchReplace`**: Powerful search and replace engine for expressions
+- **`TheoremApplier`**: Specialized theorem application with pattern matching
+
+## Usage Examples
+
+### Basic Tactic Application
+
+```rust
+use crate::subjects::math::formalism::proof::tactics::*;
+
+// Create a tactic
+let tactic = Tactic::Intro {
+    name: Identifier::Name("x".to_string(), 0),
+    expression: some_expression,
+    view: None,
+};
+
+// Apply it (single method)
+let result_node = node.apply_tactic(tactic, &mut forest);
+```
+
+### Available Tactics
+
+- **Intro**: Introduce variables/hypotheses
+- **Apply**: Apply theorems/hypotheses  
+- **Substitution**: Replace expressions
+- **TheoremApplication**: Apply registered theorems
+- **Rewrite**: Rewrite using equations
+- **ChangeView**: Change mathematical perspective
+- **Decompose**: Break down complex expressions
+- **CaseAnalysis**: Analyze different cases
+- **Induction**: Mathematical induction
+- **Simplify**: Simplify expressions
 
 ## Architecture
 
-Turn-Formal uses a hybrid architecture:
+The system uses a clean trait-based design:
 
-- **React Frontend**: Modern UI for interacting with formal systems
-- **Rust Core**: Strong typing and rigorous verification for formal systems
+1. **`TacticMatcher`**: Finds applicable locations and patterns
+2. **`TacticApplier`**: Transforms proof goals based on tactic logic  
+3. **Single Application Point**: `ProofNode::apply_tactic()` handles all result types
+
+## Result Handling
+
+The system returns different result types through `TacticApplicationResult`:
+
+- **SingleGoal**: Creates one new proof node
+- **MultipleGoals**: Creates multiple child nodes (CaseAnalysis, Decompose, Induction)
+- **NoChange**: Tactic not applicable
+- **Error**: Application failed with error message
+
+## Design Principles
+
+- **Simplicity**: One method for all tactic applications
+- **Elegance**: Clean trait-based architecture
+- **Completeness**: Handles all mathematical proof scenarios
+- **Extensibility**: Easy to add new tactics following the pattern
+
+The system achieves the original goal of "naive and elegant search and replace logic" through a unified, trait-based approach that keeps the API simple while providing powerful functionality underneath.
 
 ## Development
 

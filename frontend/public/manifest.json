@@ -49,22 +49,9 @@
             "group_theory.def.pullback_group.pullback-doc",
             "group_theory.def.restriction_group.restriction-doc"
           ]
-        },
-        {
-          "file_path": "group_theory.theorems.json",
-          "content_type": "theorems",
-          "item_count": 6,
-          "items": [
-            "group_theory.inverse_uniqueness-doc",
-            "group_theory.inverse_product_rule-doc",
-            "group_theory.abelian_squared_criterion-doc",
-            "group_theory.lagrange_theorem-doc",
-            "group_theory.example_chaining_theorems-doc",
-            "group_theory.theorem_extraction_example-doc"
-          ]
         }
       ],
-      "item_count": 38
+      "item_count": 32
     },
     {
       "theory_id": "probability_theory",
@@ -112,7 +99,7 @@
       "item_count": 17
     }
   ],
-  "total_items": 55,
-  "generated_at": "1748925268",
+  "total_items": 49,
+  "generated_at": "1749444843",
   "version": "1.0.0"
 }

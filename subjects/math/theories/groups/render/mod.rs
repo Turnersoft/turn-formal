@@ -33,10 +33,11 @@ use crate::subjects::math::theories::groups::definitions::{
     TopologicalGroup, TopologicalGroupProperty, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 
-use super::theorems::{
-    prove_abelian_squared_criterion, prove_example_chaining_theorems, prove_inverse_product_rule,
-    prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
-};
+// use super::theorems::{
+//     prove_abelian_squared_criterion, prove_deduction_using_identity_uniqueness,
+//     prove_example_chaining_theorems, prove_inverse_product_rule, prove_inverse_uniqueness,
+//     prove_lagrange_theorem, prove_theorem_extraction_example,
+// };
 
 // Include all the render modules
 pub mod alternating_group;
@@ -769,15 +770,17 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
 
     fn export_theorems(&self) -> Vec<MathDocument> {
         let mut content = vec![
-            prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
-            prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
-            prove_abelian_squared_criterion()
-                .to_math_document("group_theory.abelian_squared_criterion"),
-            prove_lagrange_theorem().to_math_document("group_theory.lagrange_theorem"),
-            prove_example_chaining_theorems()
-                .to_math_document("group_theory.example_chaining_theorems"),
-            prove_theorem_extraction_example()
-                .to_math_document("group_theory.theorem_extraction_example"),
+            // prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
+            // prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
+            // prove_abelian_squared_criterion()
+            //     .to_math_document("group_theory.abelian_squared_criterion"),
+            // prove_lagrange_theorem().to_math_document("group_theory.lagrange_theorem"),
+            // prove_example_chaining_theorems()
+            //     .to_math_document("group_theory.example_chaining_theorems"),
+            // prove_theorem_extraction_example()
+            //     .to_math_document("group_theory.theorem_extraction_example"),
+            // prove_deduction_using_identity_uniqueness()
+            //     .to_math_document("group_theory.deduction_using_identity_uniqueness"),
         ];
 
         content

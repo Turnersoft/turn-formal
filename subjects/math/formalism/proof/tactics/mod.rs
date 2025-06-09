@@ -1,17 +1,20 @@
 pub mod case_analysis;
 pub mod implement;
+pub mod replacement_strategy;
+pub mod search_replace;
 pub mod theorem_applier;
-pub mod unification;
+
 pub mod utils;
 
 // Re-export the items so external code can continue to use them
 pub use case_analysis::{CaseAnalysisBuilder, CaseResult};
 pub use implement::legacy_apply;
-pub use theorem_applier::{TheoremApplicationError, TheoremApplicationResult, TheoremApplier};
-pub use unification::{
-    UnificationContext, UnificationError, apply_instantiations, apply_instantiations_to_relation,
-    unify,
+pub use replacement_strategy::{
+    ReplacementContext, TacticApplicationResult, TacticApplier, TacticMatcher, TacticSearchReplace,
 };
+pub use search_replace::{ExpressionPath, ReplacementSpec, SearchReplace, SearchResult};
+pub use theorem_applier::{TheoremApplicationError, TheoremApplicationResult, TheoremApplier};
+
 pub use utils::{create_expr, expression_summary, name_to_string};
 
 // Re-export only public functions from parent
@@ -94,13 +97,7 @@ pub enum Tactic {
         /// Optional induction schema
         schema: Option<MathExpression>,
     },
-    /// Custom tactic defined by the user
-    Custom {
-        /// Name of the custom tactic
-        name: String,
-        /// Arguments for the custom tactic
-        args: Vec<String>,
-    },
+
     /// Case analysis on an expression
     CaseAnalysis {
         /// Target expression for case analysis
@@ -120,20 +117,6 @@ pub enum Tactic {
         direction: RewriteDirection,
         /// Location within the expression
         location: Option<Vec<usize>>,
-    },
-    /// Branch to create a new proof path
-    Branch {
-        /// Description of the new proof path
-        description: String,
-    },
-    /// Case analysis case
-    Case {
-        /// Parent case node ID
-        parent_id: String,
-        /// Case expression
-        case_expr: MathExpression,
-        /// Case name
-        case_name: String,
     },
 }
 

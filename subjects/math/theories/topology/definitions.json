@@ -1,27 +1,5 @@
 [
   {
-    "name": "TopologyRelationEntity",
-    "docs": "Entity information for topology relation operations",
-    "kind": "struct",
-    "members": [
-      {
-        "name": "id",
-        "type": "Option<String>",
-        "docs": "Optional ID for referencing this relation"
-      },
-      {
-        "name": "description",
-        "type": "Option<String>",
-        "docs": "Optional description explaining this relation instance"
-      },
-      {
-        "name": "tags",
-        "type": "Vec<(String, String)>",
-        "docs": "Optional key-value pairs for additional context"
-      }
-    ]
-  },
-  {
     "name": "TopologyRelation",
     "docs": "Relations specific to topology",
     "kind": "enum",
@@ -29,112 +7,112 @@
       {
         "name": "IsOpen",
         "docs": "A set is open in a topological space",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        set: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsClosed",
         "docs": "A set is closed in a topological space",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        set: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsNeighborhood",
         "docs": "A set is a neighborhood of a point",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        set: MathExpression,\n        point: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        set: MathExpression,\n        point: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsBasis",
         "docs": "A set is a basis for a topology",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        collection: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        collection: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsClosure",
         "docs": "A set is the closure of another",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        closure: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        closure: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsInterior",
         "docs": "A set is the interior of another",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        interior: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        interior: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsBoundary",
         "docs": "A set is the boundary of another",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        boundary: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        boundary: MathExpression,\n        set: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsConnected",
         "docs": "A topological space is connected",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsPathConnected",
         "docs": "A topological space is path-connected",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsCompact",
         "docs": "A topological space is compact",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsHausdorff",
         "docs": "A topological space is Hausdorff",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsContinuous",
         "docs": "A function is continuous",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        function: MathExpression,\n        domain: MathExpression,\n        codomain: MathExpression,\n    }"
+        "type_info": "{\n        function: MathExpression,\n        domain: MathExpression,\n        codomain: MathExpression,\n    }"
       },
       {
         "name": "AreHomeomorphic",
         "docs": "Two topological spaces are homeomorphic",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        first: MathExpression,\n        second: MathExpression,\n    }"
+        "type_info": "{\n        first: MathExpression,\n        second: MathExpression,\n    }"
       },
       {
         "name": "Converges",
         "docs": "A sequence converges to a point",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        sequence: MathExpression,\n        limit: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        sequence: MathExpression,\n        limit: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsHomeomorphism",
         "docs": "A function is a homeomorphism",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        function: MathExpression,\n        domain: MathExpression,\n        codomain: MathExpression,\n    }"
+        "type_info": "{\n        function: MathExpression,\n        domain: MathExpression,\n        codomain: MathExpression,\n    }"
       },
       {
         "name": "IsSubspace",
         "docs": "A space is a subspace of another",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        subspace: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        subspace: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsOpenCover",
         "docs": "A collection is an open cover of a space",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        cover: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        cover: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "HasFiniteSubcover",
         "docs": "A cover has a finite subcover",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        cover: MathExpression,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        cover: MathExpression,\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsLocallyCompact",
         "docs": "A space is locally compact",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsParacompact",
         "docs": "A space is paracompact",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "IsMetrizable",
         "docs": "A space is metrizable",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        space: MathExpression,\n    }"
+        "type_info": "{\n        space: MathExpression,\n    }"
       },
       {
         "name": "Custom",
         "docs": "Custom topology relation",
-        "type_info": "{\n        entity: TopologyRelationEntity,\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
+        "type_info": "{\n        name: String,\n        parameters: Vec<MathExpression>,\n    }"
       }
     ]
   },

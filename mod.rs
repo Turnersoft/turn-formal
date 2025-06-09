@@ -5,10 +5,6 @@
 pub mod foundational_theories;
 pub mod subjects;
 
-// Include the leptos module conditionally based on visualization feature
-#[cfg(feature = "visualization")]
-pub mod leptos;
-
 // This module allows access to the parent crate's modules via super
 
 #[path = "./frontend/src/pages/MathPage/components/turn-render/mod.rs"]

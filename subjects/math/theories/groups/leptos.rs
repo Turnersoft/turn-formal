@@ -4,8 +4,8 @@ use super::super::super::super::math::formalism::relations::MathRelation;
 use leptos::prelude::*;
 
 use super::theorems::{
-    prove_abelian_squared_criterion, prove_identity_uniqueness_with_syntax_trees,
-    prove_inverse_product_rule, prove_inverse_uniqueness, prove_lagrange_theorem,
+    prove_abelian_squared_criterion, prove_identity_uniqueness, prove_inverse_product_rule,
+    prove_inverse_uniqueness, prove_lagrange_theorem,
 };
 
 /// Component that lists all group theory theorems
@@ -21,7 +21,7 @@ pub fn GroupTheorems() -> impl IntoView {
                 />
                 <TheoremDisplay
                     theorem_name="Group Identity Uniqueness".to_string()
-                    theorem_fn=prove_identity_uniqueness_with_syntax_trees
+                    theorem_fn=prove_identity_uniqueness
                 />
                 <TheoremDisplay
                     theorem_name="Group Inverse Product Rule".to_string()

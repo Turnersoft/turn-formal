@@ -1,3 +1,4 @@
+use super::super::super::super::math::formalism::expressions::MathExpression;
 use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::common::spaces::*;
 use super::super::super::super::math::theories::zfc::definitions::Set;
@@ -555,4 +556,126 @@ pub enum TopologicalCoveragePropertyVariant {
     Open,
     /// Property holds on closed subset
     Closed,
+}
+
+/// Relations specific to topology
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum TopologyRelation {
+    /// A set is open in a topological space
+    IsOpen {
+        set: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A set is closed in a topological space
+    IsClosed {
+        set: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A set is a neighborhood of a point
+    IsNeighborhood {
+        set: MathExpression,
+        point: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A set is a basis for a topology
+    IsBasis {
+        collection: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A set is the closure of another
+    IsClosure {
+        closure: MathExpression,
+        set: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A set is the interior of another
+    IsInterior {
+        interior: MathExpression,
+        set: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A set is the boundary of another
+    IsBoundary {
+        boundary: MathExpression,
+        set: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A topological space is connected
+    IsConnected { space: MathExpression },
+
+    /// A topological space is path-connected
+    IsPathConnected { space: MathExpression },
+
+    /// A topological space is compact
+    IsCompact { space: MathExpression },
+
+    /// A topological space is Hausdorff
+    IsHausdorff { space: MathExpression },
+
+    /// A function is continuous
+    IsContinuous {
+        function: MathExpression,
+        domain: MathExpression,
+        codomain: MathExpression,
+    },
+
+    /// Two topological spaces are homeomorphic
+    AreHomeomorphic {
+        first: MathExpression,
+        second: MathExpression,
+    },
+
+    /// A sequence converges to a point
+    Converges {
+        sequence: MathExpression,
+        limit: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A function is a homeomorphism
+    IsHomeomorphism {
+        function: MathExpression,
+        domain: MathExpression,
+        codomain: MathExpression,
+    },
+
+    /// A space is a subspace of another
+    IsSubspace {
+        subspace: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A collection is an open cover of a space
+    IsOpenCover {
+        cover: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A cover has a finite subcover
+    HasFiniteSubcover {
+        cover: MathExpression,
+        space: MathExpression,
+    },
+
+    /// A space is locally compact
+    IsLocallyCompact { space: MathExpression },
+
+    /// A space is paracompact
+    IsParacompact { space: MathExpression },
+
+    /// A space is metrizable
+    IsMetrizable { space: MathExpression },
+
+    /// Custom topology relation
+    Custom {
+        name: String,
+        parameters: Vec<MathExpression>,
+    },
 }

@@ -6,6 +6,7 @@ import DeveloperPage from "./pages/DeveloperPage/DeveloperPage";
 import NotFound from "./pages/NotFound/NotFound";
 import Navigation from "./components/navigation";
 import usePreventNavigationGesture from "./hooks/usePreventNavigationGesture";
+import TestMathRendering from "./test-math-rendering";
 import styles from "./App.module.scss";
 
 export const App: React.FC = () => {
@@ -27,6 +28,8 @@ export const App: React.FC = () => {
             <Route path="/math/*" element={<MathPage />} />
             {/* Developer section */}
             <Route path="/developer" element={<DeveloperPage />} />
+            {/* Test routes */}
+            <Route path="/test-math" element={<TestMathRendering />} />
             {/* Catch-all for not found pages */}
             <Route path="*" element={<NotFound />} />
           </Routes>

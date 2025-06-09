@@ -9,7 +9,7 @@ use crate::foundational_theories::category_theory::definitions::CategoryRelation
 use crate::subjects::math::theories::groups::definitions::GroupRelation;
 use crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation;
 use crate::subjects::math::theories::rings::definitions::RingRelation;
-use crate::subjects::math::theories::topology::relations::TopologyRelation;
+use crate::subjects::math::theories::topology::definitions::TopologyRelation;
 use crate::subjects::math::theories::zfc::definitions::SetRelation;
 
 const MAX_DEPTH: usize = 100;

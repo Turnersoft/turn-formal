@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1748925268",
+  "exported_at": "1749438390",
   "content": [
     {
       "id": "group_theory.inverse_uniqueness-doc",
@@ -72,56 +72,7 @@
                           "Mathematical": {
                             "id": "group_theory.inverse_uniqueness-main-statement",
                             "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "group_theory.inverse_uniqueness-main-statement_ante",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "∧(2 relations)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "group_theory.inverse_uniqueness-main-statement_cons",
-                                  "content": {
-                                    "Relationship": {
-                                      "lhs": {
-                                        "id": "h1",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "h1",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      },
-                                      "rhs": {
-                                        "id": "h2",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "h2",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      },
-                                      "operator": "Equal"
-                                    }
-                                  }
-                                },
-                                "operator": "Implies"
-                              }
+                              "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
                             }
                           }
                         },
@@ -137,208 +88,446 @@
                           "strategy": [],
                           "steps": [
                             {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "c8457746-e9bf-4332-9fe8-1dfe937633a3-goal",
-                                    "content": {
-                                      "Identifier": {
-                                        "body": "? FailedApplication:group_axiom_identity",
-                                        "pre_script": null,
-                                        "mid_script": null,
-                                        "post_script": null,
-                                        "primes": 0,
-                                        "is_function": false
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Variables: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
                                       }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
+                                    ],
+                                    "alignment": null
+                                  }
                                 },
-                                "tactic": "DirectProof",
-                                "status": "Abandoned"
-                              }
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "Text": "• For any g (any group element)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "Text": "• For any h1 (first potential right inverse of g)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "Text": "• For any h2 (second potential right inverse of g)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Formal Statement: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Informal Description: If ((g * h1) = e and (g * h2) = e) then h1 = h2.",
+                                          "styles": [
+                                            "Italic"
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
                             },
                             {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "a8b2a975-3d75-4f73-a0df-6569947438db-goal",
-                                    "content": {
-                                      "Identifier": {
-                                        "body": "? FailedApplication:group_axiom_identity",
-                                        "pre_script": null,
-                                        "mid_script": null,
-                                        "post_script": null,
-                                        "primes": 0,
-                                        "is_function": false
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Introduce assumptions: theorem_inverse_uniqueness"
                                       }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
+                                    ],
+                                    "alignment": null
+                                  }
                                 },
-                                "tactic": "DirectProof",
-                                "status": "Complete"
-                              }
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
                             },
                             {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "cad54ce4-2de9-4d3c-b9b9-d6f1f0dab4b5-goal",
-                                    "content": {
-                                      "Relationship": {
-                                        "lhs": {
-                                          "id": "cad54ce4-2de9-4d3c-b9b9-d6f1f0dab4b5-goal_ante",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "∧(2 relations)",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
-                                          }
-                                        },
-                                        "rhs": {
-                                          "id": "cad54ce4-2de9-4d3c-b9b9-d6f1f0dab4b5-goal_cons",
-                                          "content": {
-                                            "Relationship": {
-                                              "lhs": {
-                                                "id": "h1",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "h1",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "rhs": {
-                                                "id": "h2",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "h2",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "operator": "Equal"
-                                            }
-                                          }
-                                        },
-                                        "operator": "Implies"
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Introduce premise: ((g * h1) = e ∧ (g * h2) = e)"
                                       }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
+                                    ],
+                                    "alignment": null
+                                  }
                                 },
-                                "tactic": "DirectProof",
-                                "status": "InProgress"
-                              }
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
                             },
                             {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "9b262c4c-62be-43f7-9222-9f9dfa984ecd-goal",
-                                    "content": {
-                                      "Identifier": {
-                                        "body": "? FailedApplication:group_axiom_associativity",
-                                        "pre_script": null,
-                                        "mid_script": null,
-                                        "post_script": null,
-                                        "primes": 0,
-                                        "is_function": false
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Substitute (g * h1) with (g⁻¹ * (g * h1)) (by established equality)"
                                       }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
+                                    ],
+                                    "alignment": null
+                                  }
                                 },
-                                "tactic": "DirectProof",
-                                "status": "Abandoned"
-                              }
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(g * h1) → (g⁻¹ * (g * h1))"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
                             },
                             {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "091ca50c-85e8-42f5-825d-30aa5d180a97-goal",
-                                    "content": {
-                                      "Relationship": {
-                                        "lhs": {
-                                          "id": "091ca50c-85e8-42f5-825d-30aa5d180a97-goal_ante",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "∧(2 relations)",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
-                                          }
-                                        },
-                                        "rhs": {
-                                          "id": "091ca50c-85e8-42f5-825d-30aa5d180a97-goal_cons",
-                                          "content": {
-                                            "Relationship": {
-                                              "lhs": {
-                                                "id": "h1",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "h1",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "rhs": {
-                                                "id": "h2",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "h2",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "operator": "Equal"
-                                            }
-                                          }
-                                        },
-                                        "operator": "Implies"
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Substitute (g⁻¹ * (g * h1)) with ((g⁻¹ * g) * h1) (by established equality)"
                                       }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
+                                    ],
+                                    "alignment": null
+                                  }
                                 },
-                                "tactic": "DirectProof",
-                                "status": "InProgress"
-                              }
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(g⁻¹ * (g * h1)) → ((g⁻¹ * g) * h1)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Substitute (g⁻¹ * g) with e (by established equality)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(g⁻¹ * g) → e"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Substitute (e * h1) with h1 (by established equality)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(e * h1) → h1"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Substitute (g⁻¹ * e) with g⁻¹ (by established equality)"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(g⁻¹ * e) → g⁻¹"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Introduce premise: h2 = g⁻¹"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(((g⁻¹ * g) * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "Elaboration": [
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Step: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "Introduce premise: h1 = h2"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                },
+                                {
+                                  "Paragraph": {
+                                    "segments": [
+                                      {
+                                        "StyledText": {
+                                          "text": "Result: ",
+                                          "styles": [
+                                            "Bold"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "Text": "(((g⁻¹ * g) * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
+                                      }
+                                    ],
+                                    "alignment": null
+                                  }
+                                }
+                              ]
                             }
                           ],
                           "qed_symbol": "∎"
@@ -366,1282 +555,6 @@
                   [
                     "theorem_id",
                     "inverse_uniqueness"
-                  ]
-                ],
-                "display_options": null
-              }
-            ],
-            "footnotes": [],
-            "glossary": [],
-            "bibliography": []
-          },
-          "relationships": {
-            "parent_documents": [],
-            "child_documents": [],
-            "related_concepts": [],
-            "cross_references": [],
-            "dependency_graph": null
-          }
-        }
-      }
-    },
-    {
-      "id": "group_theory.inverse_product_rule-doc",
-      "content_type": {
-        "ScientificPaper": {
-          "title": "Group Inverse Product Rule",
-          "paper_type": "Research",
-          "venue": "Mathematical Theorems",
-          "peer_reviewed": true,
-          "content_metadata": {
-            "language": "en-US",
-            "version": "1.0",
-            "created_at": null,
-            "last_modified": null,
-            "content_hash": null
-          },
-          "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
-            "date_published": null,
-            "date_modified": null,
-            "venue": "Mathematical Theorems",
-            "doi": null,
-            "keywords": [
-              "theorem"
-            ]
-          },
-          "structure": {
-            "abstract_content": {
-              "id": "group_theory.inverse_product_rule-abstract",
-              "title": null,
-              "content": [
-                {
-                  "Paragraph": {
-                    "segments": [
-                      {
-                        "Text": "Proof that in a group, forall a,b in G, (ab)⁻¹ = b⁻¹a⁻¹"
-                      }
-                    ],
-                    "alignment": null
-                  }
-                }
-              ],
-              "metadata": [],
-              "display_options": null
-            },
-            "table_of_contents": null,
-            "body": [
-              {
-                "id": "group_theory.inverse_product_rule-main-main",
-                "title": {
-                  "segments": [
-                    {
-                      "Text": "Group Inverse Product Rule"
-                    }
-                  ],
-                  "alignment": null
-                },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "TheoremLike": {
-                        "kind": "Theorem",
-                        "label": "inverse_product_rule",
-                        "statement": {
-                          "Mathematical": {
-                            "id": "group_theory.inverse_product_rule-main-statement",
-                            "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "group_theory.inverse_product_rule-main-statement_left",
-                                  "content": {
-                                    "Power": {
-                                      "base": {
-                                        "id": "group_theory.inverse_product_rule-main-statement_left-operand",
-                                        "content": {
-                                          "Text": "g"
-                                        }
-                                      },
-                                      "exponent": {
-                                        "id": "group_theory.inverse_product_rule-main-statement_left_inverse_exp",
-                                        "content": {
-                                          "UnaryPrefixOperation": {
-                                            "parameter": {
-                                              "id": "group_theory.inverse_product_rule-main-statement_left_one",
-                                              "content": {
-                                                "Quantity": {
-                                                  "number": "1",
-                                                  "scientific_notation": null,
-                                                  "unit": null
-                                                }
-                                              }
-                                            },
-                                            "operator": {
-                                              "id": "group_theory.inverse_product_rule-main-statement_left_minus_op",
-                                              "content": {
-                                                "String": "−"
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "group_theory.inverse_product_rule-main-statement_right",
-                                  "content": {
-                                    "Relationship": {
-                                      "lhs": {
-                                        "id": "group_theory.inverse_product_rule-main-statement_right-left",
-                                        "content": {
-                                          "Text": "a"
-                                        }
-                                      },
-                                      "rhs": {
-                                        "id": "group_theory.inverse_product_rule-main-statement_right-right",
-                                        "content": {
-                                          "Text": "b"
-                                        }
-                                      },
-                                      "operator": "Equal"
-                                    }
-                                  }
-                                },
-                                "operator": "Equal"
-                              }
-                            }
-                          }
-                        },
-                        "proof": null,
-                        "abstraction_meta": null
-                      }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Proof that in a group, forall a,b in G, (ab)⁻¹ = b⁻¹a⁻¹"
-                        }
-                      ],
-                      "alignment": null
-                    }
-                  }
-                ],
-                "metadata": [
-                  [
-                    "type",
-                    "theorem"
-                  ],
-                  [
-                    "theorem_id",
-                    "inverse_product_rule"
-                  ]
-                ],
-                "display_options": null
-              }
-            ],
-            "footnotes": [],
-            "glossary": [],
-            "bibliography": []
-          },
-          "relationships": {
-            "parent_documents": [],
-            "child_documents": [],
-            "related_concepts": [],
-            "cross_references": [],
-            "dependency_graph": null
-          }
-        }
-      }
-    },
-    {
-      "id": "group_theory.abelian_squared_criterion-doc",
-      "content_type": {
-        "ScientificPaper": {
-          "title": "Abelian Group Squared Criterion",
-          "paper_type": "Research",
-          "venue": "Mathematical Theorems",
-          "peer_reviewed": true,
-          "content_metadata": {
-            "language": "en-US",
-            "version": "1.0",
-            "created_at": null,
-            "last_modified": null,
-            "content_hash": null
-          },
-          "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
-            "date_published": null,
-            "date_modified": null,
-            "venue": "Mathematical Theorems",
-            "doi": null,
-            "keywords": [
-              "theorem"
-            ]
-          },
-          "structure": {
-            "abstract_content": {
-              "id": "group_theory.abelian_squared_criterion-abstract",
-              "title": null,
-              "content": [
-                {
-                  "Paragraph": {
-                    "segments": [
-                      {
-                        "Text": "Proof that a group is abelian if and only if (ab)² = a²b² for all a,b in the group"
-                      }
-                    ],
-                    "alignment": null
-                  }
-                }
-              ],
-              "metadata": [],
-              "display_options": null
-            },
-            "table_of_contents": null,
-            "body": [
-              {
-                "id": "group_theory.abelian_squared_criterion-main-main",
-                "title": {
-                  "segments": [
-                    {
-                      "Text": "Abelian Group Squared Criterion"
-                    }
-                  ],
-                  "alignment": null
-                },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "TheoremLike": {
-                        "kind": "Theorem",
-                        "label": "abelian_squared_criterion",
-                        "statement": {
-                          "Mathematical": {
-                            "id": "group_theory.abelian_squared_criterion-main-statement",
-                            "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "group_theory.abelian_squared_criterion-main-statement_left",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "G ⊢ φ",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "group_theory.abelian_squared_criterion-main-statement_right",
-                                  "content": {
-                                    "Relationship": {
-                                      "lhs": {
-                                        "id": "group_theory.abelian_squared_criterion-main-statement_right_left",
-                                        "content": {
-                                          "Relationship": {
-                                            "lhs": {
-                                              "id": "group_theory.abelian_squared_criterion-main-statement_right_left-left",
-                                              "content": {
-                                                "Text": "a"
-                                              }
-                                            },
-                                            "rhs": {
-                                              "id": "group_theory.abelian_squared_criterion-main-statement_right_left-right",
-                                              "content": {
-                                                "Text": "b"
-                                              }
-                                            },
-                                            "operator": "Equal"
-                                          }
-                                        }
-                                      },
-                                      "rhs": {
-                                        "id": "group_theory.abelian_squared_criterion-main-statement_right_right",
-                                        "content": {
-                                          "Relationship": {
-                                            "lhs": {
-                                              "id": "group_theory.abelian_squared_criterion-main-statement_right_right-left",
-                                              "content": {
-                                                "Text": "a"
-                                              }
-                                            },
-                                            "rhs": {
-                                              "id": "group_theory.abelian_squared_criterion-main-statement_right_right-right",
-                                              "content": {
-                                                "Text": "b"
-                                              }
-                                            },
-                                            "operator": "Equal"
-                                          }
-                                        }
-                                      },
-                                      "operator": "Equal"
-                                    }
-                                  }
-                                },
-                                "operator": "Iff"
-                              }
-                            }
-                          }
-                        },
-                        "proof": null,
-                        "abstraction_meta": null
-                      }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Proof that a group is abelian if and only if (ab)² = a²b² for all a,b in the group"
-                        }
-                      ],
-                      "alignment": null
-                    }
-                  }
-                ],
-                "metadata": [
-                  [
-                    "type",
-                    "theorem"
-                  ],
-                  [
-                    "theorem_id",
-                    "abelian_squared_criterion"
-                  ]
-                ],
-                "display_options": null
-              }
-            ],
-            "footnotes": [],
-            "glossary": [],
-            "bibliography": []
-          },
-          "relationships": {
-            "parent_documents": [],
-            "child_documents": [],
-            "related_concepts": [],
-            "cross_references": [],
-            "dependency_graph": null
-          }
-        }
-      }
-    },
-    {
-      "id": "group_theory.lagrange_theorem-doc",
-      "content_type": {
-        "ScientificPaper": {
-          "title": "Lagrange's Theorem",
-          "paper_type": "Research",
-          "venue": "Mathematical Theorems",
-          "peer_reviewed": true,
-          "content_metadata": {
-            "language": "en-US",
-            "version": "1.0",
-            "created_at": null,
-            "last_modified": null,
-            "content_hash": null
-          },
-          "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
-            "date_published": null,
-            "date_modified": null,
-            "venue": "Mathematical Theorems",
-            "doi": null,
-            "keywords": [
-              "theorem"
-            ]
-          },
-          "structure": {
-            "abstract_content": {
-              "id": "group_theory.lagrange_theorem-abstract",
-              "title": null,
-              "content": [
-                {
-                  "Paragraph": {
-                    "segments": [
-                      {
-                        "Text": "Proof that if H is a subgroup of a finite group G, then the order of H divides the order of G"
-                      }
-                    ],
-                    "alignment": null
-                  }
-                }
-              ],
-              "metadata": [],
-              "display_options": null
-            },
-            "table_of_contents": null,
-            "body": [
-              {
-                "id": "group_theory.lagrange_theorem-main-main",
-                "title": {
-                  "segments": [
-                    {
-                      "Text": "Lagrange's Theorem"
-                    }
-                  ],
-                  "alignment": null
-                },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "TheoremLike": {
-                        "kind": "Theorem",
-                        "label": "lagranges_theorem",
-                        "statement": {
-                          "Mathematical": {
-                            "id": "group_theory.lagrange_theorem-main-statement",
-                            "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "group_theory.lagrange_theorem-main-statement_ante",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "G ⊢ φ",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "group_theory.lagrange_theorem-main-statement_cons",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "G ⊢ φ",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "operator": "Implies"
-                              }
-                            }
-                          }
-                        },
-                        "proof": null,
-                        "abstraction_meta": null
-                      }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Proof that if H is a subgroup of a finite group G, then the order of H divides the order of G"
-                        }
-                      ],
-                      "alignment": null
-                    }
-                  }
-                ],
-                "metadata": [
-                  [
-                    "type",
-                    "theorem"
-                  ],
-                  [
-                    "theorem_id",
-                    "lagranges_theorem"
-                  ]
-                ],
-                "display_options": null
-              }
-            ],
-            "footnotes": [],
-            "glossary": [],
-            "bibliography": []
-          },
-          "relationships": {
-            "parent_documents": [],
-            "child_documents": [],
-            "related_concepts": [],
-            "cross_references": [],
-            "dependency_graph": null
-          }
-        }
-      }
-    },
-    {
-      "id": "group_theory.example_chaining_theorems-doc",
-      "content_type": {
-        "ScientificPaper": {
-          "title": "Example of Chaining Theorems Directly",
-          "paper_type": "Research",
-          "venue": "Mathematical Theorems",
-          "peer_reviewed": true,
-          "content_metadata": {
-            "language": "en-US",
-            "version": "1.0",
-            "created_at": null,
-            "last_modified": null,
-            "content_hash": null
-          },
-          "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
-            "date_published": null,
-            "date_modified": null,
-            "venue": "Mathematical Theorems",
-            "doi": null,
-            "keywords": [
-              "theorem"
-            ]
-          },
-          "structure": {
-            "abstract_content": {
-              "id": "group_theory.example_chaining_theorems-abstract",
-              "title": null,
-              "content": [
-                {
-                  "Paragraph": {
-                    "segments": [
-                      {
-                        "Text": "Demonstrates applying a locally available theorem's statement."
-                      }
-                    ],
-                    "alignment": null
-                  }
-                }
-              ],
-              "metadata": [],
-              "display_options": null
-            },
-            "table_of_contents": null,
-            "body": [
-              {
-                "id": "group_theory.example_chaining_theorems-main-main",
-                "title": {
-                  "segments": [
-                    {
-                      "Text": "Example of Chaining Theorems Directly"
-                    }
-                  ],
-                  "alignment": null
-                },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "TheoremLike": {
-                        "kind": "Theorem",
-                        "label": "example_chaining_theorem",
-                        "statement": {
-                          "Mathematical": {
-                            "id": "group_theory.example_chaining_theorems-main-statement",
-                            "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "group_theory.example_chaining_theorems-main-statement_ante",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "∧(4 relations)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "group_theory.example_chaining_theorems-main-statement_cons",
-                                  "content": {
-                                    "Relationship": {
-                                      "lhs": {
-                                        "id": "x",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "x",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      },
-                                      "rhs": {
-                                        "id": "y",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "y",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      },
-                                      "operator": "Equal"
-                                    }
-                                  }
-                                },
-                                "operator": "Implies"
-                              }
-                            }
-                          }
-                        },
-                        "proof": {
-                          "title": {
-                            "segments": [
-                              {
-                                "Text": "Proof."
-                              }
-                            ],
-                            "alignment": null
-                          },
-                          "strategy": [],
-                          "steps": [
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "dae2ef6a-161f-4df5-9cbe-77e5aefc0fae-goal",
-                                    "content": {
-                                      "Relationship": {
-                                        "lhs": {
-                                          "id": "dae2ef6a-161f-4df5-9cbe-77e5aefc0fae-goal_ante",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "∧(4 relations)",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
-                                          }
-                                        },
-                                        "rhs": {
-                                          "id": "dae2ef6a-161f-4df5-9cbe-77e5aefc0fae-goal_cons",
-                                          "content": {
-                                            "Relationship": {
-                                              "lhs": {
-                                                "id": "x",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "x",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "rhs": {
-                                                "id": "y",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "y",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "operator": "Equal"
-                                            }
-                                          }
-                                        },
-                                        "operator": "Implies"
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "Complete"
-                              }
-                            }
-                          ],
-                          "qed_symbol": "∎"
-                        },
-                        "abstraction_meta": null
-                      }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Demonstrates applying a locally available theorem's statement."
-                        }
-                      ],
-                      "alignment": null
-                    }
-                  }
-                ],
-                "metadata": [
-                  [
-                    "type",
-                    "theorem"
-                  ],
-                  [
-                    "theorem_id",
-                    "example_chaining_theorem"
-                  ]
-                ],
-                "display_options": null
-              }
-            ],
-            "footnotes": [],
-            "glossary": [],
-            "bibliography": []
-          },
-          "relationships": {
-            "parent_documents": [],
-            "child_documents": [],
-            "related_concepts": [],
-            "cross_references": [],
-            "dependency_graph": null
-          }
-        }
-      }
-    },
-    {
-      "id": "group_theory.theorem_extraction_example-doc",
-      "content_type": {
-        "ScientificPaper": {
-          "title": "Example of Theorem Result Extraction",
-          "paper_type": "Research",
-          "venue": "Mathematical Theorems",
-          "peer_reviewed": true,
-          "content_metadata": {
-            "language": "en-US",
-            "version": "1.0",
-            "created_at": null,
-            "last_modified": null,
-            "content_hash": null
-          },
-          "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
-            "date_published": null,
-            "date_modified": null,
-            "venue": "Mathematical Theorems",
-            "doi": null,
-            "keywords": [
-              "theorem"
-            ]
-          },
-          "structure": {
-            "abstract_content": {
-              "id": "group_theory.theorem_extraction_example-abstract",
-              "title": null,
-              "content": [
-                {
-                  "Paragraph": {
-                    "segments": [
-                      {
-                        "Text": "Demonstrates how to extract and reuse theorem results directly."
-                      }
-                    ],
-                    "alignment": null
-                  }
-                }
-              ],
-              "metadata": [],
-              "display_options": null
-            },
-            "table_of_contents": null,
-            "body": [
-              {
-                "id": "group_theory.theorem_extraction_example-main-main",
-                "title": {
-                  "segments": [
-                    {
-                      "Text": "Example of Theorem Result Extraction"
-                    }
-                  ],
-                  "alignment": null
-                },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "TheoremLike": {
-                        "kind": "Theorem",
-                        "label": "extraction_example",
-                        "statement": {
-                          "Mathematical": {
-                            "id": "group_theory.theorem_extraction_example-main-statement",
-                            "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "group_theory.theorem_extraction_example-main-statement_ante",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "∧(2 relations)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "group_theory.theorem_extraction_example-main-statement_cons",
-                                  "content": {
-                                    "Relationship": {
-                                      "lhs": {
-                                        "id": "a",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "a",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      },
-                                      "rhs": {
-                                        "id": "group_theory.theorem_extraction_example-main-statement_cons_right",
-                                        "content": {
-                                          "Power": {
-                                            "base": {
-                                              "id": "group_theory.theorem_extraction_example-main-statement_cons_right-operand",
-                                              "content": {
-                                                "Text": "g"
-                                              }
-                                            },
-                                            "exponent": {
-                                              "id": "group_theory.theorem_extraction_example-main-statement_cons_right_inverse_exp",
-                                              "content": {
-                                                "UnaryPrefixOperation": {
-                                                  "parameter": {
-                                                    "id": "group_theory.theorem_extraction_example-main-statement_cons_right_one",
-                                                    "content": {
-                                                      "Quantity": {
-                                                        "number": "1",
-                                                        "scientific_notation": null,
-                                                        "unit": null
-                                                      }
-                                                    }
-                                                  },
-                                                  "operator": {
-                                                    "id": "group_theory.theorem_extraction_example-main-statement_cons_right_minus_op",
-                                                    "content": {
-                                                      "String": "−"
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      },
-                                      "operator": "Equal"
-                                    }
-                                  }
-                                },
-                                "operator": "Implies"
-                              }
-                            }
-                          }
-                        },
-                        "proof": {
-                          "title": {
-                            "segments": [
-                              {
-                                "Text": "Proof."
-                              }
-                            ],
-                            "alignment": null
-                          },
-                          "strategy": [],
-                          "steps": [
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "28d75987-eeab-4c98-aa14-4af7f8b6f53d-goal",
-                                    "content": {
-                                      "Identifier": {
-                                        "body": "? FailedExtraction:inverse_uniqueness",
-                                        "pre_script": null,
-                                        "mid_script": null,
-                                        "post_script": null,
-                                        "primes": 0,
-                                        "is_function": false
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "Abandoned"
-                              }
-                            },
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "e15c8915-4f38-476e-98aa-789ad8530d88-goal",
-                                    "content": {
-                                      "Identifier": {
-                                        "body": "? FailedExtraction:inverse_uniqueness",
-                                        "pre_script": null,
-                                        "mid_script": null,
-                                        "post_script": null,
-                                        "primes": 0,
-                                        "is_function": false
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "Complete"
-                              }
-                            },
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal",
-                                    "content": {
-                                      "Relationship": {
-                                        "lhs": {
-                                          "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_ante",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "∧(2 relations)",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
-                                          }
-                                        },
-                                        "rhs": {
-                                          "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_cons",
-                                          "content": {
-                                            "Relationship": {
-                                              "lhs": {
-                                                "id": "a",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "a",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "rhs": {
-                                                "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_cons_right",
-                                                "content": {
-                                                  "Power": {
-                                                    "base": {
-                                                      "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_cons_right-operand",
-                                                      "content": {
-                                                        "Text": "g"
-                                                      }
-                                                    },
-                                                    "exponent": {
-                                                      "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_cons_right_inverse_exp",
-                                                      "content": {
-                                                        "UnaryPrefixOperation": {
-                                                          "parameter": {
-                                                            "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_cons_right_one",
-                                                            "content": {
-                                                              "Quantity": {
-                                                                "number": "1",
-                                                                "scientific_notation": null,
-                                                                "unit": null
-                                                              }
-                                                            }
-                                                          },
-                                                          "operator": {
-                                                            "id": "a91b3c36-5f26-450f-8251-038f2484b5f7-goal_cons_right_minus_op",
-                                                            "content": {
-                                                              "String": "−"
-                                                            }
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                }
-                                              },
-                                              "operator": "Equal"
-                                            }
-                                          }
-                                        },
-                                        "operator": "Implies"
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "InProgress"
-                              }
-                            },
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal",
-                                    "content": {
-                                      "Relationship": {
-                                        "lhs": {
-                                          "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_ante",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "∧(2 relations)",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
-                                          }
-                                        },
-                                        "rhs": {
-                                          "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_cons",
-                                          "content": {
-                                            "Relationship": {
-                                              "lhs": {
-                                                "id": "a",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "a",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "rhs": {
-                                                "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_cons_right",
-                                                "content": {
-                                                  "Power": {
-                                                    "base": {
-                                                      "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_cons_right-operand",
-                                                      "content": {
-                                                        "Text": "g"
-                                                      }
-                                                    },
-                                                    "exponent": {
-                                                      "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_cons_right_inverse_exp",
-                                                      "content": {
-                                                        "UnaryPrefixOperation": {
-                                                          "parameter": {
-                                                            "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_cons_right_one",
-                                                            "content": {
-                                                              "Quantity": {
-                                                                "number": "1",
-                                                                "scientific_notation": null,
-                                                                "unit": null
-                                                              }
-                                                            }
-                                                          },
-                                                          "operator": {
-                                                            "id": "8f230757-e215-4923-b3e5-941b8a67b6a7-goal_cons_right_minus_op",
-                                                            "content": {
-                                                              "String": "−"
-                                                            }
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                }
-                                              },
-                                              "operator": "Equal"
-                                            }
-                                          }
-                                        },
-                                        "operator": "Implies"
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "InProgress"
-                              }
-                            },
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal",
-                                    "content": {
-                                      "Relationship": {
-                                        "lhs": {
-                                          "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_ante",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "∧(2 relations)",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": null,
-                                              "primes": 0,
-                                              "is_function": false
-                                            }
-                                          }
-                                        },
-                                        "rhs": {
-                                          "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_cons",
-                                          "content": {
-                                            "Relationship": {
-                                              "lhs": {
-                                                "id": "a",
-                                                "content": {
-                                                  "Identifier": {
-                                                    "body": "a",
-                                                    "pre_script": null,
-                                                    "mid_script": null,
-                                                    "post_script": null,
-                                                    "primes": 0,
-                                                    "is_function": false
-                                                  }
-                                                }
-                                              },
-                                              "rhs": {
-                                                "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_cons_right",
-                                                "content": {
-                                                  "Power": {
-                                                    "base": {
-                                                      "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_cons_right-operand",
-                                                      "content": {
-                                                        "Text": "g"
-                                                      }
-                                                    },
-                                                    "exponent": {
-                                                      "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_cons_right_inverse_exp",
-                                                      "content": {
-                                                        "UnaryPrefixOperation": {
-                                                          "parameter": {
-                                                            "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_cons_right_one",
-                                                            "content": {
-                                                              "Quantity": {
-                                                                "number": "1",
-                                                                "scientific_notation": null,
-                                                                "unit": null
-                                                              }
-                                                            }
-                                                          },
-                                                          "operator": {
-                                                            "id": "f596518f-e60b-4bf6-99b7-8add90b75775-goal_cons_right_minus_op",
-                                                            "content": {
-                                                              "String": "−"
-                                                            }
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                }
-                                              },
-                                              "operator": "Equal"
-                                            }
-                                          }
-                                        },
-                                        "operator": "Implies"
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "InProgress"
-                              }
-                            },
-                            {
-                              "Statement": {
-                                "goal": {
-                                  "quantified_objects": [],
-                                  "variable_bindings": [],
-                                  "statement": {
-                                    "id": "ec26cb79-7421-4186-a69f-f1579e6c7274-goal",
-                                    "content": {
-                                      "Identifier": {
-                                        "body": "? FailedExtraction:inverse_uniqueness",
-                                        "pre_script": null,
-                                        "mid_script": null,
-                                        "post_script": null,
-                                        "primes": 0,
-                                        "is_function": false
-                                      }
-                                    }
-                                  },
-                                  "goal_type": "Prove"
-                                },
-                                "tactic": "DirectProof",
-                                "status": "Abandoned"
-                              }
-                            }
-                          ],
-                          "qed_symbol": "∎"
-                        },
-                        "abstraction_meta": null
-                      }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Demonstrates how to extract and reuse theorem results directly."
-                        }
-                      ],
-                      "alignment": null
-                    }
-                  }
-                ],
-                "metadata": [
-                  [
-                    "type",
-                    "theorem"
-                  ],
-                  [
-                    "theorem_id",
-                    "extraction_example"
                   ]
                 ],
                 "display_options": null

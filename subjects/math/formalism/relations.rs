@@ -12,7 +12,7 @@ use super::super::super::super::foundational_theories::category_theory::definiti
 use super::super::theories::groups::definitions::GroupRelation;
 use super::super::theories::number_theory::definitions::NumberTheoryRelation;
 use super::super::theories::rings::definitions::RingRelation;
-use super::super::theories::topology::relations::TopologyRelation;
+use super::super::theories::topology::definitions::TopologyRelation;
 use super::super::theories::zfc::definitions::SetRelation;
 
 /// Quantification of a mathematical object

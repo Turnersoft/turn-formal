@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1748925268",
+  "exported_at": "1749444843",
   "content": [
     {
       "id": "group_theory.def.generic_group.generic-l1-doc",
@@ -165,12 +165,17 @@
                                           "content": {
                                             "FunctionCall": {
                                               "name": {
-                                                "body": "∘",
-                                                "pre_script": null,
-                                                "mid_script": null,
-                                                "post_script": null,
-                                                "primes": 0,
-                                                "is_function": false
+                                                "id": "group_theory.def.generic_group.generic-main-closure_func",
+                                                "content": {
+                                                  "Identifier": {
+                                                    "body": "∘",
+                                                    "pre_script": null,
+                                                    "mid_script": null,
+                                                    "post_script": null,
+                                                    "primes": 0,
+                                                    "is_function": false
+                                                  }
+                                                }
                                               },
                                               "parameters": [
                                                 {

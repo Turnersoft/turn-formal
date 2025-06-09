@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1748925268",
+  "exported_at": "1749444843",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -72,14 +72,7 @@
                           "Mathematical": {
                             "id": "probability.weak_law_of_large_numbers-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? converges_in_probability",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: converges_in_probability"
                             }
                           }
                         },
@@ -194,14 +187,7 @@
                           "Mathematical": {
                             "id": "probability.strong_law_of_large_numbers-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? converges_almost_surely",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: converges_almost_surely"
                             }
                           }
                         },
@@ -316,14 +302,7 @@
                           "Mathematical": {
                             "id": "probability.central_limit_theorem-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? converges_in_distribution",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: converges_in_distribution"
                             }
                           }
                         },
@@ -438,35 +417,7 @@
                           "Mathematical": {
                             "id": "probability.bayes_theorem-main-statement",
                             "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "P(A|B)",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "P(A|B)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "P(B|A)P(A)/P(B)",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "P(B|A)P(A)/P(B)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "operator": "Equal"
-                              }
+                              "Text": "P(A|B) = P(B|A)P(A)/P(B)"
                             }
                           }
                         },
@@ -581,35 +532,7 @@
                           "Mathematical": {
                             "id": "probability.law_of_total_probability-main-statement",
                             "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "P(A)",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "P(A)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "Σ P(A|B_i)P(B_i)",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "Σ P(A|B_i)P(B_i)",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "operator": "Equal"
-                              }
+                              "Text": "P(A) = Σ P(A|B_i)P(B_i)"
                             }
                           }
                         },
@@ -724,14 +647,7 @@
                           "Mathematical": {
                             "id": "probability.chebyshev_inequality-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? probability_bound",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: probability_bound"
                             }
                           }
                         },
@@ -846,14 +762,7 @@
                           "Mathematical": {
                             "id": "probability.markov_inequality-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? probability_bound",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: probability_bound"
                             }
                           }
                         },
@@ -968,14 +877,7 @@
                           "Mathematical": {
                             "id": "probability.jensen_inequality-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? inequality",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: inequality"
                             }
                           }
                         },
@@ -1090,14 +992,7 @@
                           "Mathematical": {
                             "id": "probability.martingale_convergence-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? converges_almost_surely",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: converges_almost_surely"
                             }
                           }
                         },
@@ -1212,35 +1107,7 @@
                           "Mathematical": {
                             "id": "probability.optional_stopping-main-statement",
                             "content": {
-                              "Relationship": {
-                                "lhs": {
-                                  "id": "E[X_τ]",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "E[X_τ]",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "rhs": {
-                                  "id": "E[X_0]",
-                                  "content": {
-                                    "Identifier": {
-                                      "body": "E[X_0]",
-                                      "pre_script": null,
-                                      "mid_script": null,
-                                      "post_script": null,
-                                      "primes": 0,
-                                      "is_function": false
-                                    }
-                                  }
-                                },
-                                "operator": "Equal"
-                              }
+                              "Text": "E[X_τ] = E[X_0]"
                             }
                           }
                         },
@@ -1355,14 +1222,7 @@
                           "Mathematical": {
                             "id": "probability.kolmogorov_three_series-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? series_convergence_equivalence",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: series_convergence_equivalence"
                             }
                           }
                         },
@@ -1477,14 +1337,7 @@
                           "Mathematical": {
                             "id": "probability.glivenko_cantelli-main-statement",
                             "content": {
-                              "Identifier": {
-                                "body": "? uniform_convergence",
-                                "pre_script": null,
-                                "mid_script": null,
-                                "post_script": null,
-                                "primes": 0,
-                                "is_function": false
-                              }
+                              "Text": "TODO: uniform_convergence"
                             }
                           }
                         },

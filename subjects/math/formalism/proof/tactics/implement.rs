@@ -7,217 +7,11 @@ use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::formalism::theorem::ProofGoal;
 
 use super::RewriteDirection;
+use super::search_replace::SearchReplace;
 use super::{InductionType, utils::*};
 use super::{Tactic, get_theorem_registry};
 
 impl Tactic {
-    /// Apply a tactic to a proof state
-    pub fn apply(&self, state: &ProofGoal) -> Option<ProofGoal> {
-        match self {
-            Tactic::Intro {
-                name,
-                expression,
-                view: _,
-            } => {
-                let mut new_state = state.clone();
-
-                // Create a new variable binding
-                let var = crate::subjects::math::formalism::theorem::ValueBindedVariable {
-                    name: name.clone(),
-                    value: expression.clone(),
-                };
-
-                new_state.value_variables.push(var);
-                Some(new_state)
-            }
-            Tactic::Apply {
-                theorem_id,
-                instantiation,
-                target_expr,
-            } => {
-                // Apply a theorem or hypothesis from the context
-                let registry = get_theorem_registry().lock().unwrap();
-                if let Some(result) = registry.apply_theorem(
-                    theorem_id,
-                    &state.statement,
-                    instantiation,
-                    target_expr.clone(),
-                ) {
-                    let mut new_state = state.clone();
-                    new_state.statement = result;
-                    Some(new_state)
-                } else {
-                    None
-                }
-            }
-            Tactic::Substitution {
-                target,
-                replacement,
-                location,
-            } => {
-                let statement = &state.statement;
-
-                // If location is provided, use it directly
-                if let Some(path) = location {
-                    let new_statement =
-                        local_replace_in_relation(statement, &path, target, replacement);
-
-                    Some(ProofGoal {
-                        quantifier: state.quantifier.clone(),
-                        value_variables: state.value_variables.clone(),
-                        statement: new_statement,
-                    })
-                } else {
-                    // Search for occurrences of the target expression
-                    let mut paths = Vec::new();
-                    find_all_occurrences_in_relation(statement, target, &mut paths, vec![]);
-
-                    if !paths.is_empty() {
-                        // If found, use the first occurrence
-                        let path = &paths[0];
-                        let new_statement =
-                            local_replace_in_relation(statement, path, target, replacement);
-
-                        Some(ProofGoal {
-                            quantifier: state.quantifier.clone(),
-                            value_variables: state.value_variables.clone(),
-                            statement: new_statement,
-                        })
-                    } else {
-                        // Try more specialized matching for direct expression comparisons
-                        match statement {
-                            MathRelation::Equal { meta, left, right } => {
-                                if left == target {
-                                    return Some(ProofGoal {
-                                        quantifier: state.quantifier.clone(),
-                                        value_variables: state.value_variables.clone(),
-                                        statement: MathRelation::Equal {
-                                            meta: meta.clone(),
-                                            left: replacement.clone(),
-                                            right: right.clone(),
-                                        },
-                                    });
-                                } else if right == target {
-                                    return Some(ProofGoal {
-                                        quantifier: state.quantifier.clone(),
-                                        value_variables: state.value_variables.clone(),
-                                        statement: MathRelation::Equal {
-                                            meta: meta.clone(),
-                                            left: left.clone(),
-                                            right: replacement.clone(),
-                                        },
-                                    });
-                                }
-                            }
-                            // Add other relation types as needed
-                            _ => {}
-                        }
-
-                        // Not found anywhere
-                        None
-                    }
-                }
-            }
-            Tactic::ChangeView { object: _, view: _ } => {
-                // Change view of a mathematical object
-                // This is more complex and would require proper implementation
-                Some(state.clone())
-            }
-            Tactic::TheoremApplication {
-                theorem_id,
-                instantiation,
-                target_expr,
-            } => {
-                // Apply a theorem from the registry
-                // Convert Identifier keys to String keys
-                let string_instantiation: HashMap<String, MathExpression> = instantiation
-                    .iter()
-                    .filter_map(|(id, expr)| {
-                        if let Identifier::Name(name, _) = id {
-                            Some((name.clone(), expr.clone()))
-                        } else {
-                            None // Cannot convert non-name Identifiers to String keys here
-                        }
-                    })
-                    .collect();
-
-                let registry = get_theorem_registry().lock().unwrap();
-                if let Some(result) = registry.apply_theorem(
-                    theorem_id,
-                    &state.statement,
-                    &string_instantiation, // Use the converted map
-                    target_expr.clone(),
-                ) {
-                    let mut new_state = state.clone();
-                    new_state.statement = result;
-                    Some(new_state)
-                } else {
-                    None
-                }
-            }
-            Tactic::Rewrite {
-                target_expr,
-                equation_expr,
-                direction,
-                location,
-            } => {
-                let mut new_state = state.clone();
-
-                // Check if the equation_expr is a relation
-                if let MathExpression::Relation(equation_box) = equation_expr {
-                    let equation = &**equation_box;
-
-                    // Process the rewrite
-                    if let MathRelation::Equal {
-                        meta: _,
-                        left,
-                        right,
-                    } = equation
-                    {
-                        // Determine which side to replace based on direction
-                        let (to_replace, replacement) = match direction {
-                            RewriteDirection::LeftToRight => (left, right),
-                            RewriteDirection::RightToLeft => (right, left),
-                        };
-
-                        // Find target in statement using our local implementation
-                        if let Some((found_expr, path)) = local_find_subexpression(
-                            &state.statement,
-                            target_expr,
-                            location.clone(),
-                        ) {
-                            // Apply the replacement
-                            new_state.statement = local_replace_in_relation(
-                                &state.statement,
-                                &path,
-                                &found_expr,
-                                replacement,
-                            );
-
-                            Some(new_state)
-                        } else {
-                            None
-                        }
-                    } else {
-                        None
-                    }
-                } else {
-                    None
-                }
-            }
-            Tactic::CaseAnalysis {
-                target_expr: _,
-                case_exprs: _,
-                case_names: _,
-            } => {
-                let new_state = state.clone();
-                Some(new_state)
-            }
-            // Handle other tactics
-            _ => legacy_apply(self, state),
-        }
-    }
-
     /// Generate a human-readable description of this tactic
     pub fn describe(&self) -> String {
         match self {
@@ -329,14 +123,7 @@ impl Tactic {
                     ),
                 }
             }
-            Tactic::Custom { name, args } => {
-                let args_str = if args.is_empty() {
-                    "".to_string()
-                } else {
-                    format!(" with {} arguments", args.len())
-                };
-                format!("Applied custom tactic: {}{}", name, args_str)
-            }
+
             Tactic::CaseAnalysis {
                 target_expr,
                 case_names,
@@ -369,16 +156,6 @@ impl Tactic {
                     dir_str
                 )
             }
-            Tactic::Branch { description } => {
-                format!("Branched: {}", description)
-            }
-            Tactic::Case {
-                parent_id,
-                case_expr,
-                case_name,
-            } => {
-                format!("Case: {} - {}", case_name, expression_summary(case_expr))
-            }
         }
     }
 }
@@ -386,12 +163,10 @@ impl Tactic {
 pub fn legacy_apply(tactic: &Tactic, state: &ProofGoal) -> Option<ProofGoal> {
     // Legacy fallback for unimplemented tactics
     match tactic {
-        Tactic::Branch { .. } => Some(state.clone()),
-        Tactic::Case { .. } => Some(state.clone()),
         Tactic::Decompose { .. } => Some(state.clone()),
         Tactic::Induction { .. } => Some(state.clone()),
         Tactic::Simplify { .. } => Some(state.clone()),
-        Tactic::Custom { .. } => Some(state.clone()),
+
         _ => None,
     }
 }

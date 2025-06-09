@@ -15,10 +15,10 @@ use crate::subjects::math::theories::groups::definitions::{Group, GroupExpressio
 
 use crate::subjects::math::theories::groups::render::GroupTheoryExporter;
 use crate::subjects::math::theories::probability::render::ProbabilityTheoryExporter;
-use crate::subjects::math::theories::theorems::{
-    prove_abelian_squared_criterion, prove_example_chaining_theorems, prove_inverse_product_rule,
-    prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
-};
+// use crate::subjects::math::theories::groups::theorems::{
+//     prove_abelian_squared_criterion, prove_example_chaining_theorems, prove_inverse_product_rule,
+//     prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
+// };
 use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
 use crate::subjects::math::theories::zfc::definitions::Set;
 use crate::turn_render::*;

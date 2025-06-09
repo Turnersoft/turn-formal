@@ -105,8 +105,8 @@ mod tests {
     use crate::subjects::math::formalism::theorem::TheoremExt;
     use crate::subjects::math::theories::groups::theorems::{
         prove_abelian_squared_criterion, prove_example_chaining_theorems,
-        prove_identity_uniqueness_with_syntax_trees, prove_inverse_product_rule,
-        prove_inverse_uniqueness, prove_lagrange_theorem, prove_theorem_extraction_example,
+        prove_identity_uniqueness, prove_inverse_product_rule, prove_inverse_uniqueness,
+        prove_lagrange_theorem, prove_theorem_extraction_example,
     };
 
     #[test]
@@ -118,7 +118,7 @@ mod tests {
             "Inverse uniqueness theorem incomplete"
         );
 
-        let identity_uniqueness = prove_identity_uniqueness_with_syntax_trees();
+        let identity_uniqueness = prove_identity_uniqueness();
         assert!(
             identity_uniqueness.is_complete(),
             "Identity uniqueness theorem incomplete"
