@@ -53,7 +53,7 @@ impl ToSectionNode for TopologicalGroup {
         // Create comprehensive content nodes with rich mathematical explanations
         let mut content_nodes = vec![
             // Mathematical introduction
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "A topological group is a mathematical structure that combines the algebraic structure of a group with the geometric structure of a topology in a compatible way.".to_string(),
                 )],
@@ -61,7 +61,7 @@ impl ToSectionNode for TopologicalGroup {
             }),
             
             // Formal definition
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Formally, a topological group G is a group (G, ·, e, ⁻¹) equipped with a topology such that the group operations are continuous functions.".to_string(),
                 )],
@@ -69,7 +69,7 @@ impl ToSectionNode for TopologicalGroup {
             }),
 
             // Reference to underlying group structure with detailed explanation
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![
                     RichTextSegment::Text("Underlying algebraic structure: ".to_string()),
                     RichTextSegment::Link {
@@ -86,7 +86,7 @@ impl ToSectionNode for TopologicalGroup {
             }),
 
             // Reference to topology structure with detailed explanation
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![
                     RichTextSegment::Text("Underlying geometric structure: ".to_string()),
                     RichTextSegment::Link {
@@ -103,21 +103,21 @@ impl ToSectionNode for TopologicalGroup {
             }),
 
             // Compatibility conditions - the key requirement
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Compatibility Requirements: The algebra and geometry must be compatible through continuity of group operations:".to_string(),
                 )],
                 alignment: None,
             }),
             
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "• Multiplication μ: G × G → G, (x,y) ↦ x·y must be continuous".to_string(),
                 )],
                 alignment: None,
             }),
             
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "• Inversion ι: G → G, x ↦ x⁻¹ must be continuous".to_string(),
                 )],
@@ -125,7 +125,7 @@ impl ToSectionNode for TopologicalGroup {
             }),
 
             // Current instance details
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "This specific topological group is constructed on the set {:?}:",
                     self.core.base_set
@@ -136,7 +136,7 @@ impl ToSectionNode for TopologicalGroup {
 
         // Add properties from the topology if any
         if !self.topology.topology.properties.inner.is_empty() {
-            content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+            content_nodes.push(SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text("Topological Properties of the underlying space:".to_string())],
                 alignment: None,
             }));
@@ -151,7 +151,7 @@ impl ToSectionNode for TopologicalGroup {
                 .collect::<Vec<_>>();
 
             for prop_desc in topology_props {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(prop_desc)],
                     alignment: None,
                 }));
@@ -160,7 +160,7 @@ impl ToSectionNode for TopologicalGroup {
 
         // Add detailed group properties explanations
         if !self.core.props.inner.is_empty() {
-            content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+            content_nodes.push(SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text("Algebraic Properties of the underlying group:".to_string())],
                 alignment: None,
             }));
@@ -184,7 +184,7 @@ impl ToSectionNode for TopologicalGroup {
                     },
                 };
                 
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(prop_description)],
                     alignment: None,
                 }));
@@ -193,7 +193,7 @@ impl ToSectionNode for TopologicalGroup {
 
         // Add topological group specific properties with detailed mathematical explanations
         if !self.props.inner.is_empty() {
-            content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+            content_nodes.push(SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text("Topological Group Specific Properties:".to_string())],
                 alignment: None,
             }));
@@ -212,7 +212,7 @@ impl ToSectionNode for TopologicalGroup {
                     },
                 };
                 
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(prop_description)],
                     alignment: None,
                 }));
@@ -223,19 +223,19 @@ impl ToSectionNode for TopologicalGroup {
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
                 content_nodes.extend(vec![
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Level 1 (General Schema): This represents the abstract mathematical concept of topological groups, providing the foundational framework that all specific topological groups must satisfy.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Classical Examples: ℝ (real numbers under addition), S¹ (circle group), GL(n,ℝ) (general linear group), SL(n,ℝ) (special linear group), O(n) (orthogonal group), U(n) (unitary group).".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Applications: Lie group theory, harmonic analysis, representation theory, gauge theory in physics, and symmetric spaces in differential geometry.".to_string(),
                         )],
@@ -245,19 +245,19 @@ impl ToSectionNode for TopologicalGroup {
             }
             AbstractionLevel::Level2 => {
                 content_nodes.extend(vec![
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Level 2 (Specific Type): This represents a particular class of topological groups with defined algebraic and topological properties that constrain the structure significantly.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Structure Theory: The interplay between group and topological properties determines existence of Haar measure, Peter-Weyl decomposition, and representation-theoretic properties.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Key Results: Compact groups admit finite-dimensional unitary representations, connected groups have universal covers, and locally compact groups possess Haar measure.".to_string(),
                         )],
@@ -267,19 +267,19 @@ impl ToSectionNode for TopologicalGroup {
             }
             AbstractionLevel::Level3 => {
                 content_nodes.extend(vec![
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Level 3 (Constructor): This represents the constructive process of building a topological group by equipping a group with a compatible topology, or conversely, by imposing group structure on a topological space.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Construction Verification: Must verify that multiplication μ: G×G → G and inversion ι: G → G are continuous maps with respect to the chosen topology.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Topology Constraints: Not every topology on a group makes it a topological group. The continuity requirements impose significant restrictions on admissible topologies.".to_string(),
                         )],
@@ -289,19 +289,19 @@ impl ToSectionNode for TopologicalGroup {
             }
             AbstractionLevel::Level4 => {
                 content_nodes.extend(vec![
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Level 4 (Concrete Instance): This represents a fully specified topological group with explicit elements, operation tables, topology basis, and verified continuity of all operations.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Computational Aspects: All group operations can be computed explicitly, topological properties like convergence and compactness can be verified algorithmically.".to_string(),
                         )],
                         alignment: None,
                     }),
-                    SectionContentNode::Paragraph(ParagraphNode {
+                    SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Concrete Examples: Z/nZ with discrete topology, ℝⁿ with standard topology and addition, matrix groups with subspace topology from embedding in M(n,ℝ).".to_string(),
                         )],
@@ -313,19 +313,19 @@ impl ToSectionNode for TopologicalGroup {
 
         // Add mathematical importance and applications
         content_nodes.extend(vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Mathematical Significance: Topological groups bridge algebra and geometry, providing the foundation for modern harmonic analysis, representation theory, and differential geometry.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Key Theorems: Haar's theorem (existence of invariant measure), Peter-Weyl theorem (decomposition of representations), and the structure theory of locally compact groups.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Physical Applications: Gauge theories, crystal structures, particle physics symmetries, and quantum mechanical systems all rely heavily on topological group theory.".to_string(),
                 )],
@@ -404,14 +404,17 @@ impl ToSectionNode for TopologicalGroup {
         }
 
         Section {
-            id: format!("{}.main_section", id_prefix),
-            title: Some(ParagraphNode {
+            id: format!("{}-topologicalgroup-section", id_prefix),
+            title: Some(RichText {
                 segments: title_segments,
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title_text.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title_text.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
@@ -432,7 +435,9 @@ impl ToSectionNode for TopologicalGroup {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for TopologicalGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
         let title = main_section.title.as_ref().map_or_else(
@@ -489,8 +494,10 @@ impl ToSectionNode for TopologicalGroup {
             }),
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+impl TopologicalGroup {
+    pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         let mut tooltip_text = format!("Topological Group on {:?}", self.core.base_set);
 
         // Add primary topological properties if any
@@ -504,16 +511,16 @@ impl ToSectionNode for TopologicalGroup {
         vec![RichTextSegment::Text(tooltip_text)]
     }
 
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    pub fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         let name = "(G, τ)";
         vec![RichTextSegment::Link {
             content: vec![RichTextSegment::Text(name.to_string())],
             target: LinkTarget::DefinitionId {
-                term_id: format!("{}.main_section", id_prefix),
+                term_id: format!("{}-topologicalgroup-section", id_prefix),
                 theory_context: Some("GroupTheory".to_string()),
             },
             tooltip: Some(format!(
-                "View definition of {}.main_section",
+                "View definition of {}-topologicalgroup-section",
                 id_prefix
             )),
         }]

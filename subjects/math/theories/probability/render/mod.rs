@@ -6,9 +6,11 @@ use crate::subjects::math::formalism::expressions::Identifier;
 use crate::subjects::math::formalism::extract::Parametrizable;
 
 //--- Imports from crate::turn_render ---
+use crate::turn_render::ToMathDocument;
 use crate::turn_render::math_node::{
     BracketSize, BracketStyle, IntegralType, MathNode, MathNodeContent, MulSymbol,
-    RefinedMulOrDivOperation, RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
+    RefinedMulOrDivOperation, RelationOperatorNode, ScriptNode, ToTurnMath,
+    UnaryRelationOperatorNode,
 };
 use crate::turn_render::*;
 
@@ -57,8 +59,60 @@ impl ToTurnMath for ProbabilitySpace {
 impl ToTurnMath for GenericProbabilitySpace {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("(Ω, ℱ, P)".to_string())),
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Bracketed {
+                inner: Box::new(MathNode {
+                    id: format!("{}-tuple", master_id),
+                    content: Box::new(MathNodeContent::Multiplications {
+                        terms: vec![
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-omega", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "Ω".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-sigma", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "ℱ".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-measure", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "P".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                        ],
+                    }),
+                }),
+                style: BracketStyle::Round,
+                size: BracketSize::Normal,
+            }),
         }
     }
 }
@@ -66,8 +120,73 @@ impl ToTurnMath for GenericProbabilitySpace {
 impl ToTurnMath for DiscreteProbabilitySpace {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("(Ω_discrete, ℱ, P)".to_string())),
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Bracketed {
+                inner: Box::new(MathNode {
+                    id: format!("{}-tuple", master_id),
+                    content: Box::new(MathNodeContent::Multiplications {
+                        terms: vec![
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-omega-discrete", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "Ω".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: Some(ScriptNode {
+                                            subscripts: vec![MathNode {
+                                                id: format!("{}-discrete-sub", master_id),
+                                                content: Box::new(MathNodeContent::Identifier {
+                                                    body: "discrete".to_string(),
+                                                    pre_script: None,
+                                                    mid_script: None,
+                                                    post_script: None,
+                                                    primes: 0,
+                                                    is_function: false,
+                                                }),
+                                            }],
+                                            superscripts: vec![],
+                                        }),
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-sigma", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "ℱ".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-measure", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "P".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                        ],
+                    }),
+                }),
+                style: BracketStyle::Round,
+                size: BracketSize::Normal,
+            }),
         }
     }
 }
@@ -75,8 +194,73 @@ impl ToTurnMath for DiscreteProbabilitySpace {
 impl ToTurnMath for ContinuousProbabilitySpace {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("(Ω_continuous, ℱ, P)".to_string())),
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Bracketed {
+                inner: Box::new(MathNode {
+                    id: format!("{}-tuple", master_id),
+                    content: Box::new(MathNodeContent::Multiplications {
+                        terms: vec![
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-omega-continuous", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "Ω".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: Some(ScriptNode {
+                                            subscripts: vec![MathNode {
+                                                id: format!("{}-continuous-sub", master_id),
+                                                content: Box::new(MathNodeContent::Identifier {
+                                                    body: "continuous".to_string(),
+                                                    pre_script: None,
+                                                    mid_script: None,
+                                                    post_script: None,
+                                                    primes: 0,
+                                                    is_function: false,
+                                                }),
+                                            }],
+                                            superscripts: vec![],
+                                        }),
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-sigma", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "ℱ".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                            (
+                                RefinedMulOrDivOperation::None,
+                                MathNode {
+                                    id: format!("{}-measure", master_id),
+                                    content: Box::new(MathNodeContent::Identifier {
+                                        body: "P".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    }),
+                                },
+                            ),
+                        ],
+                    }),
+                }),
+                style: BracketStyle::Round,
+                size: BracketSize::Normal,
+            }),
         }
     }
 }
@@ -84,36 +268,34 @@ impl ToTurnMath for ContinuousProbabilitySpace {
 impl ToTurnMath for StochasticProcess {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("X_t".to_string())),
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Identifier {
+                body: "X_t".to_string(),
+                pre_script: None,
+                mid_script: None,
+                post_script: None,
+                primes: 0,
+                is_function: false,
+            }),
         }
     }
 }
 
 impl ToTurnMath for MarkovChain {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("X_n".to_string())),
-        }
+        self.core.core.to_turn_math(master_id)
     }
 }
 
 impl ToTurnMath for Martingale {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("M_n".to_string())),
-        }
+        self.core.core.to_turn_math(master_id)
     }
 }
 
 impl ToTurnMath for BrownianMotion {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        MathNode {
-            id: master_id,
-            content: Box::new(MathNodeContent::Text("B_t".to_string())),
-        }
+        self.core.core.to_turn_math(master_id)
     }
 }
 
@@ -133,7 +315,9 @@ impl ToSectionNode for ProbabilitySpace {
             ProbabilitySpace::BrownianMotion(p) => p.core.core.to_section_node(id_prefix),
         }
     }
+}
 
+impl ToMathDocument for ProbabilitySpace {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         match self {
             ProbabilitySpace::Generic(p) => {
@@ -156,11 +340,11 @@ impl ToSectionNode for ProbabilitySpace {
                 .to_math_document(&format!("{}.conditional", id_prefix)),
             ProbabilitySpace::StochasticProcess(p) => p
                 .core
-                .to_math_document(&format!("{}.stochastic_process", id_prefix)),
+                .to_math_document(&format!("{}.stochastic", id_prefix)),
             ProbabilitySpace::MarkovChain(p) => p
                 .core
                 .core
-                .to_math_document(&format!("{}.markov_chain", id_prefix)),
+                .to_math_document(&format!("{}.markov", id_prefix)),
             ProbabilitySpace::Martingale(p) => p
                 .core
                 .core
@@ -168,7 +352,23 @@ impl ToSectionNode for ProbabilitySpace {
             ProbabilitySpace::BrownianMotion(p) => p
                 .core
                 .core
-                .to_math_document(&format!("{}.brownian_motion", id_prefix)),
+                .to_math_document(&format!("{}.brownian", id_prefix)),
+        }
+    }
+}
+
+impl ProbabilitySpace {
+    pub fn get_id(&self) -> String {
+        match self {
+            ProbabilitySpace::Generic(_) => "generic_probability_space".to_string(),
+            ProbabilitySpace::Discrete(_) => "discrete_probability_space".to_string(),
+            ProbabilitySpace::Continuous(_) => "continuous_probability_space".to_string(),
+            ProbabilitySpace::Product(_) => "product_probability_space".to_string(),
+            ProbabilitySpace::Conditional(_) => "conditional_probability_space".to_string(),
+            ProbabilitySpace::StochasticProcess(_) => "stochastic_process".to_string(),
+            ProbabilitySpace::MarkovChain(_) => "markov_chain".to_string(),
+            ProbabilitySpace::Martingale(_) => "martingale".to_string(),
+            ProbabilitySpace::BrownianMotion(_) => "brownian_motion".to_string(),
         }
     }
 
@@ -177,11 +377,21 @@ impl ToSectionNode for ProbabilitySpace {
             ProbabilitySpace::Generic(_) => vec![RichTextSegment::Text(
                 "Generic Probability Space".to_string(),
             )],
-            ProbabilitySpace::Discrete(_) => vec![RichTextSegment::Text(
-                "Discrete Probability Space".to_string(),
-            )],
+            ProbabilitySpace::Discrete(_) => {
+                vec![RichTextSegment::Text(
+                    "Discrete Probability Space".to_string(),
+                )]
+            }
             ProbabilitySpace::Continuous(_) => vec![RichTextSegment::Text(
                 "Continuous Probability Space".to_string(),
+            )],
+            ProbabilitySpace::Product(_) => {
+                vec![RichTextSegment::Text(
+                    "Product Probability Space".to_string(),
+                )]
+            }
+            ProbabilitySpace::Conditional(_) => vec![RichTextSegment::Text(
+                "Conditional Probability Space".to_string(),
             )],
             ProbabilitySpace::StochasticProcess(_) => {
                 vec![RichTextSegment::Text("Stochastic Process".to_string())]
@@ -195,7 +405,6 @@ impl ToSectionNode for ProbabilitySpace {
             ProbabilitySpace::BrownianMotion(_) => {
                 vec![RichTextSegment::Text("Brownian Motion".to_string())]
             }
-            _ => vec![RichTextSegment::Text("Probability Space".to_string())],
         }
     }
 
@@ -203,113 +412,256 @@ impl ToSectionNode for ProbabilitySpace {
         match self {
             ProbabilitySpace::Generic(_) => vec![RichTextSegment::Text("(Ω, ℱ, P)".to_string())],
             ProbabilitySpace::Discrete(_) => {
-                vec![RichTextSegment::Text("(Ω_discrete, ℱ, P)".to_string())]
+                vec![RichTextSegment::Text("(Ωd, ℱd, Pd)".to_string())]
             }
             ProbabilitySpace::Continuous(_) => {
-                vec![RichTextSegment::Text("(Ω_continuous, ℱ, P)".to_string())]
+                vec![RichTextSegment::Text("(Ωc, ℱc, Pc)".to_string())]
+            }
+            ProbabilitySpace::Product(_) => {
+                vec![RichTextSegment::Text("Product Space".to_string())]
+            }
+            ProbabilitySpace::Conditional(_) => {
+                vec![RichTextSegment::Text("Conditional Space".to_string())]
             }
             ProbabilitySpace::StochasticProcess(_) => {
-                vec![RichTextSegment::Text("X_t".to_string())]
+                vec![RichTextSegment::Text("Stochastic Process".to_string())]
             }
-            ProbabilitySpace::MarkovChain(_) => vec![RichTextSegment::Text("X_n".to_string())],
-            ProbabilitySpace::Martingale(_) => vec![RichTextSegment::Text("M_n".to_string())],
-            ProbabilitySpace::BrownianMotion(_) => vec![RichTextSegment::Text("B_t".to_string())],
-            _ => vec![RichTextSegment::Text("(Ω, ℱ, P)".to_string())],
+            ProbabilitySpace::MarkovChain(_) => {
+                vec![RichTextSegment::Text("Markov Chain".to_string())]
+            }
+            ProbabilitySpace::Martingale(_) => {
+                vec![RichTextSegment::Text("Martingale".to_string())]
+            }
+            ProbabilitySpace::BrownianMotion(_) => {
+                vec![RichTextSegment::Text("Brownian Motion".to_string())]
+            }
         }
     }
 }
 
-// === IMPLEMENTATIONS FOR BOX<PROBABILITYSPACE> ===
-
-impl ToTurnMath for Box<ProbabilitySpace> {
-    fn to_turn_math(&self, master_id: String) -> MathNode {
-        (**self).to_turn_math(master_id)
+impl ProbabilityExpression {
+    pub fn get_id(&self) -> String {
+        match self {
+            ProbabilityExpression::EventProbability { .. } => "event_probability".to_string(),
+            ProbabilityExpression::ConditionalProbability { .. } => {
+                "conditional_probability".to_string()
+            }
+            ProbabilityExpression::ExpectedValue { .. } => "expected_value".to_string(),
+            ProbabilityExpression::Variance { .. } => "variance".to_string(),
+            ProbabilityExpression::Covariance { .. } => "covariance".to_string(),
+            ProbabilityExpression::Moment { .. } => "moment".to_string(),
+            ProbabilityExpression::CharacteristicFunction { .. } => {
+                "characteristic_function".to_string()
+            }
+            ProbabilityExpression::MomentGeneratingFunction { .. } => {
+                "moment_generating_function".to_string()
+            }
+            _ => "probability_expression".to_string(),
+        }
     }
 }
 
-// === PROBABILITYEXPRESSION IMPLEMENTATIONS ===
+impl ProbabilityRelation {
+    pub fn get_id(&self) -> String {
+        match self {
+            ProbabilityRelation::EventsAreIndependent { .. } => "events_independent".to_string(),
+            ProbabilityRelation::RandomVariablesAreIndependent { .. } => {
+                "random_variables_independent".to_string()
+            }
+            ProbabilityRelation::HasDistribution { .. } => "has_distribution".to_string(),
+            ProbabilityRelation::IdenticallyDistributed { .. } => {
+                "identically_distributed".to_string()
+            }
+            ProbabilityRelation::ConvergesTo { .. } => "converges_to".to_string(),
+            _ => "probability_relation".to_string(),
+        }
+    }
+}
+
+impl ToTurnMath for Box<ProbabilitySpace> {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        self.as_ref().to_turn_math(master_id)
+    }
+}
 
 impl ToTurnMath for ProbabilityExpression {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            ProbabilityExpression::EventProbability { .. } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("P(A)".to_string())),
+            ProbabilityExpression::EventProbability { event, .. } => MathNode {
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::FunctionCall {
+                    name: Box::new(MathNode {
+                        id: format!("{}-prob-name", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "P".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: true,
+                        }),
+                    }),
+                    parameters: vec![MathNode {
+                        id: format!("{}-event", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "A".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: false,
+                        }),
+                    }],
+                }),
             },
-            ProbabilityExpression::ConditionalProbability { .. } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("P(A|B)".to_string())),
+            ProbabilityExpression::ConditionalProbability {
+                event,
+                conditioning_event,
+                ..
+            } => MathNode {
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::FunctionCall {
+                    name: Box::new(MathNode {
+                        id: format!("{}-prob-name", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "P".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: true,
+                        }),
+                    }),
+                    parameters: vec![MathNode {
+                        id: format!("{}-conditional", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "A|B".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: false,
+                        }),
+                    }],
+                }),
             },
-            ProbabilityExpression::ExpectedValue { .. } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("E[X]".to_string())),
+            ProbabilityExpression::ExpectedValue { variable } => MathNode {
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::FunctionCall {
+                    name: Box::new(MathNode {
+                        id: format!("{}-exp-name", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "E".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: true,
+                        }),
+                    }),
+                    parameters: vec![MathNode {
+                        id: format!("{}-rv", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "X".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: false,
+                        }),
+                    }],
+                }),
             },
-            ProbabilityExpression::Variance { .. } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("Var(X)".to_string())),
-            },
-            ProbabilityExpression::Covariance { .. } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("Cov(X,Y)".to_string())),
+            ProbabilityExpression::Variance { variable } => MathNode {
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::FunctionCall {
+                    name: Box::new(MathNode {
+                        id: format!("{}-var-name", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "Var".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: true,
+                        }),
+                    }),
+                    parameters: vec![MathNode {
+                        id: format!("{}-rv", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "X".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: false,
+                        }),
+                    }],
+                }),
             },
             _ => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("prob_expr".to_string())),
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "ProbExpr".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
             },
         }
     }
 }
 
-// === PROBABILITYRELATION IMPLEMENTATIONS ===
-
 impl ToTurnMath for ProbabilityRelation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            ProbabilityRelation::EventsAreIndependent { .. } => MathNode {
+            ProbabilityRelation::EventsAreIndependent { events, .. } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(MathNode {
-                        id: format!("{}-eventA", master_id),
-                        content: Box::new(MathNodeContent::Text("A".to_string())),
+                        id: format!("{}-lhs", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "P(A∩B)".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: false,
+                        }),
+                    }),
+                    rhs: Box::new(MathNode {
+                        id: format!("{}-rhs", master_id),
+                        content: Box::new(MathNodeContent::Identifier {
+                            body: "P(A)P(B)".to_string(),
+                            pre_script: None,
+                            mid_script: None,
+                            post_script: None,
+                            primes: 0,
+                            is_function: false,
+                        }),
                     }),
                     operator: RelationOperatorNode::Equal,
-                    rhs: Box::new(MathNode {
-                        id: format!("{}-eventB", master_id),
-                        content: Box::new(MathNodeContent::Text("B".to_string())),
-                    }),
                 }),
             },
-            ProbabilityRelation::RandomVariablesAreIndependent { .. } => MathNode {
+            ProbabilityRelation::RandomVariablesAreIndependent { variables, .. } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
-                        id: format!("{}-varX", master_id),
-                        content: Box::new(MathNodeContent::Text("X".to_string())),
-                    }),
-                    operator: RelationOperatorNode::Equal,
-                    rhs: Box::new(MathNode {
-                        id: format!("{}-varY", master_id),
-                        content: Box::new(MathNodeContent::Text("Y".to_string())),
-                    }),
-                }),
-            },
-            ProbabilityRelation::HasDistribution { .. } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
-                        id: format!("{}-var", master_id),
-                        content: Box::new(MathNodeContent::Text("X".to_string())),
-                    }),
-                    operator: RelationOperatorNode::Similar,
-                    rhs: Box::new(MathNode {
-                        id: format!("{}-dist", master_id),
-                        content: Box::new(MathNodeContent::Text("F".to_string())),
-                    }),
-                }),
+                content: Box::new(MathNodeContent::Text(format!(
+                    "{} random variables are independent",
+                    variables.len()
+                ))),
             },
             _ => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("prob_relation".to_string())),
+                id: master_id.clone(),
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "ProbRel".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
             },
         }
     }
@@ -317,13 +669,15 @@ impl ToTurnMath for ProbabilityRelation {
 
 impl ProbabilityRelation {
     pub fn to_structured_probability_relation(&self) -> String {
+        // This is a placeholder. A more comprehensive implementation would be needed.
         match self {
-            ProbabilityRelation::EventsAreIndependent { .. } => "A ⊥ B (independence)".to_string(),
-            ProbabilityRelation::RandomVariablesAreIndependent { .. } => {
-                "X ⊥ Y (independence)".to_string()
+            ProbabilityRelation::EventsAreIndependent { .. } => {
+                "Events are independent".to_string()
             }
-            ProbabilityRelation::HasDistribution { .. } => "X ~ F (distribution)".to_string(),
-            _ => format!("{:?}", self),
+            ProbabilityRelation::RandomVariablesAreIndependent { .. } => {
+                "Random variables are independent".to_string()
+            }
+            _ => "Probability relation".to_string(),
         }
     }
 }
@@ -343,69 +697,111 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     }
 
     fn export_theory_overview(&self) -> MathDocument {
-        // Get ALL actual exported content to maximize references
-        let all_definitions = self.export_object_definitions(self.generate_object_definitions());
-        let all_expressions =
-            self.export_expression_definitions(self.generate_expression_definitions());
-        let all_relations = self.export_relation_definitions(self.generate_relation_definitions());
-        let all_theorems = self.export_theorems();
+        let id_prefix = "probability_theory.overview";
+        let main_section = Section {
+            id: format!("{}.fundamental", id_prefix),
+            title: Some(RichText {
+                segments: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
+                alignment: None,
+            }),
+            content: vec![
+                SectionContentNode::RichText(RichText {
+                    segments: vec![RichTextSegment::Text(
+                        "Basic probability spaces and measures.".to_string(),
+                    )],
+                    alignment: None,
+                }),
+                SectionContentNode::StructuredMath(StructuredMathNode::Definition {
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
+                        alignment: None,
+                    },
+                    formal_term: None,
+                    label: Some("Fundamental probability concepts".to_string()),
+                    body: vec![SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Basic probability spaces and measures.".to_string(),
+                        )],
+                        alignment: None,
+                    })],
+                    abstraction_meta: None,
+                    selectable_properties: vec![],
+                }),
+            ],
+            metadata: vec![],
+            display_options: None,
+        };
 
-        // Extract real IDs from ALL exported content
-        let definition_links: Vec<String> = all_definitions
-            .iter()
-            .map(|content| content.id.clone())
-            .collect();
+        let continuous_section = Section {
+            id: format!("{}.continuous", id_prefix),
+            title: Some(RichText {
+                segments: vec![RichTextSegment::Text("Continuous Probability".to_string())],
+                alignment: None,
+            }),
+            content: vec![
+                SectionContentNode::RichText(RichText {
+                    segments: vec![RichTextSegment::Text(
+                        "Continuous probability spaces and measure theory.".to_string(),
+                    )],
+                    alignment: None,
+                }),
+                SectionContentNode::StructuredMath(StructuredMathNode::Definition {
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text("Continuous Probability".to_string())],
+                        alignment: None,
+                    },
+                    formal_term: None,
+                    label: Some("Continuous probability theory".to_string()),
+                    body: vec![SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Continuous probability spaces and measure theory.".to_string(),
+                        )],
+                        alignment: None,
+                    })],
+                    abstraction_meta: None,
+                    selectable_properties: vec![],
+                }),
+            ],
+            metadata: vec![],
+            display_options: None,
+        };
 
-        let expression_links: Vec<String> = all_expressions
-            .iter()
-            .map(|content| content.id.clone())
-            .collect();
-
-        let relation_links: Vec<String> = all_relations
-            .iter()
-            .map(|content| content.id.clone())
-            .collect();
-
-        let theorem_links: Vec<String> = all_theorems
-            .iter()
-            .map(|content| content.id.clone())
-            .collect();
-
-        // Organize definitions by category using actual IDs
-        let fundamental_links: Vec<String> = definition_links
-            .iter()
-            .filter(|id| id.contains("generic") || id.contains("discrete"))
-            .cloned()
-            .collect();
-
-        let continuous_links: Vec<String> = definition_links
-            .iter()
-            .filter(|id| id.contains("continuous"))
-            .cloned()
-            .collect();
-
-        let process_links: Vec<String> = definition_links
-            .iter()
-            .filter(|id| {
-                id.contains("stochastic_process")
-                    || id.contains("markov_chain")
-                    || id.contains("martingale")
-                    || id.contains("brownian_motion")
-            })
-            .cloned()
-            .collect();
-
-        // ALL content links for comprehensive navigation
-        let all_content_links: Vec<String> = [
-            definition_links.clone(),
-            expression_links.clone(),
-            relation_links.clone(),
-            theorem_links.clone(),
-        ]
-        .concat();
+        let processes_section = Section {
+            id: format!("{}.processes", id_prefix),
+            title: Some(RichText {
+                segments: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
+                alignment: None,
+            }),
+            content: vec![
+                SectionContentNode::RichText(RichText {
+                    segments: vec![RichTextSegment::Text(
+                        "Time-dependent random phenomena and processes.".to_string(),
+                    )],
+                    alignment: None,
+                }),
+                SectionContentNode::StructuredMath(StructuredMathNode::Definition {
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
+                        alignment: None,
+                    },
+                    formal_term: None,
+                    label: Some("Stochastic processes and Markov chains".to_string()),
+                    body: vec![SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Time-dependent random phenomena and processes.".to_string(),
+                        )],
+                        alignment: None,
+                    })],
+                    abstraction_meta: None,
+                    selectable_properties: vec![],
+                }),
+            ],
+            metadata: vec![],
+            display_options: None,
+        };
 
         MathDocument {
-            id: "probability_theory.overview".to_string(),
+            id: id_prefix.to_string(),
             content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                 title: "Probability Theory".to_string(),
                 paper_type: PaperType::Survey,
@@ -424,19 +820,15 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                     date_modified: None,
                     venue: Some("Mathematical Survey".to_string()),
                     doi: None,
-                    keywords: vec![
-                        "probability".to_string(),
-                        "random variables".to_string(),
-                        "stochastic processes".to_string(),
-                    ],
+                    keywords: vec!["probability".to_string(), "random variables".to_string(), "stochastic processes".to_string()],
                 },
                 structure: DocumentStructure {
                     abstract_content: Some(Section {
-                        id: "probability_theory.overview.abstract".to_string(),
+                        id: format!("{}.abstract", id_prefix),
                         title: None,
-                        content: vec![SectionContentNode::Paragraph(ParagraphNode {
+                        content: vec![SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text(
-                                "Probability theory provides a rigorous mathematical framework for analyzing randomness and uncertainty. This comprehensive overview covers probability spaces, random variables, distributions, and stochastic processes.".to_string()
+                                "Probability theory provides a rigorous mathematical framework for analyzing randomness and uncertainty. This comprehensive overview covers probability spaces, random variables, distributions, and stochastic processes.".to_string(),
                             )],
                             alignment: None,
                         })],
@@ -444,140 +836,86 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                         display_options: None,
                     }),
                     table_of_contents: None,
-                    body: vec![
-                        Section {
-                            id: "probability_theory.overview.fundamental".to_string(),
-                            title: Some(ParagraphNode {
-                                segments: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
-                                alignment: None,
-                            }),
-                            content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
-                                    segments: vec![RichTextSegment::Text("Basic probability spaces and measures.".to_string())],
-                                    alignment: None,
-                                }),
-                                SectionContentNode::StructuredMath(
-                                    StructuredMathNode::Definition {
-                                        term_display: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
-                                        formal_term: None,
-                                        label: Some("Fundamental probability concepts".to_string()),
-                                        body: vec![SectionContentNode::Paragraph(ParagraphNode {
-                                            segments: vec![RichTextSegment::Text("Basic probability spaces and measures.".to_string())],
-                                            alignment: None,
-                                        })],
-                                        abstraction_meta: None,
-                                        selectable_properties: vec![],
-                                    }
-                                ),
-                            ],
-                            metadata: vec![],
-                            display_options: None,
-                        },
-                        Section {
-                            id: "probability_theory.overview.continuous".to_string(),
-                            title: Some(ParagraphNode {
-                                segments: vec![RichTextSegment::Text("Continuous Probability".to_string())],
-                                alignment: None,
-                            }),
-                            content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
-                                    segments: vec![RichTextSegment::Text("Continuous probability spaces and measure theory.".to_string())],
-                                    alignment: None,
-                                }),
-                                SectionContentNode::StructuredMath(
-                                    StructuredMathNode::Definition {
-                                        term_display: vec![RichTextSegment::Text("Continuous Probability".to_string())],
-                                        formal_term: None,
-                                        label: Some("Continuous probability theory".to_string()),
-                                        body: vec![SectionContentNode::Paragraph(ParagraphNode {
-                                            segments: vec![RichTextSegment::Text("Continuous probability spaces and measure theory.".to_string())],
-                                            alignment: None,
-                                        })],
-                                        abstraction_meta: None,
-                                        selectable_properties: vec![],
-                                    }
-                                ),
-                            ],
-                            metadata: vec![],
-                            display_options: None,
-                        },
-                        Section {
-                            id: "probability_theory.overview.processes".to_string(),
-                            title: Some(ParagraphNode {
-                                segments: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
-                                alignment: None,
-                            }),
-                            content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
-                                    segments: vec![RichTextSegment::Text("Time-dependent random phenomena and processes.".to_string())],
-                                    alignment: None,
-                                }),
-                                SectionContentNode::StructuredMath(
-                                    StructuredMathNode::Definition {
-                                        term_display: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
-                                        formal_term: None,
-                                        label: Some("Stochastic processes and Markov chains".to_string()),
-                                        body: vec![SectionContentNode::Paragraph(ParagraphNode {
-                                            segments: vec![RichTextSegment::Text("Time-dependent random phenomena and processes.".to_string())],
-                                            alignment: None,
-                                        })],
-                                        abstraction_meta: None,
-                                        selectable_properties: vec![],
-                                    }
-                                ),
-                            ],
-                            metadata: vec![],
-                            display_options: None,
-                        },
-                    ],
+                    body: vec![main_section, continuous_section, processes_section],
                     footnotes: vec![],
                     glossary: vec![],
                     bibliography: vec![],
                 },
                 relationships: DocumentRelationships {
                     parent_documents: vec![],
-                    child_documents: all_content_links,
+                    child_documents: vec![
+                        "probability_theory.object_0.generic.schema.doc".to_string(),
+                        "probability_theory.expression_0".to_string(),
+                        "probability_theory.expression_1".to_string(),
+                        "probability_theory.relation_0".to_string(),
+                        "probability.weak_law_of_large_numbers-doc".to_string(),
+                        "probability.strong_law_of_large_numbers-doc".to_string(),
+                        "probability.central_limit_theorem-doc".to_string(),
+                        "probability.bayes_theorem-doc".to_string(),
+                        "probability.law_of_total_probability-doc".to_string(),
+                        "probability.chebyshev_inequality-doc".to_string(),
+                        "probability.markov_inequality-doc".to_string(),
+                        "probability.jensen_inequality-doc".to_string(),
+                        "probability.martingale_convergence-doc".to_string(),
+                        "probability.optional_stopping-doc".to_string(),
+                        "probability.kolmogorov_three_series-doc".to_string(),
+                        "probability.glivenko_cantelli-doc".to_string(),
+                    ],
                     related_concepts: vec![],
-                    dependency_graph: None,
                     cross_references: vec![],
+                    dependency_graph: None,
                 },
             }),
         }
     }
 
     fn export_definitions(&self) -> Vec<MathDocument> {
-        let mut definitions = Vec::new();
-        definitions.extend(self.export_object_definitions(self.generate_object_definitions()));
-        definitions
-            .extend(self.export_expression_definitions(self.generate_expression_definitions()));
-        definitions.extend(self.export_relation_definitions(self.generate_relation_definitions()));
+        let mut definitions = vec![];
+
+        // Generate object definitions
+        let objects = self.generate_object_definitions();
+        definitions.extend(self.export_object_definitions(objects));
+
+        // Generate expression definitions
+        let expressions = self.generate_expression_definitions();
+        definitions.extend(self.export_expression_definitions(expressions));
+
+        // Generate relation definitions
+        let relations = self.generate_relation_definitions();
+        definitions.extend(self.export_relation_definitions(relations));
+
         definitions
     }
 
     fn export_theorems(&self) -> Vec<MathDocument> {
-        let theorems = all_probability_theorems();
-        theorems
+        all_probability_theorems()
             .into_iter()
-            .map(|theorem| theorem.to_math_document(&theorem.id))
+            .map(|thm| {
+                let id = thm.id.clone();
+                thm.to_math_document(&id)
+            })
             .collect()
     }
 
     fn export_object_definitions(&self, objects: Vec<ProbabilitySpace>) -> Vec<MathDocument> {
         objects
             .into_iter()
-            .enumerate()
-            .map(|(i, space)| space.to_math_document(&format!("probability_theory.object_{}", i)))
+            .map(|obj| obj.to_math_document(&obj.get_id()))
             .collect()
     }
 
     fn generate_object_definitions(&self) -> Vec<ProbabilitySpace> {
-        vec![
-            ProbabilitySpace::Generic(GenericProbabilitySpace::default()),
-            // Add other probability spaces as needed
-        ]
+        use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+        use crate::subjects::math::formalism::extract::Parametrizable;
+        use crate::subjects::math::theories::zfc::definitions::Set;
+
+        vec![ProbabilitySpace::Generic(GenericProbabilitySpace::default())]
     }
 
     fn generate_expression_definitions(&self) -> Vec<ProbabilityExpression> {
+        use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+        use crate::subjects::math::formalism::extract::Parametrizable;
+
         vec![
             ProbabilityExpression::EventProbability {
                 event: Parametrizable::Variable(Identifier::Name("A".to_string(), 1)),
@@ -590,6 +928,9 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     }
 
     fn generate_relation_definitions(&self) -> Vec<ProbabilityRelation> {
+        use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+        use crate::subjects::math::formalism::extract::Parametrizable;
+
         vec![ProbabilityRelation::EventsAreIndependent {
             events: vec![
                 Parametrizable::Variable(Identifier::Name("A".to_string(), 1)),
@@ -605,32 +946,39 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     ) -> Vec<MathDocument> {
         expressions
             .into_iter()
-            .enumerate()
-            .map(|(i, expr)| {
+            .map(|expr| {
+                let id = expr.get_id();
                 let main_section = Section {
-                    id: format!("probability_theory.expression_{}.main", i),
-                    title: Some(ParagraphNode {
+                    id: format!("{}-main", id),
+                    title: Some(RichText {
                         segments: vec![RichTextSegment::Text("Expression".to_string())],
                         alignment: None,
                     }),
-                    content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                        segments: vec![RichTextSegment::Text(format!(
-                            "Probability expression: {:?}",
-                            expr
-                        ))],
-                        alignment: None,
-                    })],
+                    content: vec![SectionContentNode::StructuredMath(
+                        StructuredMathNode::Definition {
+                            term_display: RichText {
+                                segments: vec![RichTextSegment::Math(
+                                    expr.to_turn_math(id.clone()),
+                                )],
+                                alignment: None,
+                            },
+                            formal_term: None,
+                            label: Some("Probability Expression".to_string()),
+                            body: vec![],
+                            abstraction_meta: None,
+                            selectable_properties: vec![],
+                        },
+                    )],
                     metadata: vec![],
                     display_options: None,
                 };
-
                 MathDocument {
-                    id: format!("probability_theory.expression_{}", i),
+                    id,
                     content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                         title: "Probability Expression".to_string(),
                         paper_type: PaperType::Research,
-                        venue: Some("Mathematical Expressions".to_string()),
-                        peer_reviewed: true,
+                        venue: None,
+                        peer_reviewed: false,
                         content_metadata: ContentMetadata {
                             language: Some("en-US".to_string()),
                             version: Some("1.0".to_string()),
@@ -639,12 +987,12 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                             content_hash: None,
                         },
                         academic_metadata: AcademicMetadata {
-                            authors: vec!["Turn-Formal System".to_string()],
+                            authors: vec![],
                             date_published: None,
                             date_modified: None,
-                            venue: Some("Mathematical Expressions".to_string()),
+                            venue: None,
                             doi: None,
-                            keywords: vec!["probability".to_string(), "expression".to_string()],
+                            keywords: vec![],
                         },
                         structure: DocumentStructure {
                             abstract_content: None,
@@ -658,8 +1006,8 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                             parent_documents: vec![],
                             child_documents: vec![],
                             related_concepts: vec![],
-                            dependency_graph: None,
                             cross_references: vec![],
+                            dependency_graph: None,
                         },
                     }),
                 }
@@ -673,32 +1021,37 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     ) -> Vec<MathDocument> {
         relations
             .into_iter()
-            .enumerate()
-            .map(|(i, relation)| {
+            .map(|rel| {
+                let id = rel.get_id();
                 let main_section = Section {
-                    id: format!("probability_theory.relation_{}.main", i),
-                    title: Some(ParagraphNode {
+                    id: format!("{}-main", id),
+                    title: Some(RichText {
                         segments: vec![RichTextSegment::Text("Relation".to_string())],
                         alignment: None,
                     }),
-                    content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                        segments: vec![RichTextSegment::Text(format!(
-                            "Probability relation: {:?}",
-                            relation
-                        ))],
-                        alignment: None,
-                    })],
+                    content: vec![SectionContentNode::StructuredMath(
+                        StructuredMathNode::Definition {
+                            term_display: RichText {
+                                segments: vec![RichTextSegment::Math(rel.to_turn_math(id.clone()))],
+                                alignment: None,
+                            },
+                            formal_term: None,
+                            label: Some("Probability Relation".to_string()),
+                            body: vec![],
+                            abstraction_meta: None,
+                            selectable_properties: vec![],
+                        },
+                    )],
                     metadata: vec![],
                     display_options: None,
                 };
-
                 MathDocument {
-                    id: format!("probability_theory.relation_{}", i),
+                    id,
                     content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
                         title: "Probability Relation".to_string(),
                         paper_type: PaperType::Research,
-                        venue: Some("Mathematical Relations".to_string()),
-                        peer_reviewed: true,
+                        venue: None,
+                        peer_reviewed: false,
                         content_metadata: ContentMetadata {
                             language: Some("en-US".to_string()),
                             version: Some("1.0".to_string()),
@@ -707,12 +1060,12 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                             content_hash: None,
                         },
                         academic_metadata: AcademicMetadata {
-                            authors: vec!["Turn-Formal System".to_string()],
+                            authors: vec![],
                             date_published: None,
                             date_modified: None,
-                            venue: Some("Mathematical Relations".to_string()),
+                            venue: None,
                             doi: None,
-                            keywords: vec!["probability".to_string(), "relation".to_string()],
+                            keywords: vec![],
                         },
                         structure: DocumentStructure {
                             abstract_content: None,
@@ -726,8 +1079,8 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                             parent_documents: vec![],
                             child_documents: vec![],
                             related_concepts: vec![],
-                            dependency_graph: None,
                             cross_references: vec![],
+                            dependency_graph: None,
                         },
                     }),
                 }

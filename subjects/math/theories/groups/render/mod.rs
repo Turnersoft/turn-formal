@@ -33,6 +33,8 @@ use crate::subjects::math::theories::groups::definitions::{
     TopologicalGroup, TopologicalGroupProperty, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 
+use super::theorems::prove_inverse_uniqueness;
+
 // use super::theorems::{
 //     prove_abelian_squared_criterion, prove_deduction_using_identity_uniqueness,
 //     prove_example_chaining_theorems, prove_inverse_product_rule, prove_inverse_uniqueness,
@@ -132,7 +134,9 @@ impl ToSectionNode for Group {
             Group::Restriction(g) => g.core.to_section_node(id_prefix),
         }
     }
+}
 
+impl ToMathDocument for Group {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         // For specialized groups, use their own rendering even at L1 level
         // Only use the generic L1 schema for truly generic groups
@@ -192,28 +196,6 @@ impl ToSectionNode for Group {
             Group::Restriction(g) => g.to_math_document(&format!("{}.restriction", id_prefix)),
         }
     }
-
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        match self {
-            Group::Generic(_) => vec![RichTextSegment::Text("Generic Group".to_string())],
-            Group::Cyclic(_) => vec![RichTextSegment::Text("Cyclic Group".to_string())],
-            Group::Topological(_) => vec![RichTextSegment::Text("Topological Group".to_string())],
-            Group::Symmetric(_) => vec![RichTextSegment::Text("Symmetric Group".to_string())],
-            Group::Alternating(_) => vec![RichTextSegment::Text("Alternating Group".to_string())],
-            _ => vec![RichTextSegment::Text("Group".to_string())],
-        }
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        match self {
-            Group::Generic(_) => vec![RichTextSegment::Text("G".to_string())],
-            Group::Cyclic(_) => vec![RichTextSegment::Text("⟨g⟩".to_string())],
-            Group::Topological(_) => vec![RichTextSegment::Text("(G, τ)".to_string())],
-            Group::Symmetric(_) => vec![RichTextSegment::Text("Sₙ".to_string())],
-            Group::Alternating(_) => vec![RichTextSegment::Text("Aₙ".to_string())],
-            _ => vec![RichTextSegment::Text("G".to_string())],
-        }
-    }
 }
 
 // === IMPLEMENTATIONS FOR BOX<GROUP> ===
@@ -231,19 +213,44 @@ impl ToTurnMath for GroupElement {
         match self {
             GroupElement::Integer(n) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text(n.to_string())),
+                content: Box::new(MathNodeContent::Quantity {
+                    number: n.to_string(),
+                    scientific_notation: None,
+                    unit: None,
+                }),
             },
             GroupElement::Symbol(s) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text(s.clone())),
+                content: Box::new(MathNodeContent::Identifier {
+                    body: s.clone(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
             },
             GroupElement::Permutation(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text("σ".to_string())),
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "σ".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
             },
             GroupElement::Matrix(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text("M".to_string())),
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "M".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
             },
         }
     }
@@ -251,60 +258,78 @@ impl ToTurnMath for GroupElement {
 
 // === GROUPEXPRESSION IMPLEMENTATIONS ===
 
+fn collect_multiplication_terms(
+    expr: &Parametrizable<GroupExpression>,
+    master_id: &str,
+) -> Vec<(RefinedMulOrDivOperation, MathNode)> {
+    match expr {
+        Parametrizable::Concrete(GroupExpression::Operation { left, right, .. }) => {
+            // Recursively collect terms from nested operations
+            let mut terms = collect_multiplication_terms(left, &format!("{}-left", master_id));
+            terms.push((
+                RefinedMulOrDivOperation::Multiplication(MulSymbol::Dot),
+                right.to_turn_math(format!("{}-right", master_id)),
+            ));
+            terms
+        }
+        _ => vec![(
+            RefinedMulOrDivOperation::None,
+            expr.to_turn_math(master_id.to_string()),
+        )],
+    }
+}
+
 impl ToTurnMath for GroupExpression {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            GroupExpression::Element { group, element } => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("g".to_string())),
-            },
-            GroupExpression::Identity(group) => MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("e".to_string())),
-            },
-            GroupExpression::Operation { group, left, right } => MathNode {
-                id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
-                        id: format!("{}-left", master_id),
-                        content: Box::new(MathNodeContent::Text("a".to_string())),
+            GroupExpression::Operation { left, right, .. } => {
+                // Use the helper function to properly collect all terms
+                let terms = collect_multiplication_terms(
+                    &Parametrizable::Concrete(self.clone()),
+                    &master_id,
+                );
+
+                MathNode {
+                    id: master_id.clone(),
+                    content: Box::new(MathNodeContent::Bracketed {
+                        inner: Box::new(MathNode {
+                            id: format!("{}-inner", master_id),
+                            content: Box::new(MathNodeContent::Multiplications { terms }),
+                        }),
+                        style: BracketStyle::Round,
+                        size: BracketSize::Auto,
                     }),
-                    operator: RelationOperatorNode::Equal,
-                    rhs: Box::new(MathNode {
-                        id: format!("{}-right", master_id),
-                        content: Box::new(MathNodeContent::Text("b".to_string())),
-                    }),
+                }
+            }
+            GroupExpression::Element { element, .. } => element.to_turn_math(master_id),
+            GroupExpression::Identity(_) => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "e".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
                 }),
             },
-            GroupExpression::Inverse { group, element } => MathNode {
+            GroupExpression::Inverse { element, .. } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Power {
-                    base: Box::new(MathNode {
-                        id: format!("{}-operand", master_id),
-                        content: Box::new(MathNodeContent::Text("g".to_string())),
-                    }),
+                    base: Box::new(element.to_turn_math(format!("{}-base", master_id))),
                     exponent: Box::new(MathNode {
-                        id: format!("{}_inverse_exp", master_id),
-                        content: Box::new(MathNodeContent::UnaryPrefixOperation {
-                            parameter: Box::new(MathNode {
-                                id: format!("{}_one", master_id),
-                                content: Box::new(MathNodeContent::Quantity {
-                                    number: "1".to_string(),
-                                    scientific_notation: None,
-                                    unit: None,
-                                }),
-                            }),
-                            operator: Box::new(MathNode {
-                                id: format!("{}_minus_op", master_id),
-                                content: Box::new(MathNodeContent::String("−".to_string())),
-                            }),
+                        id: format!("{}-exp", master_id),
+                        content: Box::new(MathNodeContent::Quantity {
+                            number: "-1".to_string(),
+                            scientific_notation: None,
+                            unit: None,
                         }),
                     }),
                 }),
             },
             _ => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text("expr".to_string())),
+                content: Box::new(MathNodeContent::Text("⟨expr⟩".to_string())),
             },
         }
     }
@@ -537,7 +562,7 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                     abstract_content: Some(Section {
                         id: "group_theory.theory_overview.abstract".to_string(),
                         title: None,
-                        content: vec![SectionContentNode::Paragraph(ParagraphNode {
+                        content: vec![SectionContentNode::RichText(RichText {
                             segments: vec![
                                 RichTextSegment::Text(format!("Welcome to the comprehensive Group Theory framework. This theory encompasses {} distinct group objects, {} expressions, {} relations, and {} fundamental theorems. Navigate through the organized sections below to explore the complete mathematical landscape of group theory, from basic algebraic structures to advanced constructions.", all_definitions.len(), all_expressions.len(), all_relations.len(), all_theorems.len())),
                             ],
@@ -550,12 +575,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                     body: vec![
                         Section {
                             id: "group_theory.navigation.definitions".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("📚 Group Definitions".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("Explore {} group definitions organized by mathematical category:", definition_links.len())),
                                     ],
@@ -567,12 +592,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.fundamental".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Fundamental Groups".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} basic group structures that establish foundational algebraic properties.", fundamental_links.len())),
                                     ],
@@ -584,12 +609,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.enriched".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Groups with Additional Structure".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} groups enhanced with topological or geometric structure.", enriched_links.len())),
                                     ],
@@ -601,12 +626,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.concrete".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Concrete Group Constructions".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} groups arising from symmetries and permutations.", concrete_links.len())),
                                     ],
@@ -618,12 +643,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.matrix".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Matrix Groups".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} groups defined through linear transformations and matrix properties.", matrix_links.len())),
                                     ],
@@ -635,12 +660,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.modular".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Modular Arithmetic Groups".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} groups based on modular arithmetic and number theory.", modular_links.len())),
                                     ],
@@ -652,12 +677,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.operations".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Group Operations & Constructions".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} constructions that build new groups from existing ones.", operations_links.len())),
                                     ],
@@ -669,12 +694,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.subgroups".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Subgroup Constructions".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} subgroup constructions that reveal internal structure.", subgroup_links.len())),
                                     ],
@@ -686,12 +711,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.advanced".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("• Advanced Constructions".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("{} sophisticated group constructions for advanced mathematical analysis.", advanced_links.len())),
                                     ],
@@ -703,12 +728,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.theorems".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("🔬 Fundamental Theorems".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text(format!("Discover {} fundamental theorems that establish the theoretical foundation of group theory, providing essential insights into group structure and behavior.", theorem_links.len())),
                                     ],
@@ -720,18 +745,18 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                         },
                         Section {
                             id: "group_theory.navigation.mathematical_framework".to_string(),
-                            title: Some(ParagraphNode {
+                            title: Some(RichText {
                                 segments: vec![RichTextSegment::Text("🌐 Complete Mathematical Framework".to_string())],
                                 alignment: None,
                             }),
                             content: vec![
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text("This comprehensive framework demonstrates the interconnected nature of group theory, where each mathematical object contributes to a unified understanding of algebraic structure and symmetry.".to_string()),
                                     ],
                                     alignment: None,
                                 }),
-                                SectionContentNode::Paragraph(ParagraphNode {
+                                SectionContentNode::RichText(RichText {
                                     segments: vec![
                                         RichTextSegment::Text("Use the organized navigation above to explore specific areas of interest, or dive into the complete collection to experience the full scope of group-theoretic mathematics.".to_string()),
                                     ],
@@ -770,7 +795,7 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
 
     fn export_theorems(&self) -> Vec<MathDocument> {
         let mut content = vec![
-            // prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
+            prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
             // prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
             // prove_abelian_squared_criterion()
             //     .to_math_document("group_theory.abelian_squared_criterion"),
@@ -1064,8 +1089,30 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
     }
 
     fn export_relation_definitions(&self, relations: Vec<GroupRelation>) -> Vec<MathDocument> {
-        // For now, relations are embedded in object definitions
-        // We could later extract standalone relation documentation
         vec![]
+    }
+}
+
+// === IMPLEMENTATIONS FOR PARAMETRIZABLE ===
+
+impl<T> ToTurnMath for Parametrizable<T>
+where
+    T: ToTurnMath + Clone,
+{
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        match self {
+            Parametrizable::Concrete(c) => c.to_turn_math(master_id),
+            Parametrizable::Variable(id) => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Identifier {
+                    body: id.to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
+            },
+        }
     }
 }

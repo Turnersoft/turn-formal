@@ -49,9 +49,17 @@
             "group_theory.def.pullback_group.pullback-doc",
             "group_theory.def.restriction_group.restriction-doc"
           ]
+        },
+        {
+          "file_path": "group_theory.theorems.json",
+          "content_type": "theorems",
+          "item_count": 1,
+          "items": [
+            "group_theory.inverse_uniqueness-doc"
+          ]
         }
       ],
-      "item_count": 32
+      "item_count": 33
     },
     {
       "theory_id": "probability_theory",
@@ -70,10 +78,10 @@
           "content_type": "definitions",
           "item_count": 4,
           "items": [
-            "probability_theory.object_0.generic.schema.doc",
-            "probability_theory.expression_0",
-            "probability_theory.expression_1",
-            "probability_theory.relation_0"
+            "generic_probability_space.generic.schema.doc",
+            "event_probability",
+            "expected_value",
+            "events_independent"
           ]
         },
         {
@@ -99,7 +107,7 @@
       "item_count": 17
     }
   ],
-  "total_items": 49,
-  "generated_at": "1749444843",
+  "total_items": 50,
+  "generated_at": "1750003328",
   "version": "1.0.0"
 }

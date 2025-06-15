@@ -41,21 +41,21 @@ impl ToSectionNode for DihedralGroup {
 
         // Create content nodes
         let mut content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "Regular n-gon: n = {}",
                     self.order / 2
                 ))],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!("Order: {}", self.order))],
                 alignment: None,
             }),
         ];
 
         // Link to group basic information instead of embedding it directly
-        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+        content_nodes.push(SectionContentNode::RichText(RichText {
             segments: vec![
                 RichTextSegment::Text("For the underlying group structure, see ".to_string()),
                 RichTextSegment::Link {
@@ -77,7 +77,7 @@ impl ToSectionNode for DihedralGroup {
         // Add abstraction level specific content
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L1: A general schema for any dihedral group.".to_string(),
                     )],
@@ -85,7 +85,7 @@ impl ToSectionNode for DihedralGroup {
                 }));
             }
             AbstractionLevel::Level2 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L2: A specific type of dihedral group with defined properties."
                             .to_string(),
@@ -94,7 +94,7 @@ impl ToSectionNode for DihedralGroup {
                 }));
             }
             AbstractionLevel::Level3 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L3: A constructor for building a dihedral group from a regular n-gon.".to_string(),
                     )],
@@ -102,7 +102,7 @@ impl ToSectionNode for DihedralGroup {
                 }));
             }
             AbstractionLevel::Level4 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L4: A concrete dihedral group with fully specified elements."
                             .to_string(),
@@ -112,7 +112,7 @@ impl ToSectionNode for DihedralGroup {
 
                 // For small n, list the elements
                 if self.order / 2 <= 4 {
-                    content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    content_nodes.push(SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(format!(
                             "Elements: {} rotations and {} reflections",
                             self.order / 2,
@@ -174,13 +174,16 @@ impl ToSectionNode for DihedralGroup {
 
         Section {
             id: format!("{}-dihedralgroup-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: title_segments,
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title_text.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title_text.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
@@ -202,6 +205,32 @@ impl ToSectionNode for DihedralGroup {
         }
     }
 
+    // fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let n = self.order / 2;
+    //     let tooltip_text = format!("Dihedral Group D_{} (order {})", n, self.order);
+
+    //     vec![RichTextSegment::Text(tooltip_text)]
+    // }
+
+    // fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let n = self.order / 2;
+    //     let name = format!("Dihedral Group D_{}", n);
+
+    //     vec![RichTextSegment::Link {
+    //         content: vec![RichTextSegment::Text(name)],
+    //         target: LinkTarget::DefinitionId {
+    //             term_id: format!("{}-dihedralgroup-section", id_prefix),
+    //             theory_context: Some("GroupTheory".to_string()),
+    //         },
+    //         tooltip: Some(format!(
+    //             "View definition of {}-dihedralgroup-section",
+    //             id_prefix
+    //         )),
+    //     }]
+    // }
+}
+
+impl ToMathDocument for DihedralGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
         let title = main_section.title.as_ref().map_or_else(
@@ -257,29 +286,5 @@ impl ToSectionNode for DihedralGroup {
                 },
             }),
         }
-    }
-
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let n = self.order / 2;
-        let tooltip_text = format!("Dihedral Group D_{} (order {})", n, self.order);
-
-        vec![RichTextSegment::Text(tooltip_text)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let n = self.order / 2;
-        let name = format!("Dihedral Group D_{}", n);
-
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-dihedralgroup-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-dihedralgroup-section",
-                id_prefix
-            )),
-        }]
     }
 }

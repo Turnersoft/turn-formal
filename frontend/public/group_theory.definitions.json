@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1749444843",
+  "exported_at": "1750003328",
   "content": [
     {
       "id": "group_theory.def.generic_group.generic-l1-doc",
@@ -33,7 +33,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "A comprehensive document covering the general theory of groups, including definitions, properties, and examples."
@@ -60,7 +60,7 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
+                    "RichText": {
                       "segments": [
                         {
                           "Text": "A group is an algebraic structure consisting of a set with a binary operation that satisfies four fundamental properties: closure, associativity, identity, and invertibility."
@@ -82,7 +82,7 @@
                       },
                       "content": [
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "A group (G, *) consists of a set G and a binary operation * such that:"
@@ -356,7 +356,7 @@
                       },
                       "content": [
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "Groups can have various properties:"
@@ -366,7 +366,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Abelian/Commutative: If a * b = b * a for all a, b ∈ G"
@@ -376,7 +376,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Finite/Infinite: Whether the group has a finite or infinite number of elements"
@@ -386,7 +386,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Simple: If the group has no proper normal subgroups"
@@ -396,7 +396,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Solvable: If the group has a subnormal series with abelian factors"
@@ -406,7 +406,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Nilpotent: If the lower central series terminates at the identity"
@@ -433,7 +433,7 @@
                       },
                       "content": [
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "Common examples of groups include:"
@@ -443,7 +443,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Integers under addition: (Z, +)"
@@ -453,7 +453,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Non-zero rational numbers under multiplication: (Q\\{0}, ×)"
@@ -463,7 +463,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Symmetric groups: S_n (permutations of n elements)"
@@ -473,7 +473,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Cyclic groups: Z_n or C_n (integers modulo n)"
@@ -483,7 +483,7 @@
                           }
                         },
                         {
-                          "Paragraph": {
+                          "RichText": {
                             "segments": [
                               {
                                 "Text": "- Matrix groups: GL(n, F) (n×n invertible matrices over a field F)"
@@ -553,7 +553,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.def.topological_group.topological-main.main_section",
+                "id": "group_theory.def.topological_group.topological-main-topologicalgroup-section",
                 "title": {
                   "segments": [
                     {
@@ -574,11 +574,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Topological Group [Math]"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Topological Group [Math]"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.topological_group.topological-main-formalTerm",
                           "content": {
@@ -588,7 +591,7 @@
                         "label": "Definition (Topological Group [Math])",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "A topological group is a mathematical structure that combines the algebraic structure of a group with the geometric structure of a topology in a compatible way."
@@ -598,7 +601,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Formally, a topological group G is a group (G, ·, e, ⁻¹) equipped with a topology such that the group operations are continuous functions."
@@ -608,7 +611,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Underlying algebraic structure: "
@@ -637,7 +640,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Underlying geometric structure: "
@@ -666,7 +669,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Compatibility Requirements: The algebra and geometry must be compatible through continuity of group operations:"
@@ -676,7 +679,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "• Multiplication μ: G × G → G, (x,y) ↦ x·y must be continuous"
@@ -686,7 +689,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "• Inversion ι: G → G, x ↦ x⁻¹ must be continuous"
@@ -696,7 +699,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This specific topological group is constructed on the set Parametric { parameters: {}, description: \"Abstract group set\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }:"
@@ -706,7 +709,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Level 1 (General Schema): This represents the abstract mathematical concept of topological groups, providing the foundational framework that all specific topological groups must satisfy."
@@ -716,7 +719,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Classical Examples: ℝ (real numbers under addition), S¹ (circle group), GL(n,ℝ) (general linear group), SL(n,ℝ) (special linear group), O(n) (orthogonal group), U(n) (unitary group)."
@@ -726,7 +729,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Applications: Lie group theory, harmonic analysis, representation theory, gauge theory in physics, and symmetric spaces in differential geometry."
@@ -736,7 +739,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Mathematical Significance: Topological groups bridge algebra and geometry, providing the foundation for modern harmonic analysis, representation theory, and differential geometry."
@@ -746,7 +749,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Key Theorems: Haar's theorem (existence of invariant measure), Peter-Weyl theorem (decomposition of representations), and the structure theory of locally compact groups."
@@ -756,7 +759,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Physical Applications: Gauge theories, crystal structures, particle physics symmetries, and quantum mechanical systems all rely heavily on topological group theory."
@@ -841,11 +844,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "(G, τ)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "(G, τ)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.lie_group.lie-main-formalTerm",
                           "content": {
@@ -855,7 +861,7 @@
                         "label": "Definition ((G, τ))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "A Lie group is a group that is also a differentiable manifold, with the property that the group operations (multiplication and inversion) are smooth (infinitely differentiable) functions."
@@ -865,7 +871,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Definition: A Lie group is a set G equipped with both a group structure and a smooth manifold structure such that the group operations μ: G × G → G (multiplication) and ι: G → G (inversion) are smooth maps."
@@ -875,7 +881,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Key Properties: Every Lie group is locally Euclidean, and near the identity element, the group structure is determined by its Lie algebra."
@@ -885,7 +891,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Classical Examples: GL(n, ℝ) (general linear group), SL(n, ℝ) (special linear group), O(n) (orthogonal group), SO(n) (special orthogonal group), U(n) (unitary group), SU(n) (special unitary group)."
@@ -895,7 +901,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Applications: Lie groups are fundamental in differential geometry, physics (symmetries of physical systems), representation theory, and the study of differential equations."
@@ -905,7 +911,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "For the underlying group structure, see "
@@ -934,7 +940,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Manifold Topology: Parametric { parameters: {}, description: \"Abstract Lie group manifold\", membership_condition: \"x ∈ G\", properties: VariantSet { inner: {} } }"
@@ -944,7 +950,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is L1: A general schema for any Lie group."
@@ -1041,11 +1047,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "ℤ"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "ℤ"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.cyclic_group.cyclic-main-formalTerm",
                           "content": {
@@ -1053,7 +1062,14 @@
                               "inner": {
                                 "id": "group_theory.def.cyclic_group.cyclic-main-formalTerm-gen",
                                 "content": {
-                                  "Text": "g"
+                                  "Identifier": {
+                                    "body": "g",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
                                 }
                               },
                               "style": "Angle",
@@ -1064,7 +1080,7 @@
                         "label": "Definition (ℤ)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "A cyclic group is a group that is generated by a single element. Every element in the group can be expressed as a power of this generator."
@@ -1074,7 +1090,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Definition: A group G is cyclic if there exists an element g ∈ G such that G = ⟨g⟩ = {g^n | n ∈ ℤ}."
@@ -1084,7 +1100,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Infinite Cyclic Group: ℤ represents the infinite cyclic group of integers under addition."
@@ -1094,7 +1110,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Properties: ℤ is the unique (up to isomorphism) infinite cyclic group."
@@ -1104,7 +1120,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Generator: Symbol(\"g\")"
@@ -1114,7 +1130,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Applications: Cyclic groups appear in modular arithmetic, crystallography, Fourier analysis, and as building blocks for more complex algebraic structures."
@@ -1124,7 +1140,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "For the underlying group structure, see "
@@ -1153,7 +1169,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is L1: A general schema for any cyclic group."
@@ -1258,11 +1274,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Symmetric Group [Math]"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Symmetric Group [Math]"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.symmetric_group.symmetric-main-formalTerm",
                           "content": {
@@ -1272,7 +1291,7 @@
                         "label": "Definition (Symmetric Group [Math])",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Degree: 0"
@@ -1282,7 +1301,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Order: 1"
@@ -1292,7 +1311,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "For the underlying group structure, see "
@@ -1321,7 +1340,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is L1: A general schema for any symmetric group."
@@ -1448,11 +1467,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Dihedral Group [Math]"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Dihedral Group [Math]"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.dihedral_group.dihedral-main-formalTerm",
                           "content": {
@@ -1462,7 +1484,7 @@
                         "label": "Definition (Dihedral Group [Math])",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Regular n-gon: n = 0"
@@ -1472,7 +1494,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Order: 0"
@@ -1482,7 +1504,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "For the underlying group structure, see "
@@ -1511,7 +1533,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is L1: A general schema for any dihedral group."
@@ -1582,7 +1604,7 @@
       "id": "group_theory.def.general_linear_group.general_linear-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "General Linear Group GL(n,F)",
+          "title": "GL(n, F)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -1619,11 +1641,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "GL(0, 𝔽)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "GL(0, 𝔽)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.general_linear_group.general_linear-formalTerm",
                           "content": {
@@ -1633,7 +1658,7 @@
                         "label": "Definition (GL(0, 𝔽))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Dimension: 0"
@@ -1643,7 +1668,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Field: 𝔽"
@@ -1653,7 +1678,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "General linear group of invertible matrices over the given field."
@@ -1701,7 +1726,7 @@
       "id": "group_theory.def.special_linear_group.special_linear-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Special Linear Group SL(n,F)",
+          "title": "SL(n, F)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -1729,7 +1754,7 @@
                 "title": {
                   "segments": [
                     {
-                      "Text": "SL(0, 𝔽)"
+                      "Text": "SL(0)"
                     }
                   ],
                   "alignment": null
@@ -1738,21 +1763,24 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "SL(0, 𝔽)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "SL(0)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.special_linear_group.special_linear-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "GL(0, 𝔽)"
                           }
                         },
-                        "label": "Definition (SL(0, 𝔽))",
+                        "label": "Definition (SL(0))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Dimension: 0"
@@ -1762,20 +1790,10 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
-                                  "Text": "Field: 𝔽"
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "Special linear group of matrices with determinant 1 over the given field."
+                                  "Text": "Special linear group of matrices with determinant 1."
                                 }
                               ],
                               "alignment": null
@@ -1820,7 +1838,7 @@
       "id": "group_theory.def.orthogonal_group.orthogonal-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Orthogonal Group O(n)",
+          "title": "O(n)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -1857,11 +1875,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "O(0)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "O(0)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.orthogonal_group.orthogonal-formalTerm",
                           "content": {
@@ -1871,7 +1892,7 @@
                         "label": "Definition (O(0))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Dimension: 0"
@@ -1881,10 +1902,10 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
-                                  "Text": "Orthogonal group preserving the standard inner product."
+                                  "Text": "Orthogonal group of orthogonal matrices."
                                 }
                               ],
                               "alignment": null
@@ -1929,7 +1950,7 @@
       "id": "group_theory.def.special_orthogonal_group.special_orthogonal-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Special Orthogonal Group SO(n)",
+          "title": "SO(n)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -1966,21 +1987,24 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "SO(0)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "SO(0)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.special_orthogonal_group.special_orthogonal-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "O(0, 𝔽)"
                           }
                         },
                         "label": "Definition (SO(0))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Dimension: 0"
@@ -1990,7 +2014,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Special orthogonal group of orthogonal matrices with determinant 1."
@@ -2038,7 +2062,7 @@
       "id": "group_theory.def.unitary_group.unitary-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Unitary Group U(n)",
+          "title": "U(n)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -2075,11 +2099,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "U(0)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "U(0)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.unitary_group.unitary-formalTerm",
                           "content": {
@@ -2089,7 +2116,7 @@
                         "label": "Definition (U(0))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Dimension: 0"
@@ -2099,7 +2126,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Unitary group of unitary matrices over the complex numbers."
@@ -2147,7 +2174,7 @@
       "id": "group_theory.def.special_unitary_group.special_unitary-doc",
       "content_type": {
         "ScientificPaper": {
-          "title": "Special Unitary Group SU(n)",
+          "title": "SU(n)",
           "paper_type": "Research",
           "venue": null,
           "peer_reviewed": false,
@@ -2184,21 +2211,24 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "SU(0)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "SU(0)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.special_unitary_group.special_unitary-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "U(0, ℂ)"
                           }
                         },
                         "label": "Definition (SU(0))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Dimension: 0"
@@ -2208,7 +2238,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Special unitary group of unitary matrices with determinant 1."
@@ -2318,11 +2348,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Alternating Group [Math]"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Alternating Group [Math]"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.alternating_group.alternating-main-formalTerm",
                           "content": {
@@ -2349,7 +2382,7 @@
                         "label": "Definition (Alternating Group [Math])",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Degree: 0"
@@ -2359,7 +2392,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Order: 0"
@@ -2369,7 +2402,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "For the underlying group structure, see "
@@ -2398,7 +2431,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The alternating group consists of all even permutations on n elements."
@@ -2408,7 +2441,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is L1: A general schema for any alternating group."
@@ -2527,11 +2560,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "ℤ/0"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "ℤ/0"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.modular_additive_group.modular_additive-formalTerm",
                           "content": {
@@ -2541,7 +2577,7 @@
                         "label": "Definition (ℤ/0)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Modulus: 0"
@@ -2551,7 +2587,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Additive group of integers modulo n under addition."
@@ -2561,7 +2597,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is a cyclic group of order 0."
@@ -2646,11 +2682,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "(ℤ/0)×"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "(ℤ/0)×"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.modular_multiplicative_group.modular_multiplicative-formalTerm",
                           "content": {
@@ -2660,7 +2699,7 @@
                         "label": "Definition ((ℤ/0)×)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Modulus: 0"
@@ -2670,7 +2709,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Multiplicative group of units modulo n under multiplication."
@@ -2680,7 +2719,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This group consists of integers coprime to the modulus."
@@ -2765,11 +2804,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "F_0"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "F_0"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.free_group.free-formalTerm",
                           "content": {
@@ -2779,7 +2821,7 @@
                         "label": "Definition (F_0)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Rank: 0"
@@ -2789,7 +2831,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Free group on the given number of generators."
@@ -2799,7 +2841,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The most general group with the given generators, subject only to the group axioms."
@@ -2884,11 +2926,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "1"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "1"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.trivial_group.trivial-formalTerm",
                           "content": {
@@ -2898,27 +2943,17 @@
                         "label": "Definition (1)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
-                                  "Text": "Order: 1"
+                                  "Text": "The trivial group, containing only the identity element."
                                 }
                               ],
                               "alignment": null
                             }
                           },
                           {
-                            "Paragraph": {
-                              "segments": [
-                                {
-                                  "Text": "The trivial group with only one element (the identity)."
-                                }
-                              ],
-                              "alignment": null
-                            }
-                          },
-                          {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the unique group of order 1."
@@ -3011,11 +3046,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Product Group [Math]"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Product Group [Math]"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.product_group.product-main-formalTerm",
                           "content": {
@@ -3025,7 +3063,7 @@
                         "label": "Definition (Product Group [Math])",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Number of components: 0"
@@ -3035,7 +3073,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "For the underlying group structure, see "
@@ -3064,7 +3102,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is L1: A general schema for any product group."
@@ -3172,11 +3210,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "G/N"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "G/N"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.quotient_group.quotient-formalTerm",
                           "content": {
@@ -3186,7 +3227,7 @@
                         "label": "Definition (G/N)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Parent Group: G"
@@ -3196,7 +3237,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Normal Subgroup: N"
@@ -3206,7 +3247,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Quotient group formed by the cosets of the normal subgroup."
@@ -3291,11 +3332,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "ker(φ)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "ker(φ)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.kernel_group.kernel-formalTerm",
                           "content": {
@@ -3305,7 +3349,7 @@
                         "label": "Definition (ker(φ))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The kernel of a group homomorphism φ."
@@ -3315,7 +3359,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the set of elements that map to the identity in the codomain."
@@ -3325,7 +3369,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The kernel is always a normal subgroup of the domain."
@@ -3410,11 +3454,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "im(φ)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "im(φ)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.image_group.image-formalTerm",
                           "content": {
@@ -3424,7 +3471,7 @@
                         "label": "Definition (im(φ))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The image of a group homomorphism φ."
@@ -3434,7 +3481,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the set of all elements in the codomain that have a preimage."
@@ -3444,7 +3491,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The image is always a subgroup of the codomain."
@@ -3529,11 +3576,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Z(G)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Z(G)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.center_group.center-formalTerm",
                           "content": {
@@ -3543,7 +3593,7 @@
                         "label": "Definition (Z(G))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The center Z(G) of a group G."
@@ -3553,7 +3603,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the set of elements that commute with every element of G."
@@ -3563,7 +3613,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The center is always a normal subgroup."
@@ -3648,11 +3698,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "⟨g⟩"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "⟨g⟩"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.generated_subgroup.generated_subgroup-formalTerm",
                           "content": {
@@ -3662,7 +3715,7 @@
                         "label": "Definition (⟨g⟩)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Number of generators: 1"
@@ -3672,7 +3725,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The subgroup generated by the given elements."
@@ -3682,7 +3735,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the smallest subgroup containing all the generators."
@@ -3767,11 +3820,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "N_G(H)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "N_G(H)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.normalizer_group.normalizer-formalTerm",
                           "content": {
@@ -3781,7 +3837,7 @@
                         "label": "Definition (N_G(H))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The normalizer N_G(H) of a subgroup H in G."
@@ -3791,7 +3847,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the largest subgroup of G in which H is normal."
@@ -3801,7 +3857,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The normalizer always contains H as a normal subgroup."
@@ -3886,11 +3942,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "C_G(x)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "C_G(x)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.centralizer_group.centralizer-formalTerm",
                           "content": {
@@ -3900,7 +3959,7 @@
                         "label": "Definition (C_G(x))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The centralizer C_G(x) of an element x in G."
@@ -3910,7 +3969,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the set of elements in G that commute with x."
@@ -3920,7 +3979,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The centralizer is always a subgroup of G."
@@ -4005,11 +4064,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "[G,G]"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "[G,G]"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.commutator_subgroup.commutator_subgroup-formalTerm",
                           "content": {
@@ -4019,7 +4081,7 @@
                         "label": "Definition ([G,G])",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The commutator subgroup [G,G] of a group G."
@@ -4029,7 +4091,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is the subgroup generated by all commutators [g,h] = ghg⁻¹h⁻¹."
@@ -4039,7 +4101,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The commutator subgroup is always normal, and G/[G,G] is abelian."
@@ -4124,11 +4186,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Syl_0(G)"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Syl_0(G)"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.sylow_subgroup.sylow_subgroup-formalTerm",
                           "content": {
@@ -4138,7 +4203,7 @@
                         "label": "Definition (Syl_0(G))",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Prime: 0"
@@ -4148,7 +4213,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "A Sylow p-subgroup of the given group."
@@ -4158,7 +4223,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is a maximal p-subgroup, where the order is a power of the prime."
@@ -4243,11 +4308,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "G ≀ H"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "G ≀ H"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.wreath_product_group.wreath_product-formalTerm",
                           "content": {
@@ -4257,7 +4325,7 @@
                         "label": "Definition (G ≀ H)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The wreath product G ≀ H of groups G and H."
@@ -4267,7 +4335,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This construction combines the direct product with a group action."
@@ -4277,7 +4345,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Elements are pairs (f, h) where f: H → G is a function and h ∈ H."
@@ -4362,11 +4430,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "G ∘ H"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "G ∘ H"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.central_product_group.central_product-formalTerm",
                           "content": {
@@ -4376,7 +4447,7 @@
                         "label": "Definition (G ∘ H)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "A central product group G ∘ H."
@@ -4386,7 +4457,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is formed by identifying the centers of component groups."
@@ -4396,7 +4467,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The construction allows for combining groups while maintaining certain structural properties."
@@ -4481,11 +4552,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "G ×_H K"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "G ×_H K"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.pullback_group.pullback-formalTerm",
                           "content": {
@@ -4495,7 +4569,7 @@
                         "label": "Definition (G ×_H K)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The pullback (fibered product) G ×_H K of groups over a common target H."
@@ -4505,7 +4579,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This is a universal construction in the category of groups."
@@ -4515,7 +4589,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Elements are pairs (g, k) where g ∈ G and k ∈ K such that φ(g) = ψ(k)."
@@ -4600,11 +4674,14 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "G|_S"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "G|_S"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": {
                           "id": "group_theory.def.restriction_group.restriction-formalTerm",
                           "content": {
@@ -4614,7 +4691,7 @@
                         "label": "Definition (G|_S)",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The restriction G|_S of a group G to a subset S."
@@ -4624,7 +4701,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "This construction restricts the group operation to a specific subset."
@@ -4634,7 +4711,7 @@
                             }
                           },
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "The subset S must satisfy specific conditions to form a valid subgroup."

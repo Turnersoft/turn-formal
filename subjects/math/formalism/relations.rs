@@ -26,13 +26,10 @@ pub enum Quantification {
 
     /// Object exists uniquely (∃!)
     UniqueExistential,
-
-    /// Object is defined in terms of other objects
-    Defined(MathExpression),
 }
 
 /// Entity information for relation operations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct RelationDetail {
     /// The expressions involved in the relation
     pub expressions: Vec<MathExpression>,
@@ -42,6 +39,9 @@ pub struct RelationDetail {
 
     /// Optional description of this relation instance
     pub description: Option<String>,
+
+    pub is_reflexive: bool,
+    pub is_symmetric: bool,
 }
 
 /// A mathematical relation between objects
@@ -54,6 +54,8 @@ pub enum MathRelation {
     Not(Box<MathRelation>),
     Implies(Box<MathRelation>, Box<MathRelation>), // ->
     Equivalent(Box<MathRelation>, Box<MathRelation>), // <=>
+    True,
+    False,
 
     // Domain-specific relations organized by theory
     NumberTheory(NumberTheoryRelation),
@@ -85,6 +87,8 @@ impl MathRelation {
             expressions: vec![left.clone(), right.clone()],
             metadata: HashMap::new(),
             description: None,
+            is_reflexive: false,
+            is_symmetric: false,
         };
         MathRelation::Equal {
             meta: entity,
@@ -231,4 +235,8 @@ impl MathRelation {
             _ => false, // Different relation types or pattern not exhaustive
         }
     }
+}
+
+impl Quantification {
+    // ... existing code ...
 }

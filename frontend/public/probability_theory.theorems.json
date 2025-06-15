@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1749444843",
+  "exported_at": "1750003328",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -37,7 +37,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
@@ -69,26 +69,34 @@
                         "kind": "Theorem",
                         "label": "probability.weak_law_of_large_numbers",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.weak_law_of_large_numbers-main-statement",
-                            "content": {
-                              "Text": "TODO: converges_in_probability"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -152,7 +160,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges almost surely to the population mean."
@@ -184,26 +192,34 @@
                         "kind": "Theorem",
                         "label": "probability.strong_law_of_large_numbers",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.strong_law_of_large_numbers-main-statement",
-                            "content": {
-                              "Text": "TODO: converges_almost_surely"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges almost surely to the population mean."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges almost surely to the population mean."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -267,7 +283,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For independent identically distributed random variables with finite second moment, the standardized sum converges in distribution to a standard normal distribution."
@@ -299,26 +315,34 @@
                         "kind": "Theorem",
                         "label": "probability.central_limit_theorem",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.central_limit_theorem-main-statement",
-                            "content": {
-                              "Text": "TODO: converges_in_distribution"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For independent identically distributed random variables with finite second moment, the standardized sum converges in distribution to a standard normal distribution."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For independent identically distributed random variables with finite second moment, the standardized sum converges in distribution to a standard normal distribution."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -382,7 +406,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For events A and B with P(B) > 0, P(A|B) = P(B|A)P(A)/P(B)."
@@ -414,26 +438,34 @@
                         "kind": "Theorem",
                         "label": "probability.bayes_theorem",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.bayes_theorem-main-statement",
-                            "content": {
-                              "Text": "P(A|B) = P(B|A)P(A)/P(B)"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For events A and B with P(B) > 0, P(A|B) = P(B|A)P(A)/P(B)."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For events A and B with P(B) > 0, P(A|B) = P(B|A)P(A)/P(B)."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -497,7 +529,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For a partition of the sample space {B_i}, P(A) = Σ P(A|B_i)P(B_i)."
@@ -529,26 +561,34 @@
                         "kind": "Theorem",
                         "label": "probability.law_of_total_probability",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.law_of_total_probability-main-statement",
-                            "content": {
-                              "Text": "P(A) = Σ P(A|B_i)P(B_i)"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For a partition of the sample space {B_i}, P(A) = Σ P(A|B_i)P(B_i)."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For a partition of the sample space {B_i}, P(A) = Σ P(A|B_i)P(B_i)."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -612,7 +652,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For a random variable X with finite variance σ², P(|X - μ| ≥ kσ) ≤ 1/k²."
@@ -644,26 +684,34 @@
                         "kind": "Theorem",
                         "label": "probability.chebyshev_inequality",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.chebyshev_inequality-main-statement",
-                            "content": {
-                              "Text": "TODO: probability_bound"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For a random variable X with finite variance σ², P(|X - μ| ≥ kσ) ≤ 1/k²."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For a random variable X with finite variance σ², P(|X - μ| ≥ kσ) ≤ 1/k²."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -727,7 +775,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For a non-negative random variable X with finite expectation, P(X ≥ a) ≤ E[X]/a."
@@ -759,26 +807,34 @@
                         "kind": "Theorem",
                         "label": "probability.markov_inequality",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.markov_inequality-main-statement",
-                            "content": {
-                              "Text": "TODO: probability_bound"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For a non-negative random variable X with finite expectation, P(X ≥ a) ≤ E[X]/a."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For a non-negative random variable X with finite expectation, P(X ≥ a) ≤ E[X]/a."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -842,7 +898,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For a convex function φ and integrable random variable X, φ(E[X]) ≤ E[φ(X)]."
@@ -874,26 +930,34 @@
                         "kind": "Theorem",
                         "label": "probability.jensen_inequality",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.jensen_inequality-main-statement",
-                            "content": {
-                              "Text": "TODO: inequality"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For a convex function φ and integrable random variable X, φ(E[X]) ≤ E[φ(X)]."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For a convex function φ and integrable random variable X, φ(E[X]) ≤ E[φ(X)]."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -957,7 +1021,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "A martingale bounded in L¹ converges almost surely."
@@ -989,26 +1053,34 @@
                         "kind": "Theorem",
                         "label": "probability.martingale_convergence",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.martingale_convergence-main-statement",
-                            "content": {
-                              "Text": "TODO: converges_almost_surely"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "A martingale bounded in L¹ converges almost surely."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "A martingale bounded in L¹ converges almost surely."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -1072,7 +1144,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For a martingale and stopping time satisfying integrability conditions, E[X_τ] = E[X_0]."
@@ -1104,26 +1176,34 @@
                         "kind": "Theorem",
                         "label": "probability.optional_stopping",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.optional_stopping-main-statement",
-                            "content": {
-                              "Text": "E[X_τ] = E[X_0]"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For a martingale and stopping time satisfying integrability conditions, E[X_τ] = E[X_0]."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For a martingale and stopping time satisfying integrability conditions, E[X_τ] = E[X_0]."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -1187,7 +1267,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "For independent random variables, the series Σ X_n converges almost surely if and only if three associated series converge."
@@ -1219,26 +1299,34 @@
                         "kind": "Theorem",
                         "label": "probability.kolmogorov_three_series",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.kolmogorov_three_series-main-statement",
-                            "content": {
-                              "Text": "TODO: series_convergence_equivalence"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "For independent random variables, the series Σ X_n converges almost surely if and only if three associated series converge."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "For independent random variables, the series Σ X_n converges almost surely if and only if three associated series converge."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],
@@ -1302,7 +1390,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "The empirical distribution function converges uniformly to the true distribution function almost surely."
@@ -1334,26 +1422,34 @@
                         "kind": "Theorem",
                         "label": "probability.glivenko_cantelli",
                         "statement": {
-                          "Mathematical": {
-                            "id": "probability.glivenko_cantelli-main-statement",
-                            "content": {
-                              "Text": "TODO: uniform_convergence"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "The empirical distribution function converges uniformly to the true distribution function almost surely."
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
-                        "proof": null,
+                        "proof": {
+                          "title": {
+                            "segments": [
+                              {
+                                "Text": "Proof"
+                              }
+                            ],
+                            "alignment": null
+                          },
+                          "strategy": [],
+                          "steps": [],
+                          "qed_symbol": "∎"
+                        },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "The empirical distribution function converges uniformly to the true distribution function almost surely."
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],

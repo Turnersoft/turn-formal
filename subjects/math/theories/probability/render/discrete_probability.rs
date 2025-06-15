@@ -5,13 +5,13 @@ impl ToSectionNode for DiscreteProbabilitySpace {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         Section {
             id: format!("{}.main", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Discrete Probability Space".to_string(),
                 )],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+            content: vec![SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "A discrete probability space with finite or countable sample space."
                         .to_string(),
@@ -22,7 +22,9 @@ impl ToSectionNode for DiscreteProbabilitySpace {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for DiscreteProbabilitySpace {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
 
@@ -66,14 +68,16 @@ impl ToSectionNode for DiscreteProbabilitySpace {
             }),
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+impl DiscreteProbabilitySpace {
+    pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         vec![RichTextSegment::Text(
             "Discrete Probability Space".to_string(),
         )]
     }
 
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    pub fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         vec![RichTextSegment::Text("(Ω_discrete, ℱ, P)".to_string())]
     }
 }

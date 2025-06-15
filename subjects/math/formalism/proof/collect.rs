@@ -159,6 +159,9 @@ impl CollectSubExpressions for MathRelation {
                 path.push(206);
                 ct_rel.collect_contained_expressions(path, collected_targets, depth + 1);
             }
+            MathRelation::True | MathRelation::False => {
+                // Leaf nodes, no sub-expressions to collect.
+            }
         }
     }
 }

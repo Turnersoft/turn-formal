@@ -4,10 +4,12 @@ use super::super::super::{
 };
 use super::super::relations::MathRelation;
 use super::super::theorem::MathObject;
-use crate::subjects::math::theories::groups::definitions::GroupExpression;
 use crate::subjects::math::theories::rings::definitions::{FieldExpression, RingExpression};
 use crate::turn_render::math_node::ToTurnMath;
 use crate::turn_render::{BracketSize, BracketStyle, MathNode, MathNodeContent};
+use crate::{
+    subjects::math::theories::groups::definitions::GroupExpression, turn_render::ScriptNode,
+};
 use serde::{Deserialize, Serialize};
 use std::string::String;
 
@@ -48,6 +50,28 @@ impl ToStructuredFormat for Identifier {
                 id: format!("n-{}", idx),
                 content: Box::new(MathNodeContent::String(format!("n_{}", idx))),
             },
+        }
+    }
+}
+
+impl ToTurnMath for Identifier {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        match self {
+            Identifier::Name(name, n) => {
+                MathNode::identifier_with_simple_sub_scripts(name.clone(), vec![n.to_string()])
+            }
+            Identifier::O(n) => {
+                MathNode::identifier_with_simple_sub_scripts("o".to_string(), vec![n.to_string()])
+            }
+            Identifier::M(n) => {
+                MathNode::identifier_with_simple_sub_scripts("m".to_string(), vec![n.to_string()])
+            }
+            Identifier::E(n) => {
+                MathNode::identifier_with_simple_sub_scripts("e".to_string(), vec![n.to_string()])
+            }
+            Identifier::N(n) => {
+                MathNode::identifier_with_simple_sub_scripts("n".to_string(), vec![n.to_string()])
+            }
         }
     }
 }

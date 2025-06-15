@@ -5,9 +5,22 @@ use leptos::math::Math;
 use serde::{Deserialize, Serialize};
 use std::any::{Any, TypeId};
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+use std::hash::{Hash, Hasher};
+use std::mem::discriminant;
 use std::rc::Rc;
 use uuid::Uuid;
+
+use crate::subjects::math::formalism::proof::ProofGoal;
+
+use super::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::proof::tactics::Tactic;
+use super::proof::{ProofForest, ProofNode, ProofStatus};
+use super::relations::MathRelation;
+use crate::turn_render::ToProofDisplay;
+use crate::turn_render::{
+    MathDocument, MathDocumentType, PaperType, ScientificPaperContent, ToMathDocument,
+};
 
 use super::super::theories::analysis::definition::functions::Function;
 use super::super::theories::groups::definitions::{
@@ -19,12 +32,6 @@ use super::super::theories::rings::definitions::{
 };
 use super::super::theories::topology::TopologicalSpace;
 use super::super::theories::zfc::Set;
-
-use super::expressions::{Identifier, MathExpression, TheoryExpression};
-// Centralized re-exports for convenient access from other modules
-
-use super::proof::{ProofForest, ProofNode, ProofStatus};
-use super::relations::MathRelation;
 
 /// A unified wrapper for all mathematical objects across theories
 /// This is just a reference to objects defined in their respective theory modules
@@ -89,10 +96,8 @@ pub struct Theorem {
     /// Human-readable description of the theorem
     pub description: String,
 
-    /// the initial proof state of the theorem as the formal form of the theorem
-    pub goal: ProofGoal,
-
-    /// The complete proof forest containing the structured proof
+    /// The complete proof forest containing the structured proof.
+    /// The forest is the single source of truth for the theorem's goal and proof.
     pub proofs: ProofForest,
 }
 
@@ -105,312 +110,68 @@ impl Theorem {
         registry.lock().unwrap().register(self.clone());
     }
 
-    pub fn initialize_branch(&mut self) -> ProofNode {
-        // Create an "initialization" tactic to represent the starting point
-        let init_tactic = super::proof::tactics::Tactic::Intro {
-            name: super::expressions::Identifier::Name("init".to_string(), 0),
-            expression: super::expressions::MathExpression::Var(
-                super::expressions::Identifier::Name(format!("theorem_{}", self.id), 0),
-            ),
-            view: None,
-        };
+    pub fn get_all_nodes_in_tree(&self, root_id: &str) -> Vec<&ProofNode> {
+        let mut result = Vec::new();
+        let mut queue = vec![root_id];
+        let mut visited = HashSet::new();
 
-        let node = ProofNode {
-            id: Uuid::new_v4().to_string(),
-            parent: None,
-            children: vec![],
-            state: self.goal.clone(),
-            tactic: Some(init_tactic),
-            status: ProofStatus::InProgress,
-        };
-        self.proofs.add_node(node.clone());
-        node
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct ProofGoal {
-    /// Quantified objects in this state
-    pub quantifier: Vec<QuantifiedMathObject>,
-    /// Variables with assigned values
-    pub value_variables: Vec<ValueBindedVariable>,
-    /// The main mathematical relation being proven
-    pub statement: MathRelation,
-}
-
-impl ProofGoal {
-    /// Create a new proof state for a theorem
-    pub fn new(statement: MathRelation) -> Self {
-        Self {
-            quantifier: vec![],
-            value_variables: vec![],
-            statement,
-        }
-    }
-
-    /// Add a quantified object to this state
-    pub fn with_quantified_object(&self, object: QuantifiedMathObject) -> Self {
-        let mut new_state = self.clone();
-        new_state.quantifier.push(object);
-        new_state
-    }
-
-    /// Add a variable binding to this state
-    pub fn with_variable_binding(&self, binding: ValueBindedVariable) -> Self {
-        let mut new_state = self.clone();
-        new_state.value_variables.push(binding);
-        new_state
-    }
-
-    /// Format the state for display
-    pub fn format(&self) -> String {
-        format!("Statement: {:?}", self.statement)
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct ValueBindedVariable {
-    pub name: Identifier,
-    pub value: MathExpression,
-}
-
-/// A mathematical object with quantification information
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct QuantifiedMathObject {
-    /// The variable representing this object
-    pub variable: String,
-
-    /// The type of object
-    pub object_type: MathObject, // this is not a higher order logic, unless we change it to MathExpresssion
-
-    /// How this object is quantified
-    pub quantification: Quantification,
-
-    /// Human-readable description of the object
-    pub description: Option<String>,
-}
-
-/// Types of quantification for mathematical objects
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum Quantification {
-    /// Universal quantification (∀)
-    Universal,
-
-    /// Existential quantification (∃)
-    Existential,
-
-    /// Unique existential quantification (∃!)
-    UniqueExistential,
-
-    /// Object defined in terms of others
-    Defined,
-
-    /// Arbitrary but fixed object
-    Fixed,
-}
-
-/// Domain-specific mathematical object property
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum ObjectProperty {
-    /// Group theory property
-    Group(GroupProperty),
-
-    /// Ring theory property
-    Ring(RingProperty),
-
-    /// Set theory property
-    Set(String),
-
-    /// Topology property
-    Topology(String),
-
-    /// Generic property
-    Generic(String),
-}
-
-// Helper trait for inspecting theorem state (useful for testing)
-pub trait TheoremExt {
-    fn is_complete(&self) -> bool;
-    fn has_step_using_theorem(&self, theorem_name: &str) -> bool;
-    fn get_case_count(&self) -> usize;
-    fn get_step_count(&self) -> usize;
-    fn all_proof_steps_finished(&self) -> bool;
-    fn proof_tree_is_valid(&self) -> bool;
-    fn has_proper_justifications(&self) -> bool;
-}
-
-impl TheoremExt for Theorem {
-    /// Checks if the main goal of the theorem is marked as proven in the proof forest.
-    fn is_complete(&self) -> bool {
-        self.proofs.roots.iter().any(|root_id| {
-            self.proofs.nodes.get(root_id).map_or(false, |node| {
-                node.state == self.goal && matches!(node.status, ProofStatus::Complete)
-            })
-        })
-    }
-
-    /// Recursively checks if any proof step uses a justification referencing a specific theorem name.
-    fn has_step_using_theorem(&self, theorem_name: &str) -> bool {
-        // Use an iterative approach with a stack to avoid deep recursion
-        let mut node_stack = Vec::new();
-        let mut visited = std::collections::HashSet::new();
-
-        // Add all root nodes to our stack
-        for root_id in &self.proofs.roots {
-            if let Some(root_node) = self.proofs.nodes.get(root_id) {
-                node_stack.push(root_node);
-            }
-        }
-
-        // Process nodes iteratively
-        while let Some(node) = node_stack.pop() {
-            // Skip if we've already seen this node
-            if !visited.insert(&node.id) {
+        while let Some(node_id) = queue.pop() {
+            if visited.contains(node_id) {
                 continue;
             }
+            visited.insert(node_id);
 
-            // Check if this node uses the theorem
-            if let Some(tactic) = &node.tactic {
-                let tactic_str = format!("{:?}", tactic);
-                if tactic_str.contains(theorem_name) {
-                    return true;
-                }
-            }
-
-            // Add child nodes to the stack
-            for child_id in &node.children {
-                if let Some(child_node) = self.proofs.nodes.get(child_id) {
-                    node_stack.push(child_node);
+            if let Some(node) = self.proofs.get_node(node_id) {
+                result.push(node);
+                for child_id in &node.children {
+                    queue.push(child_id);
                 }
             }
         }
-
-        // If we get here, no matching nodes were found
-        false
+        result
     }
 
-    /// Counts the number of distinct proof branches (cases) originating from the root.
-    fn get_case_count(&self) -> usize {
-        self.proofs.roots.len()
+    pub fn get_all_goals(&self) -> Vec<&ProofGoal> {
+        self.proofs.node_values().map(|node| &node.state).collect()
     }
 
-    /// Counts the total number of proof steps (nodes) in the entire proof forest.
-    fn get_step_count(&self) -> usize {
-        // Use iterative approach with a stack to avoid stack overflow
-        let mut node_stack = Vec::new();
-        let mut visited = std::collections::HashSet::new();
-        let mut count = 0;
-
-        // Add all root nodes to our stack
-        for root_id in &self.proofs.roots {
-            if let Some(root_node) = self.proofs.nodes.get(root_id) {
-                node_stack.push(root_node);
-            }
-        }
-
-        // Process nodes iteratively
-        while let Some(node) = node_stack.pop() {
-            // Skip if we've already seen this node
-            if !visited.insert(&node.id) {
-                continue;
-            }
-
-            count += 1;
-
-            // Add child nodes to the stack
-            for child_id in &node.children {
-                if let Some(child_node) = self.proofs.nodes.get(child_id) {
-                    node_stack.push(child_node);
-                }
-            }
-        }
-
-        count
+    pub fn get_all_tactics(&self) -> Vec<&Tactic> {
+        self.proofs
+            .node_values()
+            .filter_map(|node| node.tactic.as_ref())
+            .collect()
     }
 
-    /// Checks if all nodes in the proof forest are marked as finished/complete.
-    fn all_proof_steps_finished(&self) -> bool {
-        // Use iterative approach with a stack to avoid stack overflow
-        let mut node_stack = Vec::new();
-        let mut visited = std::collections::HashSet::new();
-
-        // Add all root nodes to our stack
-        for root_id in &self.proofs.roots {
-            if let Some(root_node) = self.proofs.nodes.get(root_id) {
-                node_stack.push(root_node);
-            }
-        }
-
-        // Process nodes iteratively
-        while let Some(node) = node_stack.pop() {
-            // Skip if we've already seen this node
-            if !visited.insert(&node.id) {
-                continue;
-            }
-
-            // Check if this node is complete
-            if !matches!(node.status, ProofStatus::Complete) {
-                return false;
-            }
-
-            // Add child nodes to the stack
-            for child_id in &node.children {
-                if let Some(child_node) = self.proofs.nodes.get(child_id) {
-                    node_stack.push(child_node);
-                }
-            }
-        }
-
-        true
-    }
-
-    /// Basic validation of the proof tree structure (e.g., no cycles, parent pointers okay).
-    fn proof_tree_is_valid(&self) -> bool {
-        // Simple check: all root nodes should exist and have no parents
-        // This avoids potential recursion issues that can cause stack overflow
+    /// A theorem is proven if all its proof branches are complete.
+    pub fn is_proven(&self) -> bool {
         !self.proofs.roots.is_empty()
             && self.proofs.roots.iter().all(|root_id| {
-                if let Some(root_node) = self.proofs.nodes.get(root_id) {
-                    root_node.parent.is_none()
+                if let Some(root_node) = self.proofs.get_node(root_id) {
+                    self.is_branch_complete(root_node)
                 } else {
-                    false // Root ID doesn't correspond to an actual node
+                    false
                 }
             })
     }
 
-    /// Checks if all proof steps have some form of justification provided.
-    fn has_proper_justifications(&self) -> bool {
-        // Use iterative approach with a stack to avoid stack overflow
-        let mut node_stack = Vec::new();
-        let mut visited = std::collections::HashSet::new();
+    /// Check if a proof has been started (i.e., has at least one node).
+    pub fn has_proof_started(&self) -> bool {
+        !self.proofs.is_empty()
+    }
 
-        // Add all root nodes to our stack
-        for root_id in &self.proofs.roots {
-            if let Some(root_node) = self.proofs.nodes.get(root_id) {
-                node_stack.push(root_node);
-            }
-        }
+    /// Recursively checks if a branch is complete
+    fn is_branch_complete(&self, node: &ProofNode) -> bool {
+        matches!(node.status, ProofStatus::Complete)
+    }
 
-        // Process nodes iteratively
-        while let Some(node) = node_stack.pop() {
-            // Skip if we've already seen this node
-            if !visited.insert(&node.id) {
-                continue;
-            }
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
 
-            // Check if this node has a justification
-            if node.tactic.is_none() {
-                return false;
-            }
-
-            // Add child nodes to the stack
-            for child_id in &node.children {
-                if let Some(child_node) = self.proofs.nodes.get(child_id) {
-                    node_stack.push(child_node);
-                }
-            }
-        }
-
-        true
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Theorem: {}", self.name)
     }
 }
+
+// The ToMathDocument implementation has been moved to src/formalism/render/theorem.rs
+// to centralize rendering logic.

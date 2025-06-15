@@ -30,7 +30,7 @@ impl ToTurnMath for MathRelation {
                     let lhs = relations[0].to_turn_math(format!("{}_left", master_id));
                     let and_operator = MathNode {
                         id: format!("{}_and", master_id),
-                        content: Box::new(MathNodeContent::Text(" ∧ ".to_string())),
+                        content: Box::new(MathNodeContent::String("∧".to_string())),
                     };
                     let rhs = relations[1].to_turn_math(format!("{}_right", master_id));
 
@@ -53,7 +53,7 @@ impl ToTurnMath for MathRelation {
                             // Add ∧ operator before each subsequent relation
                             let and_op = MathNode {
                                 id: format!("{}_and{}", master_id, i),
-                                content: Box::new(MathNodeContent::Text(" ∧ ".to_string())),
+                                content: Box::new(MathNodeContent::String("∧".to_string())),
                             };
                             terms.push((RefinedMulOrDivOperation::None, and_op));
                         }
@@ -143,6 +143,28 @@ impl ToTurnMath for MathRelation {
                     is_function: false,
                 }),
             },
+            MathRelation::True => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "True".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
+            },
+            MathRelation::False => MathNode {
+                id: master_id,
+                content: Box::new(MathNodeContent::Identifier {
+                    body: "False".to_string(),
+                    pre_script: None,
+                    mid_script: None,
+                    post_script: None,
+                    primes: 0,
+                    is_function: false,
+                }),
+            },
         }
     }
 }
@@ -165,6 +187,8 @@ impl ToStructuredFormat for MathRelation {
             MathRelation::TopologyTheory(_) => "Topology Theory Relation".to_string(),
             MathRelation::CategoryTheory(_) => "Category Theory Relation".to_string(),
             MathRelation::Todo { name, .. } => format!("Relation TODO: {}", name),
+            MathRelation::True => "True".to_string(),
+            MathRelation::False => "False".to_string(),
         }
     }
 }

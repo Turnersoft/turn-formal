@@ -3,316 +3,57 @@
 
 use std::collections::HashMap;
 
-use uuid::Uuid;
-
-use super::super::super::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
-use super::super::super::formalism::proof::{
-    CaseAnalysisBuilder, CaseResult, ProofForest, ProofNode, ProofStatus, Tactic,
+use crate::subjects::math::formalism::{
+    expressions::{Identifier, MathExpression},
+    proof::{
+        ProofForest, ProofGoal,
+        tactics::{RewriteDirection, Tactic},
+    },
+    relations::MathRelation,
+    theorem::Theorem,
 };
-use super::super::super::formalism::relations::MathRelation;
-use super::super::super::formalism::theorem::{ProofGoal, Theorem};
-use super::super::super::theories::groups::definitions::GroupProperty;
-use super::super::super::theories::rings::definitions::{Ring, RingExpression};
 
 /// Helper function to create a variable expression
-fn create_var(name: &str) -> MathExpression {
+fn var(name: &str) -> MathExpression {
     MathExpression::Var(Identifier::Name(name.to_string(), 0))
 }
 
-/// Helper function to create a simple ring-based expression
-fn create_expr(expr_str: &str) -> MathExpression {
-    // This is a simplification - in a real implementation, we would parse the expression
-    // For now, we'll just create a variable with the same name
-    let ring = Ring::default();
-    let ring_var = RingExpression::variable(ring, expr_str);
-    MathExpression::Expression(TheoryExpression::Ring(ring_var))
-}
-
-/// Example: Proving Group Associativity Theorem
-///
-/// This example shows how to use the proof builder to create a theorem
-/// with multiple proof branches at different depths.
-pub fn prove_group_associativity() -> Theorem {
-    // Create a theorem about group associativity
-    let left = create_expr("a * (b * c)");
-    let right = create_expr("(a * b) * c");
-
-    // Create the initial proof goal and theorem
-    let theorem_id = "group_associativity_theorem";
-    let name = "Group Associativity";
-    let statement = MathRelation::equal(left, right);
-
-    let goal = ProofGoal::new(statement);
-
-    let mut proofs = ProofForest::new();
-
-    // Initialize the proof forest with a root node
-    let p0 = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: None,
-        children: vec![],
-        state: goal.clone(),
-        tactic: None,
-        status: ProofStatus::InProgress,
+/// Creates a simple theorem for testing: a = b
+fn create_simple_equality_theorem() -> Theorem {
+    let goal = ProofGoal {
+        statement: MathRelation::equal(var("a"), var("b")),
+        quantifiers: vec![],
+        value_variables: vec![],
     };
-    proofs.add_node(p0.clone());
-
-    // Main proof path - using direct node creation to avoid stack overflow
-    let p1 = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(p0.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Intro {
-            name: Identifier::Name("a".to_string(), 0),
-            expression: create_expr("a"),
-            view: None,
-        }),
-        status: ProofStatus::InProgress,
-    };
-    proofs.add_node(p1.clone());
-
-    // Add p1 as child of p0
-    let mut p0_updated = p0.clone();
-    p0_updated.children.push(p1.id.clone());
-    proofs.add_node(p0_updated);
-
-    // P2 node
-    let p2 = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(p1.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Apply {
-            theorem_id: "group_axiom_associativity".to_string(),
-            instantiation: HashMap::new(),
-            target_expr: None,
-        }),
-        status: ProofStatus::Complete,
-    };
-    proofs.add_node(p2.clone());
-
-    // Add p2 as child of p1
-    let mut p1_updated = p1.clone();
-    p1_updated.children.push(p2.id.clone());
-    proofs.add_node(p1_updated);
-
-    // Alternative branch from p1
-    let alt2 = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(p1.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Intro {
-            name: Identifier::Name("alternative".to_string(), 0),
-            expression: create_expr("alt"),
-            view: None,
-        }),
-        status: ProofStatus::InProgress,
-    };
-    proofs.add_node(alt2.clone());
-
-    // Update p1 with alt2 child
-    let mut p1_with_alt = p1.clone();
-    p1_with_alt.children.push(alt2.id.clone());
-    proofs.add_node(p1_with_alt);
-
-    // Alt3 node
-    let alt3 = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(alt2.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Apply {
-            theorem_id: "different_approach".to_string(),
-            instantiation: HashMap::new(),
-            target_expr: None,
-        }),
-        status: ProofStatus::Wip,
-    };
-    proofs.add_node(alt3.clone());
-
-    // Add alt3 as child of alt2
-    let mut alt2_updated = alt2.clone();
-    alt2_updated.children.push(alt3.id.clone());
-    proofs.add_node(alt2_updated);
-
-    // Build the theorem
+    let proofs = ProofForest::new_from_goal(goal);
     Theorem {
-        id: theorem_id.to_string(),
-        name: name.to_string(),
-        description: "Demonstrates the associative property of group operations".to_string(),
-        goal,
+        id: "simple_equality".to_string(),
+        name: "Simple Equality".to_string(),
+        description: "A simple equality theorem for testing.".to_string(),
         proofs,
     }
 }
 
-/// Example: Using case analysis for complex proofs
-pub fn prove_with_bookmarks() -> Theorem {
-    let left = create_expr("a * b");
-    let right = create_expr("b * a");
-
-    // Create the initial proof goal and theorem
-    let theorem_id = "commutative_group_properties";
-    let name = "Commutative Group Properties";
-    let statement = MathRelation::equal(left, right);
-
-    let goal = ProofGoal::new(statement);
-
-    let mut proofs = ProofForest::new();
-
-    // Initialize the proof forest with a root node
-    let start = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: None,
-        children: vec![],
-        state: goal.clone(),
-        tactic: None,
-        status: ProofStatus::InProgress,
+/// Creates a theorem for testing: forall x, P(x) -> Q(x)
+fn create_simple_implication_theorem_with_context() -> Theorem {
+    let p_of_x = MathRelation::Todo {
+        name: "P(x)".to_string(),
+        expressions: vec![var("x")],
     };
-    proofs.add_node(start.clone());
-
-    // First key step - simplify to avoid stack overflow issues
-    let key_step = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(start.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Intro {
-            name: Identifier::Name("commutativity".to_string(), 0),
-            expression: create_expr("commutativity"),
-            view: None,
-        }),
-        status: ProofStatus::InProgress,
+    let q_of_x = MathRelation::Todo {
+        name: "Q(x)".to_string(),
+        expressions: vec![var("x")],
     };
-    proofs.add_node(key_step.clone());
-
-    // Add key_step as child of start
-    let mut start_updated = start.clone();
-    start_updated.children.push(key_step.id.clone());
-    proofs.add_node(start_updated);
-
-    // Complete main path with minimal tree
-    let main_path = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(key_step.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Apply {
-            theorem_id: "group_axiom_commutativity".to_string(),
-            instantiation: HashMap::new(),
-            target_expr: None,
-        }),
-        status: ProofStatus::Complete,
+    let goal = ProofGoal {
+        statement: MathRelation::Implies(Box::new(p_of_x), Box::new(q_of_x)),
+        quantifiers: vec![],
+        value_variables: vec![],
     };
-    proofs.add_node(main_path.clone());
-
-    // Add main_path as child of key_step
-    let mut key_step_updated = key_step.clone();
-    key_step_updated.children.push(main_path.id.clone());
-    proofs.add_node(key_step_updated);
-
-    // Build the theorem with a simpler proof tree
+    let proofs = ProofForest::new_from_goal(goal);
     Theorem {
-        id: theorem_id.to_string(),
-        name: name.to_string(),
-        description: "Explores properties of commutative groups".to_string(),
-        goal,
-        proofs,
-    }
-}
-
-/// Example: Named proof steps for better clarity
-pub fn prove_with_named_steps() -> Theorem {
-    let left = create_expr("a * a⁻¹");
-    let right = create_expr("e");
-
-    // Create the initial proof goal and theorem
-    let theorem_id = "inverse_element_theorem";
-    let name = "Inverse Element Theorem";
-    let statement = MathRelation::equal(left, right);
-
-    let goal = ProofGoal::new(statement);
-
-    let mut proofs = ProofForest::new();
-
-    // Initialize the proof forest with a root node
-    let start = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: None,
-        children: vec![],
-        state: goal.clone(),
-        tactic: None,
-        status: ProofStatus::InProgress,
-    };
-    proofs.add_node(start.clone());
-
-    // First step - introducing the concept
-    let intro_step = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(start.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Intro {
-            name: Identifier::Name("inverse_concept".to_string(), 0),
-            expression: create_expr("inverse_concept"),
-            view: None,
-        }),
-        status: ProofStatus::InProgress,
-    };
-    proofs.add_node(intro_step.clone());
-
-    // Add intro_step as child of start
-    let mut start_updated = start.clone();
-    start_updated.children.push(intro_step.id.clone());
-    proofs.add_node(start_updated);
-
-    // Main branch - direct approach
-    let direct_approach = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(intro_step.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Intro {
-            name: Identifier::Name("direct".to_string(), 0),
-            expression: create_expr("direct approach"),
-            view: None,
-        }),
-        status: ProofStatus::InProgress,
-    };
-    proofs.add_node(direct_approach.clone());
-
-    // Add direct_approach as child of intro_step
-    let mut intro_step_updated = intro_step.clone();
-    intro_step_updated.children.push(direct_approach.id.clone());
-    proofs.add_node(intro_step_updated);
-
-    // Complete the main branch
-    let completed = ProofNode {
-        id: Uuid::new_v4().to_string(),
-        parent: Some(direct_approach.id.clone()),
-        children: vec![],
-        state: goal.clone(),
-        tactic: Some(Tactic::Apply {
-            theorem_id: "group_axiom_inverse".to_string(),
-            instantiation: HashMap::new(),
-            target_expr: None,
-        }),
-        status: ProofStatus::Complete,
-    };
-    proofs.add_node(completed.clone());
-
-    // Add completed as child of direct_approach
-    let mut direct_approach_updated = direct_approach.clone();
-    direct_approach_updated.children.push(completed.id.clone());
-    proofs.add_node(direct_approach_updated);
-
-    // Build the theorem with a simple proof tree
-    Theorem {
-        id: theorem_id.to_string(),
-        name: name.to_string(),
-        description: "Proves that g * g⁻¹ = e in a group".to_string(),
-        goal,
+        id: "simple_implication".to_string(),
+        name: "Simple Implication".to_string(),
+        description: "A simple implication theorem for testing.".to_string(),
         proofs,
     }
 }
@@ -322,21 +63,69 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_group_associativity_proof() {
-        let theorem = prove_group_associativity();
-        // Assert theorem name and basic properties
-        assert_eq!(theorem.name, "Group Associativity");
+    fn test_create_proof_forest() {
+        let theorem = create_simple_equality_theorem();
+        let forest = theorem.proofs;
+        assert_eq!(forest.len(), 1);
+        assert_eq!(forest.roots.len(), 1);
+        let root_node = forest.get_root().unwrap();
+        assert_eq!(
+            root_node.state.statement,
+            MathRelation::equal(var("a"), var("b"))
+        );
     }
 
     #[test]
-    fn test_bookmarked_proof() {
-        let theorem = prove_with_bookmarks();
-        assert_eq!(theorem.name, "Commutative Group Properties");
+    fn test_apply_tactic_assume_implication() {
+        let theorem = create_simple_implication_theorem_with_context();
+        let mut forest = theorem.proofs;
+        let root_node = forest.get_root().unwrap().clone();
+
+        let tactic = Tactic::AssumeImplicationAntecedent {
+            hypothesis_name: Identifier::Name("H".to_string(), 0),
+        };
+        let new_node = root_node.apply_tactic(tactic, &mut forest);
+
+        assert_eq!(new_node.parent, Some(root_node.id));
+        assert_eq!(forest.len(), 2);
+        let child_node = forest.get_node(&new_node.id).unwrap();
+        assert_eq!(child_node.state.value_variables.len(), 1);
+        assert_eq!(
+            child_node.state.value_variables[0].name,
+            Identifier::Name("H".to_string(), 0)
+        );
     }
 
     #[test]
-    fn test_named_steps_proof() {
-        let theorem = prove_with_named_steps();
-        assert_eq!(theorem.name, "Inverse Element Theorem");
+    fn test_apply_tactic_rewrite() {
+        // Register the theorem so the tactic can find it.
+        let equality_theorem = create_simple_equality_theorem();
+        crate::subjects::math::formalism::proof::TheoremRegistry::register_globally(
+            equality_theorem,
+        );
+
+        let goal_to_prove = ProofGoal {
+            statement: MathRelation::equal(var("a"), var("c")),
+            quantifiers: vec![],
+            value_variables: vec![],
+        };
+        let mut forest = ProofForest::new_from_goal(goal_to_prove);
+        let root_node = forest.get_root().unwrap().clone();
+
+        let tactic = Tactic::Rewrite {
+            target: var("a"),
+            theorem_id: "simple_equality".to_string(),
+            instantiation: {
+                let mut map = HashMap::new();
+                map.insert("a".to_string(), var("a"));
+                map.insert("b".to_string(), var("b"));
+                map
+            },
+            direction: RewriteDirection::LeftToRight,
+        };
+        let new_node = root_node.apply_tactic(tactic, &mut forest);
+
+        let expected_statement = MathRelation::equal(var("b"), var("c"));
+        assert_eq!(new_node.state.statement, expected_statement);
     }
 }

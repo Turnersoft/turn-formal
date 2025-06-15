@@ -891,6 +891,15 @@ impl SearchReplace {
             param.clone() // No deeper structure to navigate
         }
     }
+
+    /// A more descriptive alias for replace_all, for use in value bindings
+    pub fn replace_all_in_expression(
+        expression: &MathExpression,
+        pattern: &MathExpression,
+        replacement: &MathExpression,
+    ) -> MathExpression {
+        Self::replace_all(expression, pattern, replacement)
+    }
 }
 
 /// Convenience functions for common search and replace operations

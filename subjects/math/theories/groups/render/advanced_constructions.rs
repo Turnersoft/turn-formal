@@ -14,20 +14,20 @@ impl ToSectionNode for WreathProductGroup {
         let title = "G ≀ H".to_string();
 
         let content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The wreath product G ≀ H of groups G and H.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "This construction combines the direct product with a group action."
                         .to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Elements are pairs (f, h) where f: H → G is a function and h ∈ H.".to_string(),
                 )],
@@ -37,13 +37,16 @@ impl ToSectionNode for WreathProductGroup {
 
         Section {
             id: format!("{}-wreathproduct-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -63,47 +66,9 @@ impl ToSectionNode for WreathProductGroup {
             display_options: None,
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G ≀ H".to_string();
-        vec![RichTextSegment::Text(name)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G ≀ H".to_string();
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-wreathproduct-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-wreathproduct-section",
-                id_prefix
-            )),
-        }]
-    }
-
-    fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
-        let title = "G ≀ H".to_string();
-
-        Section {
-            id: format!("{}-main-wreathproduct-section", id_prefix),
-            title: Some(ParagraphNode {
-                segments: vec![RichTextSegment::Text(title.clone())],
-                alignment: None,
-            }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
-                segments: vec![RichTextSegment::Text(
-                    "The wreath product G ≀ H of groups G and H. This construction combines the direct product with a group action.".to_string(),
-                )],
-                alignment: None,
-            })],
-            metadata: vec![("schema_level".to_string(), "1".to_string())],
-            display_options: None,
-        }
-    }
-
+impl ToMathDocument for WreathProductGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G ≀ H".to_string();
@@ -156,17 +121,17 @@ impl ToSectionNode for CentralProductGroup {
         let title = "G ∘ H".to_string();
 
         let content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text("A central product group G ∘ H.".to_string())],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "This is formed by identifying the centers of component groups.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The construction allows for combining groups while maintaining certain structural properties.".to_string(),
                 )],
@@ -176,13 +141,16 @@ impl ToSectionNode for CentralProductGroup {
 
         Section {
             id: format!("{}-centralproduct-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -203,36 +171,16 @@ impl ToSectionNode for CentralProductGroup {
         }
     }
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G ∘ H".to_string();
-        vec![RichTextSegment::Text(name)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G ∘ H".to_string();
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-centralproduct-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-centralproduct-section",
-                id_prefix
-            )),
-        }]
-    }
-
     fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
         let title = "G ∘ H".to_string();
 
         Section {
             id: format!("{}-main-centralproduct-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+            content: vec![SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "A central product group formed by identifying the centers of component groups. This construction allows for combining groups while maintaining certain structural properties.".to_string(),
                 )],
@@ -242,7 +190,9 @@ impl ToSectionNode for CentralProductGroup {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for CentralProductGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G ∘ H".to_string();
@@ -295,20 +245,20 @@ impl ToSectionNode for PullbackGroup {
         let title = "G ×_H K".to_string();
 
         let content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The pullback (fibered product) G ×_H K of groups over a common target H."
                         .to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "This is a universal construction in the category of groups.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Elements are pairs (g, k) where g ∈ G and k ∈ K such that φ(g) = ψ(k)."
                         .to_string(),
@@ -319,13 +269,16 @@ impl ToSectionNode for PullbackGroup {
 
         Section {
             id: format!("{}-pullback-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -343,33 +296,16 @@ impl ToSectionNode for PullbackGroup {
         }
     }
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G ×_H K".to_string();
-        vec![RichTextSegment::Text(name)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G ×_H K".to_string();
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-pullback-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!("View definition of {}-pullback-section", id_prefix)),
-        }]
-    }
-
     fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
         let title = "G ×_H K".to_string();
 
         Section {
             id: format!("{}-main-pullback-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+            content: vec![SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The pullback (fibered product) G ×_H K of groups over a common target H."
                         .to_string(),
@@ -380,7 +316,9 @@ impl ToSectionNode for PullbackGroup {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for PullbackGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G ×_H K".to_string();
@@ -433,20 +371,20 @@ impl ToSectionNode for RestrictionGroup {
         let title = "G|_S".to_string();
 
         let content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The restriction G|_S of a group G to a subset S.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "This construction restricts the group operation to a specific subset."
                         .to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The subset S must satisfy specific conditions to form a valid subgroup."
                         .to_string(),
@@ -457,13 +395,16 @@ impl ToSectionNode for RestrictionGroup {
 
         Section {
             id: format!("{}-restriction-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -481,36 +422,36 @@ impl ToSectionNode for RestrictionGroup {
         }
     }
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G|_S".to_string();
-        vec![RichTextSegment::Text(name)]
-    }
+    // fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let name = "G|_S".to_string();
+    //     vec![RichTextSegment::Text(name)]
+    // }
 
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = "G|_S".to_string();
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-restriction-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-restriction-section",
-                id_prefix
-            )),
-        }]
-    }
+    // fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let name = "G|_S".to_string();
+    //     vec![RichTextSegment::Link {
+    //         content: vec![RichTextSegment::Text(name)],
+    //         target: LinkTarget::DefinitionId {
+    //             term_id: format!("{}-restriction-section", id_prefix),
+    //             theory_context: Some("GroupTheory".to_string()),
+    //         },
+    //         tooltip: Some(format!(
+    //             "View definition of {}-restriction-section",
+    //             id_prefix
+    //         )),
+    //     }]
+    // }
 
     fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
         let title = "G|_S".to_string();
 
         Section {
             id: format!("{}-main-restriction-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+            content: vec![SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The restriction G|_S of a group G to a subset S satisfying specific conditions.".to_string(),
                 )],
@@ -520,7 +461,9 @@ impl ToSectionNode for RestrictionGroup {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for RestrictionGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
         let title = "G|_S".to_string();

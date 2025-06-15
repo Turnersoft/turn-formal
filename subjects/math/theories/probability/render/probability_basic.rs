@@ -6,12 +6,12 @@ impl ToSectionNode for GenericProbabilitySpace {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         Section {
             id: format!("{}.main", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text("Generic Probability Space".to_string())],
                 alignment: None,
             }),
             content: vec![
-                SectionContentNode::Paragraph(ParagraphNode {
+                SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "A probability space (Ω, ℱ, P) consists of a sample space Ω, a σ-algebra ℱ of events, and a probability measure P.".to_string()
                     )],
@@ -22,7 +22,9 @@ impl ToSectionNode for GenericProbabilitySpace {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for GenericProbabilitySpace {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(id_prefix);
 
@@ -66,28 +68,28 @@ impl ToSectionNode for GenericProbabilitySpace {
             }),
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+impl GenericProbabilitySpace {
+    pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         vec![RichTextSegment::Text(
             "Generic Probability Space (Ω, ℱ, P)".to_string(),
         )]
     }
 
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    pub fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         vec![RichTextSegment::Text("(Ω, ℱ, P)".to_string())]
     }
-}
 
-impl GenericProbabilitySpace {
     pub fn render_as_l1_schema_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = Section {
             id: format!("{}.schema", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text("Probability Space Schema".to_string())],
                 alignment: None,
             }),
             content: vec![
-                SectionContentNode::Paragraph(ParagraphNode {
+                SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure.".to_string()
                     )],

@@ -67,11 +67,11 @@ impl ToSectionNode for AlternatingGroup {
 
         // Create content nodes
         let mut content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!("Degree: {}", self.degree))],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "Order: {}",
                     factorial(self.degree as usize) / 2
@@ -81,7 +81,7 @@ impl ToSectionNode for AlternatingGroup {
         ];
 
         // Link to group basic information instead of embedding it directly
-        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+        content_nodes.push(SectionContentNode::RichText(RichText {
             segments: vec![
                 RichTextSegment::Text("For the underlying group structure, see ".to_string()),
                 RichTextSegment::Link {
@@ -100,7 +100,7 @@ impl ToSectionNode for AlternatingGroup {
             alignment: None,
         }));
 
-        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+        content_nodes.push(SectionContentNode::RichText(RichText {
             segments: vec![RichTextSegment::Text(
                 "The alternating group consists of all even permutations on n elements."
                     .to_string(),
@@ -111,7 +111,7 @@ impl ToSectionNode for AlternatingGroup {
         // Add abstraction level specific content
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L1: A general schema for any alternating group.".to_string(),
                     )],
@@ -119,7 +119,7 @@ impl ToSectionNode for AlternatingGroup {
                 }));
             }
             AbstractionLevel::Level2 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L2: A specific type of alternating group with defined properties."
                             .to_string(),
@@ -127,7 +127,7 @@ impl ToSectionNode for AlternatingGroup {
                     alignment: None,
                 }));
 
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "The alternating group A_n is the subgroup of the symmetric group S_n consisting of all \
                          even permutations. It has index 2 in S_n.".to_string()
@@ -136,7 +136,7 @@ impl ToSectionNode for AlternatingGroup {
                 }));
             }
             AbstractionLevel::Level3 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L3: A constructor for building an alternating group from a degree.".to_string(),
                     )],
@@ -144,7 +144,7 @@ impl ToSectionNode for AlternatingGroup {
                 }));
             }
             AbstractionLevel::Level4 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L4: A concrete alternating group with fully specified degree and elements.".to_string(),
                     )],
@@ -153,25 +153,25 @@ impl ToSectionNode for AlternatingGroup {
 
                 // For small degree, list the elements
                 if self.degree <= 4 {
-                    content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                    content_nodes.push(SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text("Elements: ".to_string())],
                         alignment: None,
                     }));
 
                     if self.degree == 1 || self.degree == 2 {
-                        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                        content_nodes.push(SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text("e (identity only)".to_string())],
                             alignment: None,
                         }));
                     } else if self.degree == 3 {
-                        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                        content_nodes.push(SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text(
                                 "e (identity), (1 2 3), (1 3 2)".to_string(),
                             )],
                             alignment: None,
                         }));
                     } else if self.degree == 4 {
-                        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                        content_nodes.push(SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text(
                                 "e, (1 2)(3 4), (1 3)(2 4), (1 4)(2 3), (1 2 3), (1 3 2), (1 2 4), (1 4 2), (1 3 4), (1 4 3), (2 3 4), (2 4 3)".to_string()
                             )],
@@ -253,13 +253,16 @@ impl ToSectionNode for AlternatingGroup {
 
         Section {
             id: format!("{}-alternatinggroup-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: title_segments,
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title_text.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title_text.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
@@ -281,6 +284,34 @@ impl ToSectionNode for AlternatingGroup {
         }
     }
 
+    // fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let tooltip_text = format!(
+    //         "Alternating Group A_{} (order {})",
+    //         self.degree,
+    //         factorial(self.degree as usize) / 2
+    //     );
+
+    //     vec![RichTextSegment::Text(tooltip_text)]
+    // }
+
+    // fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let name = format!("Alternating Group A_{}", self.degree);
+
+    //     vec![RichTextSegment::Link {
+    //         content: vec![RichTextSegment::Text(name.clone())],
+    //         target: LinkTarget::DefinitionId {
+    //             term_id: format!("{}-alternatinggroup-section", id_prefix),
+    //             theory_context: Some("GroupTheory".to_string()),
+    //         },
+    //         tooltip: Some(format!(
+    //             "View definition of {}-alternatinggroup-section",
+    //             id_prefix
+    //         )),
+    //     }]
+    // }
+}
+
+impl ToMathDocument for AlternatingGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
         let title = main_section.title.as_ref().map_or_else(
@@ -336,32 +367,6 @@ impl ToSectionNode for AlternatingGroup {
                 },
             }),
         }
-    }
-
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let tooltip_text = format!(
-            "Alternating Group A_{} (order {})",
-            self.degree,
-            factorial(self.degree as usize) / 2
-        );
-
-        vec![RichTextSegment::Text(tooltip_text)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("Alternating Group A_{}", self.degree);
-
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name.clone())],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-alternatinggroup-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-alternatinggroup-section",
-                id_prefix
-            )),
-        }]
     }
 }
 

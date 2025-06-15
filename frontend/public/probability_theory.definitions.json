@@ -2,10 +2,10 @@
   "theory_name": "Probability Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1749444843",
+  "exported_at": "1750003328",
   "content": [
     {
-      "id": "probability_theory.object_0.generic.schema.doc",
+      "id": "generic_probability_space.generic.schema.doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Probability Space Schema",
@@ -37,7 +37,7 @@
             "table_of_contents": null,
             "body": [
               {
-                "id": "probability_theory.object_0.generic.schema",
+                "id": "generic_probability_space.generic.schema",
                 "title": {
                   "segments": [
                     {
@@ -48,7 +48,7 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
+                    "RichText": {
                       "segments": [
                         {
                           "Text": "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure."
@@ -77,13 +77,13 @@
       }
     },
     {
-      "id": "probability_theory.expression_0",
+      "id": "event_probability",
       "content_type": {
         "ScientificPaper": {
           "title": "Probability Expression",
           "paper_type": "Research",
-          "venue": "Mathematical Expressions",
-          "peer_reviewed": true,
+          "venue": null,
+          "peer_reviewed": false,
           "content_metadata": {
             "language": "en-US",
             "version": "1.0",
@@ -92,24 +92,19 @@
             "content_hash": null
           },
           "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
+            "authors": [],
             "date_published": null,
             "date_modified": null,
-            "venue": "Mathematical Expressions",
+            "venue": null,
             "doi": null,
-            "keywords": [
-              "probability",
-              "expression"
-            ]
+            "keywords": []
           },
           "structure": {
             "abstract_content": null,
             "table_of_contents": null,
             "body": [
               {
-                "id": "probability_theory.expression_0.main",
+                "id": "event_probability-main",
                 "title": {
                   "segments": [
                     {
@@ -120,13 +115,56 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Probability expression: EventProbability { event: Variable(Name(\"A\", 1)), probability_space: Variable(Name(\"Ω\", 1)) }"
-                        }
-                      ],
-                      "alignment": null
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Math": {
+                                "id": "event_probability",
+                                "content": {
+                                  "FunctionCall": {
+                                    "name": {
+                                      "id": "event_probability-prob-name",
+                                      "content": {
+                                        "Identifier": {
+                                          "body": "P",
+                                          "pre_script": null,
+                                          "mid_script": null,
+                                          "post_script": null,
+                                          "primes": 0,
+                                          "is_function": true
+                                        }
+                                      }
+                                    },
+                                    "parameters": [
+                                      {
+                                        "id": "event_probability-event",
+                                        "content": {
+                                          "Identifier": {
+                                            "body": "A",
+                                            "pre_script": null,
+                                            "mid_script": null,
+                                            "post_script": null,
+                                            "primes": 0,
+                                            "is_function": false
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "alignment": null
+                        },
+                        "formal_term": null,
+                        "label": "Probability Expression",
+                        "body": [],
+                        "abstraction_meta": null,
+                        "selectable_properties": []
+                      }
                     }
                   }
                 ],
@@ -149,13 +187,13 @@
       }
     },
     {
-      "id": "probability_theory.expression_1",
+      "id": "expected_value",
       "content_type": {
         "ScientificPaper": {
           "title": "Probability Expression",
           "paper_type": "Research",
-          "venue": "Mathematical Expressions",
-          "peer_reviewed": true,
+          "venue": null,
+          "peer_reviewed": false,
           "content_metadata": {
             "language": "en-US",
             "version": "1.0",
@@ -164,24 +202,19 @@
             "content_hash": null
           },
           "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
+            "authors": [],
             "date_published": null,
             "date_modified": null,
-            "venue": "Mathematical Expressions",
+            "venue": null,
             "doi": null,
-            "keywords": [
-              "probability",
-              "expression"
-            ]
+            "keywords": []
           },
           "structure": {
             "abstract_content": null,
             "table_of_contents": null,
             "body": [
               {
-                "id": "probability_theory.expression_1.main",
+                "id": "expected_value-main",
                 "title": {
                   "segments": [
                     {
@@ -192,13 +225,56 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Probability expression: ExpectedValue { variable: Variable(Name(\"X\", 1)) }"
-                        }
-                      ],
-                      "alignment": null
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Math": {
+                                "id": "expected_value",
+                                "content": {
+                                  "FunctionCall": {
+                                    "name": {
+                                      "id": "expected_value-exp-name",
+                                      "content": {
+                                        "Identifier": {
+                                          "body": "E",
+                                          "pre_script": null,
+                                          "mid_script": null,
+                                          "post_script": null,
+                                          "primes": 0,
+                                          "is_function": true
+                                        }
+                                      }
+                                    },
+                                    "parameters": [
+                                      {
+                                        "id": "expected_value-rv",
+                                        "content": {
+                                          "Identifier": {
+                                            "body": "X",
+                                            "pre_script": null,
+                                            "mid_script": null,
+                                            "post_script": null,
+                                            "primes": 0,
+                                            "is_function": false
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "alignment": null
+                        },
+                        "formal_term": null,
+                        "label": "Probability Expression",
+                        "body": [],
+                        "abstraction_meta": null,
+                        "selectable_properties": []
+                      }
                     }
                   }
                 ],
@@ -221,13 +297,13 @@
       }
     },
     {
-      "id": "probability_theory.relation_0",
+      "id": "events_independent",
       "content_type": {
         "ScientificPaper": {
           "title": "Probability Relation",
           "paper_type": "Research",
-          "venue": "Mathematical Relations",
-          "peer_reviewed": true,
+          "venue": null,
+          "peer_reviewed": false,
           "content_metadata": {
             "language": "en-US",
             "version": "1.0",
@@ -236,24 +312,19 @@
             "content_hash": null
           },
           "academic_metadata": {
-            "authors": [
-              "Turn-Formal System"
-            ],
+            "authors": [],
             "date_published": null,
             "date_modified": null,
-            "venue": "Mathematical Relations",
+            "venue": null,
             "doi": null,
-            "keywords": [
-              "probability",
-              "relation"
-            ]
+            "keywords": []
           },
           "structure": {
             "abstract_content": null,
             "table_of_contents": null,
             "body": [
               {
-                "id": "probability_theory.relation_0.main",
+                "id": "events_independent-main",
                 "title": {
                   "segments": [
                     {
@@ -264,13 +335,55 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "Probability relation: EventsAreIndependent { events: [Variable(Name(\"A\", 1)), Variable(Name(\"B\", 1))], probability_space: Variable(Name(\"Ω\", 1)) }"
-                        }
-                      ],
-                      "alignment": null
+                    "StructuredMath": {
+                      "Definition": {
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Math": {
+                                "id": "events_independent",
+                                "content": {
+                                  "Relationship": {
+                                    "lhs": {
+                                      "id": "events_independent-lhs",
+                                      "content": {
+                                        "Identifier": {
+                                          "body": "P(A∩B)",
+                                          "pre_script": null,
+                                          "mid_script": null,
+                                          "post_script": null,
+                                          "primes": 0,
+                                          "is_function": false
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "id": "events_independent-rhs",
+                                      "content": {
+                                        "Identifier": {
+                                          "body": "P(A)P(B)",
+                                          "pre_script": null,
+                                          "mid_script": null,
+                                          "post_script": null,
+                                          "primes": 0,
+                                          "is_function": false
+                                        }
+                                      }
+                                    },
+                                    "operator": "Equal"
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "alignment": null
+                        },
+                        "formal_term": null,
+                        "label": "Probability Relation",
+                        "body": [],
+                        "abstraction_meta": null,
+                        "selectable_properties": []
+                      }
                     }
                   }
                 ],

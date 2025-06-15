@@ -17,17 +17,17 @@ impl ToSectionNode for ModularAdditiveGroup {
         let title = format!("ℤ/{}", self.modulus);
 
         let content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!("Modulus: {}", self.modulus))],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Additive group of integers modulo n under addition.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "This is a cyclic group of order {}.",
                     self.modulus
@@ -38,13 +38,16 @@ impl ToSectionNode for ModularAdditiveGroup {
 
         Section {
             id: format!("{}-modularadditive-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -64,27 +67,9 @@ impl ToSectionNode for ModularAdditiveGroup {
             display_options: None,
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("ℤ/{}", self.modulus);
-        vec![RichTextSegment::Text(name)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("ℤ/{}", self.modulus);
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-modularadditive-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-modularadditive-section",
-                id_prefix
-            )),
-        }]
-    }
-
+impl ToMathDocument for ModularAdditiveGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let level = self.level();
 
@@ -137,17 +122,39 @@ impl ToSectionNode for ModularAdditiveGroup {
             }),
         }
     }
+}
 
-    fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
+impl ModularAdditiveGroup {
+    pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+        let name = format!("ℤ/{}", self.modulus);
+        vec![RichTextSegment::Text(name)]
+    }
+
+    pub fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+        let name = format!("ℤ/{}", self.modulus);
+        vec![RichTextSegment::Link {
+            content: vec![RichTextSegment::Text(name)],
+            target: LinkTarget::DefinitionId {
+                term_id: format!("{}-modularadditive-section", id_prefix),
+                theory_context: Some("GroupTheory".to_string()),
+            },
+            tooltip: Some(format!(
+                "View definition of {}-modularadditive-section",
+                id_prefix
+            )),
+        }]
+    }
+
+    pub fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
         let title = format!("ℤ/{}", self.modulus);
 
         Section {
             id: format!("{}-main-modularadditive-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+            content: vec![SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "The additive group ℤ/{} of integers modulo {} under addition. This is a cyclic group of order {}.",
                     self.modulus, self.modulus, self.modulus
@@ -166,17 +173,17 @@ impl ToSectionNode for ModularMultiplicativeGroup {
         let title = format!("(ℤ/{})×", self.modulus);
 
         let content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!("Modulus: {}", self.modulus))],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Multiplicative group of units modulo n under multiplication.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "This group consists of integers coprime to the modulus.".to_string(),
                 )],
@@ -186,13 +193,16 @@ impl ToSectionNode for ModularMultiplicativeGroup {
 
         Section {
             id: format!("{}-modularmultiplicative-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -212,27 +222,9 @@ impl ToSectionNode for ModularMultiplicativeGroup {
             display_options: None,
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("(ℤ/{})×", self.modulus);
-        vec![RichTextSegment::Text(name)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("(ℤ/{})×", self.modulus);
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-modularmultiplicative-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!(
-                "View definition of {}-modularmultiplicative-section",
-                id_prefix
-            )),
-        }]
-    }
-
+impl ToMathDocument for ModularMultiplicativeGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let level = self.level();
 
@@ -285,20 +277,42 @@ impl ToSectionNode for ModularMultiplicativeGroup {
             }),
         }
     }
+}
 
-    fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
+impl ModularMultiplicativeGroup {
+    pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+        let name = format!("(ℤ/{})×", self.modulus);
+        vec![RichTextSegment::Text(name)]
+    }
+
+    pub fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+        let name = format!("(ℤ/{})×", self.modulus);
+        vec![RichTextSegment::Link {
+            content: vec![RichTextSegment::Text(name)],
+            target: LinkTarget::DefinitionId {
+                term_id: format!("{}-modularmultiplicative-section", id_prefix),
+                theory_context: Some("GroupTheory".to_string()),
+            },
+            tooltip: Some(format!(
+                "View definition of {}-modularmultiplicative-section",
+                id_prefix
+            )),
+        }]
+    }
+
+    pub fn render_as_l1_schema(&self, id_prefix: &str) -> Section {
         let title = format!("(ℤ/{})×", self.modulus);
 
         Section {
             id: format!("{}-main-modularmultiplicative-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::Paragraph(ParagraphNode {
+            content: vec![SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
-                    "The multiplicative group (ℤ/{})× of units modulo {} under multiplication. This group consists of integers coprime to {}.",
-                    self.modulus, self.modulus, self.modulus
+                    "The multiplicative group (ℤ/{})× of units modulo {} under multiplication. This group consists of integers coprime to the modulus.",
+                    self.modulus, self.modulus
                 ))],
                 alignment: None,
             })],
@@ -310,38 +324,20 @@ impl ToSectionNode for ModularMultiplicativeGroup {
 
 impl ToTurnMath for ModularAdditiveGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        let level = self.level();
-
-        // Use abstract notation for L1 groups
-        if level == AbstractionLevel::Level1 {
-            MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("ℤ/nℤ".to_string())),
-            }
-        } else {
-            MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text(format!("ℤ/{}", self.modulus))),
-            }
+        // Use proper mathematical notation ℤ/nℤ
+        MathNode {
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Text(format!("ℤ/{}ℤ", self.modulus))),
         }
     }
 }
 
 impl ToTurnMath for ModularMultiplicativeGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        let level = self.level();
-
-        // Use abstract notation for L1 groups
-        if level == AbstractionLevel::Level1 {
-            MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text("(ℤ/nℤ)*".to_string())),
-            }
-        } else {
-            MathNode {
-                id: master_id,
-                content: Box::new(MathNodeContent::Text(format!("(ℤ/{})×", self.modulus))),
-            }
+        // Use proper mathematical notation (ℤ/nℤ)×
+        MathNode {
+            id: master_id.clone(),
+            content: Box::new(MathNodeContent::Text(format!("(ℤ/{}ℤ)×", self.modulus))),
         }
     }
 }

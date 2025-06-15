@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1749438390",
+  "exported_at": "1750003328",
   "content": [
     {
       "id": "group_theory.inverse_uniqueness-doc",
@@ -37,7 +37,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "inverse uniqueness"
@@ -69,18 +69,24 @@
                         "kind": "Theorem",
                         "label": "inverse_uniqueness",
                         "statement": {
-                          "Mathematical": {
-                            "id": "group_theory.inverse_uniqueness-main-statement",
-                            "content": {
-                              "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
+                          "Content": [
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "inverse uniqueness"
+                                  }
+                                ],
+                                "alignment": null
+                              }
                             }
-                          }
+                          ]
                         },
                         "proof": {
                           "title": {
                             "segments": [
                               {
-                                "Text": "Proof."
+                                "Text": "Proof"
                               }
                             ],
                             "alignment": null
@@ -88,462 +94,178 @@
                           "strategy": [],
                           "steps": [
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Variables: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: IntroduceValueVariable"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "Text": "• For any g (any group element)"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "Text": "• For any h1 (first potential right inverse of g)"
-                                      }
-                                    ],
-                                    "alignment": null
-                                  }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "Text": "• For any h2 (second potential right inverse of g)"
-                                      }
-                                    ],
-                                    "alignment": null
-                                  }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Formal Statement: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
-                                      }
-                                    ],
-                                    "alignment": null
-                                  }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Informal Description: If ((g * h1) = e and (g * h2) = e) then h1 = h2.",
-                                          "styles": [
-                                            "Italic"
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    "alignment": null
-                                  }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Introduce assumptions: theorem_inverse_uniqueness"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: AssumeImplicationAntecedent"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Introduce premise: ((g * h1) = e ∧ (g * h2) = e)"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "((g * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Substitute (g * h1) with (g⁻¹ * (g * h1)) (by established equality)"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(g * h1) → (g⁻¹ * (g * h1))"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Substitute (g⁻¹ * (g * h1)) with ((g⁻¹ * g) * h1) (by established equality)"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(g⁻¹ * (g * h1)) → ((g⁻¹ * g) * h1)"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Substitute (g⁻¹ * g) with e (by established equality)"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(g⁻¹ * g) → e"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Substitute (e * h1) with h1 (by established equality)"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(e * h1) → h1"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Substitute (g⁻¹ * e) with g⁻¹ (by established equality)"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: ExactWith"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(g⁻¹ * e) → g⁻¹"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Introduce premise: h2 = g⁻¹"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(((g⁻¹ * g) * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             },
                             {
-                              "Elaboration": [
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Step: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "Introduce premise: h1 = h2"
-                                      }
-                                    ],
-                                    "alignment": null
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: IntroduceValueVariable"
                                   }
-                                },
-                                {
-                                  "Paragraph": {
-                                    "segments": [
-                                      {
-                                        "StyledText": {
-                                          "text": "Result: ",
-                                          "styles": [
-                                            "Bold"
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "Text": "(((g⁻¹ * g) * h1) = e ∧ (g * h2) = e) ⟹ h1 = h2"
-                                      }
-                                    ],
-                                    "alignment": null
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
                                   }
-                                }
-                              ]
+                                ]
+                              }
+                            },
+                            {
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
+                                  }
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "Statement": {
+                                "claim": [
+                                  {
+                                    "Text": "Apply tactic: Rewrite"
+                                  }
+                                ],
+                                "justification": [
+                                  {
+                                    "Text": "Tactic application"
+                                  }
+                                ]
+                              }
                             }
                           ],
                           "qed_symbol": "∎"
                         },
                         "abstraction_meta": null
                       }
-                    }
-                  },
-                  {
-                    "Paragraph": {
-                      "segments": [
-                        {
-                          "Text": "inverse uniqueness"
-                        }
-                      ],
-                      "alignment": null
                     }
                   }
                 ],

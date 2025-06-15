@@ -10,12 +10,17 @@ use super::super::fields::definitions::Field;
 use super::super::topology::definitions::TopologicalSpace;
 use super::super::zfc::definitions::{Set, SetProperty};
 
+use crate::subjects::math::theories::number_theory;
+use crate::turn_render::math_node::MathNode;
+use crate::turn_render::section_node::{RichText, RichTextSegment, Section, SectionContentNode};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::fmt;
+use std::collections::{BTreeMap, HashMap};
+use std::fmt::{self, Display};
 use std::hash::Hash;
 use std::hash::Hasher;
 use thiserror::Error;
+
+use crate::subjects::math::formalism::abstraction_level::GetAbstractionLevel;
 
 //==== GROUP-SPECIFIC OPERATION TYPES ====//
 
@@ -214,6 +219,8 @@ pub fn get_group_axioms() -> HashMap<String, MathRelation> {
                 expressions: vec![],
                 metadata: HashMap::new(),
                 description: Some("Group associativity axiom".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
             },
             left: MathExpression::Expression(TheoryExpression::Group(assoc_lhs)),
             right: MathExpression::Expression(TheoryExpression::Group(assoc_rhs)),
@@ -235,6 +242,8 @@ pub fn get_group_axioms() -> HashMap<String, MathRelation> {
                 expressions: vec![],
                 metadata: HashMap::new(),
                 description: Some("Left identity axiom".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
             },
             left: MathExpression::Expression(TheoryExpression::Group(ea_op)),
             right: MathExpression::Expression(TheoryExpression::Group(a_elem.clone())),
@@ -253,6 +262,8 @@ pub fn get_group_axioms() -> HashMap<String, MathRelation> {
                 expressions: vec![],
                 metadata: HashMap::new(),
                 description: Some("Right identity axiom".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
             },
             left: MathExpression::Expression(TheoryExpression::Group(ae_op)),
             right: MathExpression::Expression(TheoryExpression::Group(a_elem.clone())),
@@ -277,6 +288,8 @@ pub fn get_group_axioms() -> HashMap<String, MathRelation> {
                 expressions: vec![],
                 metadata: HashMap::new(),
                 description: Some("Left inverse axiom".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
             },
             left: MathExpression::Expression(TheoryExpression::Group(a_inv_a)),
             right: MathExpression::Expression(TheoryExpression::Group(e_elem.clone())),
@@ -295,6 +308,8 @@ pub fn get_group_axioms() -> HashMap<String, MathRelation> {
                 expressions: vec![],
                 metadata: HashMap::new(),
                 description: Some("Right inverse axiom".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
             },
             left: MathExpression::Expression(TheoryExpression::Group(a_a_inv)),
             right: MathExpression::Expression(TheoryExpression::Group(e_elem.clone())),
@@ -1092,6 +1107,17 @@ pub enum GroupElement {
     Matrix(Vec<Vec<i64>>),
     /// A symbolic element (for abstract elements)
     Symbol(String),
+}
+
+impl Display for GroupElement {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            GroupElement::Integer(i) => write!(f, "{}", i),
+            GroupElement::Permutation(p) => write!(f, "{:?}", p),
+            GroupElement::Matrix(m) => write!(f, "{:?}", m),
+            GroupElement::Symbol(s) => write!(f, "{}", s),
+        }
+    }
 }
 
 /// Error type for group expression evaluation

@@ -38,6 +38,18 @@ pub enum Identifier {
     Name(String, u32),
 }
 
+impl std::fmt::Display for Identifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Identifier::O(i) => write!(f, "o_{}", i),
+            Identifier::M(i) => write!(f, "m_{}", i),
+            Identifier::E(i) => write!(f, "e_{}", i),
+            Identifier::N(i) => write!(f, "n_{}", i),
+            Identifier::Name(s, _) => write!(f, "{}", s),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TheoryExpression {
     Group(GroupExpression),

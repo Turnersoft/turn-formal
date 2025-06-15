@@ -6,9 +6,9 @@ use crate::turn_render::RefinedMulOrDivOperation;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
 use crate::turn_render::{
     AbstractionMetadata, AcademicMetadata, ContentMetadata, DocumentRelationships,
-    DocumentStructure, LinkTarget, MathDocument, MathDocumentType, PaperType, ParagraphNode,
+    DocumentStructure, LinkTarget, MathDocument, MathDocumentType, PaperType, RichText,
     RichTextSegment, ScientificPaperContent, Section, SectionContentNode, SelectableProperty,
-    StructuredMathNode, ToSectionNode,
+    StructuredMathNode, ToMathDocument, ToSectionNode,
 };
 
 impl ToTurnMath for ProductGroup {
@@ -65,7 +65,7 @@ impl ToSectionNode for ProductGroup {
             .collect::<String>();
 
         // Create content nodes
-        let mut content_nodes = vec![SectionContentNode::Paragraph(ParagraphNode {
+        let mut content_nodes = vec![SectionContentNode::RichText(RichText {
             segments: vec![RichTextSegment::Text(format!(
                 "Number of components: {}",
                 self.components.len()
@@ -74,7 +74,7 @@ impl ToSectionNode for ProductGroup {
         })];
 
         // Link to group basic information instead of embedding it directly
-        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+        content_nodes.push(SectionContentNode::RichText(RichText {
             segments: vec![
                 RichTextSegment::Text("For the underlying group structure, see ".to_string()),
                 RichTextSegment::Link {
@@ -96,7 +96,7 @@ impl ToSectionNode for ProductGroup {
         // Add abstraction level specific content
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L1: A general schema for any product group.".to_string(),
                     )],
@@ -104,7 +104,7 @@ impl ToSectionNode for ProductGroup {
                 }));
             }
             AbstractionLevel::Level2 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L2: A specific type of product group with defined properties."
                             .to_string(),
@@ -113,7 +113,7 @@ impl ToSectionNode for ProductGroup {
                 }));
             }
             AbstractionLevel::Level3 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L3: A constructor for building a product group from component groups.".to_string(),
                     )],
@@ -121,7 +121,7 @@ impl ToSectionNode for ProductGroup {
                 }));
             }
             AbstractionLevel::Level4 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L4: A concrete product group with fully specified components."
                             .to_string(),
@@ -174,13 +174,16 @@ impl ToSectionNode for ProductGroup {
 
         Section {
             id: format!("{}-productgroup-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: title_segments,
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title_text.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title_text.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
@@ -201,7 +204,9 @@ impl ToSectionNode for ProductGroup {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for ProductGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
         let title = main_section.title.as_ref().map_or_else(
@@ -258,15 +263,17 @@ impl ToSectionNode for ProductGroup {
             }),
         }
     }
+}
 
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+impl ProductGroup {
+    pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         let components_count = self.components.len();
         let tooltip_text = format!("Product Group with {} components", components_count);
 
         vec![RichTextSegment::Text(tooltip_text)]
     }
 
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    pub fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
         let components_count = self.components.len();
         let name = format!("Product Group ({})", components_count);
 

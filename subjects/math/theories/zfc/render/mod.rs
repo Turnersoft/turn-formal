@@ -34,7 +34,7 @@ impl ToSectionNode for Set {
             }
             Set::Empty => {
                 title_text = "The Empty Set".to_string();
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "Contains no elements (∅).".to_string(),
                     )],
@@ -72,7 +72,7 @@ impl ToSectionNode for Set {
                     .map(|e| format!("{:?}", e))
                     .collect::<Vec<_>>()
                     .join(", ");
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(format!(
                         "Elements: {{{}}}",
                         elements_str
@@ -97,7 +97,7 @@ impl ToSectionNode for Set {
                     .chars()
                     .take(50)
                     .collect(); // Fallback title
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(format!("This set is defined by a ZFC construction (e.g., Union, Intersection, PowerSet). Rendering for display level {:?} needs to be detailed.", object_formalism_level))],
                     alignment: None,
                 }));
@@ -107,13 +107,16 @@ impl ToSectionNode for Set {
         // Create the section with all the content
         Section {
             id: format!("{}-set-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title_text.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title_text.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title_text.clone())],
+                        alignment: None,
+                    },
                     formal_term: None,
                     label: Some(format!("Definition ({})", title_text)),
                     body: content_nodes,
@@ -135,6 +138,33 @@ impl ToSectionNode for Set {
         }
     }
 
+    // fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let name = match self {
+    //         Set::Empty => "Empty Set (∅)".to_string(),
+    //         Set::Singleton { element, .. } => format!("Singleton Set {{{:?}}}", element),
+    //         _ => format!("Set: {}", id_prefix),
+    //     };
+    //     vec![RichTextSegment::Text(name)]
+    // }
+
+    // fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
+    //     let name = match self {
+    //         Set::Empty => "∅".to_string(),
+    //         Set::Singleton { element, .. } => format!("{{{:?}}}", element),
+    //         _ => format!("Set {}", id_prefix),
+    //     };
+    //     vec![RichTextSegment::Link {
+    //         content: vec![RichTextSegment::Text(name)],
+    //         target: LinkTarget::DefinitionId {
+    //             term_id: format!("{}-section", id_prefix),
+    //             theory_context: Some("ZFCSetTheory".to_string()),
+    //         },
+    //         tooltip: Some(format!("View definition of {}-section", id_prefix)),
+    //     }]
+    // }
+}
+
+impl ToMathDocument for Set {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         // Determine the inherent level of this Set object
         let inherent_formalism_level = self.level(); // formalism::AbstractionLevel
@@ -185,31 +215,6 @@ impl ToSectionNode for Set {
                 },
             }),
         }
-    }
-
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = match self {
-            Set::Empty => "Empty Set (∅)".to_string(),
-            Set::Singleton { element, .. } => format!("Singleton Set {{{:?}}}", element),
-            _ => format!("Set: {}", id_prefix),
-        };
-        vec![RichTextSegment::Text(name)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = match self {
-            Set::Empty => "∅".to_string(),
-            Set::Singleton { element, .. } => format!("{{{:?}}}", element),
-            _ => format!("Set {}", id_prefix),
-        };
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name)],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-section", id_prefix),
-                theory_context: Some("ZFCSetTheory".to_string()),
-            },
-            tooltip: Some(format!("View definition of {}-section", id_prefix)),
-        }]
     }
 }
 

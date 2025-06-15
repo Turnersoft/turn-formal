@@ -1,5 +1,5 @@
-use super::super::formalism::theorem::MathObject;
 use super::super::formalism::expressions::MathExpression;
+use super::super::formalism::theorem::MathObject;
 use super::super::theories::groups::definitions::Group;
 use super::super::theories::rings::Ring;
 use super::super::theories::rings::definitions::Field;

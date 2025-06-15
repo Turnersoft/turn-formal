@@ -26,32 +26,32 @@ impl ToSectionNode for LieGroup {
 
         // **DETAILED MATHEMATICAL EXPLANATION**
         let mut content_nodes = vec![
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "A Lie group is a group that is also a differentiable manifold, with the property that \
                      the group operations (multiplication and inversion) are smooth (infinitely differentiable) functions.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Definition: A Lie group is a set G equipped with both a group structure and a smooth manifold structure such that the group operations μ: G × G → G (multiplication) and ι: G → G (inversion) are smooth maps.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Key Properties: Every Lie group is locally Euclidean, and near the identity element, the group structure is determined by its Lie algebra.".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Classical Examples: GL(n, ℝ) (general linear group), SL(n, ℝ) (special linear group), O(n) (orthogonal group), SO(n) (special orthogonal group), U(n) (unitary group), SU(n) (special unitary group).".to_string(),
                 )],
                 alignment: None,
             }),
-            SectionContentNode::Paragraph(ParagraphNode {
+            SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "Applications: Lie groups are fundamental in differential geometry, physics (symmetries of physical systems), representation theory, and the study of differential equations.".to_string(),
                 )],
@@ -60,7 +60,7 @@ impl ToSectionNode for LieGroup {
         ];
 
         // Link to group basic information instead of embedding it directly
-        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+        content_nodes.push(SectionContentNode::RichText(RichText {
             segments: vec![
                 RichTextSegment::Text("For the underlying group structure, see ".to_string()),
                 RichTextSegment::Link {
@@ -79,7 +79,7 @@ impl ToSectionNode for LieGroup {
             alignment: None,
         }));
 
-        content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+        content_nodes.push(SectionContentNode::RichText(RichText {
             segments: vec![RichTextSegment::Text(format!(
                 "Manifold Topology: {:?}",
                 self.topology.base_set
@@ -89,7 +89,7 @@ impl ToSectionNode for LieGroup {
 
         // Add charts information if available
         if !self.charts.is_empty() {
-            content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+            content_nodes.push(SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "Charts: {}",
                     self.charts.join(", ")
@@ -101,7 +101,7 @@ impl ToSectionNode for LieGroup {
         // Add abstraction level specific content
         match formalism_obj_level {
             AbstractionLevel::Level1 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L1: A general schema for any Lie group.".to_string(),
                     )],
@@ -109,7 +109,7 @@ impl ToSectionNode for LieGroup {
                 }));
             }
             AbstractionLevel::Level2 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L2: A specific type of Lie group with defined properties."
                             .to_string(),
@@ -117,7 +117,7 @@ impl ToSectionNode for LieGroup {
                     alignment: None,
                 }));
 
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "Examples of Lie groups include the classical groups: GL(n, ℝ), SL(n, ℝ), O(n), SO(n), \
                          U(n), SU(n), and Sp(n).".to_string(),
@@ -126,7 +126,7 @@ impl ToSectionNode for LieGroup {
                 }));
             }
             AbstractionLevel::Level3 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L3: A constructor for building a Lie group from a group and a compatible manifold structure.".to_string(),
                     )],
@@ -134,7 +134,7 @@ impl ToSectionNode for LieGroup {
                 }));
             }
             AbstractionLevel::Level4 => {
-                content_nodes.push(SectionContentNode::Paragraph(ParagraphNode {
+                content_nodes.push(SectionContentNode::RichText(RichText {
                     segments: vec![RichTextSegment::Text(
                         "This is L4: A concrete Lie group with fully specified group structure and manifold structure.".to_string(),
                     )],
@@ -186,13 +186,16 @@ impl ToSectionNode for LieGroup {
 
         Section {
             id: format!("{}-liegroup-section", id_prefix),
-            title: Some(ParagraphNode {
+            title: Some(RichText {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
             content: vec![SectionContentNode::StructuredMath(
                 StructuredMathNode::Definition {
-                    term_display: vec![RichTextSegment::Text(title.clone())],
+                    term_display: RichText {
+                        segments: vec![RichTextSegment::Text(title.clone())],
+                        alignment: None,
+                    },
                     formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
                     label: Some(format!("Definition ({})", title)),
                     body: content_nodes,
@@ -213,7 +216,9 @@ impl ToSectionNode for LieGroup {
             display_options: None,
         }
     }
+}
 
+impl ToMathDocument for LieGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
         let main_section = self.to_section_node(&format!("{}-main", id_prefix));
         let title = main_section.title.as_ref().map_or_else(
@@ -269,24 +274,5 @@ impl ToSectionNode for LieGroup {
                 },
             }),
         }
-    }
-
-    fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let tooltip_text = format!("Lie Group on {:?}", self.core.base_set);
-
-        vec![RichTextSegment::Text(tooltip_text)]
-    }
-
-    fn to_reference_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
-        let name = format!("Lie Group on {:?}", self.core.base_set);
-
-        vec![RichTextSegment::Link {
-            content: vec![RichTextSegment::Text(name.clone())],
-            target: LinkTarget::DefinitionId {
-                term_id: format!("{}-liegroup-section", id_prefix),
-                theory_context: Some("GroupTheory".to_string()),
-            },
-            tooltip: Some(format!("View definition of {}-liegroup-section", id_prefix)),
-        }]
     }
 }

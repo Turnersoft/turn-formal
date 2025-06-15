@@ -10,12 +10,14 @@ mod tests {
         expressions::{Identifier, MathExpression, TheoryExpression},
         extract::Parametrizable,
         proof::{
-            ProofForest, ProofNode, ProofStatus, TheoremRegistry,
+            ProofForest, ProofGoal, ProofNode, ProofStatus, TheoremRegistry,
             collect::CollectSubExpressions,
-            tactics::{self, Tactic, TheoremApplicationError, TheoremApplicationResult},
+            tactics::{
+                self, RewriteDirection, Tactic, TheoremApplicationError, TheoremApplicationResult,
+            },
         },
         relations::MathRelation,
-        theorem::{ProofGoal, Theorem},
+        theorem::Theorem,
     };
     // Alias for group definitions to shorten long paths
     use crate::subjects::math::theories::groups::definitions as group_defs;
@@ -36,8 +38,11 @@ mod tests {
             id: id.to_string(),
             name: name.to_string(),
             description: format!("Test theorem: {}", name),
-            goal: ProofGoal::new(statement),
-            proofs: ProofForest::new(),
+            proofs: ProofForest::new_from_goal(ProofGoal {
+                statement,
+                quantifiers: vec![],
+                value_variables: vec![],
+            }),
         }
     }
 
@@ -56,7 +61,11 @@ mod tests {
 
         let mut forest = ProofForest::new();
         let initial_goal_statement = MathRelation::equal(var("a"), var("b"));
-        let initial_proof_goal = ProofGoal::new(initial_goal_statement.clone());
+        let initial_proof_goal = ProofGoal {
+            statement: initial_goal_statement.clone(),
+            quantifiers: vec![],
+            value_variables: vec![],
+        };
         let root_node_id = Uuid::new_v4().to_string();
         let root_node = ProofNode {
             id: root_node_id.clone(),
@@ -65,6 +74,7 @@ mod tests {
             state: initial_proof_goal.clone(),
             tactic: None,
             status: ProofStatus::InProgress,
+            description: None,
         };
         forest.add_node(root_node.clone());
 
@@ -93,10 +103,18 @@ mod tests {
                         &initial_proof_goal,
                     ) {
                         Ok(application_result) => {
-                            let tactic_used = tactics::Tactic::TheoremApplication {
+                            let instantiation_with_string_keys: HashMap<String, MathExpression> =
+                                application_result
+                                    .instantiations
+                                    .iter()
+                                    .map(|(k, v)| (k.to_string(), v.clone()))
+                                    .collect();
+
+                            let tactic_used = tactics::Tactic::Rewrite {
+                                target: target_sub_expression.clone(),
                                 theorem_id: theorem_id.to_string(),
-                                instantiation: application_result.instantiations.clone(),
-                                target_expr: Some(target_sub_expression.clone()), // Clone for storage
+                                instantiation: instantiation_with_string_keys,
+                                direction: RewriteDirection::LeftToRight,
                             };
                             let new_node_id_str = Uuid::new_v4().to_string();
                             let new_node = ProofNode {
@@ -106,9 +124,10 @@ mod tests {
                                 state: application_result.new_goal,
                                 tactic: Some(tactic_used),
                                 status: ProofStatus::InProgress,
+                                description: None,
                             };
                             forest.add_node(new_node);
-                            if let Some(parent_node_in_forest) = forest.nodes.get_mut(&root_node_id)
+                            if let Some(parent_node_in_forest) = forest.get_node_mut(&root_node_id)
                             {
                                 parent_node_in_forest.children.push(new_node_id_str.clone());
                             }
@@ -128,18 +147,18 @@ mod tests {
             "Should create exactly one new branch."
         );
         if let Some(new_node_id) = new_branch_ids.first() {
-            let new_node = forest.nodes.get(new_node_id).expect("New node not found.");
+            let new_node = forest.get_node(new_node_id).expect("New node not found.");
             assert_eq!(new_node.parent, Some(root_node_id.clone()));
-            if let Some(Tactic::TheoremApplication {
+            if let Some(Tactic::Rewrite {
                 theorem_id,
-                target_expr: tactic_target,
+                target: tactic_target,
                 ..
             }) = &new_node.tactic
             {
                 assert_eq!(theorem_id, "test_succeeds_on_equal");
-                assert_eq!(tactic_target, &Some(root_expr_target.clone()));
+                assert_eq!(tactic_target, &root_expr_target);
             } else {
-                panic!("Tactic was not TheoremApplication or was None.");
+                panic!("Tactic was not the expected Rewrite variant.");
             }
             // Check the new state based on the test hook in TheoremApplier
             match &new_node.state.statement {
@@ -168,7 +187,11 @@ mod tests {
 
         let mut forest = ProofForest::new();
         let initial_goal_statement = MathRelation::equal(var("a"), var("b"));
-        let initial_proof_goal = ProofGoal::new(initial_goal_statement.clone());
+        let initial_proof_goal = ProofGoal {
+            statement: initial_goal_statement.clone(),
+            quantifiers: vec![],
+            value_variables: vec![],
+        };
         let root_node_id = Uuid::new_v4().to_string();
         let root_node = ProofNode {
             id: root_node_id.clone(),
@@ -177,6 +200,7 @@ mod tests {
             state: initial_proof_goal.clone(),
             tactic: None,
             status: ProofStatus::InProgress,
+            description: None,
         };
         forest.add_node(root_node.clone());
 
@@ -207,10 +231,17 @@ mod tests {
                     ) {
                         Ok(application_result) => {
                             // This block should not be reached due to the mock failure
-                            let tactic_used = tactics::Tactic::TheoremApplication {
+                            let instantiation_with_string_keys: HashMap<String, MathExpression> =
+                                application_result
+                                    .instantiations
+                                    .iter()
+                                    .map(|(k, v)| (k.to_string(), v.clone()))
+                                    .collect();
+                            let tactic_used = tactics::Tactic::Rewrite {
+                                target: target_sub_expression.clone(),
                                 theorem_id: theorem_id.to_string(),
-                                instantiation: application_result.instantiations.clone(),
-                                target_expr: Some(target_sub_expression.clone()),
+                                instantiation: instantiation_with_string_keys,
+                                direction: RewriteDirection::LeftToRight,
                             };
                             let new_node_id_str = Uuid::new_v4().to_string();
                             let new_node = ProofNode {
@@ -220,9 +251,10 @@ mod tests {
                                 state: application_result.new_goal,
                                 tactic: Some(tactic_used),
                                 status: ProofStatus::InProgress,
+                                description: None,
                             };
                             forest.add_node(new_node);
-                            if let Some(parent_node_in_forest) = forest.nodes.get_mut(&root_node_id)
+                            if let Some(parent_node_in_forest) = forest.get_node_mut(&root_node_id)
                             {
                                 parent_node_in_forest.children.push(new_node_id_str.clone());
                             }
@@ -257,7 +289,11 @@ mod tests {
 
         let mut forest = ProofForest::new();
         let initial_goal_statement = MathRelation::equal(var("a"), var("b")); // Testing on an Equal relation
-        let initial_proof_goal = ProofGoal::new(initial_goal_statement.clone());
+        let initial_proof_goal = ProofGoal {
+            statement: initial_goal_statement.clone(),
+            quantifiers: vec![],
+            value_variables: vec![],
+        };
         let root_node_id = Uuid::new_v4().to_string();
         let root_node = ProofNode {
             id: root_node_id.clone(),
@@ -266,6 +302,7 @@ mod tests {
             state: initial_proof_goal.clone(),
             tactic: None,
             status: ProofStatus::InProgress,
+            description: None,
         };
         forest.add_node(root_node.clone());
 
@@ -305,10 +342,17 @@ mod tests {
                         &initial_proof_goal,
                     ) {
                         Ok(application_result) => {
-                            let tactic_used = tactics::Tactic::TheoremApplication {
+                            let instantiation_with_string_keys: HashMap<String, MathExpression> =
+                                application_result
+                                    .instantiations
+                                    .iter()
+                                    .map(|(k, v)| (k.to_string(), v.clone()))
+                                    .collect();
+                            let tactic_used = tactics::Tactic::Rewrite {
+                                target: target_sub_expression.clone(),
                                 theorem_id: theorem_id.to_string(),
-                                instantiation: application_result.instantiations.clone(),
-                                target_expr: Some(target_sub_expression.clone()),
+                                instantiation: instantiation_with_string_keys,
+                                direction: RewriteDirection::LeftToRight,
                             };
                             let new_node_id_str = Uuid::new_v4().to_string();
                             let new_node = ProofNode {
@@ -318,9 +362,10 @@ mod tests {
                                 state: application_result.new_goal,
                                 tactic: Some(tactic_used),
                                 status: ProofStatus::InProgress,
+                                description: None,
                             };
                             forest.add_node(new_node);
-                            if let Some(parent_node_in_forest) = forest.nodes.get_mut(&root_node_id)
+                            if let Some(parent_node_in_forest) = forest.get_node_mut(&root_node_id)
                             {
                                 parent_node_in_forest.children.push(new_node_id_str.clone());
                             }
@@ -354,7 +399,11 @@ mod tests {
         let eq1 = MathRelation::equal(var("a"), var("b"));
         let eq2 = MathRelation::equal(var("c"), var("d"));
         let initial_goal_statement = MathRelation::And(vec![eq1.clone(), eq2.clone()]);
-        let initial_proof_goal = ProofGoal::new(initial_goal_statement.clone());
+        let initial_proof_goal = ProofGoal {
+            statement: initial_goal_statement.clone(),
+            quantifiers: vec![],
+            value_variables: vec![],
+        };
         let root_node_id = Uuid::new_v4().to_string();
         let root_node = ProofNode {
             id: root_node_id.clone(),
@@ -363,6 +412,7 @@ mod tests {
             state: initial_proof_goal.clone(),
             tactic: None,
             status: ProofStatus::InProgress,
+            description: None,
         };
         forest.add_node(root_node.clone());
 
@@ -409,10 +459,17 @@ mod tests {
                     &initial_proof_goal,
                 ) {
                     Ok(application_result) => {
-                        let tactic_used = tactics::Tactic::TheoremApplication {
+                        let instantiation_with_string_keys: HashMap<String, MathExpression> =
+                            application_result
+                                .instantiations
+                                .iter()
+                                .map(|(k, v)| (k.to_string(), v.clone()))
+                                .collect();
+                        let tactic_used = tactics::Tactic::Rewrite {
+                            target: target_sub_expression.clone(),
                             theorem_id: theorem_id.to_string(),
-                            instantiation: application_result.instantiations.clone(),
-                            target_expr: Some(target_sub_expression.clone()),
+                            instantiation: instantiation_with_string_keys,
+                            direction: RewriteDirection::LeftToRight,
                         };
                         let new_node_id_str = Uuid::new_v4().to_string();
                         let new_node = ProofNode {
@@ -422,9 +479,10 @@ mod tests {
                             state: application_result.new_goal,
                             tactic: Some(tactic_used),
                             status: ProofStatus::InProgress,
+                            description: None,
                         };
                         forest.add_node(new_node);
-                        if let Some(parent_node_in_forest) = forest.nodes.get_mut(&root_node_id) {
+                        if let Some(parent_node_in_forest) = forest.get_node_mut(&root_node_id) {
                             parent_node_in_forest.children.push(new_node_id_str.clone());
                         }
                         new_branch_ids.push(new_node_id_str);
@@ -441,11 +499,11 @@ mod tests {
         );
 
         for (i, node_id) in new_branch_ids.iter().enumerate() {
-            let new_node = forest.nodes.get(node_id).expect("Node not found.");
+            let new_node = forest.get_node(node_id).expect("Node not found.");
             assert_eq!(new_node.parent, Some(root_node_id.clone()));
-            if let Some(Tactic::TheoremApplication {
+            if let Some(Tactic::Rewrite {
                 theorem_id,
-                target_expr: tactic_target,
+                target: tactic_target,
                 ..
             }) = &new_node.tactic
             {
@@ -456,9 +514,9 @@ mod tests {
                 } else {
                     rel_expr(eq2.clone())
                 };
-                assert_eq!(tactic_target, &Some(expected_target_sub_expr));
+                assert_eq!(tactic_target, &expected_target_sub_expr);
             } else {
-                panic!("Tactic was not TheoremApplication.");
+                panic!("Tactic was not the expected Rewrite variant.");
             }
             match &new_node.state.statement {
                 MathRelation::Todo { name, expressions } => {
@@ -520,10 +578,14 @@ mod tests {
         // This is the MathExpression that will be explored.
         let root_expr_target = MathExpression::Expression(TheoryExpression::Group(group_op));
 
-        let initial_proof_goal = ProofGoal::new(MathRelation::Todo {
-            name: "unused_goal".to_string(),
-            expressions: vec![],
-        });
+        let initial_proof_goal = ProofGoal {
+            statement: MathRelation::Todo {
+                name: "unused_goal".to_string(),
+                expressions: vec![],
+            },
+            quantifiers: vec![],
+            value_variables: vec![],
+        };
         let root_node_id = Uuid::new_v4().to_string();
         let root_node = ProofNode {
             id: root_node_id.clone(),
@@ -532,6 +594,7 @@ mod tests {
             state: initial_proof_goal.clone(),
             tactic: None,
             status: ProofStatus::InProgress,
+            description: None,
         };
         forest.add_node(root_node.clone());
 
@@ -588,10 +651,17 @@ mod tests {
                     &initial_proof_goal,
                 ) {
                     Ok(application_result) => {
-                        let tactic_used = tactics::Tactic::TheoremApplication {
+                        let instantiation_with_string_keys: HashMap<String, MathExpression> =
+                            application_result
+                                .instantiations
+                                .iter()
+                                .map(|(k, v)| (k.to_string(), v.clone()))
+                                .collect();
+                        let tactic_used = tactics::Tactic::Rewrite {
+                            target: target_sub_expression.clone(),
                             theorem_id: theorem_id.to_string(),
-                            instantiation: application_result.instantiations.clone(),
-                            target_expr: Some(target_sub_expression.clone()),
+                            instantiation: instantiation_with_string_keys,
+                            direction: RewriteDirection::LeftToRight,
                         };
                         let new_node_id_str = Uuid::new_v4().to_string();
                         let new_node = ProofNode {
@@ -601,9 +671,10 @@ mod tests {
                             state: application_result.new_goal,
                             tactic: Some(tactic_used),
                             status: ProofStatus::InProgress,
+                            description: None,
                         };
                         forest.add_node(new_node);
-                        if let Some(parent_node_in_forest) = forest.nodes.get_mut(&root_node_id) {
+                        if let Some(parent_node_in_forest) = forest.get_node_mut(&root_node_id) {
                             parent_node_in_forest.children.push(new_node_id_str.clone());
                         }
                         new_branch_ids.push(new_node_id_str);

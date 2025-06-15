@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theory_overview",
   "version": "1.0.0",
-  "exported_at": "1749444843",
+  "exported_at": "1750003328",
   "content": [
     {
       "id": "probability_theory.overview",
@@ -39,7 +39,7 @@
               "title": null,
               "content": [
                 {
-                  "Paragraph": {
+                  "RichText": {
                     "segments": [
                       {
                         "Text": "Probability theory provides a rigorous mathematical framework for analyzing randomness and uncertainty. This comprehensive overview covers probability spaces, random variables, distributions, and stochastic processes."
@@ -66,7 +66,7 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
+                    "RichText": {
                       "segments": [
                         {
                           "Text": "Basic probability spaces and measures."
@@ -78,16 +78,19 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Fundamental Concepts"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Fundamental Concepts"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": null,
                         "label": "Fundamental probability concepts",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Basic probability spaces and measures."
@@ -118,7 +121,7 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
+                    "RichText": {
                       "segments": [
                         {
                           "Text": "Continuous probability spaces and measure theory."
@@ -130,16 +133,19 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Continuous Probability"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Continuous Probability"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": null,
                         "label": "Continuous probability theory",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Continuous probability spaces and measure theory."
@@ -170,7 +176,7 @@
                 },
                 "content": [
                   {
-                    "Paragraph": {
+                    "RichText": {
                       "segments": [
                         {
                           "Text": "Time-dependent random phenomena and processes."
@@ -182,16 +188,19 @@
                   {
                     "StructuredMath": {
                       "Definition": {
-                        "term_display": [
-                          {
-                            "Text": "Stochastic Processes"
-                          }
-                        ],
+                        "term_display": {
+                          "segments": [
+                            {
+                              "Text": "Stochastic Processes"
+                            }
+                          ],
+                          "alignment": null
+                        },
                         "formal_term": null,
                         "label": "Stochastic processes and Markov chains",
                         "body": [
                           {
-                            "Paragraph": {
+                            "RichText": {
                               "segments": [
                                 {
                                   "Text": "Time-dependent random phenomena and processes."

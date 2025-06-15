@@ -1,7 +1,7 @@
 use super::{
-    theorem::MathObject,
     expressions::{Identifier, MathExpression, TheoryExpression},
     relations::{MathRelation, RelationDetail},
+    theorem::MathObject,
 };
 
 pub trait Complexity {
@@ -91,27 +91,25 @@ impl Complexity for MathExpression {
 impl Complexity for MathRelation {
     fn complexity(&self) -> usize {
         match self {
+            MathRelation::Equal { left, right, .. } => 1 + left.complexity() + right.complexity(),
             MathRelation::And(relations) => {
                 1 + relations.iter().map(|r| r.complexity()).sum::<usize>()
             }
             MathRelation::Or(relations) => {
                 1 + relations.iter().map(|r| r.complexity()).sum::<usize>()
             }
-            MathRelation::Not(relation) => 1 + relation.complexity(),
-            MathRelation::Implies(r1, r2) => 1 + r1.complexity() + r2.complexity(),
-            MathRelation::Equivalent(r1, r2) => 1 + r1.complexity() + r2.complexity(),
-            MathRelation::NumberTheory(nr) => 1 + 0, // nr.complexity(), // Assuming NumberTheoryRelation complexity
-            MathRelation::SetTheory(sr) => 1 + 0, // sr.complexity(), // Assuming SetTheoryRelation complexity
-            MathRelation::GroupTheory(gr) => 1 + gr.complexity(),
-            MathRelation::RingTheory(rr) => 1 + 0, // rr.complexity(), // Assuming RingRelation complexity
-            MathRelation::TopologyTheory(tr) => 1 + 0, // tr.complexity(), // Assuming TopologyRelation complexity
-            MathRelation::CategoryTheory(cr) => 1 + 0, // cr.complexity(), // Assuming CategoryTheoryRelation complexity
-            MathRelation::Equal { meta, left, right } => {
-                1 + meta.complexity() + left.complexity() + right.complexity()
-            }
-            MathRelation::Todo { name, expressions } => {
-                1 + name.len() / 4 + expressions.iter().map(|e| e.complexity()).sum::<usize>()
-            }
+            MathRelation::Implies(a, b) => 1 + a.complexity() + b.complexity(),
+            MathRelation::Equivalent(a, b) => 1 + a.complexity() + b.complexity(),
+            MathRelation::Not(r) => 1 + r.complexity(),
+            MathRelation::Todo { .. } => 1,
+            MathRelation::True => 1,
+            MathRelation::False => 1,
+            MathRelation::NumberTheory(_) => 1,
+            MathRelation::SetTheory(_) => 1,
+            MathRelation::GroupTheory(_) => 1,
+            MathRelation::RingTheory(_) => 1,
+            MathRelation::TopologyTheory(_) => 1,
+            MathRelation::CategoryTheory(_) => 1,
         }
     }
 }

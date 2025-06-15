@@ -264,6 +264,10 @@ impl ReplaceableAtPath for MathRelation {
                     Err(PathError::InvalidPath)
                 }
             }
+            MathRelation::True | MathRelation::False => {
+                // Cannot replace sub-expressions in a leaf node.
+                Err(PathError::InvalidPath)
+            }
         }
     }
 }
