@@ -9,6 +9,7 @@ pub mod abstraction_level;
 pub mod complexity;
 pub mod expressions;
 pub mod interpretation;
+pub mod objects;
 pub mod proof;
 pub mod theorem;
 #[macro_use]

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
 use crate::subjects::math::export::unified_exporter::TheoryExporter;
-use crate::subjects::math::formalism::expressions::Identifier;
+
 use crate::subjects::math::formalism::extract::Parametrizable;
 
 //--- Imports from crate::turn_render ---
@@ -69,42 +69,42 @@ impl ToTurnMath for GenericProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-omega", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "Ω".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-sigma", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "ℱ".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-measure", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "P".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                         ],
@@ -130,55 +130,57 @@ impl ToTurnMath for DiscreteProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-omega-discrete", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "Ω".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: Some(ScriptNode {
                                             subscripts: vec![MathNode {
                                                 id: format!("{}-discrete-sub", master_id),
-                                                content: Box::new(MathNodeContent::Identifier {
-                                                    body: "discrete".to_string(),
-                                                    pre_script: None,
-                                                    mid_script: None,
-                                                    post_script: None,
-                                                    primes: 0,
-                                                    is_function: false,
-                                                }),
+                                                content: Box::new(MathNodeContent::Identifier(
+                                                    Identifier {
+                                                        body: "discrete".to_string(),
+                                                        pre_script: None,
+                                                        mid_script: None,
+                                                        post_script: None,
+                                                        primes: 0,
+                                                        is_function: false,
+                                                    },
+                                                )),
                                             }],
                                             superscripts: vec![],
                                         }),
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-sigma", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "ℱ".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-measure", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "P".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                         ],
@@ -204,55 +206,57 @@ impl ToTurnMath for ContinuousProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-omega-continuous", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "Ω".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: Some(ScriptNode {
                                             subscripts: vec![MathNode {
                                                 id: format!("{}-continuous-sub", master_id),
-                                                content: Box::new(MathNodeContent::Identifier {
-                                                    body: "continuous".to_string(),
-                                                    pre_script: None,
-                                                    mid_script: None,
-                                                    post_script: None,
-                                                    primes: 0,
-                                                    is_function: false,
-                                                }),
+                                                content: Box::new(MathNodeContent::Identifier(
+                                                    Identifier {
+                                                        body: "continuous".to_string(),
+                                                        pre_script: None,
+                                                        mid_script: None,
+                                                        post_script: None,
+                                                        primes: 0,
+                                                        is_function: false,
+                                                    },
+                                                )),
                                             }],
                                             superscripts: vec![],
                                         }),
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-sigma", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "ℱ".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-measure", master_id),
-                                    content: Box::new(MathNodeContent::Identifier {
+                                    content: Box::new(MathNodeContent::Identifier(Identifier {
                                         body: "P".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: None,
                                         primes: 0,
                                         is_function: false,
-                                    }),
+                                    })),
                                 },
                             ),
                         ],
@@ -269,14 +273,14 @@ impl ToTurnMath for StochasticProcess {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier {
+            content: Box::new(MathNodeContent::Identifier(Identifier {
                 body: "X_t".to_string(),
                 pre_script: None,
                 mid_script: None,
                 post_script: None,
                 primes: 0,
                 is_function: false,
-            }),
+            })),
         }
     }
 }
@@ -492,25 +496,25 @@ impl ToTurnMath for ProbabilityExpression {
                 content: Box::new(MathNodeContent::FunctionCall {
                     name: Box::new(MathNode {
                         id: format!("{}-prob-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "P".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: true,
-                        }),
+                        })),
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-event", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "A".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: false,
-                        }),
+                        })),
                     }],
                 }),
             },
@@ -523,25 +527,25 @@ impl ToTurnMath for ProbabilityExpression {
                 content: Box::new(MathNodeContent::FunctionCall {
                     name: Box::new(MathNode {
                         id: format!("{}-prob-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "P".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: true,
-                        }),
+                        })),
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-conditional", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "A|B".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: false,
-                        }),
+                        })),
                     }],
                 }),
             },
@@ -550,25 +554,25 @@ impl ToTurnMath for ProbabilityExpression {
                 content: Box::new(MathNodeContent::FunctionCall {
                     name: Box::new(MathNode {
                         id: format!("{}-exp-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "E".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: true,
-                        }),
+                        })),
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-rv", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "X".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: false,
-                        }),
+                        })),
                     }],
                 }),
             },
@@ -577,38 +581,38 @@ impl ToTurnMath for ProbabilityExpression {
                 content: Box::new(MathNodeContent::FunctionCall {
                     name: Box::new(MathNode {
                         id: format!("{}-var-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "Var".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: true,
-                        }),
+                        })),
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-rv", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "X".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: false,
-                        }),
+                        })),
                     }],
                 }),
             },
             _ => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: "ProbExpr".to_string(),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             },
         }
     }
@@ -622,25 +626,25 @@ impl ToTurnMath for ProbabilityRelation {
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(MathNode {
                         id: format!("{}-lhs", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "P(A∩B)".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: false,
-                        }),
+                        })),
                     }),
                     rhs: Box::new(MathNode {
                         id: format!("{}-rhs", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
+                        content: Box::new(MathNodeContent::Identifier(Identifier {
                             body: "P(A)P(B)".to_string(),
                             pre_script: None,
                             mid_script: None,
                             post_script: None,
                             primes: 0,
                             is_function: false,
-                        }),
+                        })),
                     }),
                     operator: RelationOperatorNode::Equal,
                 }),
@@ -654,14 +658,14 @@ impl ToTurnMath for ProbabilityRelation {
             },
             _ => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: "ProbRel".to_string(),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             },
         }
     }
@@ -905,38 +909,30 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
     }
 
     fn generate_object_definitions(&self) -> Vec<ProbabilitySpace> {
-        use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
-        use crate::subjects::math::formalism::extract::Parametrizable;
-        use crate::subjects::math::theories::zfc::definitions::Set;
-
         vec![ProbabilitySpace::Generic(GenericProbabilitySpace::default())]
     }
 
     fn generate_expression_definitions(&self) -> Vec<ProbabilityExpression> {
-        use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
-        use crate::subjects::math::formalism::extract::Parametrizable;
-
         vec![
             ProbabilityExpression::EventProbability {
-                event: Parametrizable::Variable(Identifier::Name("A".to_string(), 1)),
-                probability_space: Parametrizable::Variable(Identifier::Name("Ω".to_string(), 1)),
+                event: Parametrizable::Variable(Identifier::new_simple("A".to_string())),
+                probability_space: Parametrizable::Variable(Identifier::new_simple(
+                    "Ω".to_string(),
+                )),
             },
             ProbabilityExpression::ExpectedValue {
-                variable: Parametrizable::Variable(Identifier::Name("X".to_string(), 1)),
+                variable: Parametrizable::Variable(Identifier::new_simple("X".to_string())),
             },
         ]
     }
 
     fn generate_relation_definitions(&self) -> Vec<ProbabilityRelation> {
-        use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
-        use crate::subjects::math::formalism::extract::Parametrizable;
-
         vec![ProbabilityRelation::EventsAreIndependent {
             events: vec![
-                Parametrizable::Variable(Identifier::Name("A".to_string(), 1)),
-                Parametrizable::Variable(Identifier::Name("B".to_string(), 1)),
+                Parametrizable::Variable(Identifier::new_simple("A".to_string())),
+                Parametrizable::Variable(Identifier::new_simple("B".to_string())),
             ],
-            probability_space: Parametrizable::Variable(Identifier::Name("Ω".to_string(), 1)),
+            probability_space: Parametrizable::Variable(Identifier::new_simple("Ω".to_string())),
         }]
     }
 

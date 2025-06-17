@@ -4,13 +4,14 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::expressions::{Identifier, MathExpression};
-use super::{complexity::Complexity, theorem::MathObject};
+use super::expressions::MathExpression;
+use super::{complexity::Complexity, objects::MathObject};
 
 // Import domain-specific relations from their respective modules
 use super::super::super::super::foundational_theories::category_theory::definitions::CategoryRelation;
 use super::super::theories::groups::definitions::GroupRelation;
 use super::super::theories::number_theory::definitions::NumberTheoryRelation;
+use super::super::theories::probability::definitions::ProbabilityRelation;
 use super::super::theories::rings::definitions::RingRelation;
 use super::super::theories::topology::definitions::TopologyRelation;
 use super::super::theories::zfc::definitions::SetRelation;
@@ -64,18 +65,13 @@ pub enum MathRelation {
     RingTheory(RingRelation),
     TopologyTheory(TopologyRelation),
     CategoryTheory(CategoryRelation),
+    ProbabilityTheory(ProbabilityRelation),
 
     // For basic equality that crosses domains
     Equal {
         meta: RelationDetail,
         left: MathExpression,
         right: MathExpression,
-    },
-
-    // For custom relations that don't fit other categories
-    Todo {
-        name: String,
-        expressions: Vec<MathExpression>,
     },
 }
 
@@ -119,33 +115,12 @@ impl MathRelation {
 
     /// Creates a set theory ElementOf relation
     pub fn element_of(element: MathExpression, set: MathExpression) -> Self {
-        MathRelation::Todo {
-            name: "element_of".to_string(),
-            expressions: vec![element, set],
-        }
+        todo!()
     }
 
     /// Creates a set theory SubsetOf relation
     pub fn subset_of(subset: MathExpression, superset: MathExpression) -> Self {
-        MathRelation::Todo {
-            name: "subset_of".to_string(),
-            expressions: vec![subset, superset],
-        }
-    }
-
-    /// Creates an And relation
-    pub fn and(relations: Vec<MathRelation>) -> Self {
-        MathRelation::And(relations)
-    }
-
-    /// Creates an Implies relation
-    pub fn implies(antecedent: MathRelation, consequent: MathRelation) -> Self {
-        MathRelation::Implies(Box::new(antecedent), Box::new(consequent))
-    }
-
-    /// Creates a Custom relation
-    pub fn todo(name: String, expressions: Vec<MathExpression>) -> Self {
-        MathRelation::Todo { name, expressions }
+        todo!()
     }
 
     /// Creates a category theory ObjectInCategory relation
@@ -214,25 +189,8 @@ impl MathRelation {
             (MathRelation::GroupTheory(gr1), MathRelation::GroupTheory(gr2)) => {
                 gr1.matches_pattern_group_relation(gr2) // Delegate to GroupRelation
             }
-            // TODO: Add cases for NumberTheory, SetTheory, RingTheory, TopologyTheory, CategoryTheory
-            (
-                MathRelation::Todo {
-                    name: n1,
-                    expressions: e1,
-                },
-                MathRelation::Todo {
-                    name: n2,
-                    expressions: e2,
-                },
-            ) => {
-                n1 == n2
-                    && e1.len() == e2.len()
-                    && e1
-                        .iter()
-                        .zip(e2.iter())
-                        .all(|(expr1, expr2)| expr1.matches_pattern_expr(expr2))
-            }
-            _ => false, // Different relation types or pattern not exhaustive
+
+            _ => todo!(), // Different relation types or pattern not exhaustive
         }
     }
 }

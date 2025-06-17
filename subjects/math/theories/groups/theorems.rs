@@ -3,17 +3,18 @@
 
 use std::collections::HashMap;
 
-use crate::subjects::math::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::objects::MathObject;
 use crate::subjects::math::formalism::proof::tactics::{AutomatedTactic, RewriteDirection, Tactic};
 use crate::subjects::math::formalism::proof::{
     ProofForest, ProofGoal, ProofNode, ProofStatus, QuantifiedMathObject, TheoremRegistry,
     ValueBindedVariable,
 };
 use crate::subjects::math::formalism::relations::{MathRelation, Quantification, RelationDetail};
-use crate::subjects::math::formalism::theorem::{MathObject, Theorem};
+use crate::subjects::math::formalism::theorem::Theorem;
 use crate::subjects::math::theories::zfc::Set;
-use crate::turn_render::RichTextSegment;
+use crate::turn_render::{Identifier, RichTextSegment};
 
 use super::super::VariantSet;
 use super::definitions::{
@@ -22,12 +23,179 @@ use super::definitions::{
     GroupOperationProperty, GroupOperationVariant, GroupProperty, GroupRelation, GroupSymbol,
 };
 
+/// Register basic group axioms in the theorem registry so tactics can reference them
+pub fn register_basic_group_axioms() {
+    // Create a generic group for the axioms
+    let group = create_abstract_group();
+    let group_param = Parametrizable::Concrete(group);
+
+    // Register group_identity_left: e * x = x
+    let identity_var = MathExpression::Expression(TheoryExpression::Group(
+        GroupExpression::Identity(group_param.clone()),
+    ));
+    let x_var = MathExpression::Var(Identifier::new_simple("x".to_string()));
+
+    // Create the proper mathematical expression: e * x
+    let e_mult_x =
+        MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
+            group: group_param.clone(),
+            left: Box::new(Parametrizable::Concrete(GroupExpression::Identity(
+                group_param.clone(),
+            ))),
+            right: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                "x".to_string(),
+            ))),
+        }));
+
+    let identity_left_relation = MathRelation::Equal {
+        meta: RelationDetail {
+            expressions: vec![],
+            metadata: HashMap::new(),
+            description: Some("Left identity axiom: e * x = x".to_string()),
+            is_reflexive: false,
+            is_symmetric: false,
+        },
+        left: e_mult_x,
+        right: x_var.clone(),
+    };
+
+    let identity_left_goal = ProofGoal {
+        quantifiers: Vec::new(),
+        value_variables: Vec::new(),
+        statement: identity_left_relation,
+    };
+
+    let identity_left_theorem = Theorem {
+        id: "group_identity_left".to_string(),
+        name: "Group Left Identity".to_string(),
+        description: "Left identity property: e * x = x for all x in G".to_string(),
+        proofs: ProofForest::new_from_goal(identity_left_goal),
+    };
+
+    TheoremRegistry::register_globally(identity_left_theorem);
+
+    // Register group_inverse_property: x * x^{-1} = e
+    let x_var2 = MathExpression::Var(Identifier::new_simple("x".to_string()));
+
+    // Create the proper mathematical expression: x * x^{-1}
+    let x_mult_x_inv =
+        MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
+            group: group_param.clone(),
+            left: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                "x".to_string(),
+            ))),
+            right: Box::new(Parametrizable::Concrete(GroupExpression::Inverse {
+                group: group_param.clone(),
+                element: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "x".to_string(),
+                ))),
+            })),
+        }));
+
+    let inverse_relation = MathRelation::Equal {
+        meta: RelationDetail {
+            expressions: vec![],
+            metadata: HashMap::new(),
+            description: Some("Inverse axiom: x * x^{-1} = e".to_string()),
+            is_reflexive: false,
+            is_symmetric: false,
+        },
+        left: x_mult_x_inv,
+        right: identity_var.clone(),
+    };
+
+    let inverse_goal = ProofGoal {
+        quantifiers: Vec::new(),
+        value_variables: Vec::new(),
+        statement: inverse_relation,
+    };
+
+    let inverse_theorem = Theorem {
+        id: "group_inverse_property".to_string(),
+        name: "Group Inverse Property".to_string(),
+        description: "Inverse property: x * x^{-1} = e for all x in G".to_string(),
+        proofs: ProofForest::new_from_goal(inverse_goal),
+    };
+
+    TheoremRegistry::register_globally(inverse_theorem);
+
+    // Register group_associativity: (x * y) * z = x * (y * z)
+    let x_var3 = MathExpression::Var(Identifier::new_simple("x".to_string()));
+    let y_var = MathExpression::Var(Identifier::new_simple("y".to_string()));
+    let z_var = MathExpression::Var(Identifier::new_simple("z".to_string()));
+
+    // Create the proper mathematical expressions: (x * y) * z and x * (y * z)
+    let xy_mult_z =
+        MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
+            group: group_param.clone(),
+            left: Box::new(Parametrizable::Concrete(GroupExpression::Operation {
+                group: group_param.clone(),
+                left: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "x".to_string(),
+                ))),
+                right: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "y".to_string(),
+                ))),
+            })),
+            right: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                "z".to_string(),
+            ))),
+        }));
+
+    let x_mult_yz =
+        MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
+            group: group_param.clone(),
+            left: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                "x".to_string(),
+            ))),
+            right: Box::new(Parametrizable::Concrete(GroupExpression::Operation {
+                group: group_param.clone(),
+                left: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "y".to_string(),
+                ))),
+                right: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "z".to_string(),
+                ))),
+            })),
+        }));
+
+    let associativity_relation = MathRelation::Equal {
+        meta: RelationDetail {
+            expressions: vec![],
+            metadata: HashMap::new(),
+            description: Some("Associativity axiom: (x * y) * z = x * (y * z)".to_string()),
+            is_reflexive: false,
+            is_symmetric: false,
+        },
+        left: xy_mult_z,
+        right: x_mult_yz,
+    };
+
+    let associativity_goal = ProofGoal {
+        quantifiers: Vec::new(),
+        value_variables: Vec::new(),
+        statement: associativity_relation,
+    };
+
+    let associativity_theorem = Theorem {
+        id: "group_associativity".to_string(),
+        name: "Group Associativity".to_string(),
+        description: "Associativity property: (x * y) * z = x * (y * z) for all x, y, z in G"
+            .to_string(),
+        proofs: ProofForest::new_from_goal(associativity_goal),
+    };
+
+    TheoremRegistry::register_globally(associativity_theorem);
+}
+
 /// Prove the theorem that in a group, inverses are unique
 pub fn prove_inverse_uniqueness() -> Theorem {
-    let group_id = Identifier::Name("G".to_string(), 0);
-    let g_id = Identifier::Name("g".to_string(), 1);
-    let h1_id = Identifier::Name("h1".to_string(), 2);
-    let h2_id = Identifier::Name("h2".to_string(), 3);
+    let group = create_abstract_group();
+
+    let group_id = Identifier::new_simple("G".to_string());
+    let g_id = Identifier::new_simple("g".to_string());
+    let h1_id = Identifier::new_simple("h1".to_string());
+    let h2_id = Identifier::new_simple("h2".to_string());
 
     let group_param = Parametrizable::Variable(group_id.clone());
     let g_param = Parametrizable::Variable(g_id.clone());
@@ -72,8 +240,30 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     let goal_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion));
 
     let goal = ProofGoal {
-        quantifiers: vec![],
-        value_variables: vec![],
+        quantifiers: vec![
+            QuantifiedMathObject {
+                quantification: Quantification::Universal,
+                variable: g_id.clone(),
+                object_type: MathObject::Element(Box::new(MathObject::Group(group.clone()))),
+                description: Some("g ranges over all elements of group G".to_string()),
+            },
+            QuantifiedMathObject {
+                quantification: Quantification::Universal,
+                variable: h1_id.clone(),
+                object_type: MathObject::Element(Box::new(MathObject::Group(group.clone()))),
+                description: Some("h1 ranges over all elements of group G".to_string()),
+            },
+            QuantifiedMathObject {
+                quantification: Quantification::Universal,
+                variable: h2_id.clone(),
+                object_type: MathObject::Element(Box::new(MathObject::Group(group.clone()))),
+                description: Some("h2 ranges over all elements of group G".to_string()),
+            },
+        ],
+        value_variables: vec![ValueBindedVariable {
+            name: Identifier::new_simple("e".to_string()),
+            value: identity_expr.clone(),
+        }],
         statement: goal_statement,
     };
 
@@ -81,14 +271,14 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
     let root_node = proofs
         .apply_initial_tactic(Tactic::AssumeImplicationAntecedent {
-            hypothesis_name: Identifier::Name("premise".to_string(), 0),
+            hypothesis_name: Identifier::new_simple("premise".to_string()),
         })
         .clone();
 
     let p1_node = {
         let tactic = Tactic::IntroduceValueVariable {
             binding: ValueBindedVariable {
-                name: Identifier::Name("hyp_gh1_eq_e".to_string(), 0),
+                name: Identifier::new_simple("hyp_gh1_eq_e".to_string()),
                 value: MathExpression::Relation(Box::new(premise_conjunct1)),
             },
             position: None,
@@ -99,7 +289,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     let p2_node = {
         let tactic = Tactic::IntroduceValueVariable {
             binding: ValueBindedVariable {
-                name: Identifier::Name("hyp_gh2_eq_e".to_string(), 0),
+                name: Identifier::new_simple("hyp_gh2_eq_e".to_string()),
                 value: MathExpression::Relation(Box::new(premise_conjunct2)),
             },
             position: None,
@@ -253,28 +443,58 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
     Theorem {
         id: "inverse_uniqueness".to_string(),
-        name: "inverse uniqueness".to_string(),
-        description: "inverse uniqueness".to_string(),
+        name: "Inverse Uniqueness in a Group".to_string(),
+        description: "In a group G, if two elements h1 and h2 are both inverses of an element g, then h1 = h2".to_string(),
         proofs,
     }
 }
 
 /// Prove that the identity element in a group is unique.
 pub fn prove_identity_uniqueness() -> Theorem {
-    let e1_id = Identifier::Name("e1".to_string(), 1);
-    let e2_id = Identifier::Name("e2".to_string(), 2);
+    let group = create_abstract_group();
+
+    let e1_id = Identifier::new_simple("e1".to_string());
+    let e2_id = Identifier::new_simple("e2".to_string());
 
     let e1_var = MathExpression::Var(e1_id.clone());
     let e2_var = MathExpression::Var(e2_id.clone());
 
     let premise = MathRelation::And(vec![
-        MathRelation::Todo {
-            name: "e1_is_left_identity".to_string(),
-            expressions: vec![],
+        // e1 is left identity: for all x in G, e1 * x = x
+        MathRelation::Equal {
+            meta: RelationDetail {
+                expressions: vec![],
+                metadata: HashMap::new(),
+                description: Some("e1 is left identity".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
+            },
+            left: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
+                group: Parametrizable::Concrete(group.clone()),
+                left: Box::new(Parametrizable::Variable(e1_id.clone())),
+                right: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "x".to_string(),
+                ))),
+            })),
+            right: MathExpression::Var(Identifier::new_simple("x".to_string())),
         },
-        MathRelation::Todo {
-            name: "e2_is_right_identity".to_string(),
-            expressions: vec![],
+        // e2 is right identity: for all x in G, x * e2 = x
+        MathRelation::Equal {
+            meta: RelationDetail {
+                expressions: vec![],
+                metadata: HashMap::new(),
+                description: Some("e2 is right identity".to_string()),
+                is_reflexive: false,
+                is_symmetric: false,
+            },
+            left: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
+                group: Parametrizable::Concrete(group.clone()),
+                left: Box::new(Parametrizable::Variable(Identifier::new_simple(
+                    "x".to_string(),
+                ))),
+                right: Box::new(Parametrizable::Variable(e2_id.clone())),
+            })),
+            right: MathExpression::Var(Identifier::new_simple("x".to_string())),
         },
     ]);
 
@@ -282,17 +502,31 @@ pub fn prove_identity_uniqueness() -> Theorem {
 
     let theorem_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion.clone()));
 
+    let element_type = MathObject::Element(Box::new(MathObject::Group(group.clone())));
     let goal = ProofGoal {
         statement: theorem_statement,
         value_variables: vec![],
-        quantifiers: vec![],
+        quantifiers: vec![
+            QuantifiedMathObject {
+                quantification: Quantification::Universal,
+                variable: e1_id.clone(),
+                object_type: element_type.clone(),
+                description: Some("e1 is an element of group G".to_string()),
+            },
+            QuantifiedMathObject {
+                quantification: Quantification::Universal,
+                variable: e2_id.clone(),
+                object_type: element_type.clone(),
+                description: Some("e2 is an element of group G".to_string()),
+            },
+        ],
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
 
     let root_node = proofs
         .apply_initial_tactic(Tactic::AssumeImplicationAntecedent {
-            hypothesis_name: Identifier::Name("premise".to_string(), 0),
+            hypothesis_name: Identifier::new_simple("premise".to_string()),
         })
         .clone();
 
@@ -355,8 +589,8 @@ pub fn prove_inverse_product_rule() -> Theorem {
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
     let group_math_object = MathObject::Group(group.clone());
 
-    let a_id = Identifier::Name("a".to_string(), 21);
-    let b_id = Identifier::Name("b".to_string(), 22);
+    let a_id = Identifier::new_simple("a".to_string());
+    let b_id = Identifier::new_simple("b".to_string());
 
     let a_param = Parametrizable::Variable(a_id.clone());
     let b_param = Parametrizable::Variable(b_id.clone());
@@ -434,8 +668,8 @@ pub fn prove_abelian_squared_criterion() -> Theorem {
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
     let group_math_object = MathObject::Group(group.clone());
 
-    let a_id = Identifier::Name("a".to_string(), 31);
-    let b_id = Identifier::Name("b".to_string(), 32);
+    let a_id = Identifier::new_simple("a".to_string());
+    let b_id = Identifier::new_simple("b".to_string());
 
     let a_param = Parametrizable::Variable(a_id.clone());
     let b_param = Parametrizable::Variable(b_id.clone());
@@ -526,8 +760,8 @@ pub fn prove_abelian_squared_criterion() -> Theorem {
 /// Prove Lagrange's Theorem: If H is a subgroup of a finite group G,
 /// then the order of H divides the order of G
 pub fn prove_lagrange_theorem() -> Theorem {
-    let _group_g_id = Identifier::Name("G".to_string(), 41);
-    let group_h_id = Identifier::Name("H".to_string(), 42);
+    let _group_g_id = Identifier::new_simple("G".to_string());
+    let group_h_id = Identifier::new_simple("H".to_string());
 
     let group_h_param = Box::new(Parametrizable::Variable(group_h_id.clone()));
 
@@ -636,24 +870,42 @@ pub fn prove_example_chaining_theorems() -> Theorem {
     let group = create_abstract_group();
     let group_math_object = MathObject::Group(group.clone());
 
-    let x_id = Identifier::Name("x".to_string(), 201);
-    let y_id = Identifier::Name("y".to_string(), 202);
-    let z_id = Identifier::Name("z".to_string(), 203);
-    let w_id = Identifier::Name("w".to_string(), 204);
+    let x_id = Identifier::new_simple("x".to_string());
+    let y_id = Identifier::new_simple("y".to_string());
+    let z_id = Identifier::new_simple("z".to_string());
+    let w_id = Identifier::new_simple("w".to_string());
 
     let x_math_var = MathExpression::Var(x_id.clone());
     let y_math_var = MathExpression::Var(y_id.clone());
     let z_math_var = MathExpression::Var(z_id.clone());
     let w_math_expr = MathExpression::Var(w_id.clone());
 
-    let x_is_identity = MathRelation::Todo {
-        name: "x_is_identity".to_string(),
-        expressions: vec![x_math_var.clone()],
+    let x_is_identity = MathRelation::Equal {
+        meta: RelationDetail {
+            expressions: vec![],
+            metadata: HashMap::new(),
+            description: Some("x is identity element".to_string()),
+            is_reflexive: false,
+            is_symmetric: false,
+        },
+        left: x_math_var.clone(),
+        right: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Identity(
+            Parametrizable::Concrete(group.clone()),
+        ))),
     };
 
-    let y_is_identity = MathRelation::Todo {
-        name: "y_is_identity".to_string(),
-        expressions: vec![y_math_var.clone()],
+    let y_is_identity = MathRelation::Equal {
+        meta: RelationDetail {
+            expressions: vec![],
+            metadata: HashMap::new(),
+            description: Some("y is identity element".to_string()),
+            is_reflexive: false,
+            is_symmetric: false,
+        },
+        left: y_math_var.clone(),
+        right: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Identity(
+            Parametrizable::Concrete(group.clone()),
+        ))),
     };
 
     let xz_eq_w = MathRelation::equal(z_math_var.clone(), w_math_expr.clone());
@@ -727,9 +979,9 @@ pub fn prove_theorem_extraction_example() -> Theorem {
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
     let group_math_object = MathObject::Group(group.clone());
 
-    let a_id = Identifier::Name("a".to_string(), 301);
-    let b_id = Identifier::Name("b".to_string(), 302);
-    let c_id = Identifier::Name("c".to_string(), 303);
+    let a_id = Identifier::new_simple("a".to_string());
+    let b_id = Identifier::new_simple("b".to_string());
+    let c_id = Identifier::new_simple("c".to_string());
 
     let a_math_var = MathExpression::Var(a_id.clone());
     let _b_math_var = MathExpression::Var(b_id.clone());
@@ -799,14 +1051,14 @@ pub fn prove_theorem_extraction_example() -> Theorem {
 
     let root_node = proofs
         .apply_initial_tactic(Tactic::AssumeImplicationAntecedent {
-            hypothesis_name: Identifier::Name("premise".to_string(), 0),
+            hypothesis_name: Identifier::new_simple("premise".to_string()),
         })
         .clone();
 
     let p1 = root_node.apply_tactic(
         Tactic::IntroduceValueVariable {
             binding: ValueBindedVariable {
-                name: Identifier::Name("ab_eq_e".to_string(), 0),
+                name: Identifier::new_simple("ab_eq_e".to_string()),
                 value: MathExpression::Relation(Box::new(a_b_eq_e.clone())),
             },
             position: None,
@@ -817,7 +1069,7 @@ pub fn prove_theorem_extraction_example() -> Theorem {
     let p2 = p1.apply_tactic(
         Tactic::IntroduceValueVariable {
             binding: ValueBindedVariable {
-                name: Identifier::Name("bc_eq_e".to_string(), 0),
+                name: Identifier::new_simple("bc_eq_e".to_string()),
                 value: MathExpression::Relation(Box::new(b_c_eq_e.clone())),
             },
             position: None,
@@ -858,8 +1110,8 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
     let group_math_object = MathObject::Group(group.clone());
     let element_type = MathObject::Element(Box::new(group_math_object.clone()));
 
-    let x_id = Identifier::Name("x".to_string(), 401);
-    let y_id = Identifier::Name("y".to_string(), 402);
+    let x_id = Identifier::new_simple("x".to_string());
+    let y_id = Identifier::new_simple("y".to_string());
 
     let x_math_var = MathExpression::Var(x_id.clone());
     let y_math_var = MathExpression::Var(y_id.clone());
@@ -902,14 +1154,14 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
 
     let root_node = proofs
         .apply_initial_tactic(Tactic::AssumeImplicationAntecedent {
-            hypothesis_name: Identifier::Name("premise".to_string(), 0),
+            hypothesis_name: Identifier::new_simple("premise".to_string()),
         })
         .clone();
 
     let p1 = root_node.apply_tactic(
         Tactic::IntroduceValueVariable {
             binding: ValueBindedVariable {
-                name: Identifier::Name("x_is_identity".to_string(), 0),
+                name: Identifier::new_simple("x_is_identity".to_string()),
                 value: MathExpression::Relation(Box::new(x_is_identity_premise.clone())),
             },
             position: None,
@@ -920,7 +1172,7 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
     let p2 = p1.apply_tactic(
         Tactic::IntroduceValueVariable {
             binding: ValueBindedVariable {
-                name: Identifier::Name("y_is_identity".to_string(), 0),
+                name: Identifier::new_simple("y_is_identity".to_string()),
                 value: MathExpression::Relation(Box::new(y_is_identity_premise.clone())),
             },
             position: None,
@@ -959,7 +1211,7 @@ mod tests {
     #[test]
     fn test_inverse_uniqueness_theorem() {
         let theorem = prove_inverse_uniqueness();
-        assert_eq!(theorem.name, "inverse uniqueness");
+        assert_eq!(theorem.name, "Inverse Uniqueness in a Group");
         assert!(
             theorem.proofs.is_fully_proven(),
             "Theorem proof should be complete"
@@ -1045,18 +1297,25 @@ mod tests {
 
     #[test]
     fn test_minimal_theorem_application_only() {
+        // Create a simple goal for the theorem
+        let simple_goal = ProofGoal {
+            statement: MathRelation::True,
+            value_variables: vec![],
+            quantifiers: vec![],
+        };
+
         let simple_theorem = Theorem {
             id: "simple_test_theorem".to_string(),
             name: "Simple Test".to_string(),
             description: "A simple theorem for testing".to_string(),
-            proofs: ProofForest::new(),
+            proofs: ProofForest::new_from_goal(simple_goal),
         };
         TheoremRegistry::register_globally(simple_theorem);
 
         let initial_goal = ProofGoal {
             statement: MathRelation::equal(
-                MathExpression::Var(Identifier::Name("a".to_string(), 1)),
-                MathExpression::Var(Identifier::Name("b".to_string(), 2)),
+                MathExpression::Var(Identifier::new_simple("a".to_string())),
+                MathExpression::Var(Identifier::new_simple("b".to_string())),
             ),
             value_variables: vec![],
             quantifiers: vec![],
@@ -1070,11 +1329,11 @@ mod tests {
         let mut instantiation = HashMap::new();
         instantiation.insert(
             "a".to_string(),
-            MathExpression::Var(Identifier::Name("x".to_string(), 1)),
+            MathExpression::Var(Identifier::new_simple("x".to_string())),
         );
         instantiation.insert(
             "b".to_string(),
-            MathExpression::Var(Identifier::Name("y".to_string(), 2)),
+            MathExpression::Var(Identifier::new_simple("y".to_string())),
         );
 
         let result_node = root_node.apply_tactic(

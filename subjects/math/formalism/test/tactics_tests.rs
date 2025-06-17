@@ -1,4 +1,4 @@
-use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::proof::get_theorem_registry;
 use crate::subjects::math::formalism::proof::tactics::{RewriteDirection, Tactic};
 use crate::subjects::math::formalism::proof::{
@@ -6,6 +6,7 @@ use crate::subjects::math::formalism::proof::{
 };
 use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::formalism::theorem::Theorem;
+use crate::turn_render::Identifier;
 
 use std::collections::HashMap;
 
@@ -47,7 +48,7 @@ fn test_assume_implication_antecedent() {
     };
     let mut forest = ProofForest::new_from_goal(goal);
     let tactic = Tactic::AssumeImplicationAntecedent {
-        hypothesis_name: Identifier::Name("H".to_string(), 0),
+        hypothesis_name: Identifier::new_simple("H".to_string()),
     };
     let new_node = forest.apply_initial_tactic(tactic).clone();
 
@@ -68,7 +69,7 @@ fn test_exact_with_tactic() {
 
     let mut goal = create_initial_goal();
     goal.value_variables.push(ValueBindedVariable {
-        name: Identifier::Name("H".to_string(), 0),
+        name: Identifier::new_simple("H".to_string()),
         value: MathExpression::Relation(Box::new(hypothesis.clone())),
     });
     goal.statement = hypothesis.clone();

@@ -1,4 +1,7 @@
 use super::definitions::*;
+use crate::subjects::math::formalism::expressions::MathExpression;
+use crate::subjects::math::formalism::proof::collect::CollectSubExpressions;
+use crate::subjects::math::formalism::proof::path_index::{PathError, ReplaceableAtPath};
 use std::collections::HashMap;
 
 /// Collection utilities for probability theory objects
@@ -151,29 +154,31 @@ pub fn collect_distribution_parameters(
 }
 
 /// Collect probability properties from probability spaces
-pub fn collect_probability_properties<'a>(
-    spaces: &'a [&'a ProbabilitySpace],
-) -> Vec<&'a ProbabilitySpaceProperty> {
+pub fn collect_probability_properties(
+    spaces: &[&ProbabilitySpace],
+) -> Vec<ProbabilitySpaceProperty> {
     let mut properties = Vec::new();
 
     for space in spaces {
         match space {
-            ProbabilitySpace::Generic(space) => {
-                // properties.extend(space.props.get_all());
+            ProbabilitySpace::Generic(generic_space) => {
+                properties.extend(generic_space.props.iter().cloned());
             }
-            ProbabilitySpace::Discrete(space) => {
-                // properties.extend(space.core.props.get_all());
+            ProbabilitySpace::Discrete(disc_space) => {
+                properties.extend(disc_space.core.props.iter().cloned());
             }
-            ProbabilitySpace::Continuous(space) => {
-                // properties.extend(space.core.props.get_all());
+            ProbabilitySpace::Continuous(cont_space) => {
+                properties.extend(cont_space.core.props.iter().cloned());
             }
-            ProbabilitySpace::Product(space) => {
-                // properties.extend(space.core.props.get_all());
+            ProbabilitySpace::Product(prod_space) => {
+                properties.extend(prod_space.core.props.iter().cloned());
             }
-            ProbabilitySpace::Conditional(space) => {
-                // properties.extend(space.core.props.get_all());
+            ProbabilitySpace::Conditional(cond_space) => {
+                properties.extend(cond_space.core.props.iter().cloned());
             }
-            _ => {}
+            _ => {
+                // Other probability space types can be handled as needed
+            }
         }
     }
 
@@ -374,4 +379,46 @@ pub fn count_variable_types(variables: &[&RandomVariable]) -> HashMap<RandomVari
     }
 
     counts
+}
+
+impl ProbabilityRelation {
+    pub fn collect_contained_expressions(
+        &self,
+        base_path: Vec<usize>,
+        collected_targets: &mut Vec<(Vec<usize>, MathExpression)>,
+        depth: usize,
+    ) {
+        if depth > 100 {
+            return;
+        }
+
+        // For now, most probability relations don't contain direct MathExpressions
+        // This is a placeholder implementation that can be expanded as needed
+        match self {
+            // Most probability relations work with Parametrizable<> types which contain
+            // either Concrete objects or Variables (Identifiers), but don't directly
+            // contain MathExpressions that need traversal
+            _ => {
+                // Placeholder - probability relations typically don't contain
+                // nested MathExpressions in the same way other theories do
+            }
+        }
+    }
+}
+
+impl ReplaceableAtPath for ProbabilityRelation {
+    fn replace_at_path_recursive(
+        self,
+        path: &[usize],
+        replacement: MathExpression,
+    ) -> Result<Self, PathError> {
+        if path.is_empty() {
+            return Err(PathError::TypeMismatch);
+        }
+
+        // For now, probability relations typically don't contain
+        // nested MathExpressions that need path-based replacement
+        // This is a placeholder implementation
+        Err(PathError::NotImplemented)
+    }
 }

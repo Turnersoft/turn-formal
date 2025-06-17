@@ -1,9 +1,10 @@
-use crate::subjects::math::formalism::expressions::{Identifier, MathExpression, TheoryExpression};
+use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::theories::groups::definitions::GroupExpression;
 use crate::subjects::math::theories::rings::definitions::FieldExpression;
 use crate::subjects::math::theories::rings::definitions::RingExpression;
+use crate::turn_render::Identifier;
 use std::collections::HashMap;
 
 /// A simple path represents the location of an expression within a larger structure
@@ -951,16 +952,16 @@ impl SearchReplace {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+    use crate::subjects::math::formalism::expressions::MathExpression;
     use crate::subjects::math::formalism::relations::{MathRelation, RelationDetail};
     use std::collections::HashMap;
 
     #[test]
     fn test_search_and_replace_basics() {
         // Create some test expressions
-        let var_x = MathExpression::Var(Identifier::Name("x".to_string(), 0));
-        let var_y = MathExpression::Var(Identifier::Name("y".to_string(), 0));
-        let var_z = MathExpression::Var(Identifier::Name("z".to_string(), 0));
+        let var_x = MathExpression::Var(Identifier::new_simple("x".to_string()));
+        let var_y = MathExpression::Var(Identifier::new_simple("y".to_string()));
+        let var_z = MathExpression::Var(Identifier::new_simple("z".to_string()));
 
         // Create a test relation: x = y
         let relation = MathRelation::equal(var_x.clone(), var_y.clone());
@@ -981,7 +982,7 @@ mod tests {
 
         // Test variable substitution
         let mut substitutions = HashMap::new();
-        substitutions.insert(Identifier::Name("x".to_string(), 0), var_z.clone());
+        substitutions.insert(Identifier::new_simple("x".to_string()), var_z.clone());
 
         let substituted =
             SearchReplace::substitute_variables_in_relation(&relation, &substitutions);
@@ -995,9 +996,9 @@ mod tests {
 
     #[test]
     fn test_replacement_specs() {
-        let var_a = MathExpression::Var(Identifier::Name("a".to_string(), 0));
-        let var_b = MathExpression::Var(Identifier::Name("b".to_string(), 0));
-        let var_c = MathExpression::Var(Identifier::Name("c".to_string(), 0));
+        let var_a = MathExpression::Var(Identifier::new_simple("a".to_string()));
+        let var_b = MathExpression::Var(Identifier::new_simple("b".to_string()));
+        let var_c = MathExpression::Var(Identifier::new_simple("c".to_string()));
 
         // Test multiple replacements
         let expr = var_a.clone();

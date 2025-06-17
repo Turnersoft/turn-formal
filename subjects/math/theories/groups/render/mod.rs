@@ -2,14 +2,13 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
 use crate::subjects::math::export::unified_exporter::TheoryExporter;
-use crate::subjects::math::formalism::expressions::Identifier;
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::theories::groups::definitions::{
     CenterGroup, CommutatorSubgroup, GroupHomomorphism, SylowSubgroup,
 };
 //--- Imports from crate::turn_render ---
 use crate::turn_render::math_node::{
-    BracketSize, BracketStyle, IntegralType, MathNode, MathNodeContent, MulSymbol,
+    BracketSize, BracketStyle, Identifier, IntegralType, MathNode, MathNodeContent, MulSymbol,
     RefinedMulOrDivOperation, RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
 use crate::turn_render::*;
@@ -221,36 +220,36 @@ impl ToTurnMath for GroupElement {
             },
             GroupElement::Symbol(s) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: s.clone(),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             },
             GroupElement::Permutation(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: "σ".to_string(),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             },
             GroupElement::Matrix(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: "M".to_string(),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             },
         }
     }
@@ -265,7 +264,7 @@ fn collect_multiplication_terms(
     match expr {
         Parametrizable::Concrete(GroupExpression::Operation { left, right, .. }) => {
             // Recursively collect terms from nested operations
-            let mut terms = collect_multiplication_terms(left, &format!("{}-left", master_id));
+            let mut terms = collect_multiplication_terms(&left, &format!("{}-left", master_id));
             terms.push((
                 RefinedMulOrDivOperation::Multiplication(MulSymbol::Dot),
                 right.to_turn_math(format!("{}-right", master_id)),
@@ -304,14 +303,14 @@ impl ToTurnMath for GroupExpression {
             GroupExpression::Element { element, .. } => element.to_turn_math(master_id),
             GroupExpression::Identity(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: "e".to_string(),
                     pre_script: None,
                     mid_script: None,
                     post_script: None,
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             },
             GroupExpression::Inverse { element, .. } => MathNode {
                 id: master_id.clone(),
@@ -794,6 +793,10 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
     }
 
     fn export_theorems(&self) -> Vec<MathDocument> {
+        // Register basic group axioms BEFORE generating theorem proofs
+        // This ensures that tactics can find the axioms in the theorem registry
+        super::theorems::register_basic_group_axioms();
+
         let mut content = vec![
             prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
             // prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
@@ -1002,15 +1005,15 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             Group::Kernel(KernelGroup {
                 core: GenericGroup::default(),
                 defining_homomorphism: Box::new(GroupHomomorphism {
-                    domain: Parametrizable::Variable(Identifier::Name("G".to_string(), 0)),
-                    codomain: Parametrizable::Variable(Identifier::Name("H".to_string(), 0)),
+                    domain: Parametrizable::Variable(Identifier::new_simple("G".to_string())),
+                    codomain: Parametrizable::Variable(Identifier::new_simple("H".to_string())),
                 }),
             }),
             Group::Image(ImageGroup {
                 core: GenericGroup::default(),
                 defining_homomorphism: Box::new(GroupHomomorphism {
-                    domain: Parametrizable::Variable(Identifier::Name("G".to_string(), 0)),
-                    codomain: Parametrizable::Variable(Identifier::Name("H".to_string(), 0)),
+                    domain: Parametrizable::Variable(Identifier::new_simple("G".to_string())),
+                    codomain: Parametrizable::Variable(Identifier::new_simple("H".to_string())),
                 }),
             }),
             // ===== SUBGROUP CONSTRUCTIONS =====
@@ -1104,14 +1107,7 @@ where
             Parametrizable::Concrete(c) => c.to_turn_math(master_id),
             Parametrizable::Variable(id) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier {
-                    body: id.to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(id.clone())),
             },
         }
     }

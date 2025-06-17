@@ -1,7 +1,9 @@
+use crate::turn_render::Identifier;
+
 use super::{
-    expressions::{Identifier, MathExpression, TheoryExpression},
+    expressions::{MathExpression, TheoryExpression},
+    objects::MathObject,
     relations::{MathRelation, RelationDetail},
-    theorem::MathObject,
 };
 
 pub trait Complexity {
@@ -56,10 +58,7 @@ impl Complexity for MathObject {
 
 impl Complexity for Identifier {
     fn complexity(&self) -> usize {
-        match self {
-            Identifier::Name(name, _) => 1 + name.len() / 4, // Basic complexity, plus a bit for name length
-            _ => 1,                                          // Simple identifiers
-        }
+        todo!()
     }
 }
 
@@ -101,7 +100,6 @@ impl Complexity for MathRelation {
             MathRelation::Implies(a, b) => 1 + a.complexity() + b.complexity(),
             MathRelation::Equivalent(a, b) => 1 + a.complexity() + b.complexity(),
             MathRelation::Not(r) => 1 + r.complexity(),
-            MathRelation::Todo { .. } => 1,
             MathRelation::True => 1,
             MathRelation::False => 1,
             MathRelation::NumberTheory(_) => 1,
@@ -110,6 +108,7 @@ impl Complexity for MathRelation {
             MathRelation::RingTheory(_) => 1,
             MathRelation::TopologyTheory(_) => 1,
             MathRelation::CategoryTheory(_) => 1,
+            MathRelation::ProbabilityTheory(_) => 1,
         }
     }
 }

@@ -1276,14 +1276,14 @@ impl GenericGroup {
             content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_func", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
+                    content: Box::new(MathNodeContent::Identifier(Identifier {
                         body: "∘".to_string(),
                         pre_script: None,
                         mid_script: None,
                         post_script: None,
                         primes: 0,
                         is_function: false,
-                    }),
+                    })),
                 }),
                 parameters: vec![a_el.clone(), b_el.clone()],
             }),
@@ -1309,14 +1309,14 @@ impl GenericGroup {
                         RefinedMulOrDivOperation::None,
                         MathNode {
                             id: format!("{}_comma", node_id),
-                            content: Box::new(MathNodeContent::Identifier {
+                            content: Box::new(MathNodeContent::Identifier(Identifier {
                                 body: ",".to_string(),
                                 pre_script: None,
                                 mid_script: None,
                                 post_script: None,
                                 primes: 0,
                                 is_function: false,
-                            }),
+                            })),
                         },
                     ),
                     (RefinedMulOrDivOperation::None, b_el),
@@ -1378,14 +1378,14 @@ impl GenericGroup {
             content: Box::new(MathNodeContent::FunctionCall {
                 name: Box::new(MathNode {
                     id: format!("{}_func", node_id),
-                    content: Box::new(MathNodeContent::Identifier {
+                    content: Box::new(MathNodeContent::Identifier(Identifier {
                         body: "∘".to_string(),
                         pre_script: None,
                         mid_script: None,
                         post_script: None,
                         primes: 0,
                         is_function: false,
-                    }),
+                    })),
                 }),
                 parameters: vec![a_el.clone(), b_el.clone()],
             }),

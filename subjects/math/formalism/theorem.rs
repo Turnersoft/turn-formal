@@ -1,7 +1,6 @@
 // Module: src/formalize_v2/subjects/math/theorem/core.rs
 // Defines core mathematical objects and context for the theorem system
 
-use leptos::math::Math;
 use serde::{Deserialize, Serialize};
 use std::any::{Any, TypeId};
 use std::cell::RefCell;
@@ -13,7 +12,7 @@ use uuid::Uuid;
 
 use crate::subjects::math::formalism::proof::ProofGoal;
 
-use super::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::expressions::{MathExpression, TheoryExpression};
 use super::proof::tactics::Tactic;
 use super::proof::{ProofForest, ProofNode, ProofStatus};
 use super::relations::MathRelation;
@@ -21,68 +20,6 @@ use crate::turn_render::ToProofDisplay;
 use crate::turn_render::{
     MathDocument, MathDocumentType, PaperType, ScientificPaperContent, ToMathDocument,
 };
-
-use super::super::theories::analysis::definition::functions::Function;
-use super::super::theories::groups::definitions::{
-    Group, GroupOperation, GroupProperty, GroupRelation, LieGroup, TopologicalGroup,
-};
-use super::super::theories::linear_algebra::definitions::VectorSpace;
-use super::super::theories::rings::definitions::{
-    Algebra, Field, Module, Ring, RingExpression, RingProperty,
-};
-use super::super::theories::topology::TopologicalSpace;
-use super::super::theories::zfc::Set;
-
-/// A unified wrapper for all mathematical objects across theories
-/// This is just a reference to objects defined in their respective theory modules
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum MathObject {
-    // Group theory objects
-    Group(Group),
-
-    // Ring theory objects
-    Ring(Ring),
-    Field(Field),
-    Module(Module),
-    Algebra(Algebra),
-
-    // Topology objects
-    TopologicalSpace(TopologicalSpace),
-
-    // Linear algebra objects
-    VectorSpace(VectorSpace),
-
-    // Set theory objects
-    Set(Set),
-
-    // Analysis objects
-    Function(Function),
-
-    // Basic number types
-    Integer,
-    Rational,
-    Irrational,
-    Real,
-    Complex,
-
-    // General types
-    Element(Box<MathObject>),                   // Element of a given type
-    Morphism(Box<MathObject>, Box<MathObject>), // Morphism between types
-
-    // Type constructors
-    Product(Vec<MathObject>),
-    Coproduct(Vec<MathObject>),
-
-    // Other
-    // The standard way to address this in systems aiming for
-    // HOL/HoTT compatibility is not typically by changing
-    // the quantifier structure to directly take a MathRelation or MathExpression.
-    // Instead, the MathObject (or a parallel "Type" system) is extended to include variants representing these higher-order concepts:
-    // Prop,
-    // Type(UnverseLevel),
-    // FunctionType(FunctionType),
-    Todo(String),
-}
 
 /// A unified representation of a mathematical theorem from any domain
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

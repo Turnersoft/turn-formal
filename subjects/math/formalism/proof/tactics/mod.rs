@@ -3,15 +3,10 @@ pub mod implement;
 pub mod search_replace;
 pub mod theorem_applier;
 
-pub mod utils;
-
 // Re-export the items so external code can continue to use them
 pub use case_analysis::{CaseAnalysisBuilder, CaseResult};
-use leptos::attr::Target;
 pub use search_replace::{ExpressionPath, ReplacementSpec, SearchReplace, SearchResult};
 pub use theorem_applier::{TheoremApplicationError, TheoremApplicationResult, TheoremApplier};
-
-pub use utils::{create_expr, expression_summary, name_to_string};
 
 // Re-export only public functions from parent
 pub use super::ProofForest;
@@ -20,9 +15,10 @@ pub use super::TheoremRegistry;
 pub use super::get_theorem_registry;
 
 use super::{ProofGoal, Quantification, QuantifiedMathObject, ValueBindedVariable};
-use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::interpretation::TypeViewOperator;
 use crate::subjects::math::formalism::relations::MathRelation;
+use crate::turn_render::Identifier;
 use crate::turn_render::Section;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

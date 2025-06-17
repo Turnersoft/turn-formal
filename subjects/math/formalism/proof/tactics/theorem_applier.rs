@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
 use super::TheoremRegistry;
-use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::proof::ProofGoal;
 use crate::subjects::math::formalism::relations::MathRelation;
+use crate::turn_render::Identifier;
 
 use super::super::{ProofNode, get_theorem_registry};
 

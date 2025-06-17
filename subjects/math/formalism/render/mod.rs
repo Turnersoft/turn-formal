@@ -6,6 +6,7 @@ pub mod interpretation;
 pub mod math_object;
 pub mod proof;
 pub mod relations;
+pub mod tactics;
 pub mod theorem;
 
 // All other content, including use statements for serde/HashMap/TS (unless a submodule *needs* them re-exported from here),

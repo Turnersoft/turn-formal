@@ -20,10 +20,10 @@ use wasm_bindgen::prelude::*;
 // Removed unused imports from the refactored traversal module
 // use self::traversal::{PotentialTheoremTarget, TargetCollector};
 use super::super::theories::zfc::definitions::SetRelation;
-use super::expressions::{Identifier, MathExpression, TheoryExpression};
+use super::expressions::{MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
 use super::relations::{MathRelation, Quantification, RelationDetail};
-use super::theorem::{MathObject, Theorem};
+use super::{objects::MathObject, theorem::Theorem};
 // Import the new traversal trait if needed, or rely on inherent methods
 use self::collect::CollectSubExpressions;
 
@@ -31,8 +31,8 @@ use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::theories::groups::definitions::GroupExpression;
 use crate::subjects::math::theories::rings::definitions::{FieldExpression, RingExpression};
 use crate::turn_render::{
-    MathNode, MathNodeContent, ProofDisplayNode, ProofStepNode, RichText, RichTextSegment, Section,
-    SectionContentNode, ToProofDisplay, ToProofStep, ToTurnMath,
+    Identifier, MathNode, MathNodeContent, ProofDisplayNode, ProofStepNode, RichText,
+    RichTextSegment, Section, SectionContentNode, ToProofDisplay, ToProofStep, ToTurnMath,
 };
 
 pub mod collect;
@@ -200,7 +200,7 @@ impl ProofGoal {
 
         // Create a variable binding
         let var = ValueBindedVariable {
-            name: Identifier::Name(var_name.to_string(), 0),
+            name: Identifier::new_simple(var_name.to_string()),
             value: expr,
         };
 
@@ -425,28 +425,7 @@ pub struct ProofForest {
     pub roots: Vec<String>,
 }
 
-impl Default for ProofForest {
-    fn default() -> Self {
-        Self {
-            initial_goal: ProofGoal {
-                quantifiers: vec![],
-                value_variables: vec![],
-                statement: MathRelation::Todo {
-                    name: "Default initial goal".to_string(),
-                    expressions: vec![],
-                },
-            },
-            nodes: HashMap::new(),
-            roots: Vec::new(),
-        }
-    }
-}
-
 impl ProofForest {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     pub fn new_from_goal(goal: ProofGoal) -> Self {
         let mut forest = Self {
             initial_goal: goal.clone(),

@@ -10,7 +10,6 @@ pub mod collect;
 pub mod complexity;
 pub mod definitions;
 pub mod extract;
-pub mod leptos;
 pub mod render;
 pub mod tests;
 pub mod theorems;

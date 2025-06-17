@@ -2,10 +2,11 @@ use std::collections::HashMap;
 
 use super::super::{ProofGoal, ValueBindedVariable, get_theorem_registry};
 use super::{RewriteDirection, Tactic};
-use crate::subjects::math::formalism::expressions::{Identifier, MathExpression};
+use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::proof::TacticApplicationResult;
 use crate::subjects::math::formalism::proof::tactics::search_replace::SearchReplace;
 use crate::subjects::math::formalism::relations::MathRelation;
+use crate::turn_render::Identifier;
 
 impl Tactic {
     pub fn apply_to_goal(&self, goal: &ProofGoal) -> TacticApplicationResult {
@@ -50,7 +51,8 @@ impl Tactic {
                     {
                         let mut ident_instantiation = HashMap::new();
                         for (k, v) in instantiation.iter() {
-                            ident_instantiation.insert(Identifier::Name(k.clone(), 0), v.clone());
+                            ident_instantiation
+                                .insert(Identifier::new_simple(k.clone()), v.clone());
                         }
 
                         let inst_left =
@@ -100,7 +102,7 @@ impl Tactic {
                 if let Some(theorem) = registry.get_theorem(theorem_id) {
                     let mut ident_instantiation = HashMap::new();
                     for (k, v) in instantiation.iter() {
-                        ident_instantiation.insert(Identifier::Name(k.clone(), 0), v.clone());
+                        ident_instantiation.insert(Identifier::new_simple(k.clone()), v.clone());
                     }
 
                     let instantiated_theorem_statement =
@@ -185,10 +187,10 @@ impl Tactic {
                     );
                     TacticApplicationResult::SingleGoal(new_goal)
                 } else {
-                    TacticApplicationResult::Error(format!(
-                        "Quantifier '{}' not found.",
-                        target_quantifier.to_string()
-                    ))
+                    TacticApplicationResult::Error(format!("Quantifier '{}' not found.", {
+                        todo!();
+                        // target_quantifier.to_string()
+                    }))
                 }
             }
             Tactic::ProvideWitness {
@@ -210,10 +212,10 @@ impl Tactic {
                     );
                     TacticApplicationResult::SingleGoal(new_goal)
                 } else {
-                    TacticApplicationResult::Error(format!(
-                        "Quantifier '{}' not found.",
-                        target_quantifier.to_string()
-                    ))
+                    TacticApplicationResult::Error(format!("Quantifier '{}' not found.", {
+                        // target_quantifier.to_string()
+                        todo!()
+                    }))
                 }
             }
             Tactic::ReorderQuantifiers { new_order } => {
@@ -243,7 +245,10 @@ impl Tactic {
                     } else {
                         return TacticApplicationResult::Error(format!(
                             "Identifier '{}' in new_order not found in goal quantifiers.",
-                            ident
+                            {
+                                // ident.to_string()
+                                todo!()
+                            }
                         ));
                     }
                 }
@@ -268,7 +273,10 @@ impl Tactic {
                         .map(|case| {
                             let mut case_goal = base_goal.clone();
                             let hypothesis = ValueBindedVariable {
-                                name: Identifier::Name(format!("case_{}", case.name), 0),
+                                name: Identifier::simple_text_subscript(
+                                    "case".to_string(),
+                                    case.name.clone(),
+                                ),
                                 value: MathExpression::Relation(Box::new(case.condition.clone())),
                             };
                             case_goal.value_variables.push(hypothesis);
@@ -293,10 +301,10 @@ impl Tactic {
                         TacticApplicationResult::MultiGoal(new_goals)
                     }
                 } else {
-                    TacticApplicationResult::Error(format!(
-                        "Quantifier '{}' not found.",
-                        target_quantifier.to_string()
-                    ))
+                    TacticApplicationResult::Error(format!("Quantifier '{}' not found.", {
+                        // target_quantifier.to_string()
+                        todo!()
+                    }))
                 }
             }
             Tactic::SubstituteValueVariable { target_variable } => {
@@ -316,7 +324,10 @@ impl Tactic {
                 } else {
                     TacticApplicationResult::Error(format!(
                         "Variable '{}' not found in context.",
-                        target_variable.to_string()
+                        {
+                            // target_variable.to_string()
+                            todo!()
+                        }
                     ))
                 }
             }
@@ -341,7 +352,10 @@ impl Tactic {
                 } else {
                     TacticApplicationResult::Error(format!(
                         "Variable '{}' not found in context.",
-                        target_variable.to_string()
+                        {
+                            // target_variable.to_string()
+                            todo!()
+                        }
                     ))
                 }
             }
@@ -374,7 +388,10 @@ impl Tactic {
                     .map(|(name, case_expr)| {
                         let mut new_goal = goal.clone();
                         let hypothesis = ValueBindedVariable {
-                            name: Identifier::Name(format!("case_{}", name), 0),
+                            name: Identifier::simple_text_subscript(
+                                "case".to_string(),
+                                name.clone(),
+                            ),
                             value: case_expr.clone(),
                         };
                         new_goal.value_variables.push(hypothesis);
@@ -440,8 +457,10 @@ impl Tactic {
 
                 // This is a simplification. A real implementation would need to define a 'successor' function.
                 // For now, we'll just create a placeholder variable for the successor.
-                let successor_var_name =
-                    Identifier::Name(format!("succ_{}", induction_variable_name.to_string()), 0);
+                let successor_var_name = Identifier::simple_identifier_subscript(
+                    "succ".to_string(),
+                    induction_variable_name.clone(),
+                );
                 let successor_expr = MathExpression::Var(successor_var_name);
 
                 let inductive_step_statement = SearchReplace::replace_all_in_relation(

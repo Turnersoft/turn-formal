@@ -1491,12 +1491,13 @@ mod zfc_machinery_tests {
 // Add a test for the new Set, SetExpression, and SetRelation structure
 #[cfg(test)]
 mod set_structure_tests {
-    use crate::subjects::math::formalism::expressions::Identifier;
+
     use crate::subjects::math::formalism::extract::Parametrizable;
     use crate::subjects::math::theories::VariantSet;
     use crate::subjects::math::theories::zfc::definitions::{
         CardinalityPropertyVariant, Set, SetElement, SetExpression, SetRelation,
     };
+    use crate::turn_render::Identifier;
 
     #[test]
     fn test_new_set_structures() {
@@ -1506,7 +1507,7 @@ mod set_structure_tests {
         let singleton = Set::singleton(empty_element.clone());
 
         // Create set expressions
-        let var_a = SetExpression::Variable(Identifier::Name("A".to_string(), 0));
+        let var_a = SetExpression::Variable(Identifier::new_simple("A".to_string()));
 
         // Create cardinality expression
         let cardinality = SetExpression::Cardinality {
@@ -1536,13 +1537,13 @@ mod set_structure_tests {
 
         // Test pattern matching
         let pattern_element_of = SetRelation::ElementOf {
-            element: Parametrizable::Variable(Identifier::Name("x".to_string(), 0)),
-            set: Parametrizable::Variable(Identifier::Name("A".to_string(), 0)),
+            element: Parametrizable::Variable(Identifier::new_simple("x".to_string())),
+            set: Parametrizable::Variable(Identifier::new_simple("A".to_string())),
         };
 
         let pattern_subset_of = SetRelation::SubsetOf {
-            subset: Parametrizable::Variable(Identifier::Name("X".to_string(), 0)),
-            superset: Parametrizable::Variable(Identifier::Name("Y".to_string(), 0)),
+            subset: Parametrizable::Variable(Identifier::new_simple("X".to_string())),
+            superset: Parametrizable::Variable(Identifier::new_simple("Y".to_string())),
         };
 
         // Verify that concrete relations match the patterns
@@ -1552,7 +1553,7 @@ mod set_structure_tests {
         // Create some parametric relations with variables
         let parametric_relation = SetRelation::ElementOf {
             element: Parametrizable::Concrete(empty_element.clone()),
-            set: Parametrizable::Variable(Identifier::Name("B".to_string(), 0)),
+            set: Parametrizable::Variable(Identifier::new_simple("B".to_string())),
         };
 
         // This should also match the pattern since the pattern has variable placeholders

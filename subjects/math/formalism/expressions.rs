@@ -3,6 +3,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::turn_render::Identifier;
+
 use super::super::theories::groups::definitions::GroupExpression;
 use super::super::theories::rings::definitions::{FieldExpression, RingExpression};
 
@@ -14,41 +16,7 @@ use super::super::theories::{
 };
 
 use super::super::formalism::interpretation::TypeViewOperator;
-use super::{relations::MathRelation, theorem::MathObject};
-
-/// Variables for use in expressionshttp://localhost:5173/math
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum Identifier {
-    /// Object variables
-    O(u8),
-
-    /// Morphism variables
-    M(u8),
-
-    /// Element variables
-    E(u8),
-
-    /// Number variables
-    N(u8),
-
-    /// custom name that you really want to costomize
-    /// Named variables with an identifier
-    /// The string is the human-readable name
-    /// The u32 is a unique identifier to distinguish variables with the same name
-    Name(String, u32),
-}
-
-impl std::fmt::Display for Identifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Identifier::O(i) => write!(f, "o_{}", i),
-            Identifier::M(i) => write!(f, "m_{}", i),
-            Identifier::E(i) => write!(f, "e_{}", i),
-            Identifier::N(i) => write!(f, "n_{}", i),
-            Identifier::Name(s, _) => write!(f, "{}", s),
-        }
-    }
-}
+use super::{objects::MathObject, relations::MathRelation};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TheoryExpression {
@@ -151,15 +119,12 @@ impl TheoryExpression {
 impl MathExpression {
     /// Create a variable expression from a name
     pub fn var(name: &str) -> Self {
-        MathExpression::Var(Identifier::Name(
-            name.to_string(),
-            name.bytes().fold(0, |acc, b| acc + b as u32),
-        ))
+        MathExpression::Var(Identifier::new_simple(name.to_string()))
     }
 
     /// Create a variable expression with an explicit identifier
     pub fn var_with_id(name: &str, id: u32) -> Self {
-        MathExpression::Var(Identifier::Name(name.to_string(), id))
+        MathExpression::Var(Identifier::new_simple(name.to_string()))
     }
 
     /// Apply a type view to this expression
@@ -184,7 +149,6 @@ impl MathExpression {
     /// Infer the type of an expression
     pub fn infer_type(&self) -> String {
         match self {
-            MathExpression::Var(Identifier::Name(name, _)) => format!("Variable({})", name),
             MathExpression::Var(_) => "Variable".to_string(),
             MathExpression::Object(_) => "Object".to_string(),
             MathExpression::Number(_) => "Number".to_string(),
@@ -206,17 +170,17 @@ impl MathExpression {
     }
 
     /// Get the variable name if this is a variable expression
-    pub fn as_variable_name(&self) -> Option<String> {
+    pub fn as_variable_name(&self) -> Option<Identifier> {
         match self {
-            MathExpression::Var(Identifier::Name(name, _)) => Some(name.clone()),
+            MathExpression::Var(id) => Some(id.clone()),
             _ => None,
         }
     }
 
     /// Check if this expression is a variable with the given name
-    pub fn is_variable_named(&self, name: &str) -> bool {
+    pub fn is_variable_named(&self, name: &Identifier) -> bool {
         match self {
-            MathExpression::Var(Identifier::Name(var_name, _)) => var_name == name,
+            MathExpression::Var(id) => id == name,
             _ => false,
         }
     }

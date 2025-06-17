@@ -181,17 +181,9 @@ impl ToTurnMath for NumberTheoryRelation {
                     MathNode {
                         id: master_id.clone(),
                         content: Box::new(MathNodeContent::FunctionCall {
-                            name: Box::new(MathNode {
-                                id: format!("{}_func", master_id),
-                                content: Box::new(MathNodeContent::Identifier {
-                                    body: name.clone(),
-                                    pre_script: None,
-                                    mid_script: None,
-                                    post_script: None,
-                                    primes: 0,
-                                    is_function: true,
-                                }),
-                            }),
+                            name: Box::new(MathNode::identifier(Identifier::new_simple(
+                                name.clone(),
+                            ))),
                             parameters: parameters
                                 .iter()
                                 .enumerate()

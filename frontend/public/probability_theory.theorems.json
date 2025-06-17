@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1750003328",
+  "exported_at": "1750176773",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -73,6 +73,77 @@
                             {
                               "RichText": {
                                 "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "sample_mean",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "population_mean",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
                                   {
                                     "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
                                   }
@@ -197,6 +268,77 @@
                               "RichText": {
                                 "segments": [
                                   {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "sample_mean",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "population_mean",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
+                                  {
                                     "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges almost surely to the population mean."
                                   }
                                 ],
@@ -319,6 +461,77 @@
                             {
                               "RichText": {
                                 "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "standardized_sum",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "standard_normal",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
                                   {
                                     "Text": "For independent identically distributed random variables with finite second moment, the standardized sum converges in distribution to a standard normal distribution."
                                   }
@@ -443,6 +656,77 @@
                               "RichText": {
                                 "segments": [
                                   {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "P(A|B)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "P(B|A)P(A)/P(B)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
+                                  {
                                     "Text": "For events A and B with P(B) > 0, P(A|B) = P(B|A)P(A)/P(B)."
                                   }
                                 ],
@@ -565,6 +849,77 @@
                             {
                               "RichText": {
                                 "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "P(A)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "Σ P(A|B_i)P(B_i)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
                                   {
                                     "Text": "For a partition of the sample space {B_i}, P(A) = Σ P(A|B_i)P(B_i)."
                                   }
@@ -689,6 +1044,77 @@
                               "RichText": {
                                 "segments": [
                                   {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement:lhs",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "P(|X - μ| ≥ kσ)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement:rhs",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "1/k²",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "LessEqual"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
+                                  {
                                     "Text": "For a random variable X with finite variance σ², P(|X - μ| ≥ kσ) ≤ 1/k²."
                                   }
                                 ],
@@ -811,6 +1237,77 @@
                             {
                               "RichText": {
                                 "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement:lhs",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "P(X ≥ a)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement:rhs",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "E[X]/a",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "LessEqual"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
                                   {
                                     "Text": "For a non-negative random variable X with finite expectation, P(X ≥ a) ≤ E[X]/a."
                                   }
@@ -935,6 +1432,77 @@
                               "RichText": {
                                 "segments": [
                                   {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement:lhs",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "φ(E[X])",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement:rhs",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "E[φ(X)]",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "LessEqual"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
+                                  {
                                     "Text": "For a convex function φ and integrable random variable X, φ(E[X]) ≤ E[φ(X)]."
                                   }
                                 ],
@@ -1057,6 +1625,77 @@
                             {
                               "RichText": {
                                 "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "X_n",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "X_∞",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
                                   {
                                     "Text": "A martingale bounded in L¹ converges almost surely."
                                   }
@@ -1181,6 +1820,77 @@
                               "RichText": {
                                 "segments": [
                                   {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "E[X_τ]",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "E[X_0]",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
+                                  {
                                     "Text": "For a martingale and stopping time satisfying integrability conditions, E[X_τ] = E[X_0]."
                                   }
                                 ],
@@ -1304,6 +2014,77 @@
                               "RichText": {
                                 "segments": [
                                   {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "Σ X_n converges a.s.",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "Three series converge",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
+                                  {
                                     "Text": "For independent random variables, the series Σ X_n converges almost surely if and only if three associated series converge."
                                   }
                                 ],
@@ -1426,6 +2207,77 @@
                             {
                               "RichText": {
                                 "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Statement: ",
+                                      "styles": [
+                                        "Bold"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "Math": {
+                                      "id": "theorem-statement",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "theorem-statement_left",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "F_n(x)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "theorem-statement_right",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "F(x)",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [],
+                                "alignment": null
+                              }
+                            },
+                            {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "StyledText": {
+                                      "text": "Description: ",
+                                      "styles": [
+                                        "Italic"
+                                      ]
+                                    }
+                                  },
                                   {
                                     "Text": "The empirical distribution function converges uniformly to the true distribution function almost surely."
                                   }

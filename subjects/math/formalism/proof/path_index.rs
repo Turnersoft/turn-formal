@@ -121,24 +121,7 @@ impl ReplaceableAtPath for MathRelation {
                 }
                 _ => Err(PathError::InvalidPath),
             },
-            MathRelation::Todo {
-                name,
-                mut expressions,
-            } => {
-                if current_idx >= 100 {
-                    let vec_idx = current_idx - 100;
-                    if vec_idx < expressions.len() {
-                        expressions[vec_idx] = expressions[vec_idx]
-                            .clone()
-                            .replace_at_path(remaining_path, replacement_expr)?;
-                        Ok(MathRelation::Todo { name, expressions })
-                    } else {
-                        Err(PathError::InvalidPath)
-                    }
-                } else {
-                    Err(PathError::InvalidPath)
-                }
-            }
+
             MathRelation::Implies(premise, conclusion) => match current_idx {
                 1 => {
                     let new_premise =
@@ -234,36 +217,18 @@ impl ReplaceableAtPath for MathRelation {
                     Err(PathError::InvalidPath)
                 }
             }
-            MathRelation::RingTheory(rt_rel) => {
-                if current_idx == 204 {
-                    // Path convention for RingTheory variant
-                    let new_rt_rel =
-                        rt_rel.replace_at_path_recursive(remaining_path, replacement_expr)?;
-                    Ok(MathRelation::RingTheory(new_rt_rel))
-                } else {
-                    Err(PathError::InvalidPath)
-                }
-            }
-            MathRelation::TopologyTheory(tt_rel) => {
-                if current_idx == 205 {
-                    // Path convention for TopologyTheory variant
-                    let new_tt_rel =
-                        tt_rel.replace_at_path_recursive(remaining_path, replacement_expr)?;
-                    Ok(MathRelation::TopologyTheory(new_tt_rel))
-                } else {
-                    Err(PathError::InvalidPath)
-                }
-            }
-            MathRelation::CategoryTheory(ct_rel) => {
-                if current_idx == 206 {
-                    // Path convention for CategoryTheory variant
-                    let new_ct_rel =
-                        ct_rel.replace_at_path_recursive(remaining_path, replacement_expr)?;
-                    Ok(MathRelation::CategoryTheory(new_ct_rel))
-                } else {
-                    Err(PathError::InvalidPath)
-                }
-            }
+            MathRelation::RingTheory(rt_rel) => rt_rel
+                .replace_at_path_recursive(path, replacement_expr)
+                .map(MathRelation::RingTheory),
+            MathRelation::TopologyTheory(tt_rel) => tt_rel
+                .replace_at_path_recursive(path, replacement_expr)
+                .map(MathRelation::TopologyTheory),
+            MathRelation::CategoryTheory(ct_rel) => ct_rel
+                .replace_at_path_recursive(path, replacement_expr)
+                .map(MathRelation::CategoryTheory),
+            MathRelation::ProbabilityTheory(pt_rel) => pt_rel
+                .replace_at_path_recursive(path, replacement_expr)
+                .map(MathRelation::ProbabilityTheory),
             MathRelation::True | MathRelation::False => {
                 // Cannot replace sub-expressions in a leaf node.
                 Err(PathError::InvalidPath)

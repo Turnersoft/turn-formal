@@ -94,13 +94,7 @@ impl CollectSubExpressions for MathRelation {
                 path_r.push(2);
                 right.collect_sub_expressions_with_paths(path_r, collected_targets, depth + 1);
             }
-            MathRelation::Todo { expressions, .. } => {
-                for (i, expr) in expressions.iter().enumerate() {
-                    let mut path = current_path.clone();
-                    path.push(100 + i);
-                    expr.collect_sub_expressions_with_paths(path, collected_targets, depth + 1);
-                }
-            }
+
             MathRelation::Implies(premise, conclusion) => {
                 let mut path_p = current_path.clone();
                 path_p.push(1);
@@ -158,6 +152,11 @@ impl CollectSubExpressions for MathRelation {
                 let mut path = current_path.clone();
                 path.push(206);
                 ct_rel.collect_contained_expressions(path, collected_targets, depth + 1);
+            }
+            MathRelation::ProbabilityTheory(pt_rel) => {
+                let mut path = current_path.clone();
+                path.push(207);
+                pt_rel.collect_contained_expressions(path, collected_targets, depth + 1);
             }
             MathRelation::True | MathRelation::False => {
                 // Leaf nodes, no sub-expressions to collect.

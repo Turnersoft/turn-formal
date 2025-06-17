@@ -18,96 +18,53 @@ impl ToTurnMath for Field {
         match self {
             Field::Basic(_field_basic) => MathNode {
                 id: format!("{}-field-basic", master_id),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "𝔽".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                    "𝔽".to_string(),
+                ))),
             },
             Field::Finite(finite_field) => MathNode {
                 id: format!("{}-field-finite", master_id),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: format!("𝔽_{}", finite_field.order),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                    format!("𝔽_{}", finite_field.order),
+                ))),
             },
             Field::PAdicNumbers(p_adic) => MathNode {
                 id: format!("{}-field-padic", master_id),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: format!("ℚ_{}", p_adic.prime),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                    format!("ℚ_{}", p_adic.prime),
+                ))),
             },
             Field::Function(_func_field) => MathNode {
                 id: format!("{}-field-function", master_id),
                 content: Box::new(MathNodeContent::FunctionCall {
-                    name: Box::new(MathNode {
-                        id: format!("{}-field-function-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
-                            body: "K".to_string(),
-                            pre_script: None,
-                            mid_script: None,
-                            post_script: None,
-                            primes: 0,
-                            is_function: true,
-                        }),
-                    }),
+                    name: Box::new(MathNode::identifier(Identifier::new_simple(
+                        "K".to_string(),
+                    ))),
                     parameters: vec![MathNode {
                         id: format!("{}-field-function-var", master_id),
-                        content: Box::new(MathNodeContent::Identifier {
-                            body: "X".to_string(),
-                            pre_script: None,
-                            mid_script: None,
-                            post_script: None,
-                            primes: 0,
-                            is_function: false,
-                        }),
+                        content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                            "X".to_string(),
+                        ))),
                     }],
                 }),
             },
             Field::Topological(_topo_field) => MathNode {
                 id: format!("{}-field-topological", master_id),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "𝔽_top".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                    "𝔽_top".to_string(),
+                ))),
             },
             Field::Ordered(_ordered_field) => MathNode {
                 id: format!("{}-field-ordered", master_id),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "𝔽_ord".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                    "𝔽_ord".to_string(),
+                ))),
             },
             Field::AlgebraicClosure(_alg_closure) => MathNode {
                 id: format!("{}-field-algebraic-closure", master_id),
-                content: Box::new(MathNodeContent::Identifier {
-                    body: "𝔽̄".to_string(),
-                    pre_script: None,
-                    mid_script: None,
-                    post_script: None,
-                    primes: 0,
-                    is_function: false,
-                }),
+                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                    "𝔽̄".to_string(),
+                ))),
             },
         }
     }
@@ -142,14 +99,9 @@ impl ToTurnMath for FieldOperation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Identifier {
-                body: self.symbol.clone(),
-                pre_script: None,
-                mid_script: None,
-                post_script: None,
-                primes: 0,
-                is_function: false,
-            }),
+            content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                self.symbol.clone(),
+            ))),
         }
     }
 }

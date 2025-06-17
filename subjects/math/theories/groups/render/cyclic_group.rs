@@ -21,7 +21,9 @@ impl ToTurnMath for CyclicGroup {
         let final_content = if let Some(order) = self.order {
             // Use proper mathematical notation C_n with subscript for finite cyclic groups
             Box::new(MathNodeContent::Power {
-                base: Box::new(MathNode::identifier("C".to_string())),
+                base: Box::new(MathNode::identifier(Identifier::new_simple(
+                    "C".to_string(),
+                ))),
                 exponent: Box::new(MathNode {
                     id: format!("{}_order", master_id),
                     content: Box::new(MathNodeContent::Quantity {

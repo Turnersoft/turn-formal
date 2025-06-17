@@ -1,10 +1,12 @@
+use crate::turn_render::Identifier;
+
 use super::super::super::super::math::formalism::expressions::MathExpression;
+use super::super::super::super::math::formalism::expressions::TheoryExpression;
 use super::super::super::super::math::formalism::relations::RelationDetail;
 use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::groups::definitions::Group;
 use super::super::super::super::math::theories::zfc::Set;
 use serde::{Deserialize, Serialize};
-
 /// A ring (R,+,·) is a set R with two binary operations + and · satisfying:
 /// 1. (R,+) is an abelian group
 /// 2. (R,·) is associative
@@ -657,35 +659,13 @@ impl RingExpression {
 
     /// Convert MathExpression to RingExpression
     pub fn from_math_expression(expr: &MathExpression, ring: &Ring) -> Result<Self, String> {
-        use super::super::super::super::math::formalism::expressions::{
-            Identifier, TheoryExpression,
-        };
-
         match expr {
             MathExpression::Expression(TheoryExpression::Ring(ring_expr)) => {
                 // Direct conversion from ring expression
                 Ok(ring_expr.clone())
             }
             MathExpression::Var(var) => {
-                // Handle variables directly
-                match var {
-                    Identifier::O(id) => {
-                        if *id == 101 {
-                            // This is our special zero element
-                            Ok(RingExpression::Zero(Box::new(ring.clone())))
-                        } else if *id == 102 {
-                            // This is our special one element
-                            Ok(RingExpression::One(Box::new(ring.clone())))
-                        } else {
-                            // Other object variables become ring variables
-                            Ok(RingExpression::Variable {
-                                ring: Box::new(ring.clone()),
-                                name: format!("var_{}", id),
-                            })
-                        }
-                    }
-                    _ => Err(format!("Unsupported variable type: {:?}", var)),
-                }
+                todo!()
             }
             // Handle other expression types as needed...
             _ => {
@@ -889,10 +869,6 @@ impl FieldExpression {
 
     /// Convert MathExpression to FieldExpression
     pub fn from_math_expression(expr: &MathExpression, field: &Field) -> Result<Self, String> {
-        use super::super::super::super::math::formalism::expressions::{
-            Identifier, TheoryExpression,
-        };
-
         match expr {
             MathExpression::Expression(TheoryExpression::Field(field_expr)) => {
                 // Direct conversion from field expression
@@ -900,24 +876,7 @@ impl FieldExpression {
             }
             MathExpression::Var(var) => {
                 // Handle variables directly
-                match var {
-                    Identifier::E(id) => {
-                        if *id == 21 {
-                            // This is our special zero element
-                            Ok(FieldExpression::Zero(Box::new(field.clone())))
-                        } else if *id == 22 {
-                            // This is our special one element
-                            Ok(FieldExpression::One(Box::new(field.clone())))
-                        } else {
-                            // Other element variables become field variables
-                            Ok(FieldExpression::Variable {
-                                field: Box::new(field.clone()),
-                                name: format!("var_{}", id),
-                            })
-                        }
-                    }
-                    _ => Err(format!("Unsupported variable type: {:?}", var)),
-                }
+                todo!()
             }
             // Handle other expression types as needed...
             _ => {

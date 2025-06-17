@@ -1,6 +1,6 @@
 use std::num::NonZeroI16;
 
-use super::super::theorem::MathObject;
+use super::super::objects::MathObject;
 use super::super::{
     proof::{ProofForest, ProofNode},
     theorem::Theorem,
@@ -18,7 +18,6 @@ use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
 
 // Import the conversion trait
-use crate::subjects::math::formalism::render::expressions::ToStructuredFormat;
 
 use crate::turn_render::*;
 
@@ -52,14 +51,31 @@ impl ToSectionNode for ProofGoal {
                     Quantification::UniqueExistential => "There exists a unique",
                 };
 
-                let var_description = if let Some(desc) = &q.description {
-                    format!("• {} {} ({})", quantifier_word, q.variable, desc)
-                } else {
-                    format!("• {} {}", quantifier_word, q.variable)
-                };
+                // Create rich text segments directly instead of formatting to string
+                let mut segments = vec![
+                    RichTextSegment::Text("• ".to_string()),
+                    RichTextSegment::StyledText {
+                        text: quantifier_word.to_string(),
+                        styles: vec![TextStyle::Bold],
+                    },
+                    RichTextSegment::Text(" ".to_string()),
+                    RichTextSegment::Math(
+                        q.variable
+                            .to_turn_math(format!("{}-var-{}", id_prefix, quantifier_word)),
+                    ),
+                ];
+
+                // Add description if present
+                if let Some(desc) = &q.description {
+                    segments.extend_from_slice(&[
+                        RichTextSegment::Text(" (".to_string()),
+                        RichTextSegment::Text(desc.clone()),
+                        RichTextSegment::Text(")".to_string()),
+                    ]);
+                }
 
                 content.push(SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(var_description)],
+                    segments,
                     alignment: None,
                 }));
             }
@@ -183,12 +199,65 @@ impl ToSectionNode for Theorem {
                     SectionContentNode::StructuredMath(StructuredMathNode::TheoremLike {
                         kind: TheoremLikeKind::Theorem,
                         label: Some(self.id.clone()),
-                        statement: TheoremStatement::Content(vec![SectionContentNode::RichText(
-                            RichText {
-                                segments: vec![RichTextSegment::Text(self.description.clone())],
+                        statement: TheoremStatement::Content(vec![
+                            // Show the formal statement
+                            SectionContentNode::RichText(RichText {
+                                segments: vec![
+                                    RichTextSegment::StyledText {
+                                        text: "Statement: ".to_string(),
+                                        styles: vec![TextStyle::Bold],
+                                    },
+                                    RichTextSegment::Math(
+                                        self.proofs
+                                            .initial_goal
+                                            .statement
+                                            .to_turn_math("theorem-statement".to_string()),
+                                    ),
+                                ],
                                 alignment: None,
+                            }),
+                            // Show quantifiers if any
+                            if !self.proofs.initial_goal.quantifiers.is_empty() {
+                                SectionContentNode::RichText(RichText {
+                                    segments: vec![RichTextSegment::StyledText {
+                                        text: "Quantifiers: ".to_string(),
+                                        styles: vec![TextStyle::Bold],
+                                    }],
+                                    alignment: None,
+                                })
+                            } else {
+                                SectionContentNode::RichText(RichText {
+                                    segments: vec![],
+                                    alignment: None,
+                                })
                             },
-                        )]),
+                            // Show value variables if any
+                            if !self.proofs.initial_goal.value_variables.is_empty() {
+                                SectionContentNode::RichText(RichText {
+                                    segments: vec![RichTextSegment::StyledText {
+                                        text: "Variables: ".to_string(),
+                                        styles: vec![TextStyle::Bold],
+                                    }],
+                                    alignment: None,
+                                })
+                            } else {
+                                SectionContentNode::RichText(RichText {
+                                    segments: vec![],
+                                    alignment: None,
+                                })
+                            },
+                            // Show the description as commentary
+                            SectionContentNode::RichText(RichText {
+                                segments: vec![
+                                    RichTextSegment::StyledText {
+                                        text: "Description: ".to_string(),
+                                        styles: vec![TextStyle::Italic],
+                                    },
+                                    RichTextSegment::Text(self.description.clone()),
+                                ],
+                                alignment: None,
+                            }),
+                        ]),
                         proof: Some(self.proofs.to_proof_display()),
                         abstraction_meta: None,
                     }),

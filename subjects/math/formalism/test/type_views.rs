@@ -3,11 +3,12 @@
 
 use super::super::super::super::super::subjects::math::formalism::interpretation::TypeViewOperator;
 
-use super::super::super::formalism::expressions::{Identifier, MathExpression, TypeViewError};
-use super::super::super::formalism::theorem::MathObject;
+use super::super::super::formalism::expressions::{MathExpression, TypeViewError};
+use super::super::super::formalism::objects::MathObject;
 use super::super::super::theories::groups::definitions::{GenericGroup, Group};
 use super::super::super::theories::number_theory::definitions::Number;
 use super::super::super::theories::rings::definitions::{Field, Ring};
+use crate::turn_render::Identifier;
 
 /// Helper to create default Group
 fn default_group() -> Group {
@@ -106,7 +107,7 @@ fn test_basic_type_views() {
 
 #[test]
 fn test_variable_type_views() {
-    let var_expr = MathExpression::Var(Identifier::O(1)); // Object variable
+    let var_expr = MathExpression::Var(Identifier::new_simple("obj1".to_string())); // Object variable
 
     // Test viewing object variable as a group
     let group_view = var_expr.to_view(TypeViewOperator::AsGroup { operation: None });
@@ -123,7 +124,7 @@ fn test_variable_type_views() {
 
 #[test]
 fn test_custom_type_views() {
-    let var_expr = MathExpression::Var(Identifier::O(1)); // Object variable
+    let var_expr = MathExpression::Var(Identifier::new_simple("obj2".to_string())); // Object variable
 
     // Test viewing with custom type
     let custom_view = var_expr.to_view(TypeViewOperator::Custom {
@@ -144,7 +145,7 @@ fn test_custom_type_views() {
 
 #[test]
 fn test_predicate_type_views() {
-    let var_expr = MathExpression::Var(Identifier::O(1)); // Object variable
+    let var_expr = MathExpression::Var(Identifier::new_simple("obj3".to_string())); // Object variable
 
     // For this test, we'll use the Custom view operator since AsGeneric isn't available
     let failing_view = var_expr.to_view(TypeViewOperator::Custom {
@@ -176,7 +177,7 @@ fn test_predicate_type_views() {
 
 #[test]
 fn test_type_compatibility() {
-    let o_var = MathExpression::Var(Identifier::O(0)); // Object variable
+    let o_var = MathExpression::Var(Identifier::new_simple("obj0".to_string())); // Object variable
 
     // Check that we can view the same expression in multiple ways
     let as_group = o_var.to_view(TypeViewOperator::AsGroup { operation: None });

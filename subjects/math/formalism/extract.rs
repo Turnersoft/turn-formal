@@ -2,10 +2,9 @@ use std::any::Any;
 
 use serde::{Deserialize, Serialize};
 
-use super::{
-    expressions::{Identifier, MathExpression},
-    theorem::MathObject,
-};
+use crate::turn_render::Identifier;
+
+use super::{expressions::MathExpression, objects::MathObject};
 
 /// Generic wrapper to allow a field to hold either a concrete value
 /// or a reference to a variable defined in the context.
@@ -133,8 +132,8 @@ impl Extractable for MathObject {
 
 #[cfg(test)]
 mod tests {
-    use crate::subjects::math::theories::groups::definitions::Group;
     use crate::subjects::math::theories::groups::definitions::GenericGroup;
+    use crate::subjects::math::theories::groups::definitions::Group;
     use crate::subjects::math::theories::rings::definitions::Ring;
 
     use super::*;

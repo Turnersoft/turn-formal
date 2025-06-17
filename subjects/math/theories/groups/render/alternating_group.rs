@@ -11,7 +11,7 @@ impl ToTurnMath for AlternatingGroup {
         // Use proper mathematical notation A_n with subscript
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier {
+            content: Box::new(MathNodeContent::Identifier(Identifier {
                 body: "A".to_string(),
                 pre_script: None,
                 mid_script: None,
@@ -24,7 +24,7 @@ impl ToTurnMath for AlternatingGroup {
                 }),
                 primes: 0,
                 is_function: false,
-            }),
+            })),
         }
     }
 }
@@ -38,7 +38,7 @@ impl ToSectionNode for AlternatingGroup {
             RichTextSegment::Text("Alternating Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Identifier {
+                content: Box::new(MathNodeContent::Identifier(Identifier {
                     body: "A".to_string(),
                     pre_script: None,
                     mid_script: None,
@@ -51,7 +51,7 @@ impl ToSectionNode for AlternatingGroup {
                     }),
                     primes: 0,
                     is_function: false,
-                }),
+                })),
             }),
         ];
 

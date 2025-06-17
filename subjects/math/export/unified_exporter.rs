@@ -6,7 +6,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
-use crate::subjects::math::formalism::expressions::Identifier;
+
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::theorem::Theorem;
 use crate::subjects::math::theories::VariantSet;

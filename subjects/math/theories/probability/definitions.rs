@@ -1,6 +1,5 @@
-use crate::subjects::math::formalism::expressions::Identifier;
 use crate::subjects::math::formalism::extract::Parametrizable;
-use crate::subjects::math::formalism::{complexity::Complexity, theorem::MathObject};
+use crate::subjects::math::formalism::{complexity::Complexity, objects::MathObject};
 
 use super::super::super::formalism::expressions::{MathExpression, TheoryExpression};
 use super::super::super::formalism::relations::MathRelation;

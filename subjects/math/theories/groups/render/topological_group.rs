@@ -434,8 +434,8 @@ impl ToSectionNode for TopologicalGroup {
             metadata: vec![("type".to_string(), "TopologicalGroupDefinition".to_string())],
             display_options: None,
         }
+        }
     }
-}
 
 impl ToMathDocument for TopologicalGroup {
     fn to_math_document(&self, id_prefix: &str) -> MathDocument {
@@ -493,8 +493,8 @@ impl ToMathDocument for TopologicalGroup {
                 },
             }),
         }
+        }
     }
-}
 
 impl TopologicalGroup {
     pub fn to_tooltip_node(&self, id_prefix: &str) -> Vec<RichTextSegment> {
