@@ -226,9 +226,10 @@ impl ReplaceableAtPath for MathRelation {
             MathRelation::CategoryTheory(ct_rel) => ct_rel
                 .replace_at_path_recursive(path, replacement_expr)
                 .map(MathRelation::CategoryTheory),
-            MathRelation::ProbabilityTheory(pt_rel) => pt_rel
-                .replace_at_path_recursive(path, replacement_expr)
-                .map(MathRelation::ProbabilityTheory),
+            MathRelation::ProbabilityTheory(prob_rel) => {
+                // TODO: Implement for probability theory relations
+                todo!()
+            }
             MathRelation::True | MathRelation::False => {
                 // Cannot replace sub-expressions in a leaf node.
                 Err(PathError::InvalidPath)

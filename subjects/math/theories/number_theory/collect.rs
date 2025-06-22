@@ -14,26 +14,10 @@ impl NumberTheoryRelation {
             return;
         }
         match self {
-            NumberTheoryRelation::LessThan {
-                entity: _,
-                left,
-                right,
-            }
-            | NumberTheoryRelation::GreaterThan {
-                entity: _,
-                left,
-                right,
-            }
-            | NumberTheoryRelation::LessThanOrEqual {
-                entity: _,
-                left,
-                right,
-            }
-            | NumberTheoryRelation::GreaterThanOrEqual {
-                entity: _,
-                left,
-                right,
-            } => {
+            NumberTheoryRelation::LessThan { left, right }
+            | NumberTheoryRelation::GreaterThan { left, right }
+            | NumberTheoryRelation::LessThanOrEqual { left, right }
+            | NumberTheoryRelation::GreaterThanOrEqual { left, right } => {
                 let mut path_l = base_path.clone();
                 path_l.push(1);
                 left.collect_sub_expressions_with_paths(path_l, collected_targets, depth + 1);
@@ -41,11 +25,7 @@ impl NumberTheoryRelation {
                 path_r.push(2);
                 right.collect_sub_expressions_with_paths(path_r, collected_targets, depth + 1);
             }
-            NumberTheoryRelation::Divides {
-                entity: _,
-                divisor,
-                dividend,
-            } => {
+            NumberTheoryRelation::Divides { divisor, dividend } => {
                 let mut path_divisor = base_path.clone();
                 path_divisor.push(1); // divisor is field 1
                 divisor.collect_sub_expressions_with_paths(
@@ -62,7 +42,6 @@ impl NumberTheoryRelation {
                 );
             }
             NumberTheoryRelation::Congruent {
-                entity: _,
                 left,
                 right,
                 modulus,
@@ -77,8 +56,8 @@ impl NumberTheoryRelation {
                 path_m.push(3);
                 modulus.collect_sub_expressions_with_paths(path_m, collected_targets, depth + 1);
             }
-            NumberTheoryRelation::IsPrime { entity: _, number }
-            | NumberTheoryRelation::IsComposite { entity: _, number } => {
+            NumberTheoryRelation::IsPrime { number }
+            | NumberTheoryRelation::IsComposite { number } => {
                 let mut path_n = base_path.clone();
                 path_n.push(1);
                 number.collect_sub_expressions_with_paths(path_n, collected_targets, depth + 1);
@@ -103,127 +82,91 @@ impl ReplaceableAtPath for NumberTheoryRelation {
         let remaining_path = &path[1..];
 
         match self {
-            NumberTheoryRelation::LessThan {
-                entity,
-                left,
-                right,
-            } => match current_idx {
+            NumberTheoryRelation::LessThan { left, right } => match current_idx {
                 1 => Ok(NumberTheoryRelation::LessThan {
-                    entity,
                     left: left.replace_at_path(remaining_path, replacement)?,
                     right,
                 }),
                 2 => Ok(NumberTheoryRelation::LessThan {
-                    entity,
                     left,
                     right: right.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            NumberTheoryRelation::LessThanOrEqual {
-                entity,
-                left,
-                right,
-            } => match current_idx {
+            NumberTheoryRelation::LessThanOrEqual { left, right } => match current_idx {
                 1 => Ok(NumberTheoryRelation::LessThanOrEqual {
-                    entity,
                     left: left.replace_at_path(remaining_path, replacement)?,
                     right,
                 }),
                 2 => Ok(NumberTheoryRelation::LessThanOrEqual {
-                    entity,
                     left,
                     right: right.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            NumberTheoryRelation::GreaterThan {
-                entity,
-                left,
-                right,
-            } => match current_idx {
+            NumberTheoryRelation::GreaterThan { left, right } => match current_idx {
                 1 => Ok(NumberTheoryRelation::GreaterThan {
-                    entity,
                     left: left.replace_at_path(remaining_path, replacement)?,
                     right,
                 }),
                 2 => Ok(NumberTheoryRelation::GreaterThan {
-                    entity,
                     left,
                     right: right.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            NumberTheoryRelation::GreaterThanOrEqual {
-                entity,
-                left,
-                right,
-            } => match current_idx {
+            NumberTheoryRelation::GreaterThanOrEqual { left, right } => match current_idx {
                 1 => Ok(NumberTheoryRelation::GreaterThanOrEqual {
-                    entity,
                     left: left.replace_at_path(remaining_path, replacement)?,
                     right,
                 }),
                 2 => Ok(NumberTheoryRelation::GreaterThanOrEqual {
-                    entity,
                     left,
                     right: right.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            NumberTheoryRelation::Divides {
-                entity,
-                divisor,
-                dividend,
-            } => match current_idx {
+            NumberTheoryRelation::Divides { divisor, dividend } => match current_idx {
                 1 => Ok(NumberTheoryRelation::Divides {
-                    entity,
                     divisor: divisor.replace_at_path(remaining_path, replacement)?,
                     dividend,
                 }),
                 2 => Ok(NumberTheoryRelation::Divides {
-                    entity,
                     divisor,
                     dividend: dividend.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
             NumberTheoryRelation::Congruent {
-                entity,
                 left,
                 right,
                 modulus,
             } => match current_idx {
                 1 => Ok(NumberTheoryRelation::Congruent {
-                    entity,
                     left: left.replace_at_path(remaining_path, replacement)?,
                     right,
                     modulus,
                 }),
                 2 => Ok(NumberTheoryRelation::Congruent {
-                    entity,
                     left,
                     right: right.replace_at_path(remaining_path, replacement)?,
                     modulus,
                 }),
                 3 => Ok(NumberTheoryRelation::Congruent {
-                    entity,
                     left,
                     right,
                     modulus: modulus.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            NumberTheoryRelation::IsPrime { entity, number } => match current_idx {
+            NumberTheoryRelation::IsPrime { number } => match current_idx {
                 1 => Ok(NumberTheoryRelation::IsPrime {
-                    entity,
                     number: number.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),
             },
-            NumberTheoryRelation::IsComposite { entity, number } => match current_idx {
+            NumberTheoryRelation::IsComposite { number } => match current_idx {
                 1 => Ok(NumberTheoryRelation::IsComposite {
-                    entity,
                     number: number.replace_at_path(remaining_path, replacement)?,
                 }),
                 _ => Err(PathError::InvalidPath),

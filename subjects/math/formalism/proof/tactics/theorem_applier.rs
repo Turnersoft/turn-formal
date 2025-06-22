@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
-use super::TheoremRegistry;
 use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::proof::ProofGoal;
+use crate::subjects::math::formalism::proof::TheoremRegistry;
 use crate::subjects::math::formalism::relations::MathRelation;
 use crate::turn_render::Identifier;
 
-use super::super::{ProofNode, get_theorem_registry};
+use super::super::ProofNode;
 
 /// Error types for theorem application
 #[derive(Debug, Clone)]
@@ -113,7 +113,7 @@ impl<'a> TheoremApplier<'a> {
         state: &ProofGoal,
     ) -> Result<TheoremApplicationResult, TheoremApplicationError> {
         // Try to find the theorem in the registry
-        let theorem = match self.registry.get_theorem(theorem_id) {
+        let theorem = match self.registry.get(theorem_id) {
             Some(t) => t,
             None => {
                 return Err(TheoremApplicationError::TheoremNotFound(

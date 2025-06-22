@@ -243,38 +243,6 @@ impl Tactic {
                 verification_steps: vec![],
             },
 
-            Tactic::IntroduceQuantifier { object, position } => {
-                TacticDisplayNode::IntroduceQuantifier {
-                    object_description: RichText {
-                        segments: vec![RichTextSegment::Text(format!("{:?}", object))],
-                        alignment: None,
-                    },
-                    position: *position,
-                    before_state: None,
-                    after_state: None,
-                }
-            }
-
-            Tactic::IntroduceValueVariable { binding, position } => {
-                TacticDisplayNode::IntroduceValueVariable {
-                    variable_name: RichText {
-                        segments: vec![RichTextSegment::Math(
-                            binding.name.to_turn_math("variable-name".to_string()),
-                        )],
-                        alignment: None,
-                    },
-                    variable_value: binding.value.to_turn_math("variable-value".to_string()),
-                    binding_type: VariableBindingType::Let, // Default binding type
-                    context_explanation: RichText {
-                        segments: vec![RichTextSegment::Text(
-                            "Introduce value variable".to_string(),
-                        )],
-                        alignment: None,
-                    },
-                    position: *position,
-                }
-            }
-
             Tactic::Auto(auto_tactic) => TacticDisplayNode::Auto {
                 automated_tactic_type: AutomatedTacticDisplay::Auto {
                     search_tree: None,
@@ -319,76 +287,6 @@ impl Tactic {
                     segments: vec![RichTextSegment::Text("Cases are exhaustive".to_string())],
                     alignment: None,
                 }),
-            },
-
-            Tactic::SubstituteValueVariable { target_variable } => {
-                TacticDisplayNode::SubstituteValueVariable {
-                    target_variable: RichText {
-                        segments: vec![RichTextSegment::Text(format!("{:?}", target_variable))],
-                        alignment: None,
-                    },
-                    substitution_preview: SubstitutionPreview {
-                        before: MathNode {
-                            id: "before".to_string(),
-                            content: Box::new(MathNodeContent::Text("Before".to_string())),
-                        },
-                        after: MathNode {
-                            id: "after".to_string(),
-                            content: Box::new(MathNodeContent::Text(
-                                "After substitution".to_string(),
-                            )),
-                        },
-                        highlighted_changes: vec![],
-                    },
-                    justification: RichText {
-                        segments: vec![RichTextSegment::Text(
-                            "Substitute value variable".to_string(),
-                        )],
-                        alignment: None,
-                    },
-                }
-            }
-
-            Tactic::RewriteInValueBinding {
-                target_variable,
-                target_sub_expression,
-                replacement,
-                justification,
-            } => TacticDisplayNode::RewriteInValueBinding {
-                target_variable: RichText {
-                    segments: vec![RichTextSegment::Text(format!("{:?}", target_variable))],
-                    alignment: None,
-                },
-                target_subexpression: target_sub_expression.to_turn_math("target".to_string()),
-                replacement: replacement.to_turn_math("replacement".to_string()),
-                justification: vec![],
-                step_by_step: vec![],
-            },
-
-            Tactic::RemoveValueVariable { target_variable } => {
-                TacticDisplayNode::RemoveValueVariable {
-                    target_variable: RichText {
-                        segments: vec![RichTextSegment::Text(format!("{:?}", target_variable))],
-                        alignment: None,
-                    },
-                    reason: RichText {
-                        segments: vec![RichTextSegment::Text(
-                            "Variable no longer needed".to_string(),
-                        )],
-                        alignment: None,
-                    },
-                    cleanup_explanation: None,
-                }
-            }
-
-            Tactic::SplitConjunction { target, index } => TacticDisplayNode::SplitConjunction {
-                target_conjunction: MathNode {
-                    id: "conjunction".to_string(),
-                    content: Box::new(MathNodeContent::Text("A ∧ B".to_string())),
-                },
-                conjuncts: vec![],
-                selected_index: *index,
-                remaining_goals: vec![],
             },
 
             Tactic::SplitDisjunction { target, index } => TacticDisplayNode::SplitDisjunction {
@@ -476,6 +374,34 @@ impl Tactic {
                     alignment: None,
                 },
             },
+
+            Tactic::Introduce { entry, position } => TacticDisplayNode::Auto {
+                automated_tactic_type: AutomatedTacticDisplay::Auto {
+                    search_tree: None,
+                    successful_tactics: vec![],
+                    failed_attempts: vec![],
+                },
+                search_depth: Some(1),
+                tactics_attempted: vec![],
+                successful_path: None,
+                execution_summary: RichText {
+                    segments: vec![RichTextSegment::Text(format!(
+                        "Introduce {:?} into context",
+                        entry.name
+                    ))],
+                    alignment: None,
+                },
+            },
+
+            Tactic::SplitConjunction => TacticDisplayNode::SplitConjunction {
+                target_conjunction: MathNode {
+                    id: "conjunction".to_string(),
+                    content: Box::new(MathNodeContent::Text("A ∧ B".to_string())),
+                },
+                conjuncts: vec![],
+                selected_index: 0,
+                remaining_goals: vec![],
+            },
         }
     }
 
@@ -487,7 +413,8 @@ impl Tactic {
         target: &MathExpression,
         instantiation: &HashMap<String, MathExpression>,
     ) -> RewriteTransformationResult {
-        let registry = get_theorem_registry().lock().unwrap();
+        let binding = get_theorem_registry();
+        let registry_guard = binding.lock().unwrap();
 
         if theorem_id.starts_with("hyp_") {
             // For hypothesis equations, show the hypothesis being applied
@@ -521,7 +448,7 @@ impl Tactic {
             };
         }
 
-        if let Some(theorem) = registry.get_theorem(theorem_id) {
+        if let Some(theorem) = registry_guard.get(theorem_id) {
             if let crate::subjects::math::formalism::relations::MathRelation::Equal {
                 left,
                 right,

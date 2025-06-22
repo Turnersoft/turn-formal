@@ -30,48 +30,40 @@ use crate::subjects::math::formalism::proof::tactics::{
 
 impl ToSectionNode for ProofGoal {
     fn to_section_node(&self, id_prefix: &str) -> Section {
-        /// Create a comprehensive initial statement using generic methods
         let mut content = vec![];
 
-        // Add variable explanations if available
-        if !self.quantifiers.is_empty() {
+        // RENDER CONTEXT
+        if !self.context.is_empty() {
             content.push(SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::StyledText {
-                    text: "Variables: ".to_string(),
+                    text: "Context:".to_string(),
                     styles: vec![TextStyle::Bold],
                 }],
                 alignment: None,
             }));
 
-            // list out quantifier
-            for q in &self.quantifiers {
-                let quantifier_word = match q.quantification {
-                    Quantification::Universal => "For any",
-                    Quantification::Existential => "There exists",
-                    Quantification::UniqueExistential => "There exists a unique",
-                };
+            for entry in &self.context {
+                let mut segments = vec![RichTextSegment::Text("• ".to_string())];
 
-                // Create rich text segments directly instead of formatting to string
-                let mut segments = vec![
-                    RichTextSegment::Text("• ".to_string()),
-                    RichTextSegment::StyledText {
-                        text: quantifier_word.to_string(),
-                        styles: vec![TextStyle::Bold],
-                    },
-                    RichTextSegment::Text(" ".to_string()),
-                    RichTextSegment::Math(
-                        q.variable
-                            .to_turn_math(format!("{}-var-{}", id_prefix, quantifier_word)),
-                    ),
-                ];
+                // Render name
+                segments.push(RichTextSegment::StyledText {
+                    text: format!("{:?}: ", entry.name),
+                    styles: vec![TextStyle::Italic],
+                });
 
-                // Add description if present
-                if let Some(desc) = &q.description {
-                    segments.extend_from_slice(&[
-                        RichTextSegment::Text(" (".to_string()),
-                        RichTextSegment::Text(desc.clone()),
-                        RichTextSegment::Text(")".to_string()),
-                    ]);
+                // Render type
+                segments.push(RichTextSegment::Math(
+                    entry
+                        .ty
+                        .to_turn_math(format!("{}-type-{:?}", id_prefix, entry.name)),
+                ));
+
+                // Render definition if it exists
+                if let Some(def) = &entry.definition {
+                    segments.push(RichTextSegment::Text(" := ".to_string()));
+                    segments.push(RichTextSegment::Math(
+                        def.to_turn_math(format!("{}-def-{:?}", id_prefix, entry.name)),
+                    ));
                 }
 
                 content.push(SectionContentNode::RichText(RichText {
@@ -81,57 +73,86 @@ impl ToSectionNode for ProofGoal {
             }
         }
 
-        // list out value-variables
-        if !self.value_variables.is_empty() {
-            content.push(SectionContentNode::RichText(RichText {
-                segments: vec![RichTextSegment::StyledText {
-                    text: "Value Variables: ".to_string(),
-                    styles: vec![TextStyle::Bold],
-                }],
-                alignment: None,
-            }));
-
-            for v in &self.value_variables {
-                content.push(SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Math(MathNode {
-                        id: format!("{}-value-variable", id_prefix),
-                        content: Box::new(MathNodeContent::Relationship {
-                            lhs: Box::new(v.name.to_turn_math("".to_string())),
-                            rhs: Box::new(v.value.to_turn_math("".to_string())),
-                            operator: RelationOperatorNode::IsEqual,
+        // RENDER QUANTIFIERS
+        if !self.quantifiers.is_empty() {
+            // Create formal mathematical representation using MathNode
+            let quantifier_nodes: Vec<MathNode> = self
+                .quantifiers
+                .iter()
+                .map(|q| {
+                    MathNode {
+                        id: format!("{}-quantifier-{:?}", id_prefix, q.variable_name),
+                        content: Box::new(MathNodeContent::QuantifiedExpression {
+                            quantifier: match q.quantification {
+                                Quantification::Universal => QuantificationNode::Universal,
+                                Quantification::Existential => QuantificationNode::Existential,
+                                Quantification::UniqueExistential => {
+                                    QuantificationNode::UniqueExistential
+                                }
+                            },
+                            variables: vec![MathNode {
+                                id: format!("{}-var-{:?}", id_prefix, q.variable_name),
+                                content: Box::new(MathNodeContent::Identifier(
+                                    q.variable_name.clone(),
+                                )),
+                            }],
+                            domain: None, // Could be enhanced to show domain if available
+                            predicate: None, // Could be enhanced to show constraints if available
                         }),
-                    })],
+                    }
+                })
+                .collect();
+
+            // Add formal mathematical quantifier representation
+            // Since there's no Group variant, we'll add each quantifier separately
+            for quantifier_node in quantifier_nodes {
+                content.push(SectionContentNode::RichText(RichText {
+                    segments: vec![
+                        RichTextSegment::StyledText {
+                            text: "Quantifier: ".to_string(),
+                            styles: vec![TextStyle::Bold],
+                        },
+                        RichTextSegment::Math(quantifier_node),
+                    ],
                     alignment: None,
                 }));
             }
+
+            // Also provide informal text representation for accessibility
+            let quantifier_text = self
+                .quantifiers
+                .iter()
+                .map(|q| format!("{:?} {:?}", q.quantification, q.variable_name))
+                .collect::<Vec<_>>()
+                .join(", ");
+
+            content.push(SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::StyledText {
+                    text: format!("(In words: {})", quantifier_text),
+                    styles: vec![TextStyle::Italic],
+                }],
+                alignment: None,
+            }));
         }
-        // Add theorem statement using structured types
+
+        // RENDER STATEMENT
         content.push(SectionContentNode::RichText(RichText {
             segments: vec![
                 RichTextSegment::StyledText {
-                    text: "Formal Statement: ".to_string(),
-                    styles: vec![TextStyle::Bold],
-                },
-                RichTextSegment::Math(self.statement.to_turn_math("".to_string())),
+                    text: "⊢ ".to_string(),
+                    styles: vec![],
+                }, // Turnstile symbol for "proves"
+                RichTextSegment::Math(self.statement.to_turn_math(format!("{}-stmt", id_prefix))),
             ],
             alignment: None,
         }));
 
-        // // Add informal description
-        // let informal_desc = self.create_generic_informal_description();
-        // if !informal_desc.is_empty() {
-        //     content.push(SectionContentNode::RichText(RichText {
-        //         segments: vec![RichTextSegment::StyledText {
-        //             text: format!("Informal Description: {}", informal_desc),
-        //             styles: vec![TextStyle::Italic],
-        //         }],
-        //         alignment: None,
-        //     }));
-        // }
-
         Section {
             id: format!("{}-statement", id_prefix),
-            title: None,
+            title: Some(RichText {
+                segments: vec![RichTextSegment::Text("Proof Goal".to_string())],
+                alignment: None,
+            }),
             content,
             metadata: vec![],
             display_options: None,
@@ -232,19 +253,29 @@ impl ToSectionNode for Theorem {
                                 })
                             },
                             // Show value variables if any
-                            if !self.proofs.initial_goal.value_variables.is_empty() {
-                                SectionContentNode::RichText(RichText {
-                                    segments: vec![RichTextSegment::StyledText {
-                                        text: "Variables: ".to_string(),
-                                        styles: vec![TextStyle::Bold],
-                                    }],
-                                    alignment: None,
-                                })
-                            } else {
-                                SectionContentNode::RichText(RichText {
-                                    segments: vec![],
-                                    alignment: None,
-                                })
+                            {
+                                let variable_assumptions: Vec<_> = self
+                                    .proofs
+                                    .initial_goal
+                                    .context
+                                    .iter()
+                                    .filter(|entry| entry.definition.is_none())
+                                    .collect();
+
+                                if !variable_assumptions.is_empty() {
+                                    SectionContentNode::RichText(RichText {
+                                        segments: vec![RichTextSegment::StyledText {
+                                            text: "Variables: ".to_string(),
+                                            styles: vec![TextStyle::Bold],
+                                        }],
+                                        alignment: None,
+                                    })
+                                } else {
+                                    SectionContentNode::RichText(RichText {
+                                        segments: vec![],
+                                        alignment: None,
+                                    })
+                                }
                             },
                             // Show the description as commentary
                             SectionContentNode::RichText(RichText {
@@ -326,5 +357,19 @@ impl ToMathDocument for Theorem {
                 },
             }),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::subjects::math::theories::theorems::prove_inverse_uniqueness;
+
+    use super::*;
+
+    #[test]
+    fn test_theorem_to_math_document() {
+        let theorem = prove_inverse_uniqueness();
+        let math_document = theorem.to_math_document("test_id");
+        println!("{:?}", math_document);
     }
 }

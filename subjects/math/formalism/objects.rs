@@ -33,22 +33,6 @@ pub enum MathObject {
 
     // Analysis objects
     Function(Function),
-
-    // Basic number types
-    Integer,
-    Rational,
-    Irrational,
-    Real,
-    Complex,
-
-    // General types
-    Element(Box<MathObject>),                   // Element of a given type
-    Morphism(Box<MathObject>, Box<MathObject>), // Morphism between types
-
-    // Type constructors
-    Product(Vec<MathObject>),
-    Coproduct(Vec<MathObject>),
-
     // Other
     // The standard way to address this in systems aiming for
     // HOL/HoTT compatibility is not typically by changing
@@ -57,5 +41,5 @@ pub enum MathObject {
     // Prop,
     // Type(UnverseLevel),
     // FunctionType(FunctionType),
-    Todo(String),
+    // Todo(String),
 }

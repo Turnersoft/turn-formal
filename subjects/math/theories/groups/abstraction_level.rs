@@ -216,7 +216,10 @@ impl GetAbstractionLevel for GroupExpression {
         match self {
             GroupExpression::Element { group, element } => {
                 let gl = group.level();
-                let el = element.level();
+                let el = match element {
+                    Some(param_element) => param_element.level(),
+                    None => AbstractionLevel::Level1, // Unknown element treated as abstract
+                };
                 if gl == AbstractionLevel::Level4 && el == AbstractionLevel::Level4 {
                     AbstractionLevel::Level4
                 } else if gl == AbstractionLevel::Level1 || el == AbstractionLevel::Level1 {

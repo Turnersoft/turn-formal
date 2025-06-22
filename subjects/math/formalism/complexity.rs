@@ -48,10 +48,12 @@ impl Complexity for MathObject {
             MathObject::Group(g) => g.complexity(), // Assuming Group implements Complexity
             MathObject::Ring(r) => 1,               // Placeholder
             MathObject::Field(f) => 1,              // Placeholder
-            MathObject::Element(mo) => 1 + mo.complexity(),
-            MathObject::Integer => 1,
-            MathObject::Todo(_) => 1,
-            _ => 2, // Default for other MathObject variants
+            MathObject::Module(m) => 1,             // Placeholder
+            MathObject::Algebra(a) => 1,            // Placeholder
+            MathObject::TopologicalSpace(ts) => 1,  // Placeholder
+            MathObject::VectorSpace(vs) => 1,       // Placeholder
+            MathObject::Set(s) => 1,                // Placeholder
+            MathObject::Function(f) => 1,           // Placeholder
         }
     }
 }
@@ -109,6 +111,7 @@ impl Complexity for MathRelation {
             MathRelation::TopologyTheory(_) => 1,
             MathRelation::CategoryTheory(_) => 1,
             MathRelation::ProbabilityTheory(_) => 1,
+            _ => 1,
         }
     }
 }

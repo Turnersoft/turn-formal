@@ -3,6 +3,7 @@ use super::super::formalism::objects::MathObject;
 use super::super::theories::groups::definitions::Group;
 use super::super::theories::rings::Ring;
 use super::super::theories::rings::definitions::Field;
+use super::super::theories::zfc::Set;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -302,8 +303,8 @@ impl TypeViewOperator {
     pub fn simple_view(type_name: &str) -> Self {
         TypeViewOperator::Custom {
             name: format!("As{}", type_name),
-            source_type: MathObject::Real, // Default source type
-            target_type: MathObject::Todo(type_name.to_string()),
+            source_type: MathObject::Set(Set::empty()), // Default source type
+            target_type: MathObject::Set(Set::empty()),
             parameters: Vec::new(),
         }
     }

@@ -5,11 +5,7 @@ use super::NumberTheoryRelation;
 impl ToTurnMath for NumberTheoryRelation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            NumberTheoryRelation::LessThan {
-                entity,
-                left,
-                right,
-            } => MathNode {
+            NumberTheoryRelation::LessThan { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(left.to_turn_math(format!("{}:lhs", master_id))),
@@ -17,11 +13,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     operator: RelationOperatorNode::Less,
                 }),
             },
-            NumberTheoryRelation::LessThanOrEqual {
-                entity,
-                left,
-                right,
-            } => MathNode {
+            NumberTheoryRelation::LessThanOrEqual { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(left.to_turn_math(format!("{}:lhs", master_id))),
@@ -29,11 +21,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     operator: RelationOperatorNode::LessEqual,
                 }),
             },
-            NumberTheoryRelation::GreaterThan {
-                entity,
-                left,
-                right,
-            } => MathNode {
+            NumberTheoryRelation::GreaterThan { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(left.to_turn_math(format!("{}:lhs", master_id))),
@@ -41,11 +29,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     operator: RelationOperatorNode::Greater,
                 }),
             },
-            NumberTheoryRelation::GreaterThanOrEqual {
-                entity,
-                left,
-                right,
-            } => MathNode {
+            NumberTheoryRelation::GreaterThanOrEqual { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(left.to_turn_math(format!("{}:lhs", master_id))),
@@ -53,11 +37,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     operator: RelationOperatorNode::GreaterEqual,
                 }),
             },
-            NumberTheoryRelation::Divides {
-                entity,
-                divisor,
-                dividend,
-            } => MathNode {
+            NumberTheoryRelation::Divides { divisor, dividend } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(divisor.to_turn_math(format!("{}:divisor", master_id))),
@@ -66,7 +46,6 @@ impl ToTurnMath for NumberTheoryRelation {
                 }),
             },
             NumberTheoryRelation::Congruent {
-                entity,
                 left,
                 right,
                 modulus,
@@ -99,25 +78,21 @@ impl ToTurnMath for NumberTheoryRelation {
                     }),
                 }
             }
-            NumberTheoryRelation::IsPrime { entity, number } => MathNode {
+            NumberTheoryRelation::IsPrime { number } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::UnaryRelationship {
                     subject: Box::new(number.to_turn_math(format!("{}:number", master_id))),
                     predicate: UnaryRelationOperatorNode::IsPrime,
                 }),
             },
-            NumberTheoryRelation::IsComposite { entity, number } => MathNode {
+            NumberTheoryRelation::IsComposite { number } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::UnaryRelationship {
                     subject: Box::new(number.to_turn_math(format!("{}:number", master_id))),
                     predicate: UnaryRelationOperatorNode::IsComposite,
                 }),
             },
-            NumberTheoryRelation::AreCoprime {
-                entity,
-                first,
-                second,
-            } => MathNode {
+            NumberTheoryRelation::AreCoprime { first, second } => MathNode {
                 id: master_id.clone(),
                 content: Box::new(MathNodeContent::Relationship {
                     lhs: Box::new(first.to_turn_math(format!("{}:first", master_id))),
@@ -125,11 +100,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     operator: RelationOperatorNode::AreCoprime,
                 }),
             },
-            NumberTheoryRelation::IsQuadraticResidue {
-                entity,
-                residue,
-                modulus,
-            } => {
+            NumberTheoryRelation::IsQuadraticResidue { residue, modulus } => {
                 // This is a custom relation with specific parameters
                 // We can use a binary relation: residue is QR mod modulus
                 let math_text = format!("QR(mod {:?})", modulus);
@@ -146,11 +117,7 @@ impl ToTurnMath for NumberTheoryRelation {
                     }),
                 }
             }
-            NumberTheoryRelation::Custom {
-                entity,
-                name,
-                parameters,
-            } => {
+            NumberTheoryRelation::Custom { name, parameters } => {
                 if parameters.len() == 1 {
                     // Unary relation
                     MathNode {

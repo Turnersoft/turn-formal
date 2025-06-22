@@ -166,159 +166,6 @@ impl Default for GroupOperation {
     }
 }
 
-// /// Provides the conceptual axioms for a group.
-// /// These are not stored on the instance but define the concept of a group.
-// pub fn get_group_axioms() -> HashMap<String, MathRelation> {
-//     let mut axioms = HashMap::new();
-//     let group_param = Parametrizable::Variable(Identifier::Name("G".to_string(), 0));
-
-//     let a_var = Parametrizable::Variable(Identifier::Name("a".to_string(), 0));
-//     let b_var = Parametrizable::Variable(Identifier::Name("b".to_string(), 0));
-//     let c_var = Parametrizable::Variable(Identifier::Name("c".to_string(), 0));
-
-//     let a_elem = GroupExpression::Element {
-//         group: group_param.clone(),
-//         element: a_var.clone(),
-//     };
-//     let b_elem = GroupExpression::Element {
-//         group: group_param.clone(),
-//         element: b_var.clone(),
-//     };
-//     let c_elem = GroupExpression::Element {
-//         group: group_param.clone(),
-//         element: c_var.clone(),
-//     };
-
-//     // Associativity: (a * b) * c = a * (b * c)
-//     let ab_op = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//         right: Box::new(Parametrizable::Concrete(b_elem.clone())),
-//     };
-//     let assoc_lhs = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(ab_op)),
-//         right: Box::new(Parametrizable::Concrete(c_elem.clone())),
-//     };
-
-//     let bc_op = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(b_elem.clone())),
-//         right: Box::new(Parametrizable::Concrete(c_elem.clone())),
-//     };
-//     let assoc_rhs = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//         right: Box::new(Parametrizable::Concrete(bc_op)),
-//     };
-
-//     axioms.insert(
-//         "associativity".to_string(),
-//         MathRelation::Equal {
-//             meta: RelationDetail {
-//                 expressions: vec![],
-//                 metadata: HashMap::new(),
-//                 description: Some("Group associativity axiom".to_string()),
-//                 is_reflexive: false,
-//                 is_symmetric: false,
-//             },
-//             left: MathExpression::Expression(TheoryExpression::Group(assoc_lhs)),
-//             right: MathExpression::Expression(TheoryExpression::Group(assoc_rhs)),
-//         },
-//     );
-
-//     // Identity: e * a = a and a * e = a
-//     let e_elem = GroupExpression::Identity(group_param.clone());
-
-//     let ea_op = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(e_elem.clone())),
-//         right: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//     };
-//     axioms.insert(
-//         "identity_left".to_string(),
-//         MathRelation::Equal {
-//             meta: RelationDetail {
-//                 expressions: vec![],
-//                 metadata: HashMap::new(),
-//                 description: Some("Left identity axiom".to_string()),
-//                 is_reflexive: false,
-//                 is_symmetric: false,
-//             },
-//             left: MathExpression::Expression(TheoryExpression::Group(ea_op)),
-//             right: MathExpression::Expression(TheoryExpression::Group(a_elem.clone())),
-//         },
-//     );
-
-//     let ae_op = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//         right: Box::new(Parametrizable::Concrete(e_elem.clone())),
-//     };
-//     axioms.insert(
-//         "identity_right".to_string(),
-//         MathRelation::Equal {
-//             meta: RelationDetail {
-//                 expressions: vec![],
-//                 metadata: HashMap::new(),
-//                 description: Some("Right identity axiom".to_string()),
-//                 is_reflexive: false,
-//                 is_symmetric: false,
-//             },
-//             left: MathExpression::Expression(TheoryExpression::Group(ae_op)),
-//             right: MathExpression::Expression(TheoryExpression::Group(a_elem.clone())),
-//         },
-//     );
-
-//     // Inverse: a * a⁻¹ = e and a⁻¹ * a = e
-//     let a_inv = GroupExpression::Inverse {
-//         group: group_param.clone(),
-//         element: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//     };
-
-//     let a_inv_a = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(a_inv.clone())),
-//         right: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//     };
-//     axioms.insert(
-//         "inverse_left".to_string(),
-//         MathRelation::Equal {
-//             meta: RelationDetail {
-//                 expressions: vec![],
-//                 metadata: HashMap::new(),
-//                 description: Some("Left inverse axiom".to_string()),
-//                 is_reflexive: false,
-//                 is_symmetric: false,
-//             },
-//             left: MathExpression::Expression(TheoryExpression::Group(a_inv_a)),
-//             right: MathExpression::Expression(TheoryExpression::Group(e_elem.clone())),
-//         },
-//     );
-
-//     let a_a_inv = GroupExpression::Operation {
-//         group: group_param.clone(),
-//         left: Box::new(Parametrizable::Concrete(a_elem.clone())),
-//         right: Box::new(Parametrizable::Concrete(a_inv.clone())),
-//     };
-//     axioms.insert(
-//         "inverse_right".to_string(),
-//         MathRelation::Equal {
-//             meta: RelationDetail {
-//                 expressions: vec![],
-//                 metadata: HashMap::new(),
-//                 description: Some("Right inverse axiom".to_string()),
-//                 is_reflexive: false,
-//                 is_symmetric: false,
-//             },
-//             left: MathExpression::Expression(TheoryExpression::Group(a_a_inv)),
-//             right: MathExpression::Expression(TheoryExpression::Group(e_elem.clone())),
-//         },
-//     );
-
-//     axioms
-// }
-
 /// Information about product operations
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ProductInfo {
@@ -1033,10 +880,11 @@ impl GroupRelation {
 // Modify the GroupExpression enum to include a ProductOperation
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum GroupExpression {
-    /// A concrete element in a group
+    /// A concrete element in a group, this is different to GroupRelation::ElementOf,
+    /// becuase it is checked by default, not something to be proven
     Element {
-        group: Parametrizable<Group>,          // Group can be variable
-        element: Parametrizable<GroupElement>, // Element can be variable
+        group: Parametrizable<Group>,                  // Group can be variable
+        element: Option<Parametrizable<GroupElement>>, // Element can be variable
     },
     /// The identity element of a group
     Identity(Parametrizable<Group>), // Group can be variable
@@ -1284,15 +1132,8 @@ impl GroupRelation {
                 group: Parametrizable::Concrete(group.clone()),
             }));
 
-        let num_entity = super::super::number_theory::definitions::NumberTheoryRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
-
         MathRelation::NumberTheory(
             super::super::number_theory::definitions::NumberTheoryRelation::Divides {
-                entity: num_entity,
                 divisor: concrete_prime,
                 dividend: group_order_expr,
             },
@@ -2171,7 +2012,15 @@ impl GroupExpression {
                     group: g2,
                     element: e2,
                 },
-            ) => g1.matches_pattern_param(g2) && e1.matches_pattern_param(e2),
+            ) => {
+                let groups_match = g1.matches_pattern_param(g2);
+                let elements_match = match (e1, e2) {
+                    (Some(param1), Some(param2)) => param1.matches_pattern_param(param2),
+                    (None, None) => true, // Both are None - they match
+                    _ => false,           // One is Some, the other is None - they don't match
+                };
+                groups_match && elements_match
+            }
             (GroupExpression::Identity(g1), GroupExpression::Identity(g2)) => {
                 g1.matches_pattern_param(g2)
             }

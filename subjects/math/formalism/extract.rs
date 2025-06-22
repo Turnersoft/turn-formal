@@ -115,17 +115,6 @@ impl Extractable for MathObject {
             MathObject::VectorSpace(vs) => extract_as!(vs, T),
             MathObject::Set(s) => extract_as!(s, T),
             MathObject::Function(func) => extract_as!(func, T),
-            MathObject::Element(inner_obj) => inner_obj.extract::<T>(),
-            MathObject::Morphism(dom, cod) => dom.extract::<T>().or_else(|| cod.extract::<T>()),
-            MathObject::Product(objs) | MathObject::Coproduct(objs) => {
-                objs.iter().find_map(|o| o.extract::<T>())
-            }
-            MathObject::Integer
-            | MathObject::Rational
-            | MathObject::Irrational
-            | MathObject::Real
-            | MathObject::Complex
-            | MathObject::Todo(_) => None,
         }
     }
 }

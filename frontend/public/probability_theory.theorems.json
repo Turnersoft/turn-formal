@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1750176773",
+  "exported_at": "1750523460",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -40,7 +40,7 @@
                   "RichText": {
                     "segments": [
                       {
-                        "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
+                        "Text": "For independent identically distributed random variables with finite variance, the sample mean converges in probability to the population mean."
                       }
                     ],
                     "alignment": null
@@ -145,7 +145,7 @@
                                     }
                                   },
                                   {
-                                    "Text": "For independent identically distributed random variables with finite expectation, the sample mean converges in probability to the population mean."
+                                    "Text": "For independent identically distributed random variables with finite variance, the sample mean converges in probability to the population mean."
                                   }
                                 ],
                                 "alignment": null

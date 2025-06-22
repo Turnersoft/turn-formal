@@ -14,7 +14,7 @@ use crate::subjects::math::formalism::proof::ProofGoal;
 
 use super::expressions::{MathExpression, TheoryExpression};
 use super::proof::tactics::Tactic;
-use super::proof::{ProofForest, ProofNode, ProofStatus};
+use super::proof::{NodeRole, ProofForest, ProofNode, ProofStatus};
 use super::relations::MathRelation;
 use crate::turn_render::ToProofDisplay;
 use crate::turn_render::{
@@ -42,9 +42,11 @@ impl Theorem {
     /// Register this theorem in the global registry
     pub fn register_self(&self) {
         println!("Registering theorem: {}", self.name);
-        let registry =
-            super::super::super::super::subjects::math::formalism::proof::get_theorem_registry();
-        registry.lock().unwrap().register(self.clone());
+        let registry = super::proof::get_theorem_registry();
+        registry
+            .lock()
+            .unwrap()
+            .register(self.id.clone(), self.clone());
     }
 
     pub fn get_all_nodes_in_tree(&self, root_id: &str) -> Vec<&ProofNode> {
@@ -69,14 +71,17 @@ impl Theorem {
     }
 
     pub fn get_all_goals(&self) -> Vec<&ProofGoal> {
-        self.proofs.node_values().map(|node| &node.state).collect()
+        self.proofs
+            .node_values()
+            .filter_map(|node| match &node.role {
+                NodeRole::Goal(goal) => Some(goal),
+                _ => None,
+            })
+            .collect()
     }
 
     pub fn get_all_tactics(&self) -> Vec<&Tactic> {
-        self.proofs
-            .node_values()
-            .filter_map(|node| node.tactic.as_ref())
-            .collect()
+        self.proofs.node_values().map(|node| &node.tactic).collect()
     }
 
     /// A theorem is proven if all its proof branches are complete.

@@ -16,6 +16,10 @@ use super::super::theories::rings::definitions::RingRelation;
 use super::super::theories::topology::definitions::TopologyRelation;
 use super::super::theories::zfc::definitions::SetRelation;
 
+use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::theories::groups::definitions::{Group, GroupExpression};
+use crate::turn_render::Identifier;
+
 /// Quantification of a mathematical object
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Quantification {

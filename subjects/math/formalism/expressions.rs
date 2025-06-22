@@ -127,6 +127,10 @@ impl MathExpression {
         MathExpression::Var(Identifier::new_simple(name.to_string()))
     }
 
+    pub fn is_variable(&self) -> bool {
+        matches!(self, MathExpression::Var(_))
+    }
+
     /// Apply a type view to this expression
     pub fn with_view(self, view: TypeViewOperator) -> Self {
         MathExpression::ViewAs {
@@ -175,6 +179,14 @@ impl MathExpression {
             MathExpression::Var(id) => Some(id.clone()),
             _ => None,
         }
+    }
+
+    /// A placeholder for a real type inference engine.
+    /// In a real system, this would analyze the expression to deduce its mathematical type.
+    pub fn infer_type_or_placeholder(&self) -> MathExpression {
+        // For now, return a placeholder using a simple variable type.
+        // This allows the `with_definition` builder to work without a full type system.
+        MathExpression::Var(Identifier::new_simple("Type".to_string()))
     }
 
     /// Check if this expression is a variable with the given name

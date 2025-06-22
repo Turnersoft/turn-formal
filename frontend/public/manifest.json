@@ -49,17 +49,9 @@
             "group_theory.def.pullback_group.pullback-doc",
             "group_theory.def.restriction_group.restriction-doc"
           ]
-        },
-        {
-          "file_path": "group_theory.theorems.json",
-          "content_type": "theorems",
-          "item_count": 1,
-          "items": [
-            "group_theory.inverse_uniqueness-doc"
-          ]
         }
       ],
-      "item_count": 33
+      "item_count": 32
     },
     {
       "theory_id": "probability_theory",
@@ -107,7 +99,7 @@
       "item_count": 17
     }
   ],
-  "total_items": 50,
-  "generated_at": "1750176773",
+  "total_items": 49,
+  "generated_at": "1750523460",
   "version": "1.0.0"
 }

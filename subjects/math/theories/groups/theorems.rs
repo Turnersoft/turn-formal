@@ -8,8 +8,8 @@ use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::objects::MathObject;
 use crate::subjects::math::formalism::proof::tactics::{AutomatedTactic, RewriteDirection, Tactic};
 use crate::subjects::math::formalism::proof::{
-    ProofForest, ProofGoal, ProofNode, ProofStatus, QuantifiedMathObject, TheoremRegistry,
-    ValueBindedVariable,
+    ContextEntry, ProofForest, ProofGoal, ProofNode, ProofStatus, QuantifiedMathObject, Quantifier,
+    TheoremRegistry, ValueBindedVariable,
 };
 use crate::subjects::math::formalism::relations::{MathRelation, Quantification, RelationDetail};
 use crate::subjects::math::formalism::theorem::Theorem;
@@ -60,8 +60,8 @@ pub fn register_basic_group_axioms() {
     };
 
     let identity_left_goal = ProofGoal {
-        quantifiers: Vec::new(),
-        value_variables: Vec::new(),
+        context: vec![],
+        quantifiers: vec![],
         statement: identity_left_relation,
     };
 
@@ -105,8 +105,8 @@ pub fn register_basic_group_axioms() {
     };
 
     let inverse_goal = ProofGoal {
-        quantifiers: Vec::new(),
-        value_variables: Vec::new(),
+        context: vec![],
+        quantifiers: vec![],
         statement: inverse_relation,
     };
 
@@ -172,8 +172,8 @@ pub fn register_basic_group_axioms() {
     };
 
     let associativity_goal = ProofGoal {
-        quantifiers: Vec::new(),
-        value_variables: Vec::new(),
+        context: vec![],
+        quantifiers: vec![],
         statement: associativity_relation,
     };
 
@@ -190,9 +190,11 @@ pub fn register_basic_group_axioms() {
 
 /// Prove the theorem that in a group, inverses are unique
 pub fn prove_inverse_uniqueness() -> Theorem {
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
-
     let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
+
     let g_id = Identifier::new_simple("g".to_string());
     let h1_id = Identifier::new_simple("h1".to_string());
     let h2_id = Identifier::new_simple("h2".to_string());
@@ -240,34 +242,69 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     let goal_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion));
 
     let goal = ProofGoal {
-        quantifiers: vec![
-            QuantifiedMathObject {
-                quantification: Quantification::Universal,
-                variable: g_id.clone(),
-                object_type: MathObject::Element(Box::new(MathObject::Group(group.clone()))),
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: group_id.clone(),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
+            },
+            ContextEntry {
+                name: g_id.clone(),
+                ty: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
+                    group: Parametrizable::Variable(group_id.clone()),
+                    element: None,
+                })),
+                definition: None,
                 description: Some("g ranges over all elements of group G".to_string()),
             },
-            QuantifiedMathObject {
-                quantification: Quantification::Universal,
-                variable: h1_id.clone(),
-                object_type: MathObject::Element(Box::new(MathObject::Group(group.clone()))),
+            ContextEntry {
+                name: h1_id.clone(),
+                ty: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
+                    group: Parametrizable::Variable(group_id.clone()),
+                    element: None,
+                })),
+                definition: None,
                 description: Some("h1 ranges over all elements of group G".to_string()),
             },
-            QuantifiedMathObject {
-                quantification: Quantification::Universal,
-                variable: h2_id.clone(),
-                object_type: MathObject::Element(Box::new(MathObject::Group(group.clone()))),
+            ContextEntry {
+                name: h2_id.clone(),
+                ty: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
+                    group: Parametrizable::Variable(group_id.clone()),
+                    element: None,
+                })),
+                definition: None,
                 description: Some("h2 ranges over all elements of group G".to_string()),
             },
+            // Add the identity element as a definition
+            ContextEntry {
+                name: Identifier::new_simple("e".to_string()),
+                ty: MathExpression::Expression(TheoryExpression::Group(GroupExpression::Identity(
+                    Parametrizable::Variable(group_id.clone()),
+                ))),
+                definition: Some(identity_expr.clone()),
+                description: Some("Identity element of the group".to_string()),
+            },
         ],
-        value_variables: vec![ValueBindedVariable {
-            name: Identifier::new_simple("e".to_string()),
-            value: identity_expr.clone(),
-        }],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: g_id.clone(),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: h1_id.clone(),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: h2_id.clone(),
+                quantification: Quantification::Universal,
+            },
+        ],
         statement: goal_statement,
     };
 
-    let mut proofs = ProofForest::new_from_goal(goal.clone());
+    let mut proofs = ProofForest::new_from_goal(goal);
 
     let root_node = proofs
         .apply_initial_tactic(Tactic::AssumeImplicationAntecedent {
@@ -276,25 +313,29 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         .clone();
 
     let p1_node = {
-        let tactic = Tactic::IntroduceValueVariable {
-            binding: ValueBindedVariable {
+        let tactic = Tactic::Introduce {
+            entry: ContextEntry {
                 name: Identifier::new_simple("hyp_gh1_eq_e".to_string()),
-                value: MathExpression::Relation(Box::new(premise_conjunct1)),
+                ty: MathExpression::Relation(Box::new(premise_conjunct1.clone())),
+                definition: None,
+                description: Some("Hypothesis: g * h1 = e".to_string()),
             },
             position: None,
         };
-        root_node.apply_tactic(tactic, &mut proofs)
+        root_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p2_node = {
-        let tactic = Tactic::IntroduceValueVariable {
-            binding: ValueBindedVariable {
+        let tactic = Tactic::Introduce {
+            entry: ContextEntry {
                 name: Identifier::new_simple("hyp_gh2_eq_e".to_string()),
-                value: MathExpression::Relation(Box::new(premise_conjunct2)),
+                ty: MathExpression::Relation(Box::new(premise_conjunct2.clone())),
+                definition: None,
+                description: Some("Hypothesis: g * h2 = e".to_string()),
             },
             position: None,
         };
-        p1_node.apply_tactic(tactic, &mut proofs)
+        p1_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p3_node = {
@@ -304,7 +345,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             instantiation: [("x".to_string(), h1_var.clone())].into(),
             direction: RewriteDirection::RightToLeft,
         };
-        p2_node.apply_tactic(tactic, &mut proofs)
+        p2_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p4_node = {
@@ -314,7 +355,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             instantiation: [("x".to_string(), g_var.clone())].into(),
             direction: RewriteDirection::RightToLeft,
         };
-        p3_node.apply_tactic(tactic, &mut proofs)
+        p3_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p5_node = {
@@ -323,12 +364,12 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                 group: group_param.clone(),
                 element: Box::new(Parametrizable::Variable(g_id.clone())),
             }));
-        let target_expr = if let MathRelation::Equal { left, .. } = p4_node.state.statement.clone()
-        {
-            left
-        } else {
-            panic!("Expected an equality relation");
-        };
+        let target_expr =
+            if let MathRelation::Equal { left, .. } = p4_node.get_goal().statement.clone() {
+                left
+            } else {
+                panic!("Expected an equality relation");
+            };
         let tactic = Tactic::Rewrite {
             target: target_expr,
             theorem_id: "group_associativity".to_string(),
@@ -340,7 +381,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             .into(),
             direction: RewriteDirection::LeftToRight,
         };
-        p4_node.apply_tactic(tactic, &mut proofs)
+        p4_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p6_node = {
@@ -356,7 +397,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             instantiation: HashMap::new(),
             direction: RewriteDirection::LeftToRight,
         };
-        p5_node.apply_tactic(tactic, &mut proofs)
+        p5_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p7_node = {
@@ -366,7 +407,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             instantiation: HashMap::new(),
             direction: RewriteDirection::RightToLeft,
         };
-        p6_node.apply_tactic(tactic, &mut proofs)
+        p6_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p8_node = {
@@ -375,12 +416,12 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                 group: group_param.clone(),
                 element: Box::new(Parametrizable::Variable(g_id.clone())),
             }));
-        let target_expr = if let MathRelation::Equal { left, .. } = p7_node.state.statement.clone()
-        {
-            left
-        } else {
-            panic!("Expected an equality relation");
-        };
+        let target_expr =
+            if let MathRelation::Equal { left, .. } = p7_node.get_goal().statement.clone() {
+                left
+            } else {
+                panic!("Expected an equality relation");
+            };
         let tactic = Tactic::Rewrite {
             target: target_expr,
             theorem_id: "group_associativity".to_string(),
@@ -392,7 +433,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             .into(),
             direction: RewriteDirection::RightToLeft,
         };
-        p7_node.apply_tactic(tactic, &mut proofs)
+        p7_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p9_node = {
@@ -411,23 +452,23 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             instantiation: [("x".to_string(), g_var.clone())].into(),
             direction: RewriteDirection::LeftToRight,
         };
-        p8_node.apply_tactic(tactic, &mut proofs)
+        p8_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p10_node = {
-        let target_expr = if let MathRelation::Equal { left, .. } = p9_node.state.statement.clone()
-        {
-            left
-        } else {
-            panic!("Expected an equality relation");
-        };
+        let target_expr =
+            if let MathRelation::Equal { left, .. } = p9_node.get_goal().statement.clone() {
+                left
+            } else {
+                panic!("Expected an equality relation");
+            };
         let tactic = Tactic::Rewrite {
             target: target_expr,
             theorem_id: "group_identity_left".to_string(),
             instantiation: [("x".to_string(), h2_var.clone())].into(),
             direction: RewriteDirection::LeftToRight,
         };
-        p9_node.apply_tactic(tactic, &mut proofs)
+        p9_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let final_node = {
@@ -435,7 +476,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             theorem_id: "equality_is_reflexive".to_string(),
             instantiation: [("x".to_string(), h2_var.clone())].into(),
         };
-        p10_node.apply_tactic(tactic, &mut proofs)
+        p10_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
     if let Some(node) = proofs.get_node_mut(&final_node.id) {
         node.status = ProofStatus::Complete;
@@ -451,7 +492,10 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
 /// Prove that the identity element in a group is unique.
 pub fn prove_identity_uniqueness() -> Theorem {
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
+    let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
 
     let e1_id = Identifier::new_simple("e1".to_string());
     let e2_id = Identifier::new_simple("e2".to_string());
@@ -502,24 +546,39 @@ pub fn prove_identity_uniqueness() -> Theorem {
 
     let theorem_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion.clone()));
 
-    let element_type = MathObject::Element(Box::new(MathObject::Group(group.clone())));
     let goal = ProofGoal {
-        statement: theorem_statement,
-        value_variables: vec![],
-        quantifiers: vec![
-            QuantifiedMathObject {
-                quantification: Quantification::Universal,
-                variable: e1_id.clone(),
-                object_type: element_type.clone(),
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
+            },
+            ContextEntry {
+                name: e1_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
                 description: Some("e1 is an element of group G".to_string()),
             },
-            QuantifiedMathObject {
-                quantification: Quantification::Universal,
-                variable: e2_id.clone(),
-                object_type: element_type.clone(),
+            ContextEntry {
+                name: e2_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
                 description: Some("e2 is an element of group G".to_string()),
             },
         ],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: e1_id.clone(),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: e2_id.clone(),
+                quantification: Quantification::Universal,
+            },
+        ],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -541,16 +600,16 @@ pub fn prove_identity_uniqueness() -> Theorem {
             .into(),
             direction: RewriteDirection::LeftToRight,
         };
-        root_node.apply_tactic(tactic, &mut proofs)
+        root_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let p2_node = {
-        let target_expr = if let MathRelation::Equal { left, .. } = p1_node.state.statement.clone()
-        {
-            left
-        } else {
-            panic!("Expected an equality relation");
-        };
+        let target_expr =
+            if let MathRelation::Equal { left, .. } = p1_node.get_goal().statement.clone() {
+                left
+            } else {
+                panic!("Expected an equality relation");
+            };
         let tactic = Tactic::Rewrite {
             target: target_expr,
             theorem_id: "left_identity_axiom".to_string(),
@@ -561,7 +620,7 @@ pub fn prove_identity_uniqueness() -> Theorem {
             .into(),
             direction: RewriteDirection::LeftToRight,
         };
-        p1_node.apply_tactic(tactic, &mut proofs)
+        p1_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
 
     let final_node = {
@@ -569,7 +628,7 @@ pub fn prove_identity_uniqueness() -> Theorem {
             theorem_id: "equality_is_reflexive".to_string(),
             instantiation: [("x".to_string(), e2_var.clone())].into(),
         };
-        p2_node.apply_tactic(tactic, &mut proofs)
+        p2_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
     if let Some(node) = proofs.get_node_mut(&final_node.id) {
         node.status = ProofStatus::Complete;
@@ -585,9 +644,11 @@ pub fn prove_identity_uniqueness() -> Theorem {
 
 /// Prove that in a group, forall a,b in G, (ab)⁻¹ = b⁻¹a⁻¹
 pub fn prove_inverse_product_rule() -> Theorem {
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
+    let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
-    let group_math_object = MathObject::Group(group.clone());
 
     let a_id = Identifier::new_simple("a".to_string());
     let b_id = Identifier::new_simple("b".to_string());
@@ -626,24 +687,39 @@ pub fn prove_inverse_product_rule() -> Theorem {
         MathExpression::Expression(TheoryExpression::Group(inverse_product_expr.clone())),
     );
 
-    let element_type = MathObject::Element(Box::new(group_math_object.clone()));
     let goal = ProofGoal {
-        statement: theorem_statement.clone(),
-        value_variables: vec![],
-        quantifiers: vec![
-            QuantifiedMathObject {
-                variable: a_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
             },
-            QuantifiedMathObject {
-                variable: b_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: Identifier::new_simple("a".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("a ranges over all elements of group G".to_string()),
+            },
+            ContextEntry {
+                name: Identifier::new_simple("b".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("b ranges over all elements of group G".to_string()),
             },
         ],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: Identifier::new_simple("a".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("b".to_string()),
+                quantification: Quantification::Universal,
+            },
+        ],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -664,9 +740,11 @@ pub fn prove_inverse_product_rule() -> Theorem {
 
 /// Prove that a group is abelian if and only if (ab)² = a²b² for all a,b in the group
 pub fn prove_abelian_squared_criterion() -> Theorem {
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
+    let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
-    let group_math_object = MathObject::Group(group.clone());
 
     let a_id = Identifier::new_simple("a".to_string());
     let b_id = Identifier::new_simple("b".to_string());
@@ -719,24 +797,39 @@ pub fn prove_abelian_squared_criterion() -> Theorem {
         Box::new(criterion.clone()),
     );
 
-    let element_type = MathObject::Element(Box::new(group_math_object.clone()));
     let goal = ProofGoal {
-        statement: theorem_statement,
-        value_variables: vec![],
-        quantifiers: vec![
-            QuantifiedMathObject {
-                variable: a_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
             },
-            QuantifiedMathObject {
-                variable: b_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: Identifier::new_simple("a".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("a ranges over all elements of group G".to_string()),
+            },
+            ContextEntry {
+                name: Identifier::new_simple("b".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("b ranges over all elements of group G".to_string()),
             },
         ],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: Identifier::new_simple("a".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("b".to_string()),
+                quantification: Quantification::Universal,
+            },
+        ],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -791,14 +884,26 @@ pub fn prove_lagrange_theorem() -> Theorem {
     );
 
     let goal = ProofGoal {
-        statement: theorem_statement.clone(),
-        value_variables: vec![],
-        quantifiers: vec![QuantifiedMathObject {
-            variable: group_h_id,
-            object_type: MathObject::Group(create_abstract_group()),
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group_g_concrete.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
+            },
+            ContextEntry {
+                name: Identifier::new_simple("H".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group_g_concrete.clone()))),
+                definition: None,
+                description: Some("H is a subgroup of G".to_string()),
+            },
+        ],
+        quantifiers: vec![Quantifier {
+            variable_name: Identifier::new_simple("H".to_string()),
             quantification: Quantification::Universal,
-            description: None,
         }],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -867,8 +972,11 @@ fn is_group_expr(expr: &MathExpression) -> bool {
 
 /// Example function to demonstrate applying a theorem generated by another function directly.
 pub fn prove_example_chaining_theorems() -> Theorem {
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
-    let group_math_object = MathObject::Group(group.clone());
+    let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
+    let group_param = Box::new(Parametrizable::Concrete(group.clone()));
 
     let x_id = Identifier::new_simple("x".to_string());
     let y_id = Identifier::new_simple("y".to_string());
@@ -922,36 +1030,59 @@ pub fn prove_example_chaining_theorems() -> Theorem {
 
     let theorem_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion));
 
-    let element_type = MathObject::Element(Box::new(group_math_object.clone()));
     let goal = ProofGoal {
-        statement: theorem_statement.clone(),
-        value_variables: vec![],
-        quantifiers: vec![
-            QuantifiedMathObject {
-                variable: x_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
             },
-            QuantifiedMathObject {
-                variable: y_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: Identifier::new_simple("x".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("x ranges over all elements of group G".to_string()),
             },
-            QuantifiedMathObject {
-                variable: z_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: Identifier::new_simple("y".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("y ranges over all elements of group G".to_string()),
             },
-            QuantifiedMathObject {
-                variable: w_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: Identifier::new_simple("z".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("z ranges over all elements of group G".to_string()),
+            },
+            ContextEntry {
+                name: Identifier::new_simple("w".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("w ranges over all elements of group G".to_string()),
             },
         ],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: Identifier::new_simple("x".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("y".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("z".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("w".to_string()),
+                quantification: Quantification::Universal,
+            },
+        ],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -975,9 +1106,11 @@ pub fn prove_theorem_extraction_example() -> Theorem {
     let identity_uniqueness = prove_identity_uniqueness();
     TheoremRegistry::register_globally(identity_uniqueness);
 
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
+    let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
-    let group_math_object = MathObject::Group(group.clone());
 
     let a_id = Identifier::new_simple("a".to_string());
     let b_id = Identifier::new_simple("b".to_string());
@@ -1021,30 +1154,49 @@ pub fn prove_theorem_extraction_example() -> Theorem {
     let premise = MathRelation::And(vec![a_b_eq_e.clone(), b_c_eq_e.clone()]);
     let theorem_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion));
 
-    let element_type = MathObject::Element(Box::new(group_math_object.clone()));
     let goal = ProofGoal {
-        statement: theorem_statement,
-        value_variables: vec![],
-        quantifiers: vec![
-            QuantifiedMathObject {
-                variable: a_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
             },
-            QuantifiedMathObject {
-                variable: b_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: a_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
+                description: Some("a ranges over all elements of group G".to_string()),
             },
-            QuantifiedMathObject {
-                variable: c_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: None,
+            ContextEntry {
+                name: b_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
+                description: Some("b ranges over all elements of group G".to_string()),
+            },
+            ContextEntry {
+                name: c_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
+                description: Some("c ranges over all elements of group G".to_string()),
             },
         ],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: Identifier::new_simple("a".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("b".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("c".to_string()),
+                quantification: Quantification::Universal,
+            },
+        ],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -1055,39 +1207,49 @@ pub fn prove_theorem_extraction_example() -> Theorem {
         })
         .clone();
 
-    let p1 = root_node.apply_tactic(
-        Tactic::IntroduceValueVariable {
-            binding: ValueBindedVariable {
-                name: Identifier::new_simple("ab_eq_e".to_string()),
-                value: MathExpression::Relation(Box::new(a_b_eq_e.clone())),
+    let p1 = root_node
+        .apply_tactic(
+            Tactic::Introduce {
+                entry: ContextEntry {
+                    name: Identifier::new_simple("ab_eq_e".to_string()),
+                    ty: MathExpression::Relation(Box::new(a_b_eq_e.clone())),
+                    definition: None,
+                    description: None,
+                },
+                position: None,
             },
-            position: None,
-        },
-        &mut proofs,
-    );
+            &mut proofs,
+        )
+        .primary_node();
 
-    let p2 = p1.apply_tactic(
-        Tactic::IntroduceValueVariable {
-            binding: ValueBindedVariable {
-                name: Identifier::new_simple("bc_eq_e".to_string()),
-                value: MathExpression::Relation(Box::new(b_c_eq_e.clone())),
+    let p2 = p1
+        .apply_tactic(
+            Tactic::Introduce {
+                entry: ContextEntry {
+                    name: Identifier::new_simple("bc_eq_e".to_string()),
+                    ty: MathExpression::Relation(Box::new(b_c_eq_e.clone())),
+                    definition: None,
+                    description: None,
+                },
+                position: None,
             },
-            position: None,
-        },
-        &mut proofs,
-    );
+            &mut proofs,
+        )
+        .primary_node();
 
     let mut instantiation = HashMap::new();
     instantiation.insert("e1".to_string(), a_math_var.clone());
     instantiation.insert("e2".to_string(), c_inv_math_expr.clone());
 
-    let mut p3 = p2.apply_tactic(
-        Tactic::ExactWith {
-            theorem_id: "identity_uniqueness".to_string(),
-            instantiation,
-        },
-        &mut proofs,
-    );
+    let mut p3 = p2
+        .apply_tactic(
+            Tactic::ExactWith {
+                theorem_id: "identity_uniqueness".to_string(),
+                instantiation,
+            },
+            &mut proofs,
+        )
+        .primary_node();
     p3.status = ProofStatus::Complete;
     proofs.add_node(p3);
 
@@ -1105,10 +1267,11 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
     let identity_uniqueness_thm = prove_identity_uniqueness();
     TheoremRegistry::register_globally(identity_uniqueness_thm);
 
+    // In all theorems, introduce group_id and group_var for clarity
     let group = create_abstract_group();
+    let group_id = Identifier::new_simple("G".to_string());
+    let group_var = MathExpression::Var(group_id.clone());
     let group_param = Box::new(Parametrizable::Concrete(group.clone()));
-    let group_math_object = MathObject::Group(group.clone());
-    let element_type = MathObject::Element(Box::new(group_math_object.clone()));
 
     let x_id = Identifier::new_simple("x".to_string());
     let y_id = Identifier::new_simple("y".to_string());
@@ -1132,22 +1295,38 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
     let theorem_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion.clone()));
 
     let goal = ProofGoal {
-        statement: theorem_statement.clone(),
-        value_variables: vec![],
-        quantifiers: vec![
-            QuantifiedMathObject {
-                variable: x_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: Some("An identity element".to_string()),
+        context: vec![
+            // Add variables to context
+            ContextEntry {
+                name: Identifier::new_simple("G".to_string()),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
             },
-            QuantifiedMathObject {
-                variable: y_id,
-                object_type: element_type.clone(),
-                quantification: Quantification::Universal,
-                description: Some("Another identity element".to_string()),
+            ContextEntry {
+                name: x_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
+                description: Some("x ranges over all elements of group G".to_string()),
+            },
+            ContextEntry {
+                name: y_id.clone(),
+                ty: group_var.clone(),
+                definition: None,
+                description: Some("y ranges over all elements of group G".to_string()),
             },
         ],
+        quantifiers: vec![
+            Quantifier {
+                variable_name: Identifier::new_simple("x".to_string()),
+                quantification: Quantification::Universal,
+            },
+            Quantifier {
+                variable_name: Identifier::new_simple("y".to_string()),
+                quantification: Quantification::Universal,
+            },
+        ],
+        statement: theorem_statement,
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -1158,39 +1337,49 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
         })
         .clone();
 
-    let p1 = root_node.apply_tactic(
-        Tactic::IntroduceValueVariable {
-            binding: ValueBindedVariable {
-                name: Identifier::new_simple("x_is_identity".to_string()),
-                value: MathExpression::Relation(Box::new(x_is_identity_premise.clone())),
+    let p1 = root_node
+        .apply_tactic(
+            Tactic::Introduce {
+                entry: ContextEntry {
+                    name: Identifier::new_simple("x_is_identity".to_string()),
+                    ty: MathExpression::Relation(Box::new(x_is_identity_premise.clone())),
+                    definition: None,
+                    description: None,
+                },
+                position: None,
             },
-            position: None,
-        },
-        &mut proofs,
-    );
+            &mut proofs,
+        )
+        .primary_node();
 
-    let p2 = p1.apply_tactic(
-        Tactic::IntroduceValueVariable {
-            binding: ValueBindedVariable {
-                name: Identifier::new_simple("y_is_identity".to_string()),
-                value: MathExpression::Relation(Box::new(y_is_identity_premise.clone())),
+    let p2 = p1
+        .apply_tactic(
+            Tactic::Introduce {
+                entry: ContextEntry {
+                    name: Identifier::new_simple("y_is_identity".to_string()),
+                    ty: MathExpression::Relation(Box::new(y_is_identity_premise.clone())),
+                    definition: None,
+                    description: None,
+                },
+                position: None,
             },
-            position: None,
-        },
-        &mut proofs,
-    );
+            &mut proofs,
+        )
+        .primary_node();
 
     let mut instantiation = HashMap::new();
     instantiation.insert("e1".to_string(), x_math_var.clone());
     instantiation.insert("e2".to_string(), y_math_var.clone());
 
-    let mut p3 = p2.apply_tactic(
-        Tactic::ExactWith {
-            theorem_id: "identity_uniqueness".to_string(),
-            instantiation,
-        },
-        &mut proofs,
-    );
+    let mut p3 = p2
+        .apply_tactic(
+            Tactic::ExactWith {
+                theorem_id: "identity_uniqueness".to_string(),
+                instantiation,
+            },
+            &mut proofs,
+        )
+        .primary_node();
     p3.status = ProofStatus::Complete;
     proofs.add_node(p3);
 
@@ -1200,6 +1389,74 @@ pub fn prove_deduction_using_identity_uniqueness() -> Theorem {
         description:
             "Proves x = y if x and y are identities, by applying identity_uniqueness theorem."
                 .to_string(),
+        proofs,
+    }
+}
+
+/// Prove a simple theorem about group structure (simplified to avoid unimplemented tactics)
+pub fn prove_simple_group_theorem() -> Theorem {
+    let group = create_abstract_group();
+
+    let group_id = Identifier::new_simple("G".to_string());
+    let g_id = Identifier::new_simple("g".to_string());
+
+    let g_var = MathExpression::Var(g_id.clone());
+
+    // Simple statement: If G is a group and g is in G, then g is in G (trivial but valid)
+    let premise = MathRelation::Equal {
+        meta: Default::default(),
+        left: g_var.clone(),
+        right: g_var.clone(),
+    };
+
+    let conclusion = MathRelation::Equal {
+        meta: Default::default(),
+        left: g_var.clone(),
+        right: g_var.clone(),
+    };
+
+    let goal_statement = MathRelation::Implies(Box::new(premise), Box::new(conclusion));
+
+    let goal = ProofGoal {
+        context: vec![
+            ContextEntry {
+                name: group_id.clone(),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("G is a group".to_string()),
+            },
+            ContextEntry {
+                name: g_id.clone(),
+                ty: MathExpression::Object(Box::new(MathObject::Group(group.clone()))),
+                definition: None,
+                description: Some("g is an element of group G".to_string()),
+            },
+        ],
+        quantifiers: vec![Quantifier {
+            variable_name: g_id.clone(),
+            quantification: Quantification::Universal,
+        }],
+        statement: goal_statement,
+    };
+
+    let mut proofs = ProofForest::new_from_goal(goal.clone());
+
+    let root_node = proofs
+        .apply_initial_tactic(Tactic::AssumeImplicationAntecedent {
+            hypothesis_name: Identifier::new_simple("premise".to_string()),
+        })
+        .clone();
+
+    // The proof is complete after assuming the premise since the conclusion is the same
+    if let Some(node) = proofs.get_node_mut(&root_node.id) {
+        node.status = ProofStatus::Complete;
+    }
+
+    Theorem {
+        id: "simple_group_theorem".to_string(),
+        name: "Simple Group Theorem".to_string(),
+        description: "A simple theorem about group structure that only uses implemented tactics"
+            .to_string(),
         proofs,
     }
 }
@@ -1300,7 +1557,7 @@ mod tests {
         // Create a simple goal for the theorem
         let simple_goal = ProofGoal {
             statement: MathRelation::True,
-            value_variables: vec![],
+            context: vec![],
             quantifiers: vec![],
         };
 
@@ -1317,7 +1574,7 @@ mod tests {
                 MathExpression::Var(Identifier::new_simple("a".to_string())),
                 MathExpression::Var(Identifier::new_simple("b".to_string())),
             ),
-            value_variables: vec![],
+            context: vec![],
             quantifiers: vec![],
         };
 
@@ -1336,19 +1593,18 @@ mod tests {
             MathExpression::Var(Identifier::new_simple("y".to_string())),
         );
 
-        let result_node = root_node.apply_tactic(
-            Tactic::ExactWith {
-                theorem_id: "simple_test_theorem".to_string(),
-                instantiation,
-            },
-            &mut forest,
-        );
+        let result_node = root_node
+            .apply_tactic(
+                Tactic::ExactWith {
+                    theorem_id: "simple_test_theorem".to_string(),
+                    instantiation,
+                },
+                &mut forest,
+            )
+            .primary_node();
 
         assert_eq!(result_node.parent.unwrap(), root_node.id);
-        assert!(matches!(
-            result_node.tactic.as_ref().unwrap(),
-            Tactic::ExactWith { .. }
-        ));
+        assert!(matches!(result_node.tactic, Tactic::ExactWith { .. }));
         assert_eq!(forest.len(), 2);
     }
 }

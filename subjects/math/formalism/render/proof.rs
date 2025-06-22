@@ -7,7 +7,6 @@ impl ToProofDisplay for ProofForest {
     fn to_proof_display(&self) -> ProofDisplayNode {
         let steps: Vec<ProofStepNode> = self
             .node_values()
-            .filter(|node| node.tactic.is_some())
             .map(|node| node.to_tactic_display_node(self))
             .collect();
 
@@ -29,42 +28,16 @@ impl ToProofDisplay for ProofForest {
 
 impl ProofNode {
     fn to_tactic_display_node(&self, _forest: &ProofForest) -> ProofStepNode {
-        match &self.tactic {
-            Some(tactic) => {
-                let tactic_display = tactic.to_display_node();
-                ProofStepNode::TacticApplication(tactic_display)
-            }
-            None => {
-                // For nodes without tactics, create a simple goal statement
-                ProofStepNode::Goal(RichText {
-                    segments: vec![RichTextSegment::Text("Initial goal".to_string())],
-                    alignment: None,
-                })
-            }
-        }
+        let tactic_display = self.tactic.to_display_node();
+        ProofStepNode::TacticApplication(tactic_display)
     }
 }
 
 impl ToProofDisplay for ProofNode {
     fn to_proof_display(&self) -> ProofDisplayNode {
         // For a single ProofNode, create a simplified display
-        let step = match &self.tactic {
-            Some(tactic) => {
-                let tactic_display = tactic.to_display_node();
-                ProofStepNode::TacticApplication(tactic_display)
-            }
-            None => {
-                return ProofDisplayNode {
-                    title: Some(RichText {
-                        segments: vec![RichTextSegment::Text("Initial State".to_string())],
-                        alignment: None,
-                    }),
-                    strategy: vec![],
-                    steps: vec![],
-                    qed_symbol: None,
-                };
-            }
-        };
+        let tactic_display = self.tactic.to_display_node();
+        let step = ProofStepNode::TacticApplication(tactic_display);
 
         ProofDisplayNode {
             title: None,

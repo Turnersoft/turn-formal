@@ -257,7 +257,7 @@ pub fn create_group_element(group: Group, value: GroupElement) -> GroupResult<Gr
     check_element_in_group(&group, &value)?;
     Ok(GroupExpression::Element {
         group: Parametrizable::Concrete(group),
-        element: Parametrizable::Concrete(value),
+        element: Some(Parametrizable::Concrete(value)),
     })
 }
 
@@ -330,7 +330,12 @@ pub fn create_group_coset(
 /// its concrete value as a group element when possible.
 pub fn evaluate_group_expression(expr: &GroupExpression) -> GroupResult<GroupElement> {
     match expr {
-        GroupExpression::Element { group: _, element } => Ok(element.unwrap().clone()),
+        GroupExpression::Element { group: _, element } => match element {
+            Some(param_element) => Ok(param_element.unwrap().clone()),
+            None => Err(GroupError::ExpressionError(
+                "Cannot evaluate element expression with None element".to_string(),
+            )),
+        },
         GroupExpression::Operation { group, left, right } => {
             let left_val = evaluate_group_expression(&left.as_ref().unwrap())?;
             let right_val = evaluate_group_expression(&right.as_ref().unwrap())?;

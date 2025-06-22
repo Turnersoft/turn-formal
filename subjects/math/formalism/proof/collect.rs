@@ -153,14 +153,13 @@ impl CollectSubExpressions for MathRelation {
                 path.push(206);
                 ct_rel.collect_contained_expressions(path, collected_targets, depth + 1);
             }
-            MathRelation::ProbabilityTheory(pt_rel) => {
-                let mut path = current_path.clone();
-                path.push(207);
-                pt_rel.collect_contained_expressions(path, collected_targets, depth + 1);
+            MathRelation::ProbabilityTheory(prob_rel) => {
+                // TODO: Implement for probability theory relations
             }
             MathRelation::True | MathRelation::False => {
                 // Leaf nodes, no sub-expressions to collect.
             }
+            _ => {}
         }
     }
 }

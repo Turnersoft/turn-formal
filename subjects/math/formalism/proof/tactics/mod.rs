@@ -5,18 +5,13 @@ pub mod theorem_applier;
 
 // Re-export the items so external code can continue to use them
 pub use case_analysis::{CaseAnalysisBuilder, CaseResult};
+pub use implement::TacticApplicationResult;
 pub use search_replace::{ExpressionPath, ReplacementSpec, SearchReplace, SearchResult};
 pub use theorem_applier::{TheoremApplicationError, TheoremApplicationResult, TheoremApplier};
 
 // Re-export only public functions from parent
-pub use super::ProofForest;
-pub use super::ProofNode;
-pub use super::TheoremRegistry;
-pub use super::get_theorem_registry;
-
-use super::{ProofGoal, Quantification, QuantifiedMathObject, ValueBindedVariable};
+pub use super::{ContextEntry, ProofForest, ProofNode};
 use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::interpretation::TypeViewOperator;
 use crate::subjects::math::formalism::relations::MathRelation;
 use crate::turn_render::Identifier;
 use crate::turn_render::Section;
@@ -27,16 +22,15 @@ use std::collections::HashMap;
 /// Each tactic is context-aware and specifies exactly where it operates
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Tactic {
-    // ========== QUANTIFIER TACTICS ==========
-    // These operate on the quantifier array in ProofGoal
-    /// Introduce a new quantified object (used for goal setup)
-    IntroduceQuantifier {
-        /// The quantified object to introduce
-        object: QuantifiedMathObject,
-        /// Position to insert (None = append to end)
+    // ========== CONTEXT MANIPULATION TACTICS ==========
+    /// Introduce a new item into the context. This is a general-purpose tactic
+    /// for adding variables, hypotheses, or definitions.
+    Introduce {
+        entry: ContextEntry,
         position: Option<usize>,
     },
 
+    // ========== QUANTIFIER TACTICS ==========
     /// For a universal quantifier (∀), introduce a fresh, arbitrary variable to stand for it.
     /// This is a key step in starting a universal proof.
     IntroduceFreshVariable {
@@ -69,42 +63,7 @@ pub enum Tactic {
         cases: Vec<CaseCondition>,
     },
 
-    // ========== VALUE VARIABLE TACTICS ==========
-    // These operate on the value_variables array in ProofGoal
-    /// Introduce a new value-bound variable (i.e., a "let" binding).
-    IntroduceValueVariable {
-        /// The variable binding to introduce.
-        binding: ValueBindedVariable,
-        /// Position to insert (None = append to end).
-        position: Option<usize>,
-    },
-
-    /// Substitute a value variable with its bound expression throughout the goal statement.
-    SubstituteValueVariable {
-        /// Identifier of the variable to substitute.
-        target_variable: Identifier,
-    },
-
-    /// Rewrites a sub-expression within the expression bound to a value variable.
-    RewriteInValueBinding {
-        /// The variable whose binding is to be rewritten.
-        target_variable: Identifier,
-        /// The sub-expression within the variable's value to be replaced.
-        target_sub_expression: MathExpression,
-        /// The new expression to replace the target with.
-        replacement: MathExpression,
-        /// Justification for the rewrite (e.g., a theorem ID or "simplification").
-        justification: Option<Section>,
-    },
-
-    /// Remove a value variable from the context (e.g., for cleanup when it's no longer needed).
-    RemoveValueVariable {
-        /// Identifier of the variable to remove.
-        target_variable: Identifier,
-    },
-
     // ========== STATEMENT TACTICS ==========
-    // These operate on the statement (MathRelation) in ProofGoal
     /// Attempts to prove the current goal *exactly* by showing it is an instance of a known theorem.
     /// This is a terminal tactic; if it succeeds, the goal is closed.
     ExactWith {
@@ -132,20 +91,15 @@ pub enum Tactic {
     },
 
     /// When the goal is an implication `A => B`, this tactic creates a new sub-goal
-    /// where `A` is added to the context as a hypothesis and the new goal is `B`.
+    /// where `A` is added to the context as a named hypothesis and the new goal is `B`.
     /// This is a fundamental tactic used to begin proofs of implication.
     AssumeImplicationAntecedent {
         /// The name to assign to the new hypothesis (A).
         hypothesis_name: Identifier,
     },
 
-    /// Split a conjunction in the statement (e.g., A ∧ B ∧ C -> prove A, then prove B ∧ C).
-    SplitConjunction {
-        /// The target conjunction to split. Must be an `And` variant.
-        target: Box<MathRelation>,
-        /// The index of the conjunct to separate into a new goal.
-        index: usize,
-    },
+    /// Split a conjunction in the statement (e.g., A ∧ B -> prove A, then prove B).
+    SplitConjunction,
 
     /// Choose one disjunct to prove from a disjunction (e.g., to prove A ∨ B ∨ C, choose to prove B).
     SplitDisjunction {
@@ -293,37 +247,18 @@ pub enum AutomatedTactic {
     },
 }
 
-/// The result of applying a tactic to a proof goal.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum TacticApplicationResult {
-    /// The tactic resulted in a single new goal.
-    SingleGoal(ProofGoal),
-    /// The tactic resulted in multiple new goals.
-    MultiGoal(Vec<ProofGoal>),
-    /// The tactic completed the proof for this branch.
-    ProofComplete,
-    /// The tactic made no change to the goal.
-    NoChange,
-    /// The tactic resulted in an error.
-    Error(String),
-}
-
 impl std::fmt::Display for Tactic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Tactic::IntroduceQuantifier { .. } => write!(f, "IntroduceQuantifier"),
+            Tactic::Introduce { .. } => write!(f, "Introduce"),
             Tactic::IntroduceFreshVariable { .. } => write!(f, "IntroduceFreshVariable"),
             Tactic::ProvideWitness { .. } => write!(f, "ProvideWitness"),
             Tactic::ReorderQuantifiers { .. } => write!(f, "ReorderQuantifiers"),
             Tactic::UniversalCaseAnalysis { .. } => write!(f, "UniversalCaseAnalysis"),
-            Tactic::IntroduceValueVariable { .. } => write!(f, "IntroduceValueVariable"),
-            Tactic::SubstituteValueVariable { .. } => write!(f, "SubstituteValueVariable"),
-            Tactic::RewriteInValueBinding { .. } => write!(f, "RewriteInValueBinding"),
-            Tactic::RemoveValueVariable { .. } => write!(f, "RemoveValueVariable"),
             Tactic::ExactWith { .. } => write!(f, "ExactWith"),
             Tactic::Rewrite { .. } => write!(f, "Rewrite"),
             Tactic::AssumeImplicationAntecedent { .. } => write!(f, "AssumeImplicationAntecedent"),
-            Tactic::SplitConjunction { .. } => write!(f, "SplitConjunction"),
+            Tactic::SplitConjunction => write!(f, "SplitConjunction"),
             Tactic::SplitDisjunction { .. } => write!(f, "SplitDisjunction"),
             Tactic::StatementCaseAnalysis { .. } => write!(f, "StatementCaseAnalysis"),
             Tactic::Simplify { .. } => write!(f, "Simplify"),

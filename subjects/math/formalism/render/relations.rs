@@ -130,6 +130,14 @@ impl ToTurnMath for MathRelation {
                     is_function: false,
                 })),
             },
+            MathRelation::ProbabilityTheory(prob_rel) => MathNode {
+                id: "prob_rel".to_string(),
+                content: Box::new(MathNodeContent::Text("Probability Relation".to_string())),
+            },
+            _ => MathNode {
+                id: "unknown_rel".to_string(),
+                content: Box::new(MathNodeContent::Text("Unknown Relation".to_string())),
+            },
         }
     }
 }

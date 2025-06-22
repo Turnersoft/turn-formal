@@ -8,8 +8,8 @@ use crate::subjects::math::theories::groups::definitions::{
 };
 //--- Imports from crate::turn_render ---
 use crate::turn_render::math_node::{
-    BracketSize, BracketStyle, Identifier, IntegralType, MathNode, MathNodeContent, MulSymbol,
-    RefinedMulOrDivOperation, RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
+    Identifier, IntegralType, MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation,
+    RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
 use crate::turn_render::*;
 
@@ -32,7 +32,7 @@ use crate::subjects::math::theories::groups::definitions::{
     TopologicalGroup, TopologicalGroupProperty, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 
-use super::theorems::prove_inverse_uniqueness;
+use super::theorems::{prove_inverse_uniqueness, prove_simple_group_theorem};
 
 // use super::theorems::{
 //     prove_abelian_squared_criterion, prove_deduction_using_identity_uniqueness,
@@ -289,18 +289,24 @@ impl ToTurnMath for GroupExpression {
                 );
 
                 MathNode {
-                    id: master_id.clone(),
-                    content: Box::new(MathNodeContent::Bracketed {
-                        inner: Box::new(MathNode {
-                            id: format!("{}-inner", master_id),
-                            content: Box::new(MathNodeContent::Multiplications { terms }),
-                        }),
-                        style: BracketStyle::Round,
-                        size: BracketSize::Auto,
-                    }),
+                    id: format!("{}-inner", master_id),
+                    content: Box::new(MathNodeContent::Multiplications { terms }),
                 }
             }
-            GroupExpression::Element { element, .. } => element.to_turn_math(master_id),
+            GroupExpression::Element { element, .. } => match element {
+                Some(param_element) => param_element.to_turn_math(master_id),
+                None => MathNode {
+                    id: master_id,
+                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                        body: "?".to_string(),
+                        pre_script: None,
+                        mid_script: None,
+                        post_script: None,
+                        primes: 0,
+                        is_function: false,
+                    })),
+                },
+            },
             GroupExpression::Identity(_) => MathNode {
                 id: master_id,
                 content: Box::new(MathNodeContent::Identifier(Identifier {
@@ -793,12 +799,19 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
     }
 
     fn export_theorems(&self) -> Vec<MathDocument> {
+        // TEMPORARILY DISABLED: Disable theorem export to prevent stack overflow
+        // caused by unimplemented tactics and recursive theorem calls
+        // TODO: Re-enable once tactics are properly implemented
+
         // Register basic group axioms BEFORE generating theorem proofs
         // This ensures that tactics can find the axioms in the theorem registry
         super::theorems::register_basic_group_axioms();
 
         let mut content = vec![
+            // prove_simple_group_theorem().to_math_document("group_theory.simple_theorem"),
+            // NOTE: Commented out to prevent stack overflow from unimplemented tactics
             prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
+            // NOTE: Commented out to prevent stack overflow from recursive theorem calls
             // prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
             // prove_abelian_squared_criterion()
             //     .to_math_document("group_theory.abelian_squared_criterion"),
