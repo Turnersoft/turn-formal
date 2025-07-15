@@ -3,22 +3,36 @@
 //! This module provides a foundational implementation of Zermelo-Fraenkel Set Theory with Choice (ZFC).
 //! It serves as the basis for building other mathematical theories in a formally verified way.
 
+use std::collections::HashSet;
+
 pub mod axioms;
-pub mod collect;
 pub mod render;
 
 pub mod abstraction_level;
 pub mod complexity;
 pub mod definitions;
+pub mod replace;
 pub mod verifier;
 
-pub use axioms::{SatisfiesZFC, ZFCAxioms};
-// Keep the legacy relation export, but also export the new one
-pub use definitions::{CardinalityPropertyVariant, Set, SetElement, SetExpression, SetRelation};
-pub use verifier::ZFCVerifier;
+use definitions::{Set, SetElement};
 
 // Import VariantSet directly from the theories module
 use super::super::theories::VariantSet;
+
+fn is_element_well_founded_recursive(
+    element: &SetElement,
+    visited: &mut HashSet<*const Set>,
+) -> bool {
+    match element {
+        SetElement::Set(s) => s.is_well_founded_recursive(visited),
+        SetElement::Pair(e1, e2) => {
+            is_element_well_founded_recursive(e1, visited)
+                && is_element_well_founded_recursive(e2, visited)
+        }
+        // Primitives are always well-founded.
+        SetElement::Integer(_) | SetElement::Symbol(_) | SetElement::Urelement(_) => true,
+    }
+}
 
 // Core set operations that guarantee ZFC compliance by construction
 
@@ -135,34 +149,6 @@ pub fn ordered_pair(a: Set, b: Set) -> Set {
     }
 }
 
-/// Verifies if a set is well-founded
-#[inline]
-pub fn is_well_founded(set: &Set) -> bool {
-    ZFCVerifier::verify_foundation(set)
-}
-
-/// Verifies if one set is a subset of another (A ⊆ B)
-#[inline]
-pub fn is_subset(subset: &Set, superset: &Set) -> bool {
-    is_subset_of(subset, superset)
-}
-
-/// Helper function to check if one set is a subset of another
-pub fn is_subset_of(subset: &Set, superset: &Set) -> bool {
-    match subset {
-        Set::Empty => true, // Empty set is a subset of everything
-        Set::Singleton { element, .. } => superset.contains(element),
-        Set::Enumeration { elements, .. } => elements.iter().all(|e| superset.contains(e)),
-        _ => false, // Simplified implementation
-    }
-}
-
-/// Verifies if one set is a proper subset of another (A ⊊ B)
-#[inline]
-pub fn is_proper_subset(subset: &Set, superset: &Set) -> bool {
-    is_subset_of(subset, superset) && subset != superset
-}
-
 /// Error type for set operations
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SetError {
@@ -173,7 +159,7 @@ pub enum SetError {
 impl Set {
     /// Returns true if this set is a proper subset of another set
     pub fn is_proper_subset_of(&self, other: &Set) -> bool {
-        is_subset_of(self, other) && self != other
+        Self::is_subset_of(self, other) && self != other
     }
 
     /// Returns an iterator over the elements of this set
@@ -200,9 +186,52 @@ impl Set {
         }
     }
 
-    /// Returns true if this set is well-founded
+    /// Returns true if this set is well-founded by checking for membership cycles.
     pub fn is_well_founded(&self) -> bool {
-        is_well_founded(self)
+        let mut visited = HashSet::new();
+        self.is_well_founded_recursive(&mut visited)
+    }
+
+    fn is_well_founded_recursive(&self, visited: &mut HashSet<*const Set>) -> bool {
+        let ptr = self as *const Set;
+        if visited.contains(&ptr) {
+            return false; // Cycle detected
+        }
+        visited.insert(ptr);
+
+        let result = match self {
+            Set::Empty | Set::Generic(_) | Set::Parametric { .. } => true,
+            Set::Singleton { element, .. } => is_element_well_founded_recursive(element, visited),
+            Set::Enumeration { elements, .. } => elements
+                .iter()
+                .all(|e| is_element_well_founded_recursive(e, visited)),
+            Set::BinaryUnion { left, right, .. }
+            | Set::BinaryIntersection { left, right, .. }
+            | Set::SetDifference { left, right, .. }
+            | Set::SymmetricDifference { left, right, .. }
+            | Set::CartesianProduct { left, right, .. } => {
+                left.is_well_founded_recursive(visited) && right.is_well_founded_recursive(visited)
+            }
+            Set::BigUnion { family, .. } | Set::BigIntersection { family, .. } => {
+                family.is_well_founded_recursive(visited)
+            }
+            Set::PowerSet { base, .. } => base.is_well_founded_recursive(visited),
+            Set::Separation { source, .. } => source.is_well_founded_recursive(visited),
+            Set::Replacement { source, .. } => source.is_well_founded_recursive(visited),
+            Set::OrderedPair { first, second, .. } => {
+                first.is_well_founded_recursive(visited)
+                    && second.is_well_founded_recursive(visited)
+            }
+            Set::Complement {
+                set,
+                universe,
+                properties,
+                op_properties,
+            } => todo!(),
+        };
+
+        visited.remove(&ptr);
+        result
     }
 
     /// Returns the cardinality of this set
@@ -212,7 +241,12 @@ impl Set {
 
     /// Returns true if this set is a subset of another set
     pub fn is_subset_of(&self, other: &Set) -> bool {
-        is_subset_of(self, other)
+        match self {
+            Set::Empty => true, // Empty set is a subset of everything
+            Set::Singleton { element, .. } => other.contains(element),
+            Set::Enumeration { elements, .. } => elements.iter().all(|e| other.contains(e)),
+            _ => false, // Simplified implementation
+        }
     }
 
     /// Returns true if this set is an ordinal number

@@ -62,14 +62,14 @@ pub enum CompletenessVariant {
 }
 
 /// Represents a binary operation within a field structure.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FieldOperation {
     /// The type of operation (e.g., addition, multiplication)
     pub operation_type: FieldOperationVariant,
     /// The notation used (e.g., '+', '*')
     pub symbol: String,
     /// The identity element for this operation
-    pub identity_element: Box<MathExpression>, // Might need a specific FieldElement type later
+    pub identity_element: Option<Box<MathExpression>>, // Might need a specific FieldElement type later
     /// Properties of the operation (associativity, commutativity, etc.)
     pub properties: Vec<FieldOperationProperty>,
 }
@@ -94,55 +94,26 @@ pub enum FieldOperationProperty {
 }
 
 /// Core algebraic structure of a field, containing minimal data for field axioms.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FieldBasic {
     /// The underlying set
     pub base_set: Set,
     /// The additive operation (+)
-    pub addition: FieldOperation,
+    pub addition: Option<FieldOperation>,
     /// The multiplicative operation (*)
-    pub multiplication: FieldOperation,
+    pub multiplication: Option<FieldOperation>,
     /// Properties specific to the field structure itself (beyond operations)
     pub props: VariantSet<FieldProperty>,
 }
 
 impl Default for FieldBasic {
     fn default() -> Self {
-        // A basic default, likely needs refinement based on actual field types
-        FieldBasic {
-            base_set: Set::empty(),
-            addition: FieldOperation {
-                operation_type: FieldOperationVariant::Addition,
-                symbol: "+".to_string(),
-                // Placeholder - identity depends on the specific field
-                identity_element: Box::new(MathExpression::var("additive_identity")),
-                properties: vec![
-                    FieldOperationProperty::Associative,
-                    FieldOperationProperty::Commutative,
-                    FieldOperationProperty::HasIdentity,
-                    FieldOperationProperty::HasInverse, // Additive inverse exists for all elements
-                ],
-            },
-            multiplication: FieldOperation {
-                operation_type: FieldOperationVariant::Multiplication,
-                symbol: "*".to_string(),
-                // Placeholder - identity depends on the specific field
-                identity_element: Box::new(MathExpression::var("multiplicative_identity")),
-                properties: vec![
-                    FieldOperationProperty::Associative,
-                    FieldOperationProperty::Commutative,
-                    FieldOperationProperty::HasIdentity,
-                    FieldOperationProperty::HasInverse, // Multiplicative inverse for non-zero elements
-                    FieldOperationProperty::Distributive, // Multiplication distributes over Addition
-                ],
-            },
-            props: VariantSet::new(),
-        }
+        todo!()
     }
 }
 
 /// A Finite field GF(q) or F_q
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FiniteField {
     pub core: FieldBasic,
     /// The order of the field (must be a prime power)
@@ -152,7 +123,7 @@ pub struct FiniteField {
 }
 
 /// The field of p-adic numbers ℚ_p
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct PAdicField {
     pub core: FieldBasic,
     /// The prime p defining the field
@@ -162,7 +133,7 @@ pub struct PAdicField {
 }
 
 /// A Function Field (e.g., K(X))
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FunctionField {
     pub core: FieldBasic,
     /// Description of the base field K and the variable X
@@ -172,7 +143,7 @@ pub struct FunctionField {
 }
 
 /// A field with a compatible topological structure.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct TopologicalField {
     pub core: FieldBasic,
     /// The topology on the field's underlying set.
@@ -182,7 +153,7 @@ pub struct TopologicalField {
 }
 
 /// A field with a compatible total order.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct OrderedField {
     pub core: FieldBasic,
     /// Properties specific to the ordered field structure
@@ -192,7 +163,7 @@ pub struct OrderedField {
 }
 
 /// Represents the algebraic closure of a given base field.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct AlgebraicClosureField {
     pub core: FieldBasic,
     /// The base field of which this is the algebraic closure.
@@ -202,7 +173,7 @@ pub struct AlgebraicClosureField {
 }
 
 /// A unified wrapper for all field structures
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Field {
     /// Basic abstract field without specific additional structure assumed by type.
     Basic(FieldBasic),

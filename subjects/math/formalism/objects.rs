@@ -1,17 +1,20 @@
+use crate::subjects::math::theories::fields::Field;
+use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
+
 use super::super::theories::analysis::definition::functions::Function;
 use super::super::theories::groups::definitions::{
     Group, GroupOperation, GroupProperty, GroupRelation, LieGroup, TopologicalGroup,
 };
 use super::super::theories::linear_algebra::definitions::VectorSpace;
 use super::super::theories::rings::definitions::{
-    Algebra, Field, Module, Ring, RingExpression, RingProperty,
+    Algebra, Module, Ring, RingExpression, RingProperty,
 };
-use super::super::theories::topology::TopologicalSpace;
-use super::super::theories::zfc::Set;
+
+use super::super::theories::zfc::definitions::Set;
 use serde::{Deserialize, Serialize};
 /// A unified wrapper for all mathematical objects across theories
 /// This is just a reference to objects defined in their respective theory modules
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MathObject {
     // Group theory objects
     Group(Group),

@@ -1,4 +1,6 @@
 use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::location::Located;
+use crate::subjects::math::theories::number_theory::NumberTheoryRelation;
 use crate::subjects::math::theories::probability::definitions::{
     ConvergenceType, ProbabilityRelation,
 };
@@ -6,7 +8,7 @@ use crate::{
     subjects::math::formalism::{
         expressions::MathExpression,
         proof::{ProofForest, ProofGoal},
-        relations::{MathRelation, RelationDetail},
+        relations::MathRelation,
         theorem::Theorem,
     },
     turn_render::Identifier,
@@ -35,7 +37,7 @@ fn create_probability_proof(statement: MathRelation) -> ProofForest {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement,
+        statement: Located::new(statement),
     };
     ProofForest::new_from_goal(goal)
 }
@@ -44,9 +46,12 @@ fn create_probability_proof(statement: MathRelation) -> ProofForest {
 
 fn prove_weak_law_of_large_numbers() -> Theorem {
     let statement = MathRelation::Equal {
-        left: MathExpression::Var(Identifier::new_simple("sample_mean".to_string())),
-        right: MathExpression::Var(Identifier::new_simple("population_mean".to_string())),
-        meta: Default::default(),
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "sample_mean".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "population_mean".to_string(),
+        ))),
     };
     Theorem {
         id: "probability.weak_law_of_large_numbers".to_string(),
@@ -58,9 +63,12 @@ fn prove_weak_law_of_large_numbers() -> Theorem {
 
 fn prove_strong_law_of_large_numbers() -> Theorem {
     let statement = MathRelation::Equal {
-        left: MathExpression::Var(Identifier::new_simple("sample_mean".to_string())),
-        right: MathExpression::Var(Identifier::new_simple("population_mean".to_string())),
-        meta: Default::default(),
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "sample_mean".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "population_mean".to_string(),
+        ))),
     };
     Theorem {
         id: "probability.strong_law_of_large_numbers".to_string(),
@@ -72,9 +80,12 @@ fn prove_strong_law_of_large_numbers() -> Theorem {
 
 fn prove_central_limit_theorem() -> Theorem {
     let statement = MathRelation::Equal {
-        left: MathExpression::Var(Identifier::new_simple("standardized_sum".to_string())),
-        right: MathExpression::Var(Identifier::new_simple("standard_normal".to_string())),
-        meta: Default::default(),
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "standardized_sum".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "standard_normal".to_string(),
+        ))),
     };
     Theorem {
         id: "probability.central_limit_theorem".to_string(),
@@ -86,9 +97,12 @@ fn prove_central_limit_theorem() -> Theorem {
 
 fn prove_bayes_theorem() -> Theorem {
     let statement = MathRelation::Equal {
-        left: MathExpression::Var(Identifier::new_simple("P(A|B)".to_string())),
-        right: MathExpression::Var(Identifier::new_simple("P(B|A)P(A)/P(B)".to_string())),
-        meta: Default::default(),
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "P(A|B)".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "P(B|A)P(A)/P(B)".to_string(),
+        ))),
     };
     Theorem {
         id: "probability.bayes_theorem".to_string(),
@@ -100,9 +114,12 @@ fn prove_bayes_theorem() -> Theorem {
 
 fn prove_law_of_total_probability() -> Theorem {
     let statement = MathRelation::Equal {
-        left: MathExpression::Var(Identifier::new_simple("P(A)".to_string())),
-        right: MathExpression::Var(Identifier::new_simple("Σ P(A|B_i)P(B_i)".to_string())),
-        meta: Default::default(),
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "P(A)".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "Σ P(A|B_i)P(B_i)".to_string(),
+        ))),
     };
     Theorem {
         id: "probability.law_of_total_probability".to_string(),
@@ -114,12 +131,14 @@ fn prove_law_of_total_probability() -> Theorem {
 }
 
 fn prove_chebyshev_inequality() -> Theorem {
-    let statement = MathRelation::NumberTheory(
-        crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::LessThanOrEqual {
-            left: MathExpression::Var(Identifier::new_simple("P(|X - μ| ≥ kσ)".to_string())),
-            right: MathExpression::Var(Identifier::new_simple("1/k²".to_string())),
-        }
-    );
+    let statement = MathRelation::NumberTheory(NumberTheoryRelation::LessThanOrEqual {
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "P(|X - μ| ≥ kσ)".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "1/k²".to_string(),
+        ))),
+    });
     Theorem {
         id: "probability.chebyshev_inequality".to_string(),
         name: "Chebyshev's Inequality".to_string(),
@@ -130,12 +149,14 @@ fn prove_chebyshev_inequality() -> Theorem {
 }
 
 fn prove_markov_inequality() -> Theorem {
-    let statement = MathRelation::NumberTheory(
-        crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::LessThanOrEqual {
-            left: MathExpression::Var(Identifier::new_simple("P(X ≥ a)".to_string())),
-            right: MathExpression::Var(Identifier::new_simple("E[X]/a".to_string())),
-        }
-    );
+    let statement = MathRelation::NumberTheory(NumberTheoryRelation::LessThanOrEqual {
+        left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "P(X ≥ a)".to_string(),
+        ))),
+        right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+            "E[X]/a".to_string(),
+        ))),
+    });
     Theorem {
         id: "probability.markov_inequality".to_string(),
         name: "Markov's Inequality".to_string(),
@@ -155,12 +176,12 @@ fn prove_jensen_inequality() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::NumberTheory(
+            statement: Located::new(MathRelation::NumberTheory(
                 crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::LessThanOrEqual {
-                    left: MathExpression::Var(Identifier::new_simple("φ(E[X])".to_string())),
-                    right: MathExpression::Var(Identifier::new_simple("E[φ(X)]".to_string())),
+                    left: Located::new(Parametrizable::Variable(Identifier::new_simple("φ(E[X])".to_string()))),
+                    right: Located::new(Parametrizable::Variable(Identifier::new_simple("E[φ(X)]".to_string()))),
                 }
-            ),
+            )),
         }),
     }
 }
@@ -173,20 +194,14 @@ fn prove_martingale_convergence_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::Equal {
-                left: MathExpression::Var(Identifier::new_simple("X_n".to_string())),
-                right: MathExpression::Var(Identifier::new_simple("X_∞".to_string())),
-                meta: RelationDetail {
-                    expressions: vec![
-                        MathExpression::Var(Identifier::new_simple("X_n".to_string())),
-                        MathExpression::Var(Identifier::new_simple("X_∞".to_string())),
-                    ],
-                    metadata: std::collections::HashMap::new(),
-                    description: Some("Martingale Convergence Theorem".to_string()),
-                    is_reflexive: false,
-                    is_symmetric: false,
-                },
-            },
+            statement: Located::new(MathRelation::Equal {
+                left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "X_n".to_string(),
+                ))),
+                right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "X_∞".to_string(),
+                ))),
+            }),
         }),
     }
 }
@@ -199,20 +214,14 @@ fn prove_optional_stopping_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::Equal {
-                left: MathExpression::Var(Identifier::new_simple("E[X_τ]".to_string())),
-                right: MathExpression::Var(Identifier::new_simple("E[X_0]".to_string())),
-            meta: RelationDetail {
-                expressions: vec![
-                        MathExpression::Var(Identifier::new_simple("E[X_τ]".to_string())),
-                        MathExpression::Var(Identifier::new_simple("E[X_0]".to_string())),
-                ],
-                metadata: std::collections::HashMap::new(),
-                    description: Some("Optional Stopping Theorem".to_string()),
-                    is_reflexive: false,
-                    is_symmetric: false,
-                },
-            },
+            statement: Located::new(MathRelation::Equal {
+                left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "E[X_τ]".to_string(),
+                ))),
+                right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "E[X_0]".to_string(),
+                ))),
+            }),
         }),
     }
 }
@@ -225,20 +234,14 @@ fn prove_kolmogorov_three_series_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::Equal {
-                left: MathExpression::Var(Identifier::new_simple("Σ X_n converges a.s.".to_string())),
-                right: MathExpression::Var(Identifier::new_simple("Three series converge".to_string())),
-                meta: RelationDetail {
-            expressions: vec![
-                        MathExpression::Var(Identifier::new_simple("Σ X_n converges a.s.".to_string())),
-                        MathExpression::Var(Identifier::new_simple("Three series converge".to_string())),
-                    ],
-                    metadata: std::collections::HashMap::new(),
-                    description: Some("Kolmogorov's Three-Series Theorem".to_string()),
-                    is_reflexive: false,
-                    is_symmetric: false,
-                },
-            },
+            statement: Located::new(MathRelation::Equal {
+                left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "Σ X_n converges a.s.".to_string(),
+                ))),
+                right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "Three series converge".to_string(),
+                ))),
+            }),
         }),
     }
 }
@@ -251,20 +254,14 @@ fn prove_glivenko_cantelli_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::Equal {
-                left: MathExpression::Var(Identifier::new_simple("F_n(x)".to_string())),
-                right: MathExpression::Var(Identifier::new_simple("F(x)".to_string())),
-                meta: RelationDetail {
-            expressions: vec![
-                        MathExpression::Var(Identifier::new_simple("F_n(x)".to_string())),
-                        MathExpression::Var(Identifier::new_simple("F(x)".to_string())),
-                    ],
-                    metadata: std::collections::HashMap::new(),
-                    description: Some("Glivenko-Cantelli Theorem".to_string()),
-                    is_reflexive: false,
-                    is_symmetric: false,
-                },
-            },
+            statement: Located::new(MathRelation::Equal {
+                left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "F_n(x)".to_string(),
+                ))),
+                right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                    "F(x)".to_string(),
+                ))),
+            }),
         }),
     }
 }

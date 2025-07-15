@@ -1,6 +1,8 @@
 use super::definitions::*;
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::theories::zfc::definitions::Set;
+use crate::turn_render::Identifier;
+use serde_json::Number;
 
 /// Extraction utilities for probability theory objects
 
@@ -111,7 +113,7 @@ pub fn extract_events_from_relation(relation: &ProbabilityRelation) -> Vec<&Para
 /// Extract parameters from a distribution
 pub fn extract_distribution_parameters(
     distribution: &Distribution,
-) -> &std::collections::HashMap<String, f64> {
+) -> &std::collections::HashMap<Identifier, Number> {
     &distribution.parameters.parameters
 }
 
@@ -197,6 +199,6 @@ pub fn extract_transition_matrix(chain: &MarkovChain) -> &TransitionMatrix {
 }
 
 /// Extract drift and variance from Brownian motion
-pub fn extract_brownian_parameters(brownian: &BrownianMotion) -> (f64, f64) {
-    (brownian.drift, brownian.variance)
+pub fn extract_brownian_parameters(brownian: &BrownianMotion) -> (Number, Number) {
+    (brownian.drift.clone(), brownian.variance.clone())
 }

@@ -1,6 +1,6 @@
 use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::{
-    analysis::definition::functions::SmoothnessPropertyVariant, zfc::Set,
+    analysis::definition::functions::SmoothnessPropertyVariant, zfc::definitions::Set,
 };
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 /// - Affine schemes: Spec of a ring
 /// - Structure sheaf: Local functions
 /// - Morphisms: Compatible with ring structure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Scheme {
     /// The underlying topological space
     pub base_space: Set,
@@ -22,7 +22,7 @@ pub struct Scheme {
 }
 
 /// Properties specific to schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SchemeProperty {
     /// Separated: Diagonal morphism is closed
     Separated(SeparatedPropertyVariant),
@@ -41,7 +41,7 @@ pub enum SchemeProperty {
 }
 
 /// Properties for separatedness of schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SeparatedPropertyVariant {
     /// Separated scheme
     Separated,
@@ -52,7 +52,7 @@ pub enum SeparatedPropertyVariant {
 }
 
 /// Properties for properness of schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProperPropertyVariant {
     /// Proper scheme
     Proper,
@@ -63,7 +63,7 @@ pub enum ProperPropertyVariant {
 }
 
 /// Properties for projectivity of schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProjectivityPropertyVariant {
     /// Projective scheme
     Projective,
@@ -74,7 +74,7 @@ pub enum ProjectivityPropertyVariant {
 }
 
 /// Properties for Noetherian schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NoetherianPropertyVariant {
     /// Noetherian scheme
     Noetherian,
@@ -85,7 +85,7 @@ pub enum NoetherianPropertyVariant {
 }
 
 /// Properties for regularity of schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RegularityPropertyVariant {
     /// Regular scheme
     Regular,
@@ -96,7 +96,7 @@ pub enum RegularityPropertyVariant {
 }
 
 /// Properties for normality of schemes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NormalityPropertyVariant {
     /// Normal scheme
     Normal,
@@ -108,7 +108,7 @@ pub enum NormalityPropertyVariant {
 
 /// A variety is a reduced, separated scheme of finite type over a field k
 /// Classical objects of algebraic geometry
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Variety {
     /// The underlying scheme
     pub scheme: Scheme,
@@ -119,7 +119,7 @@ pub struct Variety {
 }
 
 /// Properties specific to varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum VarietyProperty {
     /// Affine: Spec of finitely generated k-algebra
     Affine(AffinePropertyVariant),
@@ -136,7 +136,7 @@ pub enum VarietyProperty {
 }
 
 /// Properties for affine varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AffinePropertyVariant {
     /// Affine variety
     Affine,
@@ -147,7 +147,7 @@ pub enum AffinePropertyVariant {
 }
 
 /// Properties for projective varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProjectivePropertyVariant {
     /// Projective variety
     Projective,
@@ -158,7 +158,7 @@ pub enum ProjectivePropertyVariant {
 }
 
 /// Properties for quasi-projective varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum QuasiProjectivePropertyVariant {
     /// Quasi-projective variety
     QuasiProjective,
@@ -169,7 +169,7 @@ pub enum QuasiProjectivePropertyVariant {
 }
 
 /// Properties for completeness of varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompletenessPropertyVariant {
     /// Complete variety
     Complete,
@@ -180,7 +180,7 @@ pub enum CompletenessPropertyVariant {
 }
 
 /// Properties for rationality of varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RationalityPropertyVariant {
     /// Rational variety
     Rational,
@@ -191,7 +191,7 @@ pub enum RationalityPropertyVariant {
 }
 
 /// Properties for unirationality of varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum UnirationialityPropertyVariant {
     /// Unirational variety
     Unirational,
@@ -204,7 +204,7 @@ pub enum UnirationialityPropertyVariant {
 /// A coherent sheaf F on a scheme X is a quasi-coherent O_X-module that:
 /// - Is locally finitely presented
 /// - Has coherent restriction to affine open sets
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CoherentSheaf {
     /// The underlying scheme
     pub base_scheme: Scheme,
@@ -213,7 +213,7 @@ pub struct CoherentSheaf {
 }
 
 /// Properties specific to coherent sheaves
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CoherentSheafProperty {
     /// Locally free: Locally isomorphic to O_X^n
     LocallyFree(LocallyFreePropertyVariant),
@@ -226,7 +226,7 @@ pub enum CoherentSheafProperty {
 }
 
 /// Properties for local freeness of coherent sheaves
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LocallyFreePropertyVariant {
     /// Locally free sheaf
     LocallyFree(u32), // rank
@@ -235,7 +235,7 @@ pub enum LocallyFreePropertyVariant {
 }
 
 /// Properties for torsion freeness of coherent sheaves
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TorsionFreePropertyVariant {
     /// Torsion free sheaf
     TorsionFree,
@@ -244,7 +244,7 @@ pub enum TorsionFreePropertyVariant {
 }
 
 /// Properties for reflexivity of coherent sheaves
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ReflexivityPropertyVariant {
     /// Reflexive sheaf
     Reflexive,
@@ -253,7 +253,7 @@ pub enum ReflexivityPropertyVariant {
 }
 
 /// Base field for varieties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BaseField {
     /// Complex numbers ℂ
     Complex,

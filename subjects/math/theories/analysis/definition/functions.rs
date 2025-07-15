@@ -1,6 +1,7 @@
-use super::super::super::super::super::math::theories::topology::definitions::CompactProperty;
-use super::super::super::super::super::math::theories::zfc::definitions::Set;
-use super::super::super::super::super::math::theories::{
+use crate::subjects::math::theories::number_theory::Number;
+use crate::subjects::math::theories::topology::definitions::CompactProperty;
+use crate::subjects::math::theories::zfc::definitions::Set;
+use crate::subjects::math::theories::{
     VariantSet, common::spaces::Space, linear_algebra::definitions::VectorSpace,
 };
 use serde::{Deserialize, Serialize};
@@ -11,7 +12,7 @@ use serde::{Deserialize, Serialize};
 /// - Domain (X): The space of input values
 /// - Codomain (Y): The space of possible output values
 /// - Properties: Mathematical characteristics of the mapping
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Function {
     /// The domain X of the function, with its topological/metric structure
     pub domain: Space,
@@ -26,7 +27,7 @@ pub struct Function {
 /// Properties that can be possessed by functions
 /// Each variant represents a distinct mathematical characteristic
 /// that a function may or may not have
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FunctionPropertyVariant {
     /// Continuity: preservation of closeness between points
     /// f is continuous at x₀ if ∀ε>0 ∃δ>0: |x-x₀|<δ ⟹ |f(x)-f(x₀)|<ε
@@ -98,7 +99,7 @@ pub enum FunctionPropertyVariant {
 }
 
 /// Variants of compactness for topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompactnessPropertyVariant {
     /// Every open cover has a finite subcover
     /// For any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ
@@ -113,7 +114,7 @@ pub enum CompactnessPropertyVariant {
 /// Describes how a subset approximates its ambient space:
 /// - Dense: closure equals whole space
 /// - Various topologies: strong, weak, pointwise
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DensityPropertyVariant {
     /// Set is dense in specified topology
     /// Closure equals whole space
@@ -125,7 +126,7 @@ pub enum DensityPropertyVariant {
 }
 
 /// Properties modifying dense sets
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DensityProperty {
     /// Where density holds
     Locality(LocalityPropertyVariant),
@@ -138,7 +139,7 @@ pub enum DensityProperty {
 }
 
 /// Types of topologies for density
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DensityTopologyVariant {
     /// Dense in norm topology
     /// ∀x ∃(xₙ): ‖xₙ-x‖→0
@@ -158,7 +159,7 @@ pub enum DensityTopologyVariant {
 }
 
 /// Coverage variants describing the extent of a property
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CoveragePropertyVariant {
     /// Property holds without exception on X
     Everywhere,
@@ -177,7 +178,7 @@ pub enum CoveragePropertyVariant {
 }
 
 /// Locality variants describing where a property holds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LocalityPropertyVariant {
     /// Property holds on the entire space X
     Everywhere,
@@ -195,7 +196,7 @@ pub enum LocalityPropertyVariant {
     OnCompact,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum PeriodicityPropertyVariant {
     /// Strictly periodic: f(x+p)=f(x) for some p≠0
     Periodic,
@@ -209,7 +210,7 @@ pub enum PeriodicityPropertyVariant {
 /// A function f is convex if:
 /// - f(tx + (1-t)y) ≤ tf(x) + (1-t)f(y) for t∈[0,1]
 /// Concave functions satisfy the reverse inequality
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConvexityPropertyVariant {
     /// Function is convex
     /// f(tx + (1-t)y) ≤ tf(x) + (1-t)f(y)
@@ -224,7 +225,7 @@ pub enum ConvexityPropertyVariant {
 }
 
 /// Properties modifying convex/concave functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConvexityProperty {
     /// Where convexity holds
     Locality(LocalityPropertyVariant),
@@ -237,7 +238,7 @@ pub enum ConvexityProperty {
 }
 
 /// Strength variants describing how strongly a property holds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StrengthPropertyVariant {
     /// Property holds in the strongest possible sense
     Strong,
@@ -257,7 +258,7 @@ pub enum StrengthPropertyVariant {
 /// - Increasing: x₁ < x₂ ⟹ f(x₁) ≤ f(x₂)
 /// - Strictly increasing: x₁ < x₂ ⟹ f(x₁) < f(x₂)
 /// - Decreasing: analogous with reversed inequalities
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MonotonicityPropertyVariant {
     /// Function preserves or reverses order
     /// x₁ ≤ x₂ ⟹ f(x₁) ≤ f(x₂) (or ≥)
@@ -269,7 +270,7 @@ pub enum MonotonicityPropertyVariant {
 }
 
 /// Properties modifying monotonic functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MonotonicityProperty {
     /// Where monotonicity holds
     Locality(LocalityPropertyVariant),
@@ -285,7 +286,7 @@ pub enum MonotonicityProperty {
 }
 
 /// Directions of monotonicity
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MonotonicityDirectionVariant {
     /// Non-decreasing: x₁ ≤ x₂ ⟹ f(x₁) ≤ f(x₂)
     Increasing,
@@ -306,7 +307,7 @@ pub enum MonotonicityDirectionVariant {
 /// - C^∞: infinitely differentiable
 /// - Analytic: locally representable as power series
 /// - Gevrey: intermediate between C^∞ and analytic
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SmoothnessPropertyVariant {
     /// Function has specified smoothness class
     /// All derivatives up to specified order exist and are continuous
@@ -318,7 +319,7 @@ pub enum SmoothnessPropertyVariant {
 }
 
 /// Properties modifying smooth functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SmoothProperty {
     /// Where smoothness holds
     Locality(LocalityPropertyVariant),
@@ -331,7 +332,7 @@ pub enum SmoothProperty {
 }
 
 /// Classes of smoothness in differential geometry/analysis
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SmoothnessClassVariant {
     /// k times continuously differentiable
     /// f⁽ⁿ⁾ exists and is continuous for n ≤ k
@@ -351,7 +352,7 @@ pub enum SmoothnessClassVariant {
 }
 
 /// Variants of measurability for sets and functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasurabilityPropertyVariant {
     /// Set/function is measurable
     /// For functions: f⁻¹(E) measurable for all measurable E
@@ -368,7 +369,7 @@ pub enum MeasurabilityPropertyVariant {
 /// Key aspects:
 /// - Borel measurability: inverse images of open sets are measurable
 /// - Lebesgue measurability: inverse images of null sets are measurable
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasurableProperty {
     /// Extent of measurability
     Coverage(CoveragePropertyVariant),
@@ -381,7 +382,7 @@ pub enum MeasurableProperty {
 }
 
 /// Types of measures in measure theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasureTypePropertyVariant {
     /// Generated by open sets
     /// σ-algebra generated by topology
@@ -403,7 +404,7 @@ pub enum MeasureTypePropertyVariant {
 /// - Classical derivatives: limits of difference quotients
 /// - Weak derivatives: integration by parts formula
 /// - Distributional derivatives: action on test functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DifferentiabilityPropertyVariant {
     /// Function is differentiable
     /// limₕ→₀[f(x+h)-f(x)]/h exists
@@ -414,7 +415,7 @@ pub enum DifferentiabilityPropertyVariant {
     NonDifferentiable,
 }
 /// Properties modifying differentiable functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DifferentiableProperty {
     /// Where differentiability holds
     Locality(LocalityPropertyVariant),
@@ -430,7 +431,7 @@ pub enum DifferentiableProperty {
 }
 
 /// Orders of differentiability
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DifferentiabilityOrderVariant {
     /// First derivative exists
     /// f' exists
@@ -453,7 +454,7 @@ pub enum DifferentiabilityOrderVariant {
     Distribution,
 }
 /// Variants of integrability for functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IntegrabilityPropertyVariant {
     /// Function is integrable in some sense
     /// ∫|f| exists (in specified sense)
@@ -469,7 +470,7 @@ pub enum IntegrabilityPropertyVariant {
 /// - Riemann: limits of sums over partitions
 /// - Lebesgue: limits of simple function approximations
 /// - Improper: limits of proper integrals
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IntegrableProperty {
     /// Extent of integrability
     Coverage(CoveragePropertyVariant),
@@ -481,7 +482,7 @@ pub enum IntegrableProperty {
     Strength(StrengthPropertyVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IntegrableTypePropertyVariant {
     /// Lebesgue integrable: ∫|f|dμ < ∞
     Lebesgue,
@@ -491,7 +492,7 @@ pub enum IntegrableTypePropertyVariant {
     Improper,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticPropertyVariant {
     /// Locally representable as power series
     /// f(x) = Σₙaₙ(x-x₀)ⁿ in some neighborhood
@@ -500,7 +501,7 @@ pub enum AnalyticPropertyVariant {
     NonAnalytic,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum HolderPropertyVariant {
     /// Satisfies Hölder condition
     /// ∃C>0,α∈(0,1]: |f(x)-f(y)| ≤ C|x-y|ᵅ
@@ -509,7 +510,7 @@ pub enum HolderPropertyVariant {
     NonHolder,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LipschitzPropertyVariant {
     /// Satisfies Lipschitz condition
     /// ∃L>0: |f(x)-f(y)| ≤ L|x-y| for all x,y
@@ -518,7 +519,7 @@ pub enum LipschitzPropertyVariant {
     NonLipschitz,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProperPropertyVariant {
     /// Inverse images of compact sets are compact
     /// K compact in Y ⟹ f⁻¹(K) compact in X
@@ -528,7 +529,7 @@ pub enum ProperPropertyVariant {
 }
 
 /// Basic property variants for functions and spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum OpenPropertyVariant {
     /// Maps open sets to open sets
     /// U open in X ⟹ f(U) open in Y
@@ -537,7 +538,7 @@ pub enum OpenPropertyVariant {
     NonOpen,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ClosedPropertyVariant {
     /// Maps closed sets to closed sets
     /// F closed in X ⟹ f(F) closed in Y
@@ -547,7 +548,7 @@ pub enum ClosedPropertyVariant {
 }
 
 /// Variants of boundedness properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BoundednessPropertyVariant {
     /// Bounded metric space
     Bounded,
@@ -558,7 +559,7 @@ pub enum BoundednessPropertyVariant {
 }
 
 /// Continuity property variants with precise mathematical definitions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ContinuityPropertyVariant {
     /// Function preserves closeness between points
     /// ∀ε>0 ∃δ>0: |x-x₀|<δ ⟹ |f(x)-f(x₀)|<ε
@@ -570,7 +571,7 @@ pub enum ContinuityPropertyVariant {
 }
 
 /// Properties modifying continuous functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ContinuousProperty {
     /// Where the continuity holds (globally, locally, etc.)
     Locality(LocalityPropertyVariant),
@@ -583,7 +584,7 @@ pub enum ContinuousProperty {
 }
 
 /// Properties modifying discontinuous functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DiscontinuousProperty {
     /// Extent of discontinuity
     Coverage(CoveragePropertyVariant),
@@ -592,7 +593,7 @@ pub enum DiscontinuousProperty {
     Essentiality(EssentialityPropertyVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum EssentialityPropertyVariant {
     /// Cannot be made continuous by redefining at point
     Essential,
@@ -603,7 +604,7 @@ pub enum EssentialityPropertyVariant {
 }
 
 /// Represents the domain type for functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DomainType {
     /// Real numbers
     Real,
@@ -625,7 +626,7 @@ pub enum DomainType {
 }
 
 /// Represents well-defined mathematical functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConcreteFunction {
     /// Elementary transcendental functions
     Exp {
@@ -648,12 +649,12 @@ pub enum ConcreteFunction {
 
     /// Polynomial and rational functions
     Polynomial {
-        coefficients: Vec<f64>, // In ascending order of degree
+        coefficients: Vec<Number>, // In ascending order of degree
         domain: DomainType,
     },
     RationalFunction {
-        numerator: Vec<f64>,   // Coefficients of numerator polynomial
-        denominator: Vec<f64>, // Coefficients of denominator polynomial
+        numerator: Vec<Number>,   // Coefficients of numerator polynomial
+        denominator: Vec<Number>, // Coefficients of denominator polynomial
         domain: DomainType,
     },
 
@@ -665,7 +666,7 @@ pub enum ConcreteFunction {
         domain: DomainType,
     },
     BesselJ {
-        order: f64,
+        order: Number,
         domain: DomainType,
     },
     AiryAi {
@@ -692,8 +693,8 @@ pub enum ConcreteFunction {
     /// Classical test functions
     Bump {
         // C^∞ function with compact support
-        center: f64,
-        radius: f64,
+        center: Number,
+        radius: Number,
     },
     Schwartz {
         // Rapidly decreasing C^∞ function
@@ -702,7 +703,7 @@ pub enum ConcreteFunction {
 }
 
 /// Types of Schwartz functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SchwartzKind {
     Gaussian,         // exp(-x^2)
     Lorentzian,       // 1/(1 + x^2)
@@ -831,7 +832,7 @@ impl ConcreteFunction {
 }
 
 /// Variants of boundedness for analytic functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticBoundednessPropertyVariant {
     /// Function has upper/lower bounds
     /// ∃M>0: |f(x)| ≤ M for all x
@@ -843,7 +844,7 @@ pub enum AnalyticBoundednessPropertyVariant {
 }
 
 /// Properties modifying bounded analytic functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticBoundedProperty {
     /// Where the boundedness holds
     Locality(AnalyticLocalityPropertyVariant),
@@ -856,7 +857,7 @@ pub enum AnalyticBoundedProperty {
 }
 
 /// Types of boundedness in analysis
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticBoundednessTypeVariant {
     /// Bounded in norm sense
     NormBounded,
@@ -867,7 +868,7 @@ pub enum AnalyticBoundednessTypeVariant {
 }
 
 /// Variants of continuity for analytic functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticContinuityPropertyVariant {
     /// Function preserves limits
     /// ∀ε>0 ∃δ>0: |x-x₀|<δ ⟹ |f(x)-f(x₀)|<ε
@@ -879,7 +880,7 @@ pub enum AnalyticContinuityPropertyVariant {
 }
 
 /// Properties modifying continuous analytic functions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticContinuousProperty {
     /// Where the continuity holds
     Locality(AnalyticLocalityPropertyVariant),
@@ -892,7 +893,7 @@ pub enum AnalyticContinuousProperty {
 }
 
 /// Types of continuity in analysis
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticContinuityTypeVariant {
     /// Continuous in norm topology
     NormContinuous,
@@ -903,7 +904,7 @@ pub enum AnalyticContinuityTypeVariant {
 }
 
 /// Locality variants for analytic properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticLocalityPropertyVariant {
     /// Property holds on entire domain
     Global,
@@ -916,7 +917,7 @@ pub enum AnalyticLocalityPropertyVariant {
 }
 
 /// Coverage variants for analytic properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AnalyticCoveragePropertyVariant {
     /// Property holds everywhere
     Complete,

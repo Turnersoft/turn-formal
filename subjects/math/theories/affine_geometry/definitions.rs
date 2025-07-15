@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 /// An affine space modeled on a vector space
 /// An affine space is a set A together with a vector space V and a transitive
 /// and free action of V on A by translation.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct AffineSpace {
     /// Dimension of the space
     pub dimension: DimensionType,
@@ -18,7 +18,7 @@ pub struct AffineSpace {
 }
 
 /// Properties specific to affine spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AffineSpaceProperty {
     /// Whether the space is real or complex
     ScalarField(ScalarFieldType),
@@ -29,7 +29,7 @@ pub enum AffineSpaceProperty {
 }
 
 /// Types of scalar fields for affine spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ScalarFieldType {
     /// Real numbers
     Real,

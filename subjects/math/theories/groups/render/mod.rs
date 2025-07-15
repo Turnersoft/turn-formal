@@ -3,6 +3,7 @@ use std::collections::{BTreeMap, HashMap};
 
 use crate::subjects::math::export::unified_exporter::TheoryExporter;
 use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::location::Located;
 use crate::subjects::math::theories::groups::definitions::{
     CenterGroup, CommutatorSubgroup, GroupHomomorphism, SylowSubgroup,
 };
@@ -32,7 +33,7 @@ use crate::subjects::math::theories::groups::definitions::{
     TopologicalGroup, TopologicalGroupProperty, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 
-use super::theorems::{prove_inverse_uniqueness, prove_simple_group_theorem};
+use super::theorems::prove_inverse_uniqueness;
 
 // use super::theorems::{
 //     prove_abelian_squared_criterion, prove_deduction_using_identity_uniqueness,
@@ -56,6 +57,15 @@ pub mod linear_groups;
 pub mod modular_groups;
 pub mod quotient_groups;
 pub mod subgroup_constructions;
+
+// use crate::subjects::math::formalism::location::Located;
+// use crate::subjects::math::formalism::relations::MathRelation;
+// use crate::subjects::math::theories::groups::definitions::{
+//     Group, GroupExpression, GroupRelation,
+// };
+// use crate::turn_render::{
+//     self, BracketSize, BracketStyle, MathNode, MathNodeContent, RelationOperatorNode, ToTurnMath,
+// };
 
 // === TOMATH IMPLEMENTATIONS ===
 
@@ -257,41 +267,11 @@ impl ToTurnMath for GroupElement {
 
 // === GROUPEXPRESSION IMPLEMENTATIONS ===
 
-fn collect_multiplication_terms(
-    expr: &Parametrizable<GroupExpression>,
-    master_id: &str,
-) -> Vec<(RefinedMulOrDivOperation, MathNode)> {
-    match expr {
-        Parametrizable::Concrete(GroupExpression::Operation { left, right, .. }) => {
-            // Recursively collect terms from nested operations
-            let mut terms = collect_multiplication_terms(&left, &format!("{}-left", master_id));
-            terms.push((
-                RefinedMulOrDivOperation::Multiplication(MulSymbol::Dot),
-                right.to_turn_math(format!("{}-right", master_id)),
-            ));
-            terms
-        }
-        _ => vec![(
-            RefinedMulOrDivOperation::None,
-            expr.to_turn_math(master_id.to_string()),
-        )],
-    }
-}
-
 impl ToTurnMath for GroupExpression {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
             GroupExpression::Operation { left, right, .. } => {
-                // Use the helper function to properly collect all terms
-                let terms = collect_multiplication_terms(
-                    &Parametrizable::Concrete(self.clone()),
-                    &master_id,
-                );
-
-                MathNode {
-                    id: format!("{}-inner", master_id),
-                    content: Box::new(MathNodeContent::Multiplications { terms }),
-                }
+                todo!()
             }
             GroupExpression::Element { element, .. } => match element {
                 Some(param_element) => param_element.to_turn_math(master_id),
@@ -799,32 +779,18 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
     }
 
     fn export_theorems(&self) -> Vec<MathDocument> {
-        // TEMPORARILY DISABLED: Disable theorem export to prevent stack overflow
-        // caused by unimplemented tactics and recursive theorem calls
-        // TODO: Re-enable once tactics are properly implemented
+        // Initializing the registry is now handled automatically by the OnceLock
+        // in get_theorem_registry(). We can call it here to be explicit.
 
-        // Register basic group axioms BEFORE generating theorem proofs
-        // This ensures that tactics can find the axioms in the theorem registry
-        super::theorems::register_basic_group_axioms();
+        let theorems = vec![(
+            "inverse_uniqueness".to_string(),
+            super::theorems::prove_inverse_uniqueness(),
+        )];
 
-        let mut content = vec![
-            // prove_simple_group_theorem().to_math_document("group_theory.simple_theorem"),
-            // NOTE: Commented out to prevent stack overflow from unimplemented tactics
-            prove_inverse_uniqueness().to_math_document("group_theory.inverse_uniqueness"),
-            // NOTE: Commented out to prevent stack overflow from recursive theorem calls
-            // prove_inverse_product_rule().to_math_document("group_theory.inverse_product_rule"),
-            // prove_abelian_squared_criterion()
-            //     .to_math_document("group_theory.abelian_squared_criterion"),
-            // prove_lagrange_theorem().to_math_document("group_theory.lagrange_theorem"),
-            // prove_example_chaining_theorems()
-            //     .to_math_document("group_theory.example_chaining_theorems"),
-            // prove_theorem_extraction_example()
-            //     .to_math_document("group_theory.theorem_extraction_example"),
-            // prove_deduction_using_identity_uniqueness()
-            //     .to_math_document("group_theory.deduction_using_identity_uniqueness"),
-        ];
-
-        content
+        theorems
+            .into_iter()
+            .map(|(id, theorem)| theorem.to_math_document(&format!("group_theory.thm.{}", id)))
+            .collect()
     }
 
     fn export_object_definitions(&self, objects: Vec<Group>) -> Vec<MathDocument> {

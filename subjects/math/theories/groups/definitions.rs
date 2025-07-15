@@ -1,16 +1,18 @@
 use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::location::Located;
 use crate::subjects::math::formalism::{complexity::Complexity, objects::MathObject};
+use crate::subjects::math::theories::zfc::definitions::GenericSet;
 use crate::turn_render::Identifier;
+use crate::variant_set;
 
 use super::super::super::formalism::expressions::{MathExpression, TheoryExpression};
 use super::super::super::formalism::relations::MathRelation;
-use super::super::super::formalism::relations::RelationDetail;
 use super::super::VariantSet;
 use super::super::fields::definitions::Field;
 use super::super::topology::definitions::TopologicalSpace;
 use super::super::zfc::definitions::{Set, SetProperty};
 
-use crate::subjects::math::theories::number_theory;
+use crate::subjects::math::theories::number_theory::{self, NumberTheoryRelation};
 use crate::turn_render::math_node::MathNode;
 use crate::turn_render::section_node::{RichText, RichTextSegment, Section, SectionContentNode};
 use serde::{Deserialize, Serialize};
@@ -25,8 +27,10 @@ use crate::subjects::math::formalism::abstraction_level::GetAbstractionLevel;
 //==== GROUP-SPECIFIC OPERATION TYPES ====//
 
 /// Types of operations specific to group theory
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupOperationVariant {
+    /// Generic operation (used for abstract groups)
+    Generic,
     /// Standard multiplication (used in most abstract groups)
     Multiplication,
     /// Addition (used in additive groups)
@@ -44,7 +48,7 @@ pub enum GroupOperationVariant {
 }
 
 /// Notation used for group operations
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupNotation {
     /// Infix notation: a * b
     Infix(GroupSymbol),
@@ -55,7 +59,7 @@ pub enum GroupNotation {
 }
 
 /// Common symbols used in group theory
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupSymbol {
     /// Multiplication: ×
     Times,
@@ -76,8 +80,10 @@ pub enum GroupSymbol {
 }
 
 /// Identity element for group operations
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupIdentity {
+    /// Generic identity (used for abstract groups)
+    Generic,
     /// Multiplicative identity: 1
     One,
     /// Additive identity: 0
@@ -91,8 +97,10 @@ pub enum GroupIdentity {
 }
 
 /// Inverse operation types in group theory
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupInverse {
+    /// Generic inverse (used for abstract groups)
+    Generic,
     /// Multiplicative inverse: x⁻¹
     MultiplicativeInverse,
     /// Additive inverse: -x
@@ -106,8 +114,10 @@ pub enum GroupInverse {
 }
 
 /// How inverses are applied in groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupInverseApplication {
+    /// Generic inverse application (used for abstract groups)
+    Generic,
     /// Left inverse: b*a = e
     Left,
     /// Right inverse: a*b = e
@@ -116,20 +126,10 @@ pub enum GroupInverseApplication {
     TwoSided,
 }
 
-/// Properties specific to group operations
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
-pub enum GroupOperationProperty {
-    /// Whether the operation is associative (required for groups)
-    Associative,
-    /// Whether the operation is commutative
-    Commutative(bool),
-    /// Whether the operation is closed (required for groups)
-    Closed,
-}
-
 /// Complete binary operation structure specific to group theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct GroupOperation {
+    /// this struct is problematic, all fields should be tied together, we will need serious runtime check for them
     /// Type of operation
     pub operation_type: GroupOperationVariant,
 
@@ -144,30 +144,22 @@ pub struct GroupOperation {
 
     /// How inverses are applied (usually two-sided in groups)
     pub inverse_application: GroupInverseApplication,
-
-    /// Properties of this operation
-    pub properties: Vec<GroupOperationProperty>,
-
-    /// For product operations, contains information about the product structure
-    pub product_info: Option<ProductInfo>,
 }
 
 impl Default for GroupOperation {
     fn default() -> Self {
         GroupOperation {
-            operation_type: GroupOperationVariant::Multiplication,
-            notation: GroupNotation::Infix(GroupSymbol::Times),
+            operation_type: GroupOperationVariant::Generic,
+            notation: GroupNotation::Infix(GroupSymbol::Asterisk),
             identity: GroupIdentity::One,
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![GroupOperationProperty::Associative],
-            product_info: None,
         }
     }
 }
 
 /// Information about product operations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ProductInfo {
     /// The type of product operation
     pub operation: ProductOperation,
@@ -183,7 +175,7 @@ pub struct ProductInfo {
 }
 
 /// Core algebraic structure of a group, containing the minimal data needed to satisfy group axioms
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct GenericGroup {
     /// The underlying set
     pub base_set: Set,
@@ -209,7 +201,7 @@ impl Default for GenericGroup {
 }
 
 /// Type of product operation used to form a product group
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProductOperation {
     /// Direct product (×): Cartesian product with componentwise operation
     Direct,
@@ -237,7 +229,7 @@ pub enum ProductOperation {
 }
 
 /// A product group combining two or more groups with a specific operation
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ProductGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -255,35 +247,49 @@ pub struct ProductGroup {
     pub product_props: VariantSet<ProductProperty>,
 }
 
-/// A unified wrapper for all group-like structures
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// A unified wrapper for all group-like structures.
+/// The variants are ordered and commented to visually represent their conceptual hierarchy.
+/// The formal "is-a" relationship is defined in the `GROUP_HIERARCHY` map.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Group {
-    /// Basic abstract group
+    // --- Foundational & Abstract Groups ---
     Generic(GenericGroup),
+    Trivial(TrivialGroup),
+    Cyclic(CyclicGroup),
+    Dihedral(DihedralGroup),
+    Free(FreeGroup),
 
-    // Groups with additional structure (axiomatically defined)
+    // --- Permutation Groups ---
+    Symmetric(SymmetricGroup),
+    // A more specific type of SymmetricGroup
+    Alternating(AlternatingGroup),
+
+    // --- Matrix/Linear Groups ---
+    GeneralLinear(GeneralLinearGroup),
+    //  A more specific type of GeneralLinearGroup
+    SpecialLinear(SpecialLinearGroup),
+    //  A more specific type of GeneralLinearGroup
+    Orthogonal(OrthogonalGroup),
+    //      A more specific type of OrthogonalGroup
+    SpecialOrthogonal(SpecialOrthogonalGroup),
+    //  A more specific type of GeneralLinearGroup
+    Unitary(UnitaryGroup),
+    //      A more specific type of UnitaryGroup
+    SpecialUnitary(SpecialUnitaryGroup),
+
+    // --- Groups with Additional Structure ---
     Topological(TopologicalGroup),
     Lie(LieGroup),
-    Cyclic(CyclicGroup),
-    Symmetric(SymmetricGroup),
-    Dihedral(DihedralGroup),
-    GeneralLinear(GeneralLinearGroup),
-    SpecialLinear(SpecialLinearGroup),
-    Orthogonal(OrthogonalGroup),
-    SpecialOrthogonal(SpecialOrthogonalGroup),
-    Unitary(UnitaryGroup),
-    SpecialUnitary(SpecialUnitaryGroup),
-    Alternating(AlternatingGroup),
+
+    // --- Modular Groups ---
     ModularAdditive(ModularAdditiveGroup),
     ModularMultiplicative(ModularMultiplicativeGroup),
-    Free(FreeGroup),
-    Trivial(TrivialGroup),
 
-    // Groups defined by operations on other groups
+    // --- Groups Defined by Operations on Other Groups ---
     Product(ProductGroup),
     Quotient(QuotientGroup),
 
-    // Groups defined by other explicit constructions (flattened)
+    // --- Groups Defined by Other Explicit Constructions ---
     Kernel(KernelGroup),
     Image(ImageGroup),
     Center(CenterGroup),
@@ -333,7 +339,7 @@ pub enum CanonicityVariant {
 }
 
 /// Properties specific to groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum GroupProperty {
     /// Commutativity properties
     Abelian(AbelianPropertyVariant),
@@ -352,7 +358,7 @@ pub enum GroupProperty {
 }
 
 /// Properties specific to topological groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum TopologicalGroupProperty {
     /// Compactness properties
     Compact(CompactPropertyVariant),
@@ -365,7 +371,7 @@ pub enum TopologicalGroupProperty {
 }
 
 /// Properties specific to Lie groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum LieGroupProperty {
     /// Semisimplicity properties
     Semisimple(SemisimplePropertyVariant),
@@ -375,7 +381,7 @@ pub enum LieGroupProperty {
 }
 
 /// Types of abelian groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AbelianPropertyVariant {
     /// Commutative
     Abelian,
@@ -385,7 +391,7 @@ pub enum AbelianPropertyVariant {
 }
 
 /// Types of finite groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FinitePropertyVariant {
     /// Finite order
     Finite(u32),
@@ -398,7 +404,7 @@ pub enum FinitePropertyVariant {
 }
 
 /// Types of simple groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SimplePropertyVariant {
     /// No proper normal subgroups
     Simple,
@@ -411,7 +417,7 @@ pub enum SimplePropertyVariant {
 }
 
 /// Types of solvable groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SolvablePropertyVariant {
     /// Has solvable series
     Solvable,
@@ -424,7 +430,7 @@ pub enum SolvablePropertyVariant {
 }
 
 /// Types of nilpotent groups
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NilpotentPropertyVariant {
     /// Has nilpotent series
     Nilpotent(u32),
@@ -434,7 +440,7 @@ pub enum NilpotentPropertyVariant {
 }
 
 /// Types of compact groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum CompactPropertyVariant {
     /// Compact
     Compact,
@@ -447,7 +453,7 @@ pub enum CompactPropertyVariant {
 }
 
 /// Types of connected groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ConnectedPropertyVariant {
     /// Connected
     Connected,
@@ -466,7 +472,7 @@ pub enum ConnectedPropertyVariant {
 }
 
 /// Types of metrizable groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum MetrizablePropertyVariant {
     /// Admits compatible metric
     Metrizable,
@@ -476,7 +482,7 @@ pub enum MetrizablePropertyVariant {
 }
 
 /// Types of semisimple Lie groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SemisimplePropertyVariant {
     /// No abelian ideals
     Semisimple,
@@ -489,7 +495,7 @@ pub enum SemisimplePropertyVariant {
 }
 
 /// Types of reductive Lie groups
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ReductivePropertyVariant {
     /// Reductive
     Reductive,
@@ -501,7 +507,7 @@ pub enum ReductivePropertyVariant {
 /// A group action of G on X is a homomorphism:
 /// φ: G → Aut(X)
 /// This combines both the action definition and target information
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum GroupAction {
     /// Action on a set
     SetAction {
@@ -521,7 +527,7 @@ pub enum GroupAction {
         /// The vector space being acted on
         space: String,
         /// Specific vector in the space (if any)
-        vector: Option<Vec<f64>>,
+        vector: Option<Vec<i64>>,
         /// Properties of the action
         properties: VariantSet<GroupActionProperty>,
     },
@@ -539,7 +545,7 @@ pub enum GroupAction {
 }
 
 /// Properties specific to group actions
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupActionProperty {
     /// Transitive: Single orbit
     Transitive(TransitivityPropertyVariant),
@@ -552,7 +558,7 @@ pub enum GroupActionProperty {
 }
 
 /// Properties for transitivity of group actions
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum TransitivityPropertyVariant {
     /// Single orbit
     Transitive,
@@ -563,7 +569,7 @@ pub enum TransitivityPropertyVariant {
 }
 
 /// Properties for properness of group actions
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PropernessPropertyVariant {
     /// Proper action
     Proper,
@@ -576,7 +582,7 @@ pub enum PropernessPropertyVariant {
 }
 
 /// Properties for faithfulness of group actions
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum FaithfulnessPropertyVariant {
     /// Trivial kernel
     Faithful,
@@ -589,7 +595,7 @@ pub enum FaithfulnessPropertyVariant {
 }
 
 /// Properties for freeness of group actions
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum FreenessPropertyVariant {
     /// Trivial stabilizers
     Free,
@@ -603,7 +609,7 @@ pub enum FreenessPropertyVariant {
 
 /// Relations specific to group theory
 /// these are the verbs in the language of group theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum GroupRelation {
     /// One group is a subgroup of another
     IsSubgroupOf {
@@ -826,12 +832,6 @@ pub enum GroupRelation {
         target: Parametrizable<QuotientGroup>,
         property: QuotientProperty,
     },
-
-    /// Asserts a property on a Group Operation.
-    HasOperationProperty {
-        target: Parametrizable<GroupOperation>,
-        property: GroupOperationProperty,
-    },
 }
 
 // Helper methods for backward compatibility
@@ -878,7 +878,7 @@ impl GroupRelation {
 }
 
 // Modify the GroupExpression enum to include a ProductOperation
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum GroupExpression {
     /// A concrete element in a group, this is different to GroupRelation::ElementOf,
     /// becuase it is checked by default, not something to be proven
@@ -936,7 +936,7 @@ pub enum GroupExpression {
     Homomorphism(Parametrizable<GroupHomomorphism>), // Homomorphism itself can be variable
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct GroupHomomorphism {
     /// The domain group
     pub domain: Parametrizable<Group>,
@@ -945,7 +945,7 @@ pub struct GroupHomomorphism {
 }
 
 /// Different types of element values depending on the group structure
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GroupElement {
     /// A numeric element (useful for Z/nZ, etc.)
     Integer(i64),
@@ -1039,7 +1039,7 @@ impl GroupAction {
     pub fn vector_space_action_with_vector(
         group: Group,
         space: impl Into<String>,
-        vector: Vec<f64>,
+        vector: Vec<i64>,
         properties: VariantSet<GroupActionProperty>,
     ) -> Self {
         GroupAction::VectorSpaceAction {
@@ -1103,7 +1103,7 @@ impl GroupRelation {
     /// Create a relation for element has unique inverse (simplified, concrete inputs)
     pub fn has_unique_inverse(element: &GroupExpression, group: &Group) -> Self {
         GroupRelation::HasUniqueInverse {
-            element: Parametrizable::Concrete(element.clone()), // Keep Expr unboxed for now
+            element: Parametrizable::Concrete(element.clone()),
             group: Parametrizable::Concrete(group.clone()),
         }
     }
@@ -1132,12 +1132,10 @@ impl GroupRelation {
                 group: Parametrizable::Concrete(group.clone()),
             }));
 
-        MathRelation::NumberTheory(
-            super::super::number_theory::definitions::NumberTheoryRelation::Divides {
-                divisor: concrete_prime,
-                dividend: group_order_expr,
-            },
-        )
+        MathRelation::NumberTheory(NumberTheoryRelation::Divides {
+            divisor: Located::new(Parametrizable::Concrete(concrete_prime)),
+            dividend: Located::new(Parametrizable::Concrete(group_order_expr)),
+        })
     }
 
     /// Create a relation for one element is the inverse of another (simplified, concrete)
@@ -1177,7 +1175,7 @@ impl GroupRelation {
 }
 
 /// A group with topological structure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct TopologicalGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1188,7 +1186,7 @@ pub struct TopologicalGroup {
 }
 
 /// A Lie group with smooth structure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct LieGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1201,7 +1199,7 @@ pub struct LieGroup {
 }
 
 /// A cyclic group generated by a single element
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CyclicGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1212,7 +1210,7 @@ pub struct CyclicGroup {
 }
 
 /// A symmetric group (permutation group) on n elements
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SymmetricGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1221,7 +1219,7 @@ pub struct SymmetricGroup {
 }
 
 /// A dihedral group representing the symmetries of a regular polygon
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct DihedralGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1450,8 +1448,6 @@ pub enum GeneratorsVariant {
 pub enum PermutationProperty {
     /// Parity property
     Parity(ParityVariant),
-    /// Degree property (size of the set being permuted)
-    Degree(u32),
     /// Symmetric property
     Symmetric(SymmetricVariant),
     /// Primitivity property
@@ -1492,8 +1488,6 @@ pub enum PrimitivityVariant {
 pub enum QuotientProperty {
     /// Projection property
     Projection(ProjectionVariant),
-    /// Simplicity property
-    Simplicity(SimplicityVariant),
 }
 
 /// Property variants for projection
@@ -1503,15 +1497,6 @@ pub enum ProjectionVariant {
     HasProjection,
     /// Has no projection homomorphism
     HasNoProjection,
-}
-
-/// Property variants for simplicity
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum SimplicityVariant {
-    /// Is a simple group
-    Simple,
-    /// Is not a simple group
-    NonSimple,
 }
 
 /// Properties specific to special linear groups (SL)
@@ -1650,7 +1635,7 @@ pub enum SpecialUnitaryVolumeVariant {
 }
 
 /// General linear group GL(n,F)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct GeneralLinearGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1665,7 +1650,7 @@ pub struct GeneralLinearGroup {
 }
 
 /// Special linear group SL(n,F)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SpecialLinearGroup {
     /// The underlying general linear group
     pub general_linear: GeneralLinearGroup,
@@ -1674,7 +1659,7 @@ pub struct SpecialLinearGroup {
 }
 
 /// Orthogonal group O(n)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct OrthogonalGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1685,7 +1670,7 @@ pub struct OrthogonalGroup {
 }
 
 /// Special orthogonal group SO(n)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SpecialOrthogonalGroup {
     /// The underlying orthogonal group
     pub orthogonal: OrthogonalGroup,
@@ -1694,7 +1679,7 @@ pub struct SpecialOrthogonalGroup {
 }
 
 /// Unitary group U(n)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct UnitaryGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1705,7 +1690,7 @@ pub struct UnitaryGroup {
 }
 
 /// Special unitary group SU(n)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SpecialUnitaryGroup {
     /// The underlying unitary group
     pub unitary: UnitaryGroup,
@@ -1714,7 +1699,7 @@ pub struct SpecialUnitaryGroup {
 }
 
 /// Alternating group A_n
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct AlternatingGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1725,7 +1710,7 @@ pub struct AlternatingGroup {
 }
 
 /// Modular additive group Z/nZ
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ModularAdditiveGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1736,7 +1721,7 @@ pub struct ModularAdditiveGroup {
 }
 
 /// Multiplicative group of integers modulo n
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ModularMultiplicativeGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1747,7 +1732,7 @@ pub struct ModularMultiplicativeGroup {
 }
 
 /// Free group F_n
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FreeGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1758,7 +1743,7 @@ pub struct FreeGroup {
 }
 
 /// Quotient group G/N
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct QuotientGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1783,7 +1768,7 @@ impl QuotientGroup {
 }
 
 /// The trivial group
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct TrivialGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
@@ -1792,7 +1777,7 @@ pub struct TrivialGroup {
 // --- Structs for Flattened Group Constructions ---
 
 /// A group defined as the kernel of a homomorphism
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct KernelGroup {
     pub core: GenericGroup,
     pub defining_homomorphism: Box<GroupHomomorphism>,
@@ -1800,7 +1785,7 @@ pub struct KernelGroup {
 }
 
 /// A group defined as the image of a homomorphism
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ImageGroup {
     pub core: GenericGroup,
     pub defining_homomorphism: Box<GroupHomomorphism>,
@@ -1808,14 +1793,14 @@ pub struct ImageGroup {
 }
 
 /// A group defined as the center of another group: Z(G)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CenterGroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
 }
 
 /// A group defined as a subgroup generated by a set of elements
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct GeneratedSubgroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
@@ -1823,7 +1808,7 @@ pub struct GeneratedSubgroup {
 }
 
 /// A group defined as the normalizer of a subgroup: N_G(H)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct NormalizerGroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
@@ -1831,7 +1816,7 @@ pub struct NormalizerGroup {
 }
 
 /// A group defined as the centralizer of an element: C_G(x)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CentralizerGroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
@@ -1839,14 +1824,14 @@ pub struct CentralizerGroup {
 }
 
 /// A group defined as the commutator subgroup: [G,G]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CommutatorSubgroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
 }
 
 /// A group defined as a Sylow p-subgroup: Syl_p(G)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SylowSubgroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
@@ -1854,7 +1839,7 @@ pub struct SylowSubgroup {
 }
 
 /// A group defined as a wreath product
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct WreathProductGroup {
     pub core: GenericGroup,
     pub base_group: Box<Group>,
@@ -1863,7 +1848,7 @@ pub struct WreathProductGroup {
 }
 
 /// A group defined as a central product
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CentralProductGroup {
     pub core: GenericGroup,
     pub component_groups: Vec<Box<Group>>,
@@ -1871,7 +1856,7 @@ pub struct CentralProductGroup {
 }
 
 /// A group defined as a pullback (fibered product)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct PullbackGroup {
     pub core: GenericGroup,
     pub source_groups: Vec<Box<Group>>, // Groups being mapped from
@@ -1880,7 +1865,7 @@ pub struct PullbackGroup {
 }
 
 /// A group constructed by restricting to a specific subset satisfying group properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct RestrictionGroup {
     pub core: GenericGroup,
     pub parent_group: Box<Group>,
@@ -1888,115 +1873,48 @@ pub struct RestrictionGroup {
 }
 
 impl Group {
-    /// Gets the properties of the group
-    pub fn get_properties(&self) -> &VariantSet<GroupProperty> {
+    pub fn get_variant_name(&self) -> &'static str {
         match self {
-            Group::Generic(g) => &g.props,
-            Group::Topological(g) => &g.core.props,
-            Group::Lie(g) => &g.core.props,
-            Group::Cyclic(g) => &g.core.props,
-            Group::Symmetric(g) => &g.core.props,
-            Group::Dihedral(g) => &g.core.props,
-            Group::GeneralLinear(g) => &g.core.props,
-            Group::SpecialLinear(g) => &g.general_linear.core.props,
-            Group::Orthogonal(g) => &g.core.props,
-            Group::SpecialOrthogonal(g) => &g.orthogonal.core.props,
-            Group::Unitary(g) => &g.core.props,
-            Group::SpecialUnitary(g) => &g.unitary.core.props,
-            Group::Alternating(g) => &g.core.props,
-            Group::ModularAdditive(g) => &g.core.props,
-            Group::ModularMultiplicative(g) => &g.core.props,
-            Group::Free(g) => &g.core.props,
-            Group::Trivial(g) => &g.core.props,
-            Group::Product(g) => &g.core.props,
-            Group::Quotient(g) => &g.core.props,
-            Group::Kernel(g) => &g.core.props,
-            Group::Image(g) => &g.core.props,
-            Group::Center(g) => &g.core.props,
-            Group::GeneratedSubgroup(g) => &g.core.props,
-            Group::Normalizer(g) => &g.core.props,
-            Group::Centralizer(g) => &g.core.props,
-            Group::CommutatorSubgroup(g) => &g.core.props,
-            Group::SylowSubgroup(g) => &g.core.props,
-            Group::WreathProduct(g) => &g.core.props,
-            Group::CentralProduct(g) => &g.core.props,
-            Group::Pullback(g) => &g.core.props,
-            Group::Restriction(g) => &g.core.props,
+            Group::Generic(_) => "Generic",
+            Group::Trivial(_) => "Trivial",
+            Group::Cyclic(_) => "Cyclic",
+            Group::Dihedral(_) => "Dihedral",
+            Group::Free(_) => "Free",
+            Group::Symmetric(_) => "Symmetric",
+            Group::Alternating(_) => "Alternating",
+            Group::GeneralLinear(_) => "GeneralLinear",
+            Group::SpecialLinear(_) => "SpecialLinear",
+            Group::Orthogonal(_) => "Orthogonal",
+            Group::SpecialOrthogonal(_) => "SpecialOrthogonal",
+            Group::Unitary(_) => "Unitary",
+            Group::SpecialUnitary(_) => "SpecialUnitary",
+            Group::Topological(_) => "Topological",
+            Group::Lie(_) => "Lie",
+            Group::ModularAdditive(_) => "ModularAdditive",
+            Group::ModularMultiplicative(_) => "ModularMultiplicative",
+            Group::Product(_) => "Product",
+            Group::Quotient(_) => "Quotient",
+            Group::Kernel(_) => "Kernel",
+            Group::Image(_) => "Image",
+            Group::Center(_) => "Center",
+            Group::GeneratedSubgroup(_) => "GeneratedSubgroup",
+            Group::Normalizer(_) => "Normalizer",
+            Group::Centralizer(_) => "Centralizer",
+            Group::CommutatorSubgroup(_) => "CommutatorSubgroup",
+            Group::SylowSubgroup(_) => "SylowSubgroup",
+            Group::WreathProduct(_) => "WreathProduct",
+            Group::CentralProduct(_) => "CentralProduct",
+            Group::Pullback(_) => "Pullback",
+            Group::Restriction(_) => "Restriction",
         }
     }
 
-    /// Sets the properties of the group
-    pub fn set_properties(&mut self, props: VariantSet<GroupProperty>) {
-        match self {
-            Group::Generic(g) => g.props = props,
-            Group::Topological(g) => g.core.props = props,
-            Group::Lie(g) => g.core.props = props,
-            Group::Cyclic(g) => g.core.props = props,
-            Group::Symmetric(g) => g.core.props = props,
-            Group::Dihedral(g) => g.core.props = props,
-            Group::GeneralLinear(g) => g.core.props = props,
-            Group::SpecialLinear(g) => g.general_linear.core.props = props,
-            Group::Orthogonal(g) => g.core.props = props,
-            Group::SpecialOrthogonal(g) => g.orthogonal.core.props = props,
-            Group::Unitary(g) => g.core.props = props,
-            Group::SpecialUnitary(g) => g.unitary.core.props = props,
-            Group::Alternating(g) => g.core.props = props,
-            Group::ModularAdditive(g) => g.core.props = props,
-            Group::ModularMultiplicative(g) => g.core.props = props,
-            Group::Free(g) => g.core.props = props,
-            Group::Trivial(g) => g.core.props = props,
-            Group::Product(g) => g.core.props = props,
-            Group::Quotient(g) => g.core.props = props,
-            Group::Kernel(g) => g.core.props = props,
-            Group::Image(g) => g.core.props = props,
-            Group::Center(g) => g.core.props = props,
-            Group::GeneratedSubgroup(g) => g.core.props = props,
-            Group::Normalizer(g) => g.core.props = props,
-            Group::Centralizer(g) => g.core.props = props,
-            Group::CommutatorSubgroup(g) => g.core.props = props,
-            Group::SylowSubgroup(g) => g.core.props = props,
-            Group::WreathProduct(g) => g.core.props = props,
-            Group::CentralProduct(g) => g.core.props = props,
-            Group::Pullback(g) => g.core.props = props,
-            Group::Restriction(g) => g.core.props = props,
-        }
-    }
-
-    /// Gets a reference to the core of the group
-    pub fn get_core(&self) -> &GenericGroup {
-        match self {
-            Group::Generic(g) => &g,
-            Group::Topological(g) => &g.core,
-            Group::Lie(g) => &g.core,
-            Group::Cyclic(g) => &g.core,
-            Group::Symmetric(g) => &g.core,
-            Group::Dihedral(g) => &g.core,
-            Group::GeneralLinear(g) => &g.core,
-            Group::SpecialLinear(g) => &g.general_linear.core,
-            Group::Orthogonal(g) => &g.core,
-            Group::SpecialOrthogonal(g) => &g.orthogonal.core,
-            Group::Unitary(g) => &g.core,
-            Group::SpecialUnitary(g) => &g.unitary.core,
-            Group::Alternating(g) => &g.core,
-            Group::ModularAdditive(g) => &g.core,
-            Group::ModularMultiplicative(g) => &g.core,
-            Group::Free(g) => &g.core,
-            Group::Trivial(g) => &g.core,
-            Group::Product(g) => &g.core,
-            Group::Quotient(g) => &g.core,
-            Group::Kernel(g) => &g.core,
-            Group::Image(g) => &g.core,
-            Group::Center(g) => &g.core,
-            Group::GeneratedSubgroup(g) => &g.core,
-            Group::Normalizer(g) => &g.core,
-            Group::Centralizer(g) => &g.core,
-            Group::CommutatorSubgroup(g) => &g.core,
-            Group::SylowSubgroup(g) => &g.core,
-            Group::WreathProduct(g) => &g.core,
-            Group::CentralProduct(g) => &g.core,
-            Group::Pullback(g) => &g.core,
-            Group::Restriction(g) => &g.core,
-        }
+    pub fn new_generic() -> Self {
+        Group::Generic(GenericGroup {
+            base_set: Set::Generic(GenericSet::new()),
+            operation: GroupOperation::default(),
+            props: VariantSet::new(),
+        })
     }
 }
 

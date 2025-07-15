@@ -1,11 +1,11 @@
+use crate::subjects::math::formalism::location::Located;
 use crate::turn_render::Identifier;
 
 use super::super::super::super::math::formalism::expressions::MathExpression;
 use super::super::super::super::math::formalism::expressions::TheoryExpression;
-use super::super::super::super::math::formalism::relations::RelationDetail;
 use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::groups::definitions::Group;
-use super::super::super::super::math::theories::zfc::Set;
+use super::super::super::super::math::theories::zfc::definitions::Set;
 use serde::{Deserialize, Serialize};
 /// A ring (R,+,·) is a set R with two binary operations + and · satisfying:
 /// 1. (R,+) is an abelian group
@@ -373,39 +373,34 @@ pub struct RingRelationEntity {
 }
 
 /// Relations specific to ring theory
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum RingRelation {
     /// One ring is a subring of another
     IsSubringOf {
-        entity: RingRelationEntity,
         subring: MathExpression,
         ring: MathExpression,
     },
 
     /// One subspace is an ideal of a ring
     IsIdealOf {
-        entity: RingRelationEntity,
         ideal: MathExpression,
         ring: MathExpression,
     },
 
     /// One ideal is a prime ideal of a ring
     IsPrimeIdeal {
-        entity: RingRelationEntity,
         ideal: MathExpression,
         ring: MathExpression,
     },
 
     /// One ideal is a maximal ideal of a ring
     IsMaximalIdeal {
-        entity: RingRelationEntity,
         ideal: MathExpression,
         ring: MathExpression,
     },
 
     /// One ideal is a principal ideal of a ring
     IsPrincipalIdeal {
-        entity: RingRelationEntity,
         ideal: MathExpression,
         ring: MathExpression,
         generator: MathExpression,
@@ -413,52 +408,36 @@ pub enum RingRelation {
 
     /// An element is a unit in a ring
     IsUnit {
-        entity: RingRelationEntity,
         element: MathExpression,
         ring: MathExpression,
     },
 
     /// An element is irreducible in a ring
     IsIrreducible {
-        entity: RingRelationEntity,
         element: MathExpression,
         ring: MathExpression,
     },
 
     /// An element is prime in a ring
     IsPrime {
-        entity: RingRelationEntity,
         element: MathExpression,
         ring: MathExpression,
     },
 
     /// A ring is a field
-    IsField {
-        entity: RingRelationEntity,
-        ring: MathExpression,
-    },
+    IsField { ring: MathExpression },
 
     /// A ring is an integral domain
-    IsIntegralDomain {
-        entity: RingRelationEntity,
-        ring: MathExpression,
-    },
+    IsIntegralDomain { ring: MathExpression },
 
     /// A ring is a unique factorization domain (UFD)
-    IsUFD {
-        entity: RingRelationEntity,
-        ring: MathExpression,
-    },
+    IsUFD { ring: MathExpression },
 
     /// A ring is a principal ideal domain (PID)
-    IsPID {
-        entity: RingRelationEntity,
-        ring: MathExpression,
-    },
+    IsPID { ring: MathExpression },
 
     /// Two elements are associates in a ring
     AreAssociates {
-        entity: RingRelationEntity,
         first: MathExpression,
         second: MathExpression,
         ring: MathExpression,
@@ -466,7 +445,6 @@ pub enum RingRelation {
 
     /// One polynomial divides another in a polynomial ring
     Divides {
-        entity: RingRelationEntity,
         divisor: MathExpression,
         dividend: MathExpression,
         ring: MathExpression,
@@ -474,7 +452,6 @@ pub enum RingRelation {
 
     /// Custom ring theory relation
     Custom {
-        entity: RingRelationEntity,
         name: String,
         parameters: Vec<MathExpression>,
     },
@@ -490,7 +467,6 @@ impl RingRelation {
             tags: Vec::new(),
         };
         RingRelation::IsSubringOf {
-            entity,
             subring: subring.clone(),
             ring: ring.clone(),
         }
@@ -498,13 +474,7 @@ impl RingRelation {
 
     /// Create a new IsIdealOf relation
     pub fn is_ideal_of(ideal: &MathExpression, ring: &MathExpression) -> Self {
-        let entity = RingRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
         RingRelation::IsIdealOf {
-            entity,
             ideal: ideal.clone(),
             ring: ring.clone(),
         }
@@ -512,26 +482,12 @@ impl RingRelation {
 
     /// Create a new IsField relation
     pub fn is_field(ring: &MathExpression) -> Self {
-        let entity = RingRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
-        RingRelation::IsField {
-            entity,
-            ring: ring.clone(),
-        }
+        RingRelation::IsField { ring: ring.clone() }
     }
 
     /// Create a custom relation
     pub fn custom(name: &str, parameters: Vec<MathExpression>) -> Self {
-        let entity = RingRelationEntity {
-            id: None,
-            description: None,
-            tags: Vec::new(),
-        };
         RingRelation::Custom {
-            entity,
             name: name.to_string(),
             parameters,
         }
@@ -539,10 +495,10 @@ impl RingRelation {
 }
 
 /// A structured expression within the ring theory domain
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RingExpression {
-    /// An element in a ring
-    Element(RingElement),
+    /// An element of a ring
+    Element(Identifier),
     /// The additive identity element (zero) of a ring
     Zero(Box<Ring>),
     /// The multiplicative identity element (one) of a ring, if it exists
@@ -593,7 +549,7 @@ pub enum RingExpression {
 impl RingExpression {
     /// Create a ring element expression
     pub fn element(ring: Ring, value: RingElementValue) -> Self {
-        RingExpression::Element(RingElement::new(ring, value))
+        todo!()
     }
 
     /// Create a ring addition expression
@@ -664,15 +620,14 @@ impl RingExpression {
                 // Direct conversion from ring expression
                 Ok(ring_expr.clone())
             }
-            MathExpression::Var(var) => {
-                todo!()
-            }
+            // MathExpression::Var(var) => {
+            //     todo!()
+            // }
             // Handle other expression types as needed...
             _ => {
                 // Default case: treat as an element directly
-                Ok(RingExpression::Element(RingElement::new(
-                    ring.clone(),
-                    RingElementValue::Symbol("unknown".to_string()),
+                Ok(RingExpression::Element(Identifier::new_simple(
+                    "unknown".to_string(),
                 )))
             }
         }
@@ -712,10 +667,10 @@ pub enum RingElementValue {
 }
 
 /// A structured expression within the field theory domain
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FieldExpression {
-    /// An element in a field
-    Element(FieldElement),
+    /// An element of a field
+    Element(Identifier),
     /// The additive identity element (zero) of a field
     Zero(Box<Field>),
     /// The multiplicative identity element (one) of a field
@@ -782,7 +737,7 @@ pub enum FieldExpression {
 impl FieldExpression {
     /// Create a field element expression
     pub fn element(field: Field, value: FieldElementValue) -> Self {
-        FieldExpression::Element(FieldElement::new(field, value))
+        todo!()
     }
 
     /// Create a field addition expression
@@ -874,16 +829,15 @@ impl FieldExpression {
                 // Direct conversion from field expression
                 Ok(field_expr.clone())
             }
-            MathExpression::Var(var) => {
-                // Handle variables directly
-                todo!()
-            }
+            // MathExpression::Var(var) => {
+            //     // Handle variables directly
+            //     todo!()
+            // }
             // Handle other expression types as needed...
             _ => {
                 // Default case: treat as an element directly
-                Ok(FieldExpression::Element(FieldElement::new(
-                    field.clone(),
-                    FieldElementValue::Symbol("unknown".to_string()),
+                Ok(FieldExpression::Element(Identifier::new_simple(
+                    "unknown".to_string(),
                 )))
             }
         }

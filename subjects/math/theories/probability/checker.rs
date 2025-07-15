@@ -1,5 +1,6 @@
 use super::definitions::*;
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::turn_render::Identifier;
 
 /// Validation and checking utilities for probability theory concepts
 
@@ -37,34 +38,15 @@ pub fn validate_generic_probability_space(space: &GenericProbabilitySpace) -> Re
 pub fn validate_discrete_probability_space(space: &DiscreteProbabilitySpace) -> Result<(), String> {
     validate_generic_probability_space(&space.core)?;
 
-    // Check that probabilities sum to 1
-    let total_probability: f64 = space.point_probabilities.values().sum();
-    if (total_probability - 1.0).abs() > 1e-10 {
-        return Err(format!(
-            "Probabilities must sum to 1, got {}",
-            total_probability
-        ));
-    }
-
-    // Check that all probabilities are non-negative
-    for (point, prob) in &space.point_probabilities {
-        if *prob < 0.0 {
-            return Err(format!(
-                "Probability for point {} cannot be negative: {}",
-                point, prob
-            ));
-        }
-        if *prob > 1.0 {
-            return Err(format!(
-                "Probability for point {} cannot exceed 1: {}",
-                point, prob
-            ));
-        }
-    }
+    // TODO: The following checks need to be updated for the `Number` type.
+    todo!();
 
     // Check that every sample point has a probability
     for point in &space.sample_points {
-        if !space.point_probabilities.contains_key(point) {
+        if !space
+            .point_probabilities
+            .contains_key(&Identifier::new_simple(point.clone()))
+        {
             return Err(format!(
                 "Sample point {} has no associated probability",
                 point
@@ -158,24 +140,8 @@ pub fn validate_markov_chain(chain: &MarkovChain) -> Result<(), String> {
                     return Err(format!("Transition matrix row {} has wrong length", i));
                 }
 
-                // Check that rows sum to 1 (stochastic matrix)
-                let row_sum: f64 = row.iter().sum();
-                if (row_sum - 1.0).abs() > 1e-10 {
-                    return Err(format!(
-                        "Transition matrix row {} does not sum to 1: {}",
-                        i, row_sum
-                    ));
-                }
-
-                // Check that all entries are non-negative
-                for (j, &entry) in row.iter().enumerate() {
-                    if entry < 0.0 {
-                        return Err(format!(
-                            "Transition matrix entry ({},{}) is negative: {}",
-                            i, j, entry
-                        ));
-                    }
-                }
+                // TODO: The following checks need to be updated for the `Number` type.
+                todo!();
             }
         }
         TransitionMatrix::Kernel(_) => {
@@ -202,20 +168,8 @@ pub fn validate_martingale(martingale: &Martingale) -> Result<(), String> {
 pub fn validate_brownian_motion(brownian: &BrownianMotion) -> Result<(), String> {
     validate_stochastic_process(&brownian.core)?;
 
-    // Check parameter validity
-    if brownian.variance < 0.0 {
-        return Err(format!(
-            "Brownian motion variance cannot be negative: {}",
-            brownian.variance
-        ));
-    }
-
-    // Standard Brownian motion has specific parameter values
-    if brownian.drift == 0.0 && brownian.variance == 1.0 {
-        // This is standard Brownian motion
-    }
-
-    Ok(())
+    // TODO: The following checks need to be updated for the `Number` type.
+    todo!();
 }
 
 /// Check if an event is well-formed
@@ -259,13 +213,13 @@ pub fn validate_distribution(distribution: &Distribution) -> Result<(), String> 
     for constraint in &distribution.parameters.constraints {
         match constraint {
             ParameterConstraint::Positive(param) => {
-                if let Some(&value) = distribution.parameters.parameters.get(param) {
-                    if value <= 0.0 {
-                        return Err(format!(
-                            "Parameter {} must be positive, got {}",
-                            param, value
-                        ));
-                    }
+                if let Some(value) = distribution
+                    .parameters
+                    .parameters
+                    .get(&Identifier::new_simple(param.clone()))
+                {
+                    // TODO: The following checks need to be updated for the `Number` type.
+                    todo!();
                 }
             }
             ParameterConstraint::Range {
@@ -273,33 +227,33 @@ pub fn validate_distribution(distribution: &Distribution) -> Result<(), String> 
                 min,
                 max,
             } => {
-                if let Some(&value) = distribution.parameters.parameters.get(parameter) {
-                    if value < *min || value > *max {
-                        return Err(format!(
-                            "Parameter {} must be in range [{}, {}], got {}",
-                            parameter, min, max, value
-                        ));
-                    }
+                if let Some(value) = distribution
+                    .parameters
+                    .parameters
+                    .get(&Identifier::new_simple(parameter.clone()))
+                {
+                    // TODO: The following checks need to be updated for the `Number` type.
+                    todo!();
                 }
             }
             ParameterConstraint::Integer(param) => {
-                if let Some(&value) = distribution.parameters.parameters.get(param) {
-                    if value.fract() != 0.0 {
-                        return Err(format!(
-                            "Parameter {} must be integer, got {}",
-                            param, value
-                        ));
-                    }
+                if let Some(value) = distribution
+                    .parameters
+                    .parameters
+                    .get(&Identifier::new_simple(param.clone()))
+                {
+                    // TODO: The following checks need to be updated for the `Number` type.
+                    todo!();
                 }
             }
             ParameterConstraint::Probability(param) => {
-                if let Some(&value) = distribution.parameters.parameters.get(param) {
-                    if value < 0.0 || value > 1.0 {
-                        return Err(format!(
-                            "Parameter {} must be a probability in [0, 1], got {}",
-                            param, value
-                        ));
-                    }
+                if let Some(value) = distribution
+                    .parameters
+                    .parameters
+                    .get(&Identifier::new_simple(param.clone()))
+                {
+                    // TODO: The following checks need to be updated for the `Number` type.
+                    todo!();
                 }
             }
         }
@@ -328,36 +282,63 @@ pub fn validate_discrete_distribution(
 ) -> Result<(), String> {
     match variant {
         DiscreteDistributionVariant::Bernoulli => {
-            if !params.parameters.contains_key("p") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("p".to_string()))
+            {
                 return Err("Bernoulli distribution requires parameter 'p'".to_string());
             }
         }
         DiscreteDistributionVariant::Binomial => {
-            if !params.parameters.contains_key("n") || !params.parameters.contains_key("p") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("n".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("p".to_string()))
+            {
                 return Err("Binomial distribution requires parameters 'n' and 'p'".to_string());
             }
         }
         DiscreteDistributionVariant::Poisson => {
-            if !params.parameters.contains_key("lambda") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("lambda".to_string()))
+            {
                 return Err("Poisson distribution requires parameter 'lambda'".to_string());
             }
         }
         DiscreteDistributionVariant::Geometric => {
-            if !params.parameters.contains_key("p") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("p".to_string()))
+            {
                 return Err("Geometric distribution requires parameter 'p'".to_string());
             }
         }
         DiscreteDistributionVariant::UniformDiscrete => {
-            if !params.parameters.contains_key("a") || !params.parameters.contains_key("b") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("a".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("b".to_string()))
+            {
                 return Err(
                     "Uniform discrete distribution requires parameters 'a' and 'b'".to_string(),
                 );
             }
         }
         DiscreteDistributionVariant::Hypergeometric => {
-            if !params.parameters.contains_key("N")
-                || !params.parameters.contains_key("K")
-                || !params.parameters.contains_key("n")
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("N".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("K".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("n".to_string()))
             {
                 return Err(
                     "Hypergeometric distribution requires parameters 'N', 'K', and 'n'".to_string(),
@@ -375,34 +356,64 @@ pub fn validate_continuous_distribution(
 ) -> Result<(), String> {
     match variant {
         ContinuousDistributionVariant::Normal => {
-            if !params.parameters.contains_key("mu") || !params.parameters.contains_key("sigma") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("mu".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("sigma".to_string()))
+            {
                 return Err("Normal distribution requires parameters 'mu' and 'sigma'".to_string());
             }
         }
         ContinuousDistributionVariant::UniformContinuous => {
-            if !params.parameters.contains_key("a") || !params.parameters.contains_key("b") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("a".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("b".to_string()))
+            {
                 return Err(
                     "Uniform continuous distribution requires parameters 'a' and 'b'".to_string(),
                 );
             }
         }
         ContinuousDistributionVariant::Exponential => {
-            if !params.parameters.contains_key("lambda") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("lambda".to_string()))
+            {
                 return Err("Exponential distribution requires parameter 'lambda'".to_string());
             }
         }
         ContinuousDistributionVariant::Gamma => {
-            if !params.parameters.contains_key("alpha") || !params.parameters.contains_key("beta") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("alpha".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("beta".to_string()))
+            {
                 return Err("Gamma distribution requires parameters 'alpha' and 'beta'".to_string());
             }
         }
         ContinuousDistributionVariant::Beta => {
-            if !params.parameters.contains_key("alpha") || !params.parameters.contains_key("beta") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("alpha".to_string()))
+                || !params
+                    .parameters
+                    .contains_key(&Identifier::new_simple("beta".to_string()))
+            {
                 return Err("Beta distribution requires parameters 'alpha' and 'beta'".to_string());
             }
         }
         ContinuousDistributionVariant::ChiSquared => {
-            if !params.parameters.contains_key("nu") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("nu".to_string()))
+            {
                 return Err(
                     "Chi-squared distribution requires parameter 'nu' (degrees of freedom)"
                         .to_string(),
@@ -410,7 +421,10 @@ pub fn validate_continuous_distribution(
             }
         }
         ContinuousDistributionVariant::StudentT => {
-            if !params.parameters.contains_key("nu") {
+            if !params
+                .parameters
+                .contains_key(&Identifier::new_simple("nu".to_string()))
+            {
                 return Err(
                     "Student's t-distribution requires parameter 'nu' (degrees of freedom)"
                         .to_string(),
@@ -467,12 +481,8 @@ pub fn validate_probability_relation(relation: &ProbabilityRelation) -> Result<(
             }
         }
         ProbabilityRelation::EventHasProbability { probability, .. } => {
-            if *probability < 0.0 || *probability > 1.0 {
-                return Err(format!(
-                    "Probability must be in [0, 1], got {}",
-                    probability
-                ));
-            }
+            // TODO: The following checks need to be updated for the `Number` type.
+            todo!();
         }
         _ => {
             // Other relations can be validated as needed

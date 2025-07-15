@@ -1,3 +1,5 @@
+use crate::subjects::math::theories::number_theory::Number;
+
 use super::super::super::super::super::math::theories::topology::definitions::CompactProperty;
 use super::super::super::super::super::math::theories::zfc::definitions::Set;
 use super::super::super::super::super::math::theories::{
@@ -7,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 /// A Banach space is a complete normed vector space.
 /// Every Cauchy sequence in a Banach space converges to a point in the space.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct BanachSpace {
     /// The underlying set
     pub set: Set,
@@ -18,7 +20,7 @@ pub struct BanachSpace {
 }
 
 /// Properties specific to Banach spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BanachSpaceProperty {
     /// Whether the space is separable
     Separable(bool),
@@ -30,7 +32,7 @@ pub enum BanachSpaceProperty {
 
 /// A Hilbert space is a complete inner product space.
 /// The inner product induces a norm that makes the space a Banach space.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct HilbertSpace {
     /// The underlying set
     pub set: Set,
@@ -41,7 +43,7 @@ pub struct HilbertSpace {
 }
 
 /// Properties specific to Hilbert spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum HilbertSpaceProperty {
     /// Whether the space is separable
     Separable(bool),
@@ -52,7 +54,7 @@ pub enum HilbertSpaceProperty {
 }
 
 /// A norm on a vector space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Norm {
     /// Name or description of the norm
     pub name: String,
@@ -61,10 +63,10 @@ pub struct Norm {
 }
 
 /// Types of norms
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NormType {
     /// L^p norm
-    Lp(f64),
+    Lp(Number),
     /// Supremum norm
     Supremum,
     /// Custom norm
@@ -72,7 +74,7 @@ pub enum NormType {
 }
 
 /// An inner product on a vector space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct InnerProduct {
     /// Name or description of the inner product
     pub name: String,
@@ -81,18 +83,18 @@ pub struct InnerProduct {
 }
 
 /// Types of inner products
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum InnerProductType {
     /// Standard dot product
     DotProduct,
     /// L^2 inner product
     L2,
     /// Custom inner product
-    Custom(String),
+    Custom(String), // TODO: Add a custom inner product type
 }
 
 /// Types of scalar fields
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ScalarFieldType {
     /// Real numbers
     Real,
@@ -101,7 +103,7 @@ pub enum ScalarFieldType {
 }
 
 /// A function space of maps between two spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FunctionSpace {
     /// Domain space
     pub domain: Box<Space>,
@@ -112,7 +114,7 @@ pub struct FunctionSpace {
 }
 
 /// Properties specific to function spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FunctionSpaceProperty {
     /// Whether the space is complete
     Complete(bool),
@@ -123,25 +125,25 @@ pub enum FunctionSpaceProperty {
 }
 
 /// A Sobolev space W^{k,p}
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SobolevSpace {
     /// The underlying function space
     pub base_function_space: Box<Space>,
     /// Order of derivatives
     pub derivative_order: u32,
     /// Integrability index p
-    pub integrability_index: Option<f64>,
+    pub integrability_index: Option<Number>,
     /// Properties of the Sobolev space
     pub properties: VariantSet<SobolevSpaceProperty>,
 }
 
 /// Properties specific to Sobolev spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SobolevSpaceProperty {
     /// Order of derivatives
     Order(u32),
     /// Integrability index
-    Index(f64),
+    Index(Number),
     /// Whether the space is complete
     Complete(bool),
     /// Whether the space is separable
@@ -151,7 +153,7 @@ pub enum SobolevSpaceProperty {
 }
 
 /// A space of distributions (generalized functions)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct DistributionSpace {
     /// The space of test functions
     pub test_function_space: Box<Space>,
@@ -162,7 +164,7 @@ pub struct DistributionSpace {
 }
 
 /// Properties specific to distribution spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DistributionSpaceProperty {
     /// Order of the distribution
     Order(Option<u32>),
@@ -173,7 +175,7 @@ pub enum DistributionSpaceProperty {
 }
 
 /// A Fréchet space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FrechetSpace {
     /// The underlying vector space
     pub vector_space: VectorSpace,
@@ -182,7 +184,7 @@ pub struct FrechetSpace {
 }
 
 /// Properties specific to Fréchet spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FrechetSpaceProperty {
     /// Whether the space is nuclear
     Nuclear(bool),
@@ -193,7 +195,7 @@ pub enum FrechetSpaceProperty {
 }
 
 /// A locally convex space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct LocallyConvexSpace {
     /// The underlying vector space
     pub vector_space: VectorSpace,
@@ -202,7 +204,7 @@ pub struct LocallyConvexSpace {
 }
 
 /// Properties specific to locally convex spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LocallyConvexSpaceProperty {
     /// Whether the space is barreled
     Barreled(bool),

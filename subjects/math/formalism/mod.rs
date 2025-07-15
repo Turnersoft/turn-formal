@@ -6,14 +6,85 @@
 // pub mod counter_example;
 
 pub mod abstraction_level;
+pub mod automation;
 pub mod complexity;
 pub mod expressions;
+pub mod extract;
+pub mod foundational_axioms;
+pub mod getter;
 pub mod interpretation;
+pub mod location;
 pub mod objects;
 pub mod proof;
-pub mod theorem;
-#[macro_use]
-pub mod extract;
 pub mod relations;
 pub mod render;
+pub mod replace;
+pub mod search;
 pub mod test;
+pub mod theorem;
+
+use expressions::{MathExpression, TheoryExpression};
+use extract::Parametrizable;
+use location::Located;
+use proof::{ProofForest, ProofGoal};
+use relations::MathRelation;
+use theorem::Theorem;
+
+use crate::turn_render::Identifier;
+
+use super::theories::groups::definitions::{Group, GroupExpression};
+pub fn group_identity_theorem_2() -> Theorem {
+    let group = Parametrizable::Concrete(Group::new_generic());
+    let x_var: Parametrizable<GroupExpression> =
+        Parametrizable::Variable(Identifier::new_simple("x".to_string()));
+    let identity_gexpr = GroupExpression::Identity(group.clone());
+
+    // e * x
+    let e_mult_x_gexpr = GroupExpression::Operation {
+        group: group.clone(),
+        left: Box::new(Parametrizable::Concrete(identity_gexpr.clone())),
+        right: Box::new(x_var.clone()),
+    };
+
+    // x * e
+    let x_mult_e_gexpr = GroupExpression::Operation {
+        group: group.clone(),
+        left: Box::new(x_var.clone()),
+        right: Box::new(Parametrizable::Concrete(identity_gexpr)),
+    };
+
+    let x_var_mex: Parametrizable<MathExpression> =
+        Parametrizable::Variable(Identifier::new_simple("x".to_string()));
+
+    let left_identity_rel = MathRelation::Equal {
+        left: Located::new(Parametrizable::Concrete(MathExpression::Expression(
+            TheoryExpression::Group(e_mult_x_gexpr),
+        ))),
+        right: Located::new(x_var_mex.clone()),
+    };
+
+    let right_identity_rel = MathRelation::Equal {
+        left: Located::new(Parametrizable::Concrete(MathExpression::Expression(
+            TheoryExpression::Group(x_mult_e_gexpr),
+        ))),
+        right: Located::new(x_var_mex),
+    };
+
+    let identity_relation = MathRelation::And(vec![
+        Located::new(Parametrizable::Concrete(left_identity_rel)),
+        Located::new(Parametrizable::Concrete(right_identity_rel)),
+    ]);
+
+    let goal = ProofGoal {
+        context: vec![],
+        quantifiers: vec![],
+        statement: Located::new(identity_relation),
+    };
+
+    Theorem {
+        id: "group_identity_axiom".to_string(),
+        name: "Group Identity Axiom".to_string(),
+        description: "There exists an identity element e in G such that for every element x in G, e ∘ x = x and x ∘ e = x.".to_string(),
+        proofs: ProofForest::new_from_goal(goal),
+    }
+}

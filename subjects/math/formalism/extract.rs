@@ -1,120 +1,152 @@
-use std::any::Any;
+use std::fmt::Debug;
+use std::{
+    any::Any,
+    hash::{Hash, Hasher},
+};
 
 use serde::{Deserialize, Serialize};
 
 use crate::turn_render::Identifier;
 
-use super::{expressions::MathExpression, objects::MathObject};
+use super::{
+    expressions::{MathExpression, TheoryExpression},
+    location::Located,
+    objects::MathObject,
+    proof::ContextEntry,
+    relations::MathRelation,
+};
 
 /// Generic wrapper to allow a field to hold either a concrete value
 /// or a reference to a variable defined in the context.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Parametrizable<T> {
     Concrete(T),
     Variable(Identifier),
 }
 
-pub trait Extractable {
-    fn extract<T: 'static + Clone>(&self) -> Option<T>;
-}
-
-impl<T: Clone> Parametrizable<T> {
-    pub fn unwrap(&self) -> T {
+impl<T: 'static + Clone + Debug> Parametrizable<T> {
+    pub fn unwrap(&self, context: &Vec<ContextEntry>) -> T {
         match self {
             Parametrizable::Concrete(t) => t.clone(),
-            Parametrizable::Variable(_) => panic!("Cannot unwrap a variable"),
+            Parametrizable::Variable(id) => {
+                let math_expr = &context
+                    .iter()
+                    .find(|entry| entry.name == *id)
+                    .unwrap_or_else(|| panic!("Variable with id {:?} not found in context", id))
+                    .ty
+                    .data;
+
+                math_expr.extract::<T>()
+            }
         }
     }
 }
 
-/// Macro for implementing type extraction with pattern matching
-#[macro_export]
-macro_rules! extract_as {
-    // Extract directly from a value
-    ($val:expr, $target_type:ty) => {
-        ($val as &dyn std::any::Any).downcast_ref::<$target_type>().cloned()
-    };
-
-    // Try extracting directly, then from inner structure
-    ($val:expr, $target_type:ty, try_extract) => {
-        ($val as &dyn std::any::Any)
-            .downcast_ref::<$target_type>()
-            .cloned()
-            .or_else(|| $val.extract::<$target_type>())
-    };
-
-    // Try multiple structures with OR (assuming T is in scope from calling fn)
-    ($val:expr, $($rest:expr),+) => {
-        $val.extract::<T>()$(
-            .or_else(|| $rest.extract::<T>())
-        )+
-    };
+impl<T: Hash> Hash for Parametrizable<T> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        match self {
+            Parametrizable::Concrete(t) => t.hash(state),
+            Parametrizable::Variable(id) => id.hash(state),
+        }
+    }
 }
 
-/// Macro for implementing Extractable trait for expression types
-/// Automatically implements check for self as the target type and field extractions
-macro_rules! impl_extractable {
-    // Basic implementation with just fields to extract from
-    ($type:ty, $($field:ident),* $(,)?) => {
-        impl Extractable for $type {
-            fn extract<T: 'static + Any + Clone>(&self) -> Option<T> {
-                if let Some(t) = (self as &dyn Any).downcast_ref::<T>() {
-                    return Some(t.clone());
-                }
-                $(
-                    if let Some(extracted) = self.$field.extract::<T>() {
-                        return Some(extracted);
-                    }
-                )*
-                None
-            }
+pub trait Extractable: Debug {
+    fn try_extract<T: 'static + Clone>(&self) -> Option<T>;
+    fn extract<T: 'static + Clone>(&self) -> T
+    where
+        Self: Sized + 'static,
+    {
+        // check if the current type is the same as the target type
+        if let Some(val) = (self as &dyn Any).downcast_ref::<T>() {
+            return val.clone();
         }
-    };
+        // if not, try to extract the target type from the current type
+        self.try_extract().unwrap_or_else(|| {
+            panic!(
+                "Could not extract type {} from expression {:?}",
+                std::any::type_name::<T>(),
+                self
+            )
+        })
+    }
+}
 
-    // Implementation with match expression
-    ($type:ty, match $self:ident {
-        $($variant:pat => $extract_expr:expr),* $(,)?
-    }) => {
-        impl Extractable for $type {
-            fn extract<T: 'static + Any + Clone>(&self) -> Option<T> {
-                if let Some(t) = (self as &dyn Any).downcast_ref::<T>() {
-                    return Some(t.clone());
-                }
-
-                let $self = self;
-                match $self {
-                    $($variant => $extract_expr),*
-                }
-            }
-        }
-    };
+impl<T: Extractable> Extractable for Located<T> {
+    fn try_extract<U: 'static + Clone>(&self) -> Option<U> {
+        self.data.try_extract::<U>()
+    }
 }
 
 impl Extractable for MathExpression {
-    fn extract<T: 'static + Clone>(&self) -> Option<T> {
+    fn try_extract<T: 'static + Clone>(&self) -> Option<T> {
         match self {
-            MathExpression::Var(_) => None,
-            MathExpression::Object(math_object) => math_object.extract::<T>(),
-            MathExpression::Expression(theory_expression) => todo!(),
-            MathExpression::Relation(_) => None,
-            MathExpression::Number(number) => extract_as!(number, T),
-            MathExpression::ViewAs { expression, .. } => expression.extract::<T>(),
+            MathExpression::Object(math_object) => math_object.try_extract::<T>(),
+            MathExpression::Expression(theory_expression) => theory_expression.try_extract::<T>(),
+            _ => (self as &dyn Any).downcast_ref::<T>().cloned(),
         }
     }
 }
 
 impl Extractable for MathObject {
-    fn extract<T: 'static + Clone>(&self) -> Option<T> {
+    fn try_extract<T: 'static + Clone>(&self) -> Option<T> {
+        macro_rules! extract_variant {
+            ($val:expr) => {
+                ($val as &dyn Any).downcast_ref::<T>().cloned()
+            };
+        }
         match self {
-            MathObject::Group(g) => g.extract(),
-            MathObject::Ring(r) => extract_as!(r, T),
-            MathObject::Field(f) => extract_as!(f, T),
-            MathObject::Module(m) => extract_as!(m, T),
-            MathObject::Algebra(a) => extract_as!(a, T),
-            MathObject::TopologicalSpace(ts) => extract_as!(ts, T),
-            MathObject::VectorSpace(vs) => extract_as!(vs, T),
-            MathObject::Set(s) => extract_as!(s, T),
-            MathObject::Function(func) => extract_as!(func, T),
+            MathObject::Group(g) => extract_variant!(g),
+            MathObject::Ring(r) => extract_variant!(r),
+            MathObject::Field(f) => extract_variant!(f),
+            MathObject::Module(m) => extract_variant!(m),
+            MathObject::Algebra(a) => extract_variant!(a),
+            MathObject::TopologicalSpace(ts) => extract_variant!(ts),
+            MathObject::VectorSpace(vs) => extract_variant!(vs),
+            MathObject::Set(s) => extract_variant!(s),
+            MathObject::Function(func) => extract_variant!(func),
+        }
+    }
+}
+
+impl Extractable for MathRelation {
+    fn try_extract<T: 'static + Clone>(&self) -> Option<T> {
+        macro_rules! extract_variant {
+            ($val:expr) => {
+                ($val as &dyn Any).downcast_ref::<T>().cloned()
+            };
+        }
+        match self {
+            MathRelation::And(locateds) => todo!(),
+            MathRelation::Or(locateds) => todo!(),
+            MathRelation::Not(located) => todo!(),
+            MathRelation::Implies(located, located1) => todo!(),
+            MathRelation::Equivalent(located, located1) => todo!(),
+            MathRelation::True => todo!(),
+            MathRelation::False => todo!(),
+            MathRelation::NumberTheory(number_theory_relation) => todo!(),
+            MathRelation::SetTheory(set_relation) => todo!(),
+            MathRelation::GroupTheory(group_relation) => todo!(),
+            MathRelation::RingTheory(ring_relation) => todo!(),
+            MathRelation::TopologyTheory(topology_relation) => todo!(),
+            MathRelation::CategoryTheory(category_relation) => todo!(),
+            MathRelation::ProbabilityTheory(probability_relation) => todo!(),
+            MathRelation::Equal { left, right } => todo!(),
+        }
+    }
+}
+
+impl Extractable for TheoryExpression {
+    fn try_extract<T: 'static + Clone>(&self) -> Option<T> {
+        macro_rules! extract_variant {
+            ($val:expr) => {
+                ($val as &dyn Any).downcast_ref::<T>().cloned()
+            };
+        }
+        match self {
+            TheoryExpression::Group(group) => extract_variant!(group),
+            TheoryExpression::Ring(ring) => extract_variant!(ring),
+            TheoryExpression::Field(field) => extract_variant!(field),
         }
     }
 }
@@ -128,24 +160,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_extract_math_object() {
+    fn test_extract_from_math_expression() {
         let group = Group::Generic(GenericGroup::default());
         let math_object = MathObject::Group(group.clone());
-        let extracted = math_object.extract::<Group>();
-        assert_eq!(extracted, Some(group));
+        let expr = MathExpression::Object(Box::new(math_object));
+        let extracted = expr.extract::<Group>();
+        assert_eq!(extracted, group);
     }
 
     #[test]
-    fn test_extract_with_macro() {
+    #[should_panic]
+    fn test_extract_panic() {
         let group = Group::Generic(GenericGroup::default());
         let math_object = MathObject::Group(group.clone());
-
-        // Test with the extract_as macro (via its usage in MathObject impl)
-        let extracted_group: Option<Group> = math_object.extract();
-        assert_eq!(extracted_group, Some(group));
-
-        // Test extracting a type that's not present
-        let extracted_ring: Option<Ring> = math_object.extract();
-        assert_eq!(extracted_ring, None);
+        let expr = MathExpression::Object(Box::new(math_object));
+        expr.extract::<Ring>();
     }
 }

@@ -9,13 +9,13 @@ use serde::{Deserialize, Serialize};
 /// 1. ∅ and X are in τ
 /// 2. τ is closed under arbitrary unions
 /// 3. τ is closed under finite intersections
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Topology {
     /// Properties of the topology (compactness, connectedness, etc.)
     pub properties: VariantSet<TopologyProperty>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologyProperty {
     /// Compactness: every open cover has a finite subcover
     /// For any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ
@@ -42,7 +42,7 @@ pub enum TopologyProperty {
     Paracompact(ParacompactPropertyVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ParacompactPropertyVariant {
     /// Every open cover has locally finite refinement
     Paracompact,
@@ -50,7 +50,7 @@ pub enum ParacompactPropertyVariant {
     NonParacompact,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CountablePropertyVariant {
     /// Has cardinality ≤ ℵ₀
     Countable,
@@ -58,7 +58,7 @@ pub enum CountablePropertyVariant {
     Uncountable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SeparablePropertyVariant {
     /// Has countable dense subset
     /// ∃ countable D⊆X: D̄ = X
@@ -68,7 +68,7 @@ pub enum SeparablePropertyVariant {
 }
 
 /// Variants of connectedness for topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConnectednessPropertyVariant {
     /// Space cannot be disconnected by open sets
     /// If X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅
@@ -84,7 +84,7 @@ pub enum ConnectednessPropertyVariant {
 /// non-empty open sets. Formally:
 /// - If X = U∪V with U,V open and U∩V=∅, then U=∅ or V=∅
 /// - This is equivalent to having no proper clopen subsets
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConnectedProperty {
     /// Where the connectedness property holds
     Locality(TopologicalLocalityPropertyVariant),
@@ -96,7 +96,7 @@ pub enum ConnectedProperty {
     ConnectionType(ConnectionTypePropertyVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConnectionTypePropertyVariant {
     /// Connected by continuous paths
     /// ∀x,y ∃γ:[0,1]→X continuous: γ(0)=x, γ(1)=y
@@ -110,7 +110,7 @@ pub enum ConnectionTypePropertyVariant {
 }
 
 /// Variants of compactness for topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompactnessPropertyVariant {
     /// Every open cover has a finite subcover
     /// For any open cover {Uᵢ}ᵢ∈I, ∃ finite J⊆I: X = ⋃ᵢ∈J Uᵢ
@@ -128,7 +128,7 @@ pub enum CompactnessPropertyVariant {
 /// - Every net has a convergent subnet
 /// - Every ultrafilter is convergent
 /// - Every collection of closed sets with FIP has non-empty intersection
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompactProperty {
     /// Where the compactness property holds
     Locality(TopologicalLocalityPropertyVariant),
@@ -140,7 +140,7 @@ pub enum CompactProperty {
     CompactnessType(CompactnessTypePropertyVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompactnessTypePropertyVariant {
     /// Every sequence has convergent subsequence
     /// (xₙ) bounded ⟹ ∃(xₙₖ) convergent
@@ -160,7 +160,7 @@ pub enum CompactnessTypePropertyVariant {
 /// - Convergence: xₙ → x iff every open set containing x contains all but finitely many xₙ
 /// - Connectedness: X cannot be written as union of two disjoint non-empty open sets
 /// - Compactness: Every open cover has a finite subcover
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct TopologicalSpace {
     /// The underlying set X of points
     pub base_set: Set,
@@ -171,7 +171,7 @@ pub struct TopologicalSpace {
 }
 
 /// Properties specific to topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalSpaceProperty {
     /// Separation axioms (T0 through T4)
     Separation(SeparationAxiomLevel),
@@ -188,7 +188,7 @@ pub enum TopologicalSpaceProperty {
 
 /// Separation axioms in topology form a hierarchy of increasingly strong conditions
 /// on how points and closed sets can be separated by open sets.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SeparationAxiomLevel {
     /// T₀ (Kolmogorov): For any two distinct points x,y ∈ X, there exists an open set
     /// containing exactly one of them
@@ -212,7 +212,7 @@ pub enum SeparationAxiomLevel {
 }
 
 /// Types of compactness in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompactnessType {
     /// Every open cover has a finite subcover
     Compact,
@@ -228,7 +228,7 @@ pub enum CompactnessType {
 }
 
 /// Types of connectedness in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConnectednessType {
     /// Cannot be written as union of two disjoint non-empty open sets
     Connected,
@@ -244,7 +244,7 @@ pub enum ConnectednessType {
 }
 
 /// Types of metrizability in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MetrizabilityType {
     /// Space admits a metric inducing its topology
     Metrizable,
@@ -257,7 +257,7 @@ pub enum MetrizabilityType {
 }
 
 /// Properties specific to metric spaces in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalMetricSpaceProperty {
     /// Whether the space is complete
     Complete(bool),
@@ -282,7 +282,7 @@ pub enum TopologicalMetricSpaceProperty {
 /// 2. d(x,y) = 0 iff x = y (identity of indiscernibles)
 /// 3. d(x,y) = d(y,x) (symmetry)
 /// 4. d(x,z) ≤ d(x,y) + d(y,z) (triangle inequality)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct MetricSpace {
     /// The underlying set
     pub set: Set,
@@ -293,7 +293,7 @@ pub struct MetricSpace {
 }
 
 /// Properties specific to affine spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AffineSpaceProperty {
     /// Dimension of the affine space
     Dimension(u32),
@@ -304,7 +304,7 @@ pub enum AffineSpaceProperty {
 }
 
 /// Properties specific to fiber bundles
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FiberBundleProperty {
     /// Whether the bundle is trivial
     Trivial(bool),
@@ -317,7 +317,7 @@ pub enum FiberBundleProperty {
 }
 
 /// Properties specific to projective spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProjectiveSpaceProperty {
     /// Dimension of the projective space
     Dimension(u32),
@@ -328,7 +328,7 @@ pub enum ProjectiveSpaceProperty {
 }
 
 /// Types of scalar fields
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ScalarFieldType {
     /// Real numbers
     Real,
@@ -341,7 +341,7 @@ pub enum ScalarFieldType {
 }
 
 /// Variants of completeness properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompletenessPropertyVariant {
     /// Complete metric space
     Complete,
@@ -352,7 +352,7 @@ pub enum CompletenessPropertyVariant {
 }
 
 /// Variants of separability properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SeparabilityPropertyVariant {
     /// Separable metric space
     Separable,
@@ -363,7 +363,7 @@ pub enum SeparabilityPropertyVariant {
 }
 
 /// A metric space completion is a complete metric space that contains the original space as a dense subset
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct MetricCompletion {
     /// The original metric space
     pub original_space: MetricSpace,
@@ -376,7 +376,7 @@ pub struct MetricCompletion {
 }
 
 /// Properties specific to metric space completions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompletionProperty {
     /// Whether the completion is unique up to isometry
     Unique(bool),
@@ -391,13 +391,13 @@ pub enum CompletionProperty {
 /// 1. d(x,y) ≥ 0 and d(x,y) = 0 iff x = y (positive definiteness)
 /// 2. d(x,y) = d(y,x) (symmetry)
 /// 3. d(x,z) ≤ d(x,y) + d(y,z) (triangle inequality)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Metric {
     /// Properties of the metric (completeness, boundedness, etc.)
     pub properties: VariantSet<MetricProperty>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MetricProperty {
     /// Continuity of the metric function
     /// (x,y) ↦ d(x,y) is continuous from X×X to ℝ
@@ -424,7 +424,7 @@ pub enum MetricProperty {
     UniformStructure(UniformStructurePropertyVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum UniformStructurePropertyVariant {
     /// Has compatible uniform structure
     /// Topology from uniformity agrees with given topology
@@ -433,7 +433,7 @@ pub enum UniformStructurePropertyVariant {
     NonUniform,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IsometryGroupPropertyVariant {
     /// Has non-trivial isometry group
     /// ∃T≠id: d(Tx,Ty) = d(x,y) for all x,y
@@ -442,7 +442,7 @@ pub enum IsometryGroupPropertyVariant {
     NoIsometryGroup,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LengthSpacePropertyVariant {
     /// Distance is infimum of path lengths
     /// d(x,y) = inf{length(γ): γ connects x to y}
@@ -451,7 +451,7 @@ pub enum LengthSpacePropertyVariant {
     NonLengthSpace,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum GeodesicPropertyVariant {
     /// Distance realized by length of path
     /// ∃ path γ: d(x,y) = length(γ)
@@ -461,7 +461,7 @@ pub enum GeodesicPropertyVariant {
 }
 
 /// Variants of boundedness for topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalBoundednessPropertyVariant {
     /// Space is bounded in some metric
     /// ∃ metric d, x₀,r: X ⊆ B(x₀,r)
@@ -473,7 +473,7 @@ pub enum TopologicalBoundednessPropertyVariant {
 }
 
 /// Properties modifying bounded topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalBoundedProperty {
     /// Where the boundedness holds
     Locality(TopologicalLocalityPropertyVariant),
@@ -486,7 +486,7 @@ pub enum TopologicalBoundedProperty {
 }
 
 /// Types of boundedness in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalBoundednessTypeVariant {
     /// Bounded in metric sense
     MetricBounded,
@@ -497,7 +497,7 @@ pub enum TopologicalBoundednessTypeVariant {
 }
 
 /// Variants of continuity for topological spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalContinuityPropertyVariant {
     /// Function preserves topology
     /// Inverse images of open sets are open
@@ -509,7 +509,7 @@ pub enum TopologicalContinuityPropertyVariant {
 }
 
 /// Properties modifying continuous functions in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalContinuousProperty {
     /// Where the continuity holds
     Locality(TopologicalLocalityPropertyVariant),
@@ -522,7 +522,7 @@ pub enum TopologicalContinuousProperty {
 }
 
 /// Types of continuity in topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalContinuityTypeVariant {
     /// Continuous everywhere
     Continuous,
@@ -533,7 +533,7 @@ pub enum TopologicalContinuityTypeVariant {
 }
 
 /// Locality variants for topological properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalLocalityPropertyVariant {
     /// Property holds on entire space
     Global,
@@ -546,7 +546,7 @@ pub enum TopologicalLocalityPropertyVariant {
 }
 
 /// Coverage variants for topological properties
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologicalCoveragePropertyVariant {
     /// Property holds everywhere
     Complete,
@@ -559,7 +559,7 @@ pub enum TopologicalCoveragePropertyVariant {
 }
 
 /// Relations specific to topology
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologyRelation {
     /// A set is open in a topological space
     IsOpen {

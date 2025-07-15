@@ -7,14 +7,15 @@ mod tests {
     use crate::subjects::math::theories::groups::definitions::{
         AbelianPropertyVariant, CyclicGroup, FinitePropertyVariant, GenericGroup, Group,
         GroupElement, GroupIdentity, GroupInverse, GroupInverseApplication, GroupNotation,
-        GroupOperation, GroupOperationProperty, GroupOperationVariant, GroupProperty, GroupSymbol,
-        SymmetricGroup, TopologicalGroup,
+        GroupOperation, GroupOperationVariant, GroupProperty, GroupSymbol, SymmetricGroup,
+        TopologicalGroup,
     };
     use crate::subjects::math::theories::topology::definitions::{
         TopologicalSpace, Topology, TopologyProperty,
     };
     use crate::subjects::math::theories::zfc::definitions::{Set, SetElement};
     use crate::turn_render::section_node::ToSectionNode;
+    use crate::variant_set;
 
     #[test]
     fn test_group_basic_to_section_node() {
@@ -29,12 +30,6 @@ mod tests {
             identity: GroupIdentity::Zero,
             inverse: GroupInverse::AdditiveInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Commutative(true),
-                GroupOperationProperty::Closed,
-            ],
-            product_info: None,
         };
 
         let group_basic = GenericGroup {

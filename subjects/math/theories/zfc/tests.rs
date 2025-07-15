@@ -19,14 +19,15 @@
 /// These tests verify that our implementation correctly follows these mathematical rules.
 #[cfg(test)]
 mod zfc_machinery_tests {
+    use crate::subjects::math::theories::zfc::axioms::ZFCAxioms;
+
     use super::super::super::super::super::math::theories::VariantSet;
     use super::super::super::super::super::math::theories::zfc::{
-        ZFCVerifier,
-        axioms::{SatisfiesZFC, ZFCAxioms},
         cartesian_product,
         definitions::{ElementCondition, Set, SetElement, SetMapping, SetOpProperty, SetProperty},
         empty_set, ordered_pair, pair_set, power_set, singleton_set, symmetric_difference_set,
         union_set,
+        verifier::ZFCVerifier,
     };
     use super::super::*;
     use super::*;
@@ -1583,12 +1584,12 @@ mod set_structure_tests {
 #[cfg(test)]
 mod additional_tests {
     use super::super::super::super::super::math::theories::zfc::{
-        ZFCVerifier,
         axioms::{SatisfiesZFC, ZFCAxioms},
         cartesian_product,
         definitions::{ElementCondition, Set, SetElement, SetMapping, SetOpProperty, SetProperty},
         empty_set, ordered_pair, pair_set, power_set, singleton_set, symmetric_difference_set,
         union_set,
+        verifier::ZFCVerifier,
     };
     use super::*;
     use crate::subjects::math::theories::VariantSet;

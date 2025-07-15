@@ -37,20 +37,9 @@ impl Complexity for GroupExpression {
     fn complexity(&self) -> usize {
         match self {
             GroupExpression::Operation { left, right, .. } => {
-                1 + match **left {
-                    Parametrizable::Concrete(ref expr) => expr.complexity(),
-                    Parametrizable::Variable(_) => 1,
-                } + match **right {
-                    Parametrizable::Concrete(ref expr) => expr.complexity(),
-                    Parametrizable::Variable(_) => 1,
-                }
+                1 + left.complexity() + right.complexity()
             }
-            GroupExpression::Inverse { element, .. } => {
-                1 + match **element {
-                    Parametrizable::Concrete(ref expr) => expr.complexity(),
-                    Parametrizable::Variable(_) => 1,
-                }
-            }
+            GroupExpression::Inverse { element, .. } => 1 + element.complexity(),
             // Handle other cases with simple complexity values
             _ => 1,
         }

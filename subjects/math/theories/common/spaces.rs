@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 /// Registry of all mathematical spaces
 /// Each space type is defined in its respective theory folder
 /// This enum serves as a unified type for referencing any space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Space {
     /// Basic set without additional structure
     Set(Set),
@@ -112,7 +112,7 @@ pub enum Space {
 }
 
 /// Types of dimensions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DimensionType {
     /// Zero dimensional
     Zero,

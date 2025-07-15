@@ -174,9 +174,9 @@ impl GetAbstractionLevel for LieGroup {
 
         // Overall level is the most abstract of these three defining aspects.
         // (L1 < L2 < L3 < L4)
-        let mut min_level = core_level;
+        let mut min_level = core_level.clone();
         if topology_level < min_level {
-            min_level = topology_level;
+            min_level = topology_level.clone();
         }
         if charts_level < min_level {
             min_level = charts_level;
@@ -567,9 +567,9 @@ impl GetAbstractionLevel for TopologicalSpace {
 
         // If no overriding properties on TopologicalSpace itself, level is determined by components.
         // L1 < L2 < L3 < L4 (requires Ord on AbstractionLevel)
-        let mut overall_level = base_set_level;
+        let mut overall_level = base_set_level.clone();
         if topology_definition_level < overall_level {
-            overall_level = topology_definition_level;
+            overall_level = topology_definition_level.clone();
         }
 
         // If base_set or topology definition is L3 (e.g. base_set = Set::Union), then TS is L3.

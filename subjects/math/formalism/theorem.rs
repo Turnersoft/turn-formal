@@ -10,11 +10,13 @@ use std::mem::discriminant;
 use std::rc::Rc;
 use uuid::Uuid;
 
+use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
 use crate::subjects::math::formalism::proof::ProofGoal;
+use crate::subjects::math::formalism::proof::tactics::implement::safe_clone;
 
 use super::expressions::{MathExpression, TheoryExpression};
 use super::proof::tactics::Tactic;
-use super::proof::{NodeRole, ProofForest, ProofNode, ProofStatus};
+use super::proof::{NodeRole, ProofForest, ProofNode};
 use super::relations::MathRelation;
 use crate::turn_render::ToProofDisplay;
 use crate::turn_render::{
@@ -38,17 +40,12 @@ pub struct Theorem {
     pub proofs: ProofForest,
 }
 
-impl Theorem {
-    /// Register this theorem in the global registry
-    pub fn register_self(&self) {
-        println!("Registering theorem: {}", self.name);
-        let registry = super::proof::get_theorem_registry();
-        registry
-            .lock()
-            .unwrap()
-            .register(self.id.clone(), self.clone());
-    }
+pub type Axiom = Theorem;
+pub type Lemma = Theorem;
+pub type Corollary = Theorem;
+pub type Proposition = Theorem;
 
+impl Theorem {
     pub fn get_all_nodes_in_tree(&self, root_id: &str) -> Vec<&ProofNode> {
         let mut result = Vec::new();
         let mut queue = vec![root_id];
@@ -103,7 +100,7 @@ impl Theorem {
 
     /// Recursively checks if a branch is complete
     fn is_branch_complete(&self, node: &ProofNode) -> bool {
-        matches!(node.status, ProofStatus::Complete)
+        matches!(node.role, NodeRole::Completed)
     }
 
     fn eq(&self, other: &Self) -> bool {

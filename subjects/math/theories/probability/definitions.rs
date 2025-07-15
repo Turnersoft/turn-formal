@@ -1,5 +1,6 @@
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::{complexity::Complexity, objects::MathObject};
+use crate::turn_render::Identifier;
 
 use super::super::super::formalism::expressions::{MathExpression, TheoryExpression};
 use super::super::super::formalism::relations::MathRelation;
@@ -9,6 +10,7 @@ use super::super::topology::definitions::TopologicalSpace;
 use super::super::zfc::definitions::{Set, SetProperty};
 
 use serde::{Deserialize, Serialize};
+use serde_json::Number;
 use std::collections::HashMap;
 use std::fmt;
 use std::hash::Hash;
@@ -18,7 +20,7 @@ use thiserror::Error;
 //==== PROBABILITY-SPECIFIC OPERATION TYPES ====//
 
 /// Types of probability measures
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProbabilityMeasureVariant {
     /// Standard probability measure on events
     StandardMeasure,
@@ -50,7 +52,7 @@ pub enum RandomVariableType {
 }
 
 /// Types of convergence in probability theory
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConvergenceType {
     /// Almost sure convergence
     AlmostSure,
@@ -65,7 +67,7 @@ pub enum ConvergenceType {
 }
 
 /// Core algebraic structure of a probability space (Ω, F, P)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct GenericProbabilitySpace {
     /// The sample space Ω
     pub sample_space: Set,
@@ -78,7 +80,7 @@ pub struct GenericProbabilitySpace {
 }
 
 /// A σ-algebra (sigma-algebra) on a set
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SigmaAlgebra {
     /// The underlying set
     pub base_set: Set,
@@ -89,7 +91,7 @@ pub struct SigmaAlgebra {
 }
 
 /// Types of sigma algebras
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SigmaAlgebraType {
     /// Power set (all subsets)
     PowerSet,
@@ -107,7 +109,7 @@ pub enum SigmaAlgebraType {
 }
 
 /// A probability measure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ProbabilityMeasure {
     /// Type of measure
     pub measure_type: ProbabilityMeasureVariant,
@@ -118,7 +120,7 @@ pub struct ProbabilityMeasure {
 }
 
 /// An event (measurable subset of sample space)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Event {
     /// The underlying set
     pub event_set: Set,
@@ -129,7 +131,7 @@ pub struct Event {
 }
 
 /// A random variable X: Ω → ℝ
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct RandomVariable {
     /// The probability space (domain)
     pub probability_space: Box<ProbabilitySpace>,
@@ -142,7 +144,7 @@ pub struct RandomVariable {
 }
 
 /// A probability distribution
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Distribution {
     /// The random variable inducing this distribution
     pub random_variable: Box<RandomVariable>,
@@ -155,7 +157,7 @@ pub struct Distribution {
 }
 
 /// Types of probability distributions
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DistributionType {
     /// Discrete distributions
     Discrete(DiscreteDistributionVariant),
@@ -166,7 +168,7 @@ pub enum DistributionType {
 }
 
 /// Discrete distribution variants
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DiscreteDistributionVariant {
     /// Bernoulli distribution
     Bernoulli,
@@ -183,7 +185,7 @@ pub enum DiscreteDistributionVariant {
 }
 
 /// Continuous distribution variants
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ContinuousDistributionVariant {
     /// Normal (Gaussian) distribution
     Normal,
@@ -202,24 +204,33 @@ pub enum ContinuousDistributionVariant {
 }
 
 /// Distribution parameters
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DistributionParameters {
     /// Parameter values
-    pub parameters: HashMap<String, f64>,
+    pub parameters: HashMap<Identifier, Number>,
     /// Parameter constraints
     pub constraints: Vec<ParameterConstraint>,
 }
 
+impl Hash for DistributionParameters {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let mut params: Vec<_> = self.parameters.iter().collect();
+        params.sort_by_key(|(k, _)| *k);
+        params.hash(state);
+        self.constraints.hash(state);
+    }
+}
+
 /// Parameter constraints for distributions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ParameterConstraint {
     /// Parameter must be positive
     Positive(String),
     /// Parameter must be in range [a, b]
     Range {
         parameter: String,
-        min: f64,
-        max: f64,
+        min: Number,
+        max: Number,
     },
     /// Parameter must be integer
     Integer(String),
@@ -228,7 +239,7 @@ pub enum ParameterConstraint {
 }
 
 /// A unified wrapper for all probability spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProbabilitySpace {
     /// Basic abstract probability space
     Generic(GenericProbabilitySpace),
@@ -247,20 +258,31 @@ pub enum ProbabilitySpace {
 }
 
 /// Discrete probability space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DiscreteProbabilitySpace {
     /// Core probability space structure
     pub core: GenericProbabilitySpace,
     /// Finite or countable sample space
     pub sample_points: Vec<String>,
     /// Point probabilities
-    pub point_probabilities: HashMap<String, f64>,
+    pub point_probabilities: HashMap<Identifier, Number>,
     /// Discrete-specific properties
     pub discrete_props: VariantSet<DiscreteProbabilityProperty>,
 }
 
+impl Hash for DiscreteProbabilitySpace {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.core.hash(state);
+        self.sample_points.hash(state);
+        let mut points: Vec<_> = self.point_probabilities.iter().collect();
+        points.sort_by_key(|(k, _)| *k);
+        points.hash(state);
+        self.discrete_props.hash(state);
+    }
+}
+
 /// Continuous probability space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ContinuousProbabilitySpace {
     /// Core probability space structure
     pub core: GenericProbabilitySpace,
@@ -271,7 +293,7 @@ pub struct ContinuousProbabilitySpace {
 }
 
 /// Product probability space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ProductProbabilitySpace {
     /// Core probability space structure
     pub core: GenericProbabilitySpace,
@@ -282,7 +304,7 @@ pub struct ProductProbabilitySpace {
 }
 
 /// Conditional probability space
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ConditionalProbabilitySpace {
     /// Core probability space structure
     pub core: GenericProbabilitySpace,
@@ -295,7 +317,7 @@ pub struct ConditionalProbabilitySpace {
 }
 
 /// Stochastic process
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct StochasticProcess {
     /// Core probability space structure
     pub core: GenericProbabilitySpace,
@@ -310,7 +332,7 @@ pub struct StochasticProcess {
 }
 
 /// Types of stochastic processes
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StochasticProcessType {
     /// General stochastic process
     General,
@@ -327,7 +349,7 @@ pub enum StochasticProcessType {
 }
 
 /// Properties specific to probability spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProbabilitySpaceProperty {
     /// Completeness properties
     Complete(CompletenessPropertyVariant),
@@ -338,7 +360,7 @@ pub enum ProbabilitySpaceProperty {
 }
 
 /// Properties specific to sigma algebras
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SigmaAlgebraProperty {
     /// Completeness under the measure
     Complete(SigmaAlgebraCompletenessVariant),
@@ -349,7 +371,7 @@ pub enum SigmaAlgebraProperty {
 }
 
 /// Properties specific to probability measures
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProbabilityMeasureProperty {
     /// Atomicity
     Atomic(MeasureAtomicityVariant),
@@ -360,18 +382,18 @@ pub enum ProbabilityMeasureProperty {
 }
 
 /// Properties specific to events
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum EventProperty {
     /// Measurability
     Measurable(MeasurabilityVariant),
     /// Independence
     Independent(IndependenceVariant),
     /// Probability value
-    Probability(f64),
+    Probability(Number),
 }
 
 /// Properties specific to random variables
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RandomVariableProperty {
     /// Integrability
     Integrable(IntegrabilityVariant),
@@ -384,7 +406,7 @@ pub enum RandomVariableProperty {
 }
 
 /// Properties specific to distributions
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DistributionProperty {
     /// Symmetry
     Symmetric(SymmetryVariant),
@@ -397,86 +419,86 @@ pub enum DistributionProperty {
 }
 
 // Property variant definitions...
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompletenessPropertyVariant {
     Complete,
     Incomplete,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AtomicityPropertyVariant {
     Atomic,
     NonAtomic,
     PurelyAtomic,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SeparabilityPropertyVariant {
     Separable,
     NonSeparable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SigmaAlgebraCompletenessVariant {
     Complete,
     Incomplete,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CountableGenerationVariant {
     CountablyGenerated,
     UncountablyGenerated,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SigmaAlgebraSeparabilityVariant {
     Separable,
     NonSeparable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasureAtomicityVariant {
     Atomic,
     NonAtomic,
     PurelyAtomic,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasureContinuityVariant {
     AbsolutelyContinuous,
     SingularContinuous,
     Discrete,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasureRegularityVariant {
     Regular,
     InnerRegular,
     OuterRegular,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MeasurabilityVariant {
     Measurable,
     NonMeasurable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IndependenceVariant {
     Independent,
     Dependent,
     ConditionallyIndependent,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IntegrabilityVariant {
     Integrable,
     SquareIntegrable,
-    PthIntegrable(f64),
+    PthIntegrable(Number),
     NonIntegrable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RandomVariableIndependenceVariant {
     Independent,
     Dependent,
@@ -484,14 +506,14 @@ pub enum RandomVariableIndependenceVariant {
     PairwiseIndependent,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MomentsVariant {
     FiniteAllMoments,
     FiniteMoments(u32),
     InfiniteMoments,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TailBehaviorVariant {
     LightTailed,
     HeavyTailed,
@@ -499,28 +521,28 @@ pub enum TailBehaviorVariant {
     RegularlyVarying,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SymmetryVariant {
     Symmetric,
     Asymmetric,
-    SymmetricAroundPoint(f64),
+    SymmetricAroundPoint(Number),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum HeavyTailVariant {
     HeavyTailed,
     LightTailed,
-    PowerLaw(f64),
+    PowerLaw(Number),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum UnimodalityVariant {
     Unimodal,
     Bimodal,
     Multimodal,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SupportVariant {
     Bounded,
     Unbounded,
@@ -528,97 +550,97 @@ pub enum SupportVariant {
     FiniteSupport,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DiscreteProbabilityProperty {
     Finite(FiniteDiscreteProbabilityVariant),
     Countable(CountableDiscreteProbabilityVariant),
     Uniform(UniformDiscreteProbabilityVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FiniteDiscreteProbabilityVariant {
     Finite(u32),
     Infinite,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CountableDiscreteProbabilityVariant {
     Countable,
     Uncountable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum UniformDiscreteProbabilityVariant {
     Uniform,
     NonUniform,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ContinuousProbabilityProperty {
     Density(DensityVariant),
     Support(ContinuousSupportVariant),
     Smoothness(SmoothnessVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DensityVariant {
     HasDensity,
     NoDensity,
     BoundedDensity,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ContinuousSupportVariant {
     CompactSupport,
     UnboundedSupport,
     HalfLine,
-    Interval(f64, f64),
+    Interval(Number, Number),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SmoothnessVariant {
     Smooth,
     Continuous,
     Discontinuous,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProductProbabilityProperty {
     Independence(ProductIndependenceVariant),
     Factorization(FactorizationVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProductIndependenceVariant {
     Independent,
     Dependent,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FactorizationVariant {
     Factorizable,
     NonFactorizable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConditionalProbabilityProperty {
     WellDefined(ConditionalWellDefinedVariant),
     RegularConditionality(RegularConditionalityVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConditionalWellDefinedVariant {
     WellDefined,
     IllDefined,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RegularConditionalityVariant {
     Regular,
     Irregular,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StochasticProcessProperty {
     Stationarity(StationarityVariant),
     MarkovProperty(MarkovPropertyVariant),
@@ -626,7 +648,7 @@ pub enum StochasticProcessProperty {
     Continuity(ProcessContinuityVariant),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StationarityVariant {
     Stationary,
     NonStationary,
@@ -634,14 +656,14 @@ pub enum StationarityVariant {
     StrictlyStationary,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MarkovPropertyVariant {
     Markov,
     NonMarkov,
     HigherOrderMarkov(u32),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MartingalePropertyVariant {
     Martingale,
     Supermartingale,
@@ -649,7 +671,7 @@ pub enum MartingalePropertyVariant {
     NonMartingale,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProcessContinuityVariant {
     ContinuousPaths,
     CadlagPaths,
@@ -657,7 +679,7 @@ pub enum ProcessContinuityVariant {
 }
 
 /// Relations specific to probability theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProbabilityRelation {
     /// Events are independent
     EventsAreIndependent {
@@ -709,20 +731,20 @@ pub enum ProbabilityRelation {
     /// Event has specific probability
     EventHasProbability {
         event: Parametrizable<Event>,
-        probability: f64,
+        probability: Number,
         probability_space: Parametrizable<ProbabilitySpace>,
     },
 
     /// Random variable has expected value
     HasExpectedValue {
         variable: Parametrizable<RandomVariable>,
-        expected_value: f64,
+        expected_value: Number,
     },
 
     /// Random variable has variance
     HasVariance {
         variable: Parametrizable<RandomVariable>,
-        variance: f64,
+        variance: Number,
     },
 
     /// Law of large numbers applies
@@ -745,14 +767,14 @@ pub enum ProbabilityRelation {
 }
 
 /// Types of law of large numbers
-#[derive(Debug, Clone, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LawOfLargeNumbersType {
     Weak,
     Strong,
 }
 
 /// Expressions specific to probability theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProbabilityExpression {
     /// Probability of an event: P(A)
     EventProbability {
@@ -798,13 +820,13 @@ pub enum ProbabilityExpression {
     /// Characteristic function: φ_X(t) = E[e^{itX}]
     CharacteristicFunction {
         variable: Parametrizable<RandomVariable>,
-        parameter: f64,
+        parameter: Number,
     },
 
     /// Moment generating function: M_X(t) = E[e^{tX}]
     MomentGeneratingFunction {
         variable: Parametrizable<RandomVariable>,
-        parameter: f64,
+        parameter: Number,
     },
 
     /// Random variable sum: X + Y
@@ -840,13 +862,13 @@ pub enum ProbabilityExpression {
     /// Distribution function: F_X(x) = P(X ≤ x)
     DistributionFunction {
         variable: Parametrizable<RandomVariable>,
-        value: f64,
+        value: Number,
     },
 
     /// Probability density function (for continuous variables)
     ProbabilityDensityFunction {
         variable: Parametrizable<RandomVariable>,
-        value: f64,
+        value: Number,
     },
 
     /// Probability mass function (for discrete variables)
@@ -857,7 +879,7 @@ pub enum ProbabilityExpression {
 }
 
 /// Markov chain specific structure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct MarkovChain {
     /// Core stochastic process structure
     pub core: StochasticProcess,
@@ -872,16 +894,16 @@ pub struct MarkovChain {
 }
 
 /// Transition matrix for Markov chains
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TransitionMatrix {
     /// Finite state space with matrix
-    Finite(Vec<Vec<f64>>),
+    Finite(Vec<Vec<Number>>),
     /// General transition kernel
     Kernel(String), // Simplified representation
 }
 
 /// Martingale specific structure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Martingale {
     /// Core stochastic process structure
     pub core: StochasticProcess,
@@ -892,20 +914,20 @@ pub struct Martingale {
 }
 
 /// Brownian motion specific structure
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct BrownianMotion {
     /// Core stochastic process structure
     pub core: StochasticProcess,
     /// Drift parameter
-    pub drift: f64,
+    pub drift: Number,
     /// Variance parameter
-    pub variance: f64,
+    pub variance: Number,
     /// Brownian motion specific properties
     pub brownian_props: VariantSet<BrownianMotionProperty>,
 }
 
 /// Properties specific to Markov chains
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MarkovChainProperty {
     /// Irreducibility
     Irreducible(IrreducibilityVariant),
@@ -918,7 +940,7 @@ pub enum MarkovChainProperty {
 }
 
 /// Properties specific to martingales
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MartingaleProperty {
     /// Uniform integrability
     UniformlyIntegrable(UniformIntegrabilityVariant),
@@ -929,7 +951,7 @@ pub enum MartingaleProperty {
 }
 
 /// Properties specific to Brownian motion
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BrownianMotionProperty {
     /// Standard Brownian motion
     Standard(StandardBrownianVariant),
@@ -940,19 +962,19 @@ pub enum BrownianMotionProperty {
 }
 
 // Additional property variants...
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum IrreducibilityVariant {
     Irreducible,
     Reducible,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AperiodicityVariant {
     Aperiodic,
     Periodic(u32),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RecurrenceVariant {
     Recurrent,
     Transient,
@@ -960,48 +982,48 @@ pub enum RecurrenceVariant {
     NullRecurrent,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ErgodicityVariant {
     Ergodic,
     NonErgodic,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum UniformIntegrabilityVariant {
     UniformlyIntegrable,
     NotUniformlyIntegrable,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BoundednessVariant {
     Bounded,
     Unbounded,
-    BoundedInLp(f64),
+    BoundedInLp(Number),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MartingaleConvergenceVariant {
     ConvergesAlmostSurely,
     ConvergesInProbability,
-    ConvergesInLp(f64),
+    ConvergesInLp(Number),
     DoesNotConverge,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StandardBrownianVariant {
     Standard,
     NonStandard,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum GeometricBrownianVariant {
     Geometric,
     NonGeometric,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FractionalBrownianVariant {
-    Fractional(f64), // Hurst parameter
+    Fractional(Number), // Hurst parameter
     NonFractional,
 }
 

@@ -171,23 +171,23 @@ pub enum CardinalityPropertyVariant {
     LargerCardinal(usize),
 }
 
-impl Hash for VariantSet<SetProperty> {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        // Convert the HashSet to a Vec, sort it, and hash the sorted Vec
-        let mut elements: Vec<_> = self.inner.iter().collect();
-        elements.sort_by_key(|x| format!("{:?}", x));
-        elements.hash(state);
-    }
-}
+// impl Hash for VariantSet<SetProperty> {
+//     fn hash<H: Hasher>(&self, state: &mut H) {
+//         // Convert the HashSet to a Vec, sort it, and hash the sorted Vec
+//         let mut elements: Vec<_> = self.inner.iter().collect();
+//         elements.sort_by_key(|x| format!("{:?}", x));
+//         elements.hash(state);
+//     }
+// }
 
-impl Hash for VariantSet<SetOpProperty> {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        // Convert the HashSet to a Vec, sort it, and hash the sorted Vec
-        let mut elements: Vec<_> = self.inner.iter().collect();
-        elements.sort_by_key(|x| format!("{:?}", x));
-        elements.hash(state);
-    }
-}
+// impl Hash for VariantSet<SetOpProperty> {
+//     fn hash<H: Hasher>(&self, state: &mut H) {
+//         // Convert the HashSet to a Vec, sort it, and hash the sorted Vec
+//         let mut elements: Vec<_> = self.inner.iter().collect();
+//         elements.sort_by_key(|x| format!("{:?}", x));
+//         elements.hash(state);
+//     }
+// }
 
 /// Properties specific to ordinal operations
 #[derive(Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq)]
@@ -220,6 +220,14 @@ pub enum SetOpProperty {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub struct GenericSet {
     pub properties: VariantSet<SetProperty>,
+}
+
+impl GenericSet {
+    pub fn new() -> Self {
+        Self {
+            properties: VariantSet::new(),
+        }
+    }
 }
 
 /// A set in ZFC set theory, defined by its membership rule
@@ -415,7 +423,7 @@ pub enum SetExpression {
 }
 
 /// Relations between sets, capturing the predicate structure of set theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SetRelation {
     /// Element relation: x ∈ A
     ElementOf {

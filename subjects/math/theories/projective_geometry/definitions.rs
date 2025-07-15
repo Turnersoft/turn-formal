@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 /// A projective space
 /// A projective space P(V) is the set of lines through the origin in a vector space V.
 /// Equivalently, it is the quotient of V\{0} by the scaling action of the multiplicative group.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ProjectiveSpace {
     /// Dimension (one less than vector space dimension)
     pub dimension: DimensionType,
@@ -15,7 +15,7 @@ pub struct ProjectiveSpace {
 }
 
 /// Properties specific to projective spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProjectiveSpaceProperty {
     /// Whether the space is smooth
     Smooth(bool),
@@ -26,7 +26,7 @@ pub enum ProjectiveSpaceProperty {
 }
 
 /// Types of scalar fields for projective spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ScalarFieldType {
     /// Real numbers
     Real,

@@ -31,16 +31,45 @@ pub mod projective_geometry;
 pub mod representation;
 pub mod riemannian_geometry;
 
-pub use common::spaces::*;
-
 // VariantSet implementation for property collections
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VariantSet<T> {
     inner: HashSet<VariantWrapper<T>>,
 }
 
+impl<T> Hash for VariantSet<T> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let mut elements: Vec<_> = self.inner.iter().collect();
+        // sort elements to get a consistent order for hashing
+        elements.sort();
+        elements.hash(state);
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct VariantWrapper<T>(T);
+
+impl<T> PartialOrd for VariantWrapper<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<T> Ord for VariantWrapper<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        // We can't compare discriminants directly, but we can compare their hashes.
+        // This is stable enough for a consistent sort order.
+        let mut s = std::collections::hash_map::DefaultHasher::new();
+        discriminant(&self.0).hash(&mut s);
+        let self_hash = s.finish();
+
+        let mut s = std::collections::hash_map::DefaultHasher::new();
+        discriminant(&other.0).hash(&mut s);
+        let other_hash = s.finish();
+
+        self_hash.cmp(&other_hash)
+    }
+}
 
 impl<T> Hash for VariantWrapper<T> {
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -90,6 +119,10 @@ impl<T: Clone> VariantSet<T> {
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.inner.iter().map(|wrapper| &wrapper.0)
     }
+
+    pub fn is_subset(&self, other: &Self) -> bool {
+        self.inner.is_subset(&other.inner)
+    }
 }
 
 pub trait HasProperties<T> {
@@ -97,77 +130,26 @@ pub trait HasProperties<T> {
     fn get_properties_mut(&mut self) -> &mut VariantSet<T>;
 }
 
-pub use groups::*;
-pub use zfc::*;
-
-#[cfg(test)]
-mod tests {
-    use crate::subjects::math::theories::groups;
-    use crate::subjects::math::theories::groups::theorems::prove_inverse_uniqueness;
-    use crate::subjects::math::theories::probability;
-
-    // The TheoremExt trait and its methods have been removed.
-    // Commenting out the tests that rely on them to allow compilation.
-
-    // use crate::subjects::math::formalism::theorem::TheoremExt;
-
-    // #[test]
-    // fn test_all_group_theory_theorems() {
-    //     let theorems = groups::get_all_theorems();
-    //     for theorem in theorems {
-    //         assert!(
-    //             theorem.is_complete(),
-    //             "Theorem '{}' is not complete.",
-    //             theorem.id
-    //         );
-    //     }
-    // }
-
-    // #[test]
-    // fn test_specific_theorems() {
-    //     let inverse_uniqueness = prove_inverse_uniqueness();
-    //     assert!(
-    //         inverse_uniqueness.is_complete(),
-    //         "Inverse uniqueness proof is not complete"
-    //     );
-
-    //     let identity_uniqueness = groups::theorems::prove_identity_uniqueness();
-    //     assert!(
-    //         identity_uniqueness.is_complete(),
-    //         "Identity uniqueness proof is not complete"
-    //     );
-
-    //     let inverse_product_rule = groups::theorems::prove_inverse_product_rule();
-    //     assert!(
-    //         inverse_product_rule.is_complete(),
-    //         "Inverse product rule proof is not complete"
-    //     );
-
-    //     let abelian_squared_criterion = groups::theorems::prove_abelian_squared_criterion();
-    //     assert!(
-    //         abelian_squared_criterion.is_complete(),
-    //         "Abelian squared criterion proof is not complete"
-    //     );
-
-    //     let lagrange_theorem = groups::theorems::prove_lagrange_theorem();
-    //     assert!(
-    //         lagrange_theorem.is_complete(),
-    //         "Lagrange's theorem proof is not complete"
-    //     );
-    // }
-
-    // #[test]
-    // fn test_example_chaining_and_extraction() {
-    //     let example_chaining = groups::theorems::example_chaining();
-    //     assert!(
-    //         example_chaining.is_complete(),
-    //         "Example chaining proof is not complete"
-    //     );
-
-    //     let extraction_example = groups::theorems::example_extraction();
-    //     assert!(
-    //         extraction_example.is_complete(),
-    //         "Extraction example proof is not complete"
-    //     );
-    // }
+/// A macro to create a `VariantSet` with initial values.
+///
+/// Example:
+/// ```
+/// let set = variant_set![MyEnum::A, MyEnum::B("hello")];
+/// ```
+#[macro_export]
+macro_rules! variant_set {
+    // Case for an empty set
+    () => {
+        $crate::subjects::math::theories::VariantSet::new()
+    };
+    // Case for a set with elements, allowing a trailing comma
+    ( $( $x:expr ),* $(,)? ) => {
+        {
+            let mut set = $crate::subjects::math::theories::VariantSet::new();
+            $(
+                set.insert($x);
+            )*
+            set
+        }
+    };
 }

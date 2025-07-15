@@ -2,8 +2,9 @@ use crate::turn_render::Identifier;
 
 use super::{
     expressions::{MathExpression, TheoryExpression},
+    location::Located,
     objects::MathObject,
-    relations::{MathRelation, RelationDetail},
+    relations::MathRelation,
 };
 
 pub trait Complexity {
@@ -77,13 +78,13 @@ impl Complexity for TheoryExpression {
 impl Complexity for MathExpression {
     fn complexity(&self) -> usize {
         match self {
-            MathExpression::Var(id) => id.complexity(),
+            // MathExpression::Var(id) => id.complexity(),
             MathExpression::Object(obj) => 1 + 0, // Assuming MathObject complexity will be added
             MathExpression::Expression(te) => 1 + te.complexity(),
             MathExpression::Relation(rel) => 1 + rel.complexity(),
             MathExpression::Number(_) => 1, // Simple number
             MathExpression::ViewAs { expression, view } => {
-                1 + expression.complexity() + 0 // Assuming TypeViewOperator complexity
+                1 + expression.data.complexity() + 0 // Assuming TypeViewOperator complexity
             }
         }
     }
@@ -92,16 +93,18 @@ impl Complexity for MathExpression {
 impl Complexity for MathRelation {
     fn complexity(&self) -> usize {
         match self {
-            MathRelation::Equal { left, right, .. } => 1 + left.complexity() + right.complexity(),
+            MathRelation::Equal { left, right, .. } => {
+                1 + left.data.complexity() + right.data.complexity()
+            }
             MathRelation::And(relations) => {
-                1 + relations.iter().map(|r| r.complexity()).sum::<usize>()
+                1 + relations.iter().map(|r| r.data.complexity()).sum::<usize>()
             }
             MathRelation::Or(relations) => {
-                1 + relations.iter().map(|r| r.complexity()).sum::<usize>()
+                1 + relations.iter().map(|r| r.data.complexity()).sum::<usize>()
             }
-            MathRelation::Implies(a, b) => 1 + a.complexity() + b.complexity(),
-            MathRelation::Equivalent(a, b) => 1 + a.complexity() + b.complexity(),
-            MathRelation::Not(r) => 1 + r.complexity(),
+            MathRelation::Implies(a, b) => 1 + a.data.complexity() + b.data.complexity(),
+            MathRelation::Equivalent(a, b) => 1 + a.data.complexity() + b.data.complexity(),
+            MathRelation::Not(r) => 1 + r.data.complexity(),
             MathRelation::True => 1,
             MathRelation::False => 1,
             MathRelation::NumberTheory(_) => 1,
@@ -116,13 +119,8 @@ impl Complexity for MathRelation {
     }
 }
 
-impl Complexity for RelationDetail {
-    fn complexity(&self) -> usize {
-        self.expressions
-            .iter()
-            .map(|e| e.complexity())
-            .sum::<usize>()
-            + self.metadata.len()
-            + self.description.as_ref().map_or(0, |d| d.len() / 4)
-    }
-}
+// impl<T: Complexity> Complexity for Located<T> {
+//     fn complexity(&self) -> usize {
+//         self.data.complexity()
+//     }
+// }

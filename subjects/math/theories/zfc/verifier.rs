@@ -1,5 +1,4 @@
 use super::axioms::{SatisfiesZFC, ZFCAxioms};
-use super::is_subset_of;
 use super::definitions::{Set, SetElement};
 
 /// ZFC Axiom Verification Implementation
@@ -65,7 +64,7 @@ impl ZFCAxioms for ZFCVerifier {
         P: Fn(&Self::Set) -> bool,
     {
         // Check subset relation
-        is_subset_of(subset, superset) &&
+        subset.is_subset_of(superset) &&
         // Check that every element in subset satisfies the property
         subset.elements().iter().all(|e| {
             match e {

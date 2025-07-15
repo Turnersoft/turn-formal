@@ -1,3 +1,5 @@
+use crate::subjects::math::theories::number_theory::Number;
+
 use super::super::super::super::math::theories::VariantSet;
 use super::super::super::super::math::theories::common::spaces::*;
 use super::super::super::super::math::theories::zfc::definitions::Set;
@@ -11,7 +13,7 @@ use serde::{Deserialize, Serialize};
 /// - Transition maps: Changes between overlapping charts
 /// - Atlas: Collection of compatible charts covering manifold
 /// - Tangent spaces: Local linearization at each point
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SmoothManifold {
     /// The underlying set of points
     pub base_set: Set,
@@ -29,7 +31,7 @@ pub struct SmoothManifold {
 /// - Geodesics: Length-minimizing curves
 /// - Curvature: Measure of deviation from flatness
 /// - Levi-Civita connection: Canonical way to differentiate
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct RiemannianManifold {
     /// The underlying smooth manifold
     pub smooth_manifold: SmoothManifold,
@@ -38,7 +40,7 @@ pub struct RiemannianManifold {
 }
 
 /// Properties specific to smooth manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SmoothManifoldProperty {
     /// Orientability properties
     Orientable(OrientabilityType),
@@ -54,7 +56,7 @@ pub enum SmoothManifoldProperty {
 }
 
 /// Properties specific to Riemannian manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RiemannianManifoldProperty {
     /// Curvature properties
     Curvature(CurvatureType),
@@ -70,7 +72,7 @@ pub enum RiemannianManifoldProperty {
 }
 
 /// Types of orientability for manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum OrientabilityType {
     /// Admits consistent orientation
     Orientable,
@@ -83,7 +85,7 @@ pub enum OrientabilityType {
 }
 
 /// Types of boundary conditions for manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BoundaryType {
     /// No boundary
     Closed,
@@ -96,7 +98,7 @@ pub enum BoundaryType {
 }
 
 /// Types of parallelizability for manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ParallelizabilityType {
     /// Admits global frame field
     Parallelizable,
@@ -109,7 +111,7 @@ pub enum ParallelizabilityType {
 }
 
 /// Types of complex structures on manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ComplexStructureType {
     /// Admits integrable complex structure
     Complex,
@@ -122,10 +124,10 @@ pub enum ComplexStructureType {
 }
 
 /// Types of curvature for Riemannian manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CurvatureType {
     /// Constant sectional curvature
-    ConstantSectional(f64),
+    ConstantSectional(Number),
 
     /// Positive Ricci curvature
     PositiveRicci,
@@ -138,7 +140,7 @@ pub enum CurvatureType {
 }
 
 /// Types of completeness for Riemannian manifolds
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompletenessType {
     /// Geodesically complete
     Complete,
@@ -151,7 +153,7 @@ pub enum CompletenessType {
 }
 
 /// Types of Einstein metrics
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum EinsteinType {
     /// Ricci tensor proportional to metric
     Einstein,
@@ -160,11 +162,11 @@ pub enum EinsteinType {
     NonEinstein,
 
     /// Einstein with cosmological constant
-    EinsteinLambda(f64),
+    EinsteinLambda(Number),
 }
 
 /// Types of Kähler structures
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum KahlerType {
     /// Kähler metric
     Kahler,
@@ -181,7 +183,7 @@ pub enum KahlerType {
 /// - Total space E
 /// - Projection π: E → M
 /// - Fiber F (vector space) at each point
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct VectorBundle {
     /// The base manifold
     pub base_manifold: SmoothManifold,
@@ -192,7 +194,7 @@ pub struct VectorBundle {
 }
 
 /// Properties specific to vector bundles
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum VectorBundleProperty {
     /// Trivial: Isomorphic to product bundle
     Trivial(TrivialityPropertyVariant),
@@ -207,7 +209,7 @@ pub mod bundle_properties {
     use super::*;
 
     /// Properties for triviality of vector bundles
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum TrivialityPropertyVariant {
         /// Globally trivial
         Trivial,
@@ -218,7 +220,7 @@ pub mod bundle_properties {
     }
 
     /// Properties for orientability of vector bundles
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum OrientabilityPropertyVariant {
         /// Orientable bundle
         Orientable,
@@ -227,7 +229,7 @@ pub mod bundle_properties {
     }
 
     /// Properties for stability of vector bundles
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum StabilityPropertyVariant {
         /// Stable under direct sum
         Stable,
@@ -243,7 +245,7 @@ pub use bundle_properties::*;
 /// - Parallel transport
 /// - Covariant differentiation
 /// - Horizontal subspaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Connection {
     /// The underlying vector bundle
     pub bundle: VectorBundle,
@@ -252,7 +254,7 @@ pub struct Connection {
 }
 
 /// Properties specific to connections
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConnectionProperty {
     /// Flat: Zero curvature
     Flat(FlatnessPropertyVariant),
@@ -267,7 +269,7 @@ pub mod connection_properties {
     use super::*;
 
     /// Properties for flatness of connections
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum FlatnessPropertyVariant {
         /// Zero curvature
         Flat,
@@ -276,7 +278,7 @@ pub mod connection_properties {
     }
 
     /// Properties for metric compatibility of connections
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum MetricCompatibilityPropertyVariant {
         /// Compatible with metric
         Compatible,
@@ -285,7 +287,7 @@ pub mod connection_properties {
     }
 
     /// Properties for torsion-freeness of connections
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum TorsionFreePropertyVariant {
         /// Zero torsion
         TorsionFree,
@@ -305,7 +307,7 @@ pub use connection_properties::*;
 /// - For each point x in B, the preimage π⁻¹(x) is homeomorphic to F
 /// - The bundle is locally trivial: each point in B has a neighborhood U such that
 ///   π⁻¹(U) is homeomorphic to U × F
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FiberBundle {
     /// The total space E
     pub total_space: Set,
@@ -318,7 +320,7 @@ pub struct FiberBundle {
 }
 
 /// Properties specific to fiber bundles
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FiberBundleProperty {
     /// Whether the bundle is trivial (globally homeomorphic to B × F)
     Trivial(bool),
@@ -335,7 +337,7 @@ pub enum FiberBundleProperty {
 }
 
 /// A section of a fiber bundle is a continuous map s: B → E such that π ∘ s = id_B
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct BundleSection {
     /// Name or description of the section
     pub name: String,
@@ -344,7 +346,7 @@ pub struct BundleSection {
 }
 
 /// Types of bundle sections
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SectionType {
     /// Global section (defined on all of B)
     Global,

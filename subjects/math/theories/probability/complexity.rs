@@ -157,12 +157,7 @@ impl Complexity for Martingale {
 
 impl Complexity for BrownianMotion {
     fn complexity(&self) -> usize {
-        let param_complexity = if self.drift == 0.0 && self.variance == 0.0 {
-            0
-        } else {
-            2
-        };
-        1 + self.core.complexity() + param_complexity
+        todo!()
     }
 }
 

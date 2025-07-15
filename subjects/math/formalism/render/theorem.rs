@@ -10,20 +10,19 @@ use crate::turn_render::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, MulSymbol, QuantificationNode,
     RefinedMulOrDivOperation, RelationOperatorNode, ToTurnMath,
 };
-// Importing ProofStatus
-use super::super::proof::ProofStatus;
 
-// Direct imports for MathRelation and MathExpression
-use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
+use crate::subjects::math::formalism::{
+    expressions::MathExpression,
+    proof::{ContextEntry, DefinitionState},
+    relations::{MathRelation, Quantification},
+};
 
 // Import the conversion trait
 
 use crate::turn_render::*;
 
-use crate::subjects::math::formalism::proof::tactics::{
-    CaseAnalysisBuilder, CaseResult, DecompositionMethod, InductionType, RewriteDirection, Tactic,
-};
+use crate::subjects::math::formalism::automation::registry::TheoremRegistry;
+
 // use crate::subjects::math::theories::groups::theorems::{
 //     prove_abelian_squared_criterion, prove_inverse_product_rule,
 // };
@@ -59,11 +58,22 @@ impl ToSectionNode for ProofGoal {
                 ));
 
                 // Render definition if it exists
-                if let Some(def) = &entry.definition {
-                    segments.push(RichTextSegment::Text(" := ".to_string()));
-                    segments.push(RichTextSegment::Math(
-                        def.to_turn_math(format!("{}-def-{:?}", id_prefix, entry.name)),
-                    ));
+                match &entry.definition {
+                    DefinitionState::Separate(def) => {
+                        segments.push(RichTextSegment::Text(" := ".to_string()));
+                        segments.push(RichTextSegment::Math(
+                            def.to_turn_math(format!("{}-def-{:?}", id_prefix, entry.name)),
+                        ));
+                    }
+                    DefinitionState::Inlined => {
+                        segments.push(RichTextSegment::Text(" (defined inline)".to_string()));
+                    }
+                    DefinitionState::ContainedInType => {
+                        segments.push(RichTextSegment::Text(
+                            " (value is self-contained)".to_string(),
+                        ));
+                    }
+                    DefinitionState::Abstract => { /* Do nothing for abstract entries */ }
                 }
 
                 content.push(SectionContentNode::RichText(RichText {
@@ -160,52 +170,6 @@ impl ToSectionNode for ProofGoal {
     }
 }
 
-impl ToMathDocument for ProofGoal {
-    fn to_math_document(&self, id_prefix: &str) -> MathDocument {
-        let main_section = self.to_section_node(&format!("{}-main", id_prefix));
-
-        MathDocument {
-            id: format!("{}-doc", id_prefix),
-            content_type: MathDocumentType::ScientificPaper(ScientificPaperContent {
-                title: "Proof Goal".to_string(),
-                paper_type: PaperType::Research,
-                venue: Some("Mathematical Proofs".to_string()),
-                peer_reviewed: false,
-                content_metadata: ContentMetadata {
-                    language: Some("en-US".to_string()),
-                    version: Some("1.0".to_string()),
-                    created_at: None,
-                    last_modified: None,
-                    content_hash: None,
-                },
-                academic_metadata: AcademicMetadata {
-                    authors: vec!["Turn-Formal System".to_string()],
-                    date_published: None,
-                    date_modified: None,
-                    venue: Some("Mathematical Proofs".to_string()),
-                    doi: None,
-                    keywords: vec!["proof-goal".to_string()],
-                },
-                structure: DocumentStructure {
-                    abstract_content: None,
-                    table_of_contents: None,
-                    body: vec![main_section],
-                    footnotes: vec![],
-                    glossary: vec![],
-                    bibliography: vec![],
-                },
-                relationships: DocumentRelationships {
-                    parent_documents: vec![],
-                    child_documents: vec![],
-                    related_concepts: vec![],
-                    cross_references: vec![],
-                    dependency_graph: None,
-                },
-            }),
-        }
-    }
-}
-
 impl ToSectionNode for Theorem {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         Section {
@@ -259,7 +223,9 @@ impl ToSectionNode for Theorem {
                                     .initial_goal
                                     .context
                                     .iter()
-                                    .filter(|entry| entry.definition.is_none())
+                                    .filter(|entry| {
+                                        matches!(entry.definition, DefinitionState::Abstract)
+                                    })
                                     .collect();
 
                                 if !variable_assumptions.is_empty() {
@@ -362,14 +328,17 @@ impl ToMathDocument for Theorem {
 
 #[cfg(test)]
 mod tests {
-    use crate::subjects::math::theories::theorems::prove_inverse_uniqueness;
+    use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
+    use crate::subjects::math::theories::groups::theorems::prove_inverse_uniqueness;
 
     use super::*;
 
     #[test]
     fn test_theorem_to_math_document() {
+        // The call to get_theorem_registry() is enough to ensure axioms are registered.
+        let _ = get_theorem_registry();
         let theorem = prove_inverse_uniqueness();
         let math_document = theorem.to_math_document("test_id");
-        println!("{:?}", math_document);
+        assert_eq!(math_document.id, "test_id_doc");
     }
 }

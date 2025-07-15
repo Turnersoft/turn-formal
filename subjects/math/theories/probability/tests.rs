@@ -5,6 +5,8 @@ mod tests {
     };
     use crate::subjects::math::theories::probability::checker::*;
     use crate::subjects::math::theories::probability::definitions::*;
+    use crate::turn_render::Identifier;
+    use serde_json::Number;
 
     #[test]
     fn test_generic_probability_space_creation() {
@@ -25,8 +27,14 @@ mod tests {
         assert!(validate_discrete_probability_space(&space).is_err());
 
         // Add probabilities
-        space.point_probabilities.insert("head".to_string(), 0.5);
-        space.point_probabilities.insert("tail".to_string(), 0.5);
+        space.point_probabilities.insert(
+            Identifier::new_simple("head".to_string()),
+            Number::from_f64(0.5).unwrap(),
+        );
+        space.point_probabilities.insert(
+            Identifier::new_simple("tail".to_string()),
+            Number::from_f64(0.5).unwrap(),
+        );
 
         // Should pass now
         assert!(validate_discrete_probability_space(&space).is_ok());
@@ -40,7 +48,13 @@ mod tests {
         let discrete_space = ProbabilitySpace::Discrete(DiscreteProbabilitySpace {
             core: GenericProbabilitySpace::default(),
             sample_points: vec!["1".to_string()],
-            point_probabilities: [("1".to_string(), 1.0)].iter().cloned().collect(),
+            point_probabilities: [(
+                Identifier::new_simple("1".to_string()),
+                Number::from_f64(1.0).unwrap(),
+            )]
+            .iter()
+            .cloned()
+            .collect(),
             discrete_props: crate::subjects::math::theories::VariantSet::new(),
         });
         assert_eq!(discrete_space.level(), AbstractionLevel::Level3);
@@ -48,7 +62,16 @@ mod tests {
 
     #[test]
     fn test_markov_chain_validation() {
-        let transition_matrix = TransitionMatrix::Finite(vec![vec![0.7, 0.3], vec![0.4, 0.6]]);
+        let transition_matrix = TransitionMatrix::Finite(vec![
+            vec![
+                Number::from_f64(0.7).unwrap(),
+                Number::from_f64(0.3).unwrap(),
+            ],
+            vec![
+                Number::from_f64(0.4).unwrap(),
+                Number::from_f64(0.6).unwrap(),
+            ],
+        ]);
 
         let chain = MarkovChain {
             core: StochasticProcess {
@@ -94,7 +117,13 @@ mod tests {
                     DiscreteDistributionVariant::Bernoulli,
                 ),
                 parameters: DistributionParameters {
-                    parameters: [("p".to_string(), 0.5)].iter().cloned().collect(),
+                    parameters: [(
+                        Identifier::new_simple("p".to_string()),
+                        Number::from_f64(0.5).unwrap(),
+                    )]
+                    .iter()
+                    .cloned()
+                    .collect(),
                     constraints: vec![ParameterConstraint::Probability("p".to_string())],
                 },
                 props: crate::subjects::math::theories::VariantSet::new(),
@@ -113,7 +142,10 @@ mod tests {
         };
 
         // Invalid probability
-        params.parameters.insert("p".to_string(), 1.5);
+        params.parameters.insert(
+            Identifier::new_simple("p".to_string()),
+            Number::from_f64(1.5).unwrap(),
+        );
         let dist = Distribution {
             random_variable: Box::new(RandomVariable {
                 probability_space: Box::new(ProbabilitySpace::Generic(
@@ -136,7 +168,10 @@ mod tests {
         assert!(validate_distribution(&dist).is_err());
 
         // Valid probability
-        params.parameters.insert("p".to_string(), 0.3);
+        params.parameters.insert(
+            Identifier::new_simple("p".to_string()),
+            Number::from_f64(0.3).unwrap(),
+        );
         let valid_dist = Distribution {
             parameters: params,
             ..dist

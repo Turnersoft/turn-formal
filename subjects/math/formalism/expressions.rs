@@ -16,9 +16,10 @@ use super::super::theories::{
 };
 
 use super::super::formalism::interpretation::TypeViewOperator;
-use super::{objects::MathObject, relations::MathRelation};
+use super::extract::Parametrizable;
+use super::{location::Located, objects::MathObject, relations::MathRelation};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum TheoryExpression {
     Group(GroupExpression),
     Ring(RingExpression),
@@ -26,10 +27,12 @@ pub enum TheoryExpression {
 }
 
 /// A unified mathematical expression
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum MathExpression {
     /// Variable reference, not definition
-    Var(Identifier),
+    /// we don't use this anymore, we use Parametrizable such as Parametrizable<MathExpression>
+    /// to represent variables everywhere!
+    // Var(Identifier),
 
     /// Reference to a mathematical object
     Object(Box<MathObject>),
@@ -49,9 +52,9 @@ pub enum MathExpression {
     /// this is a central transit for all math theories
     ViewAs {
         /// The original expression
-        expression: Box<MathExpression>,
+        expression: Box<Located<Parametrizable<MathExpression>>>,
         /// The view operator
-        view: TypeViewOperator,
+        view: Located<TypeViewOperator>,
     },
 }
 
@@ -117,25 +120,25 @@ impl TheoryExpression {
 }
 
 impl MathExpression {
-    /// Create a variable expression from a name
-    pub fn var(name: &str) -> Self {
-        MathExpression::Var(Identifier::new_simple(name.to_string()))
-    }
+    // /// Create a variable expression from a name
+    // pub fn var(name: &str) -> Self {
+    //     MathExpression::Var(Identifier::new_simple(name.to_string()))
+    // }
 
-    /// Create a variable expression with an explicit identifier
-    pub fn var_with_id(name: &str, id: u32) -> Self {
-        MathExpression::Var(Identifier::new_simple(name.to_string()))
-    }
+    // /// Create a variable expression with an explicit identifier
+    // pub fn var_with_id(name: &str, id: u32) -> Self {
+    //     MathExpression::Var(Identifier::new_simple(name.to_string()))
+    // }
 
-    pub fn is_variable(&self) -> bool {
-        matches!(self, MathExpression::Var(_))
-    }
+    // pub fn is_variable(&self) -> bool {
+    //     matches!(self, MathExpression::Var(_))
+    // }
 
     /// Apply a type view to this expression
-    pub fn with_view(self, view: TypeViewOperator) -> Self {
+    pub fn with_view(&self, view: TypeViewOperator) -> Self {
         MathExpression::ViewAs {
-            expression: Box::new(self),
-            view: view,
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            view: Located::new(view),
         }
     }
 
@@ -150,83 +153,35 @@ impl MathExpression {
         true
     }
 
-    /// Infer the type of an expression
-    pub fn infer_type(&self) -> String {
-        match self {
-            MathExpression::Var(_) => "Variable".to_string(),
-            MathExpression::Object(_) => "Object".to_string(),
-            MathExpression::Number(_) => "Number".to_string(),
-            MathExpression::Relation(_) => "Relation".to_string(),
-            MathExpression::Expression(theory_expr) => match theory_expr {
-                TheoryExpression::Group(_) => "GroupExpression".to_string(),
-                TheoryExpression::Ring(_) => "RingExpression".to_string(),
-                TheoryExpression::Field(_) => "FieldExpression".to_string(),
-            },
-            MathExpression::ViewAs { expression, view } => {
-                format!("{} viewed as {:?}", expression.infer_type(), view)
-            }
-        }
-    }
-
     /// Returns true if this expression is a view of another expression
     pub fn is_view(&self) -> bool {
         matches!(self, MathExpression::ViewAs { .. })
     }
 
-    /// Get the variable name if this is a variable expression
-    pub fn as_variable_name(&self) -> Option<Identifier> {
+    // /// Get the variable name if this is a variable expression
+    // pub fn as_variable_name(&self) -> Option<Identifier> {
+    //     match self {
+    //         MathExpression::Var(id) => Some(id.clone()),
+    //         _ => None,
+    //     }
+    // }
+
+    // /// Check if this expression is a variable with the given name
+    // pub fn is_variable_named(&self, name: &Identifier) -> bool {
+    //     match self {
+    //         MathExpression::Var(id) => id == name,
+    //         _ => false,
+    //     }
+    // }
+
+    pub fn get_variant_name(&self) -> &'static str {
         match self {
-            MathExpression::Var(id) => Some(id.clone()),
-            _ => None,
-        }
-    }
-
-    /// A placeholder for a real type inference engine.
-    /// In a real system, this would analyze the expression to deduce its mathematical type.
-    pub fn infer_type_or_placeholder(&self) -> MathExpression {
-        // For now, return a placeholder using a simple variable type.
-        // This allows the `with_definition` builder to work without a full type system.
-        MathExpression::Var(Identifier::new_simple("Type".to_string()))
-    }
-
-    /// Check if this expression is a variable with the given name
-    pub fn is_variable_named(&self, name: &Identifier) -> bool {
-        match self {
-            MathExpression::Var(id) => id == name,
-            _ => false,
-        }
-    }
-
-    /// Check if this expression structurally matches a pattern expression.
-    /// Variables in the pattern act as wildcards.
-    pub fn matches_pattern_expr(&self, pattern: &MathExpression) -> bool {
-        match pattern {
-            // If pattern is a variable, it's a wildcard match.
-            MathExpression::Var(_) => true,
-            _ => match (self, pattern) {
-                (MathExpression::Object(o1), MathExpression::Object(o2)) => o1 == o2, // Or more detailed matching
-                (MathExpression::Expression(te1), MathExpression::Expression(te2)) => {
-                    te1.matches_pattern_theory_expr(te2)
-                }
-                (MathExpression::Relation(r1), MathExpression::Relation(r2)) => {
-                    r1.matches_pattern(r2)
-                }
-                (MathExpression::Number(n1), MathExpression::Number(n2)) => n1 == n2,
-                (
-                    MathExpression::ViewAs {
-                        expression: e1,
-                        view: v1,
-                    },
-                    MathExpression::ViewAs {
-                        expression: e2,
-                        view: v2,
-                    },
-                ) => v1 == v2 && e1.matches_pattern_expr(e2),
-                // Fallback: if current expression (self) is Var and pattern is not, it's not a match unless pattern was Var (handled above)
-                (MathExpression::Var(_), _) => false,
-                // If types don't match structurally and pattern is not a Var.
-                _ => self == pattern, // Default to direct equality if not a special case or wildcard
-            },
+            // MathExpression::Var(_) => "Var",
+            MathExpression::Object(_) => "Object",
+            MathExpression::Expression(_) => "Expression",
+            MathExpression::Relation(_) => "Relation",
+            MathExpression::Number(_) => "Number",
+            MathExpression::ViewAs { .. } => "ViewAs",
         }
     }
 }
@@ -235,6 +190,40 @@ impl MathExpression {
 impl From<GroupExpression> for MathExpression {
     fn from(group_expr: GroupExpression) -> Self {
         MathExpression::Expression(TheoryExpression::Group(group_expr))
+    }
+}
+
+// Implementation to convert RingExpression into MathExpression
+impl From<RingExpression> for MathExpression {
+    fn from(ring_expr: RingExpression) -> Self {
+        MathExpression::Expression(TheoryExpression::Ring(ring_expr))
+    }
+}
+
+// Implementation to convert FieldExpression into MathExpression
+impl From<FieldExpression> for MathExpression {
+    fn from(field_expr: FieldExpression) -> Self {
+        MathExpression::Expression(TheoryExpression::Field(field_expr))
+    }
+}
+
+// Implementation to convert MathRelation to MathExpression
+impl From<MathRelation> for MathExpression {
+    fn from(relation: MathRelation) -> Self {
+        MathExpression::Relation(Box::new(relation))
+    }
+}
+
+// Implementation to convert MathObject to MathExpression
+impl From<MathObject> for MathExpression {
+    fn from(object: MathObject) -> Self {
+        MathExpression::Object(Box::new(object))
+    }
+}
+
+impl From<Number> for MathExpression {
+    fn from(number: Number) -> Self {
+        MathExpression::Number(number)
     }
 }
 

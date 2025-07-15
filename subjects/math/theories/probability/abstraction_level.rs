@@ -334,19 +334,7 @@ impl GetAbstractionLevel for Martingale {
 /// Brownian motion abstraction level
 impl GetAbstractionLevel for BrownianMotion {
     fn level(&self) -> AbstractionLevel {
-        let core_level = self.core.level();
-
-        // If drift and variance are zero (default/abstract), it's Level 1
-        if self.drift == 0.0 && self.variance == 0.0 {
-            if core_level == AbstractionLevel::Level3 {
-                AbstractionLevel::Level3
-            } else {
-                AbstractionLevel::Level1
-            }
-        } else {
-            // Concrete parameters make it Level 3
-            AbstractionLevel::Level3
-        }
+        todo!()
     }
 }
 
@@ -370,9 +358,9 @@ pub fn level_for_probability_relation(relation: &ProbabilityRelation) -> Abstrac
                     })
                     .collect();
 
-                if event_levels.iter().any(|&l| l == AbstractionLevel::Level3) {
+                if event_levels.iter().any(|l| *l == AbstractionLevel::Level3) {
                     AbstractionLevel::Level3
-                } else if event_levels.iter().any(|&l| l == AbstractionLevel::Level2) {
+                } else if event_levels.iter().any(|l| *l == AbstractionLevel::Level2) {
                     AbstractionLevel::Level2
                 } else {
                     AbstractionLevel::Level1
@@ -397,9 +385,9 @@ pub fn level_for_probability_relation(relation: &ProbabilityRelation) -> Abstrac
                     })
                     .collect();
 
-                if var_levels.iter().any(|&l| l == AbstractionLevel::Level3) {
+                if var_levels.iter().any(|l| *l == AbstractionLevel::Level3) {
                     AbstractionLevel::Level3
-                } else if var_levels.iter().any(|&l| l == AbstractionLevel::Level2) {
+                } else if var_levels.iter().any(|l| *l == AbstractionLevel::Level2) {
                     AbstractionLevel::Level2
                 } else {
                     AbstractionLevel::Level1

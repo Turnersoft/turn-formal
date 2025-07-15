@@ -1,14 +1,15 @@
-use super::super::formalism::expressions::MathExpression;
 use super::super::formalism::objects::MathObject;
 use super::super::theories::groups::definitions::Group;
 use super::super::theories::rings::Ring;
 use super::super::theories::rings::definitions::Field;
-use super::super::theories::zfc::Set;
+use super::super::theories::zfc::definitions::Set;
+use super::location::Located;
+use super::{super::formalism::expressions::MathExpression, extract::Parametrizable};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Operator that changes the theoretical interpretation of a mathematical expression
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum TypeViewOperator {
     /// View a number as an element of a group
     AsGroupElement {
@@ -233,69 +234,55 @@ impl MathExpression {
     /// Create a view of this expression as a group element
     pub fn as_group_element(&self, group: Group) -> Self {
         MathExpression::ViewAs {
-            view: TypeViewOperator::AsGroupElement { group },
-            expression: Box::new(self.clone()),
+            view: Located::new(TypeViewOperator::AsGroupElement { group }),
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
         }
     }
 
     /// Create a view of this expression as a ring element
     pub fn as_ring_element(&self, ring: Ring) -> Self {
         MathExpression::ViewAs {
-            view: TypeViewOperator::AsRingElement { ring },
-            expression: Box::new(self.clone()),
+            view: Located::new(TypeViewOperator::AsRingElement { ring }),
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
         }
     }
 
     /// Create a view of this expression as a cyclic group (for integers)
     pub fn as_cyclic_group(&self) -> Self {
         MathExpression::ViewAs {
-            view: TypeViewOperator::AsCyclicGroup,
-            expression: Box::new(self.clone()),
+            view: Located::new(TypeViewOperator::AsCyclicGroup),
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
         }
     }
 
     /// Create a view of this expression as a field element
     pub fn as_field_element(&self, field: Field) -> Self {
         MathExpression::ViewAs {
-            view: TypeViewOperator::AsFieldElement { field },
-            expression: Box::new(self.clone()),
+            view: Located::new(TypeViewOperator::AsFieldElement { field }),
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
         }
     }
 
     /// Create a view of this expression as a group
     pub fn as_group(&self, operation: Option<MathExpression>) -> Self {
         MathExpression::ViewAs {
-            view: TypeViewOperator::AsGroup {
+            view: Located::new(TypeViewOperator::AsGroup {
                 operation: operation.map(Box::new),
-            },
-            expression: Box::new(self.clone()),
+            }),
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
         }
     }
 
     /// Create a view of this expression as a homomorphism
     pub fn as_homomorphism(&self, source: MathExpression, target: MathExpression) -> Self {
         MathExpression::ViewAs {
-            view: TypeViewOperator::AsHomomorphism {
+            view: Located::new(TypeViewOperator::AsHomomorphism {
                 source: Box::new(source),
                 target: Box::new(target),
-            },
-            expression: Box::new(self.clone()),
+            }),
+            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
         }
     }
-}
-
-/// Method to interpret a Group as a Category with one object
-pub fn group_as_category(group: &Group) -> MathExpression {
-    // Simplified placeholder implementation
-    // In a real system, this would create a proper category representation
-    MathExpression::var("category_with_one_object")
-}
-
-/// Method to interpret a Group in Type Theory
-pub fn group_as_type_theory(group: &Group) -> MathExpression {
-    // Simplified placeholder implementation
-    // In a real system, this would create a proper type theory representation
-    MathExpression::var("dependent_type_for_group")
 }
 
 impl TypeViewOperator {

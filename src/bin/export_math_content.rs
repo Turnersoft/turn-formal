@@ -1,7 +1,7 @@
 use std::env;
 use std::path::Path;
 use turn_formal::subjects::math::export::UnifiedExporter;
-use turn_formal::subjects::math::theories::groups::theorems::register_basic_group_axioms;
+use turn_formal::subjects::math::formalism::automation::registry::get_theorem_registry;
 
 fn main() {
     // Get command line arguments
@@ -48,11 +48,11 @@ fn main() {
     println!("🌍 All theories: {}", all_theories);
     println!("");
 
-    // Register basic group axioms BEFORE exporting content
-    println!("📚 Registering basic group axioms...");
-    register_basic_group_axioms();
-    println!("✅ Group axioms registered successfully");
-    println!("");
+    // Initialize the theorem registry by calling it once.
+    // All axioms and theorems will be registered automatically.
+    println!("📚 Initializing theorem registry...");
+    get_theorem_registry();
+    println!("✅ Theorem registry initialized.");
 
     // Export mathematical content using the unified system
     if all_theories {

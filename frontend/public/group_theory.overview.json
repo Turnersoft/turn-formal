@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "theory_overview",
   "version": "1.0.0",
-  "exported_at": "1750523460",
+  "exported_at": "1751646074",
   "content": [
     {
       "id": "group_theory.theory_overview.main",
@@ -40,7 +40,7 @@
                   "RichText": {
                     "segments": [
                       {
-                        "Text": "Welcome to the comprehensive Group Theory framework. This theory encompasses 31 distinct group objects, 0 expressions, 0 relations, and 0 fundamental theorems. Navigate through the organized sections below to explore the complete mathematical landscape of group theory, from basic algebraic structures to advanced constructions."
+                        "Text": "Welcome to the comprehensive Group Theory framework. This theory encompasses 31 distinct group objects, 0 expressions, 0 relations, and 1 fundamental theorems. Navigate through the organized sections below to explore the complete mathematical landscape of group theory, from basic algebraic structures to advanced constructions."
                       }
                     ],
                     "alignment": null
@@ -292,7 +292,7 @@
                     "RichText": {
                       "segments": [
                         {
-                          "Text": "Discover 0 fundamental theorems that establish the theoretical foundation of group theory, providing essential insights into group structure and behavior."
+                          "Text": "Discover 1 fundamental theorems that establish the theoretical foundation of group theory, providing essential insights into group structure and behavior."
                         }
                       ],
                       "alignment": null
@@ -375,7 +375,8 @@
               "group_theory.def.wreath_product_group.wreath_product-doc",
               "group_theory.def.central_product_group.central_product-doc",
               "group_theory.def.pullback_group.pullback-doc",
-              "group_theory.def.restriction_group.restriction-doc"
+              "group_theory.def.restriction_group.restriction-doc",
+              "group_theory.inverse_uniqueness-doc"
             ],
             "related_concepts": [],
             "cross_references": [],

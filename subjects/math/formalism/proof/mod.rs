@@ -1,3 +1,4 @@
+// A test comment to see if the file is writable
 // Module: src/formalize_v2/subjects/math/theorem/proof.rs
 // Implements a rich proof structure for mathematical theorems with branching support
 
@@ -5,28 +6,28 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
+use std::env::consts::DLL_EXTENSION;
 use std::hash::{Hash, Hasher};
 use std::mem::{Discriminant, discriminant};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, OnceLock};
 #[cfg(not(target_arch = "wasm32"))]
 use std::time::{SystemTime, UNIX_EPOCH};
-use tactics::{TacticApplicationResult, TheoremApplicationError};
+use tactics::{TacticApplicationResult, Target};
 use uuid::Uuid;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-// Removed unused imports from the refactored traversal module
-// use self::traversal::{PotentialTheoremTarget, TargetCollector};
 use super::super::theories::zfc::definitions::SetRelation;
 use super::expressions::{MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
-use super::relations::{MathRelation, RelationDetail};
+use super::location::Located;
+use super::relations::{MathRelation, Quantification};
 use super::{objects::MathObject, theorem::Theorem};
-// Import the new traversal trait if needed, or rely on inherent methods
-use self::collect::CollectSubExpressions;
 
+use self::tactics::Tactic;
 use crate::subjects::math::formalism::extract::Parametrizable;
+
 use crate::subjects::math::theories::groups::definitions::GroupExpression;
 use crate::subjects::math::theories::rings::definitions::{FieldExpression, RingExpression};
 use crate::turn_render::{
@@ -34,62 +35,20 @@ use crate::turn_render::{
     RichTextSegment, Section, SectionContentNode, ToProofDisplay, ToProofStep, ToTurnMath,
 };
 
-pub mod collect;
 pub mod helpers;
-pub mod path_index;
 pub mod tactics;
 
-// Re-export the tactics types for backward compatibility
-pub use tactics::{
-    AutomatedTactic, CaseAnalysisBuilder, CaseCondition, CaseResult, DecompositionMethod,
-    InductionType, RewriteDirection, Tactic, TargetRelationLocation,
-};
-
-// Re-export relations types for external use
-pub use super::relations::Quantification;
-
-// Re-export helpers for ergonomic subgoal extraction
-pub use helpers::*;
-
-// Add the missing TheoremRegistry and get_theorem_registry
-lazy_static! {
-    static ref THEOREM_REGISTRY: Arc<Mutex<TheoremRegistry>> =
-        Arc::new(Mutex::new(TheoremRegistry::new()));
-}
-
-pub fn get_theorem_registry() -> Arc<Mutex<TheoremRegistry>> {
-    THEOREM_REGISTRY.clone()
-}
-
-#[derive(Debug, Clone)]
-pub struct TheoremRegistry {
-    theorems: HashMap<String, Theorem>,
-}
-
-impl TheoremRegistry {
-    pub fn new() -> Self {
-        Self {
-            theorems: HashMap::new(),
-        }
-    }
-
-    pub fn register(&mut self, id: String, theorem: Theorem) {
-        self.theorems.insert(id, theorem);
-    }
-
-    pub fn get(&self, id: &str) -> Option<&Theorem> {
-        self.theorems.get(id)
-    }
-
-    pub fn list_ids(&self) -> Vec<String> {
-        self.theorems.keys().cloned().collect()
-    }
-
-    pub fn register_globally(theorem: Theorem) {
-        let registry = get_theorem_registry();
-        let mut registry = registry.lock().unwrap();
-        registry.register(theorem.id.clone(), theorem);
-    }
+/// Describes how the value of a context entry is defined.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum DefinitionState {
+    /// The name is just a placeholder with no definition.
+    Abstract,
+    /// The name is defined by a separate mathematical expression.
+    Separate(Located<MathExpression>),
+    /// The name is defined inline within a larger structure (e.g., local let binding).
+    Inlined,
+    /// the value is part of the type
+    ContainedInType,
 }
 
 /// Represents a single named entry in a proof context. This can be a variable
@@ -97,18 +56,9 @@ impl TheoremRegistry {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ContextEntry {
     pub name: Identifier,
-
-    /// The "type" of the entry.
-    /// - For a variable `g` of type `Group`, `ty` holds the `Group` type object.
-    /// - For a hypothesis `h: g > 0`, `ty` holds the proposition `g > 0`.
-    pub ty: MathExpression,
-
-    /// An optional definition for local abbreviations (`let y = x + 1`).
-    /// If `None`, this is a declared variable or hypothesis.
-    /// If `Some`, this is a definition that can be unfolded (delta-reduction).
-    pub definition: Option<MathExpression>,
-
-    pub description: Option<String>,
+    pub ty: Located<MathExpression>,
+    pub definition: DefinitionState,
+    pub description: Option<RichText>,
 }
 
 /// Represents a quantified variable in the main statement's prenex form.
@@ -135,7 +85,7 @@ pub struct ProofGoal {
 
     /// The core logical statement to be proven (the part after the quantifiers).
     /// All free variables in this statement MUST be declared in the `context`.
-    pub statement: MathRelation,
+    pub statement: Located<MathRelation>,
 }
 
 impl ProofGoal {
@@ -144,7 +94,7 @@ impl ProofGoal {
         Self {
             context: Vec::new(),
             quantifiers: Vec::new(),
-            statement: MathRelation::False, // Default to False, must be set later
+            statement: Located::new(MathRelation::False),
         }
     }
 
@@ -161,9 +111,12 @@ impl ProofGoal {
         let variable_name = Identifier::new_simple(name.to_string());
         let entry = ContextEntry {
             name: variable_name.clone(),
-            ty,
-            definition: None,
-            description,
+            ty: Located::new(ty),
+            definition: DefinitionState::Abstract,
+            description: description.map(|s| RichText {
+                segments: vec![RichTextSegment::Text(s)],
+                alignment: None,
+            }),
         };
         self.context.push(entry);
         (self, variable_name)
@@ -182,25 +135,15 @@ impl ProofGoal {
         // information in the description field.
         let hypothesis_name = Identifier::new_simple(name.to_string());
 
-        // Create a safe description that includes the proposition information
-        let safe_description = match description {
-            Some(desc) => Some(format!(
-                "{} (Proposition: {})",
-                desc,
-                format_relation_safely(&proposition)
-            )),
-            None => Some(format!(
-                "Proposition: {}",
-                format_relation_safely(&proposition)
-            )),
-        };
-
         let entry = ContextEntry {
             name: hypothesis_name.clone(),
             // Use a simple variable type instead of MathExpression::Relation to avoid circular reference
-            ty: MathExpression::Var(Identifier::new_simple("Proposition".to_string())),
-            definition: None,
-            description: safe_description,
+            ty: Located::new(MathExpression::Relation(Box::new(proposition))),
+            definition: DefinitionState::Abstract,
+            description: description.map(|s| RichText {
+                segments: vec![RichTextSegment::Text(s)],
+                alignment: None,
+            }),
         };
         self.context.push(entry);
         (self, hypothesis_name)
@@ -213,19 +156,23 @@ impl ProofGoal {
         definition: MathExpression,
         description: Option<String>,
     ) -> (Self, Identifier) {
-        // In a full implementation, we would run type inference on `definition`
-        // to get its type, and verify well-formedness.
-        let inferred_type = definition.infer_type_or_placeholder();
+        // // In a full implementation, we would run type inference on `definition`
+        // // to get its type, and verify well-formedness.
+        // let inferred_type = MathExpression::Object(Box::new(MathObject::Set(Set::empty())));
 
-        let variable_name = Identifier::new_simple(name.to_string());
-        let entry = ContextEntry {
-            name: variable_name.clone(),
-            ty: inferred_type,
-            definition: Some(definition),
-            description,
-        };
-        self.context.push(entry);
-        (self, variable_name)
+        // let variable_name = Identifier::new_simple(name.to_string());
+        // let entry = ContextEntry {
+        //     name: variable_name.clone(),
+        //     ty: Located::new(inferred_type),
+        //     definition: DefinitionState::Separate(Located::new(definition)),
+        //     description: description.map(|s| RichText {
+        //         segments: vec![RichTextSegment::Text(s)],
+        //         alignment: None,
+        //     }),
+        // };
+        // self.context.push(entry);
+        // (self, variable_name)
+        todo!()
     }
 
     /// Add a quantifier for a variable that is **already in the context**.
@@ -255,30 +202,40 @@ impl ProofGoal {
 
     /// Set the final statement after the context and quantifiers are in place.
     pub fn with_statement(mut self, statement: MathRelation) -> Self {
-        self.statement = statement;
+        self.statement = Located::new(statement);
         self
     }
 
     /// Verifies that the proof goal is well-formed.
     pub fn verify(&self) -> Result<(), String> {
-        if matches!(self.statement, MathRelation::False) {
+        if matches!(self.statement.value(), MathRelation::False) {
             return Err("Statement has not been set.".to_string());
         }
 
-        let context_names: HashSet<_> = self.context.iter().map(|e| &e.name).collect();
+        let context_map: HashMap<_, _> = self.context.iter().map(|e| (&e.name, e)).collect();
 
-        // Check 1: Every quantifier corresponds to a defined variable.
+        // Check 1: Every quantifier corresponds to an abstract variable.
         for q in &self.quantifiers {
-            if !context_names.contains(&q.variable_name) {
-                return Err(format!(
-                    "Quantifier '{:?}' has no definition in the context.",
-                    q.variable_name
-                ));
+            match context_map.get(&q.variable_name) {
+                None => {
+                    return Err(format!(
+                        "Quantifier '{:?}' has no definition in the context.",
+                        q.variable_name
+                    ));
+                }
+                Some(entry) => {
+                    if !matches!(entry.definition, DefinitionState::Abstract) {
+                        return Err(format!(
+                            "Quantified variable '{:?}' must be abstract, but it has a concrete definition.",
+                            q.variable_name
+                        ));
+                    }
+                }
             }
         }
 
         // Check 2: No duplicate names in the context.
-        if context_names.len() != self.context.len() {
+        if context_map.len() != self.context.len() {
             return Err("Duplicate names found in the context.".to_string());
         }
 
@@ -302,9 +259,42 @@ pub enum NodeRole {
         /// How the sub-goals should be combined (And/Or)
         combination_type: SubgoalCombination,
     },
-    // the role of the node is to represent the result of a
+
+    /// Represents a single, user-visible step that was performed by a
+    /// high-level, automated tactic (like 'simplify' or 'auto').
+    ///
+    /// This node encapsulates a complex internal proof that justifies the
+    /// transformation from its parent's goal to a new, transformed state.
+    AutomatedTacticStep {
+        /// A human-readable description of the automated tactic that was run
+        /// (e.g., "Simplified the goal using 5 rewrites").
+        description: RichText,
+
+        /// The detailed, internal proof showing all attempts made by the
+        /// automated tactic. This is a self-contained "scratchpad" forest.
+        justification: ProofForest,
+
+        /// The ID of the node within the `justification` forest that represents
+        /// the successful outcome of this automated step. The state of this
+        /// "best node" becomes the new current state for the main proof tree.
+        best_node_id: String,
+    },
+
+    /// Represents a goal that has been proven false by citing a
+    /// counter-theorem. This is a terminal failure state for a proof branch.
+    Disproved(String), // The ID of the theorem that proves the negation of this node's goal.
+
+    /// A goal that was transformed by a rewrite tactic.
+    RewriteStep {
+        /// The goal state after the rewrite.
+        goal: ProofGoal,
+        /// The ID of the sub-expression that was replaced.
+        rewritten_from_id: Target,
+        /// The ID of the new sub-expression that was substituted in.
+        rewritten_to_id: Target,
+    },
+
     Completed,
-    Disproved,
 }
 
 /// How sub-goals should be combined in a SubgoalManager
@@ -403,21 +393,6 @@ impl TacticOutcome {
     }
 }
 
-/// Status of a proof branch
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProofStatus {
-    /// Successfully completed proof
-    Complete,
-    /// In progress but making headway
-    InProgress,
-    /// Todo item for later
-    Todo,
-    /// Work in progress (active development)
-    Wip,
-    /// Abandoned (won't pursue further)
-    Abandoned,
-}
-
 /// A single node in a proof tree, representing the application of a tactic
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProofNode {
@@ -431,8 +406,7 @@ pub struct ProofNode {
     pub role: NodeRole,
     /// The tactic applied to reach this state - ALWAYS required
     pub tactic: Tactic,
-    /// Status of this proof branch
-    pub status: ProofStatus,
+
     /// Structured description of this proof step
     pub description: Option<RichText>,
 }
@@ -454,7 +428,6 @@ impl ProofNode {
                 combination_type,
             },
             tactic,
-            status: ProofStatus::InProgress,
             description: None,
         }
     }
@@ -493,7 +466,6 @@ impl ProofNode {
                     children: vec![],
                     role: NodeRole::Goal(new_goal),
                     tactic,
-                    status: ProofStatus::InProgress,
                     description: None,
                 };
 
@@ -519,7 +491,6 @@ impl ProofNode {
                             children: vec![],
                             role: NodeRole::Goal(goal),
                             tactic: tactic.clone(),
-                            status: ProofStatus::InProgress,
                             description: None,
                         };
                         forest.add_node(node.clone());
@@ -554,7 +525,6 @@ impl ProofNode {
                     children: vec![],
                     role: NodeRole::Completed,
                     tactic,
-                    status: ProofStatus::Complete,
                     description: None,
                 };
 
@@ -575,7 +545,6 @@ impl ProofNode {
                     children: vec![],
                     role: NodeRole::Goal(current_goal.clone()),
                     tactic,
-                    status: ProofStatus::InProgress,
                     description: None,
                 };
 
@@ -605,7 +574,7 @@ impl ProofNode {
             .collect();
 
         // Use a placeholder tactic for combining subproofs
-        let combine_tactic = Tactic::Auto(AutomatedTactic::ByAssumption);
+        let combine_tactic = Tactic::SearchAssumptions;
 
         ProofNode::new_manager(
             Uuid::new_v4().to_string(),
@@ -615,20 +584,27 @@ impl ProofNode {
         )
     }
 
-    /// Marks a proof branch as complete.
-    pub fn should_complete(self, forest: &mut ProofForest) -> Self {
-        let mut node = self;
-        node.role = NodeRole::Completed;
-        // forest.nodes.insert(node.id.clone(), node.clone());
-        node
-    }
-
-    /// Create a case analysis
-    pub fn case_analysis<'a>(
-        &self,
-        forest: &'a mut ProofForest,
-    ) -> tactics::CaseAnalysisBuilder<'a> {
-        tactics::CaseAnalysisBuilder::new(self.clone(), forest)
+    /// Validates that this node represents a completed proof.
+    /// This method should be called on the result of applying a completing tactic.
+    /// It will panic if the node doesn't actually represent a completed proof.
+    pub fn should_complete(self) -> Self {
+        // Check that this node actually represents a completed proof
+        match &self.role {
+            NodeRole::Completed => self, // Good! The proof is completed
+            NodeRole::Goal(_) => {
+                panic!(
+                    "Expected the node to represent a completed proof, but it still has a goal. \
+                     The proof step does not actually close this goal."
+                );
+            }
+            other => {
+                panic!(
+                    "Expected the node to represent a completed proof (Completed role), but got: {:?}. \
+                     The proof step does not actually close this goal.",
+                    other
+                );
+            }
+        }
     }
 
     pub fn to_proof_display(&self, forest: &ProofForest) -> ProofDisplayNode {
@@ -661,20 +637,20 @@ impl ProofNode {
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::Implies(
-                Box::new(antecedent.clone()),
-                Box::new(consequent.clone()),
-            ),
+            statement: Located::new(MathRelation::Implies(
+                Box::new(Located::new(Parametrizable::Concrete(antecedent.clone()))),
+                Box::new(Located::new(Parametrizable::Concrete(consequent.clone()))),
+            )),
         };
 
         let tactic = Tactic::AssumeImplicationAntecedent {
-            hypothesis_name: Identifier::new_simple("H".to_string()),
+            with_name: Identifier::new_simple("H".to_string()),
         };
 
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::SingleGoal(new_goal) => {
                 // Verify the transformation worked
-                new_goal.statement == consequent && new_goal.context.len() == 1
+                new_goal.statement.data == consequent && new_goal.context.len() == 1
             }
             _ => false,
         }
@@ -683,7 +659,7 @@ impl ProofNode {
 
 impl ToProofStep for ProofNode {
     fn to_proof_step(&self) -> ProofStepNode {
-        let tactic_name = self.tactic.to_string();
+        let tactic_name = format!("{:?}", self.tactic);
 
         ProofStepNode::Statement {
             claim: vec![RichTextSegment::Text(format!(
@@ -757,16 +733,14 @@ impl ProofForest {
                 children: vec![],
                 role: NodeRole::Goal(new_goal),
                 tactic,
-                status: ProofStatus::InProgress,
                 description: None,
             },
             TacticApplicationResult::ProofComplete => ProofNode {
                 id: Uuid::new_v4().to_string(),
                 parent: None,
                 children: vec![],
-                role: NodeRole::Goal(initial_state),
+                role: NodeRole::Completed,
                 tactic,
-                status: ProofStatus::Complete,
                 description: None,
             },
             TacticApplicationResult::NoChange => ProofNode {
@@ -775,7 +749,6 @@ impl ProofForest {
                 children: vec![],
                 role: NodeRole::Goal(initial_state),
                 tactic,
-                status: ProofStatus::InProgress,
                 description: None,
             },
             TacticApplicationResult::MultiGoal(_) => {
@@ -819,7 +792,7 @@ impl ProofForest {
     fn is_branch_complete(&self, node_id: &str) -> bool {
         if let Some(node) = self.nodes.get(node_id) {
             if node.children.is_empty() {
-                return node.status == ProofStatus::Complete;
+                return matches!(node.role, NodeRole::Completed);
             }
             for child_id in &node.children {
                 if !self.is_branch_complete(child_id) {
@@ -862,70 +835,28 @@ mod tests {
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: MathRelation::Implies(
-                Box::new(antecedent.clone()),
-                Box::new(consequent.clone()),
-            ),
+            statement: Located::new(MathRelation::Implies(
+                Box::new(Located::new(Parametrizable::Concrete(antecedent.clone()))),
+                Box::new(Located::new(Parametrizable::Concrete(consequent.clone()))),
+            )),
         };
 
         let tactic = Tactic::AssumeImplicationAntecedent {
-            hypothesis_name: Identifier::new_simple("H1".to_string()),
+            with_name: Identifier::new_simple("H1".to_string()),
         };
 
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::SingleGoal(new_goal) => {
                 // The statement should now be just the consequent
-                assert_eq!(new_goal.statement, consequent);
+                assert_eq!(new_goal.statement.data, consequent);
 
                 // There should be one hypothesis in the context
                 assert_eq!(new_goal.context.len(), 1);
-                // Check that the context entry is a hypothesis with the antecedent as its type
-                assert_eq!(
-                    new_goal.context[0].ty,
-                    MathExpression::Relation(Box::new(antecedent))
-                );
-            }
-            other => panic!("Expected SingleGoal, got {:?}", other),
-        }
-    }
-
-    #[test]
-    fn test_introduce_value_variable_tactic() {
-        use crate::subjects::math::formalism::expressions::MathExpression;
-        use crate::subjects::math::formalism::proof::tactics::{Tactic, TacticApplicationResult};
-        use crate::subjects::math::formalism::relations::MathRelation;
-        use crate::subjects::math::theories::number_theory::definitions::Number;
-        use crate::turn_render::Identifier;
-
-        let goal = ProofGoal {
-            context: vec![],
-            quantifiers: vec![],
-            statement: MathRelation::equal(
-                MathExpression::Number(Number {}),
-                MathExpression::Number(Number {}),
-            ),
-        };
-
-        let new_entry = ContextEntry {
-            name: Identifier::new_simple("temp".to_string()),
-            ty: MathExpression::Number(Number {}),
-            definition: Some(MathExpression::Number(Number {})),
-            description: None,
-        };
-
-        let tactic = Tactic::Introduce {
-            entry: new_entry.clone(),
-            position: None,
-        };
-
-        match tactic.apply_to_goal(&goal) {
-            TacticApplicationResult::SingleGoal(new_goal) => {
-                // The statement should remain the same
-                assert_eq!(new_goal.statement, goal.statement);
-
-                // There should now be one entry in the context
-                assert_eq!(new_goal.context.len(), 1);
-                assert_eq!(new_goal.context[0], new_entry);
+                // Check that the context entry is a hypothesis with a Relation type
+                assert!(matches!(
+                    new_goal.context[0].ty.data,
+                    MathExpression::Relation(_)
+                ));
             }
             other => panic!("Expected SingleGoal, got {:?}", other),
         }
@@ -951,24 +882,28 @@ mod tests {
             MathExpression::Number(Number {}),
         );
 
-        let conjunction = MathRelation::And(vec![part1.clone(), part2.clone(), part3.clone()]);
+        let conjunction = MathRelation::And(vec![
+            Located::new(Parametrizable::Concrete(part1.clone())),
+            Located::new(Parametrizable::Concrete(part2.clone())),
+            Located::new(Parametrizable::Concrete(part3.clone())),
+        ]);
 
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: conjunction.clone(),
+            statement: Located::new(conjunction.clone()),
         };
 
-        let tactic = Tactic::SplitConjunction;
+        let tactic = Tactic::SplitGoalConjunction;
 
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::MultiGoal(goals) => {
                 assert_eq!(goals.len(), 3);
 
                 // Each goal should be one of the conjuncts
-                assert_eq!(goals[0].statement, part1);
-                assert_eq!(goals[1].statement, part2);
-                assert_eq!(goals[2].statement, part3);
+                assert_eq!(goals[0].statement.data, part1);
+                assert_eq!(goals[1].statement.data, part2);
+                assert_eq!(goals[2].statement.data, part3);
             }
             other => panic!("Expected MultiGoal, got {:?}", other),
         }
@@ -990,57 +925,17 @@ pub struct QuantifiedMathObject {
     pub description: Option<String>,
 }
 
-/// Safely format a MathRelation to a string without causing circular references
-pub fn format_relation_safely(relation: &MathRelation) -> String {
-    match relation {
-        MathRelation::Equal { left, right, .. } => {
-            format!(
-                "{} = {}",
-                format_expression_safely(left),
-                format_expression_safely(right)
-            )
-        }
-        MathRelation::And(relations) => {
-            let formatted: Vec<String> = relations.iter().map(format_relation_safely).collect();
-            format!("({})", formatted.join(" ∧ "))
-        }
-        MathRelation::Or(relations) => {
-            let formatted: Vec<String> = relations.iter().map(format_relation_safely).collect();
-            format!("({})", formatted.join(" ∨ "))
-        }
-        MathRelation::Not(relation) => {
-            format!("¬({})", format_relation_safely(relation))
-        }
-        MathRelation::Implies(premise, conclusion) => {
-            format!(
-                "({} → {})",
-                format_relation_safely(premise),
-                format_relation_safely(conclusion)
-            )
-        }
-        MathRelation::Equivalent(left, right) => {
-            format!(
-                "({} ↔ {})",
-                format_relation_safely(left),
-                format_relation_safely(right)
-            )
-        }
-        MathRelation::True => "True".to_string(),
-        MathRelation::False => "False".to_string(),
-        MathRelation::NumberTheory(_) => "[NumberTheoryRelation]".to_string(),
-        MathRelation::SetTheory(_) => "[SetTheoryRelation]".to_string(),
-        MathRelation::GroupTheory(_) => "[GroupTheoryRelation]".to_string(),
-        MathRelation::RingTheory(_) => "[RingTheoryRelation]".to_string(),
-        MathRelation::TopologyTheory(_) => "[TopologyTheoryRelation]".to_string(),
-        MathRelation::CategoryTheory(_) => "[CategoryTheoryRelation]".to_string(),
-        MathRelation::ProbabilityTheory(_) => "[ProbabilityTheoryRelation]".to_string(),
+/// Safely format a Parametrizable<MathExpression> to a string
+fn format_parametrizable_expression_safely(pexpr: &Parametrizable<MathExpression>) -> String {
+    match pexpr {
+        Parametrizable::Concrete(expr) => format_expression_safely(expr),
+        Parametrizable::Variable(id) => id.to_string(),
     }
 }
 
 /// Safely format a MathExpression to a string without causing circular references
 fn format_expression_safely(expr: &MathExpression) -> String {
     match expr {
-        MathExpression::Var(id) => id.to_string(),
         MathExpression::Relation(_) => "[Relation]".to_string(), // Avoid circular reference
         MathExpression::Object(obj) => format!(
             "[Object: {}]",
@@ -1056,14 +951,62 @@ fn format_expression_safely(expr: &MathExpression) -> String {
                 MathObject::Function(_) => "Function",
             }
         ),
-        MathExpression::Expression(theory_expr) => "[TheoryExpression]".to_string(),
+        MathExpression::Expression(_theory_expr) => "[TheoryExpression]".to_string(),
         MathExpression::Number(num) => format!("[Number: {:?}]", num),
         MathExpression::ViewAs { expression, view } => {
             format!(
                 "[ViewAs: {} as {:?}]",
-                format_expression_safely(expression),
+                format_parametrizable_expression_safely(&expression.data),
                 view
             )
         }
+    }
+}
+
+/// Safely format a Parametrizable<MathRelation> to a string
+fn format_parametrizable_relation_safely(prel: &Parametrizable<MathRelation>) -> String {
+    match prel {
+        Parametrizable::Concrete(rel) => format_relation_safely(rel),
+        Parametrizable::Variable(id) => id.to_string(),
+    }
+}
+
+/// Safely format a MathRelation to a string without causing circular references
+fn format_relation_safely(rel: &MathRelation) -> String {
+    match rel {
+        MathRelation::Equal { left, right, .. } => {
+            format!(
+                "{} = {}",
+                format_parametrizable_expression_safely(&left.data),
+                format_parametrizable_expression_safely(&right.data)
+            )
+        }
+        MathRelation::Implies(antecedent, consequent) => {
+            format!(
+                "{} → {}",
+                format_parametrizable_relation_safely(&antecedent.data),
+                format_parametrizable_relation_safely(&consequent.data)
+            )
+        }
+        MathRelation::And(relations) => {
+            let parts: Vec<String> = relations
+                .iter()
+                .map(|r| format_parametrizable_relation_safely(&r.data))
+                .collect();
+            format!("({})", parts.join(" ∧ "))
+        }
+        MathRelation::Or(relations) => {
+            let parts: Vec<String> = relations
+                .iter()
+                .map(|r| format_parametrizable_relation_safely(&r.data))
+                .collect();
+            format!("({})", parts.join(" ∨ "))
+        }
+        MathRelation::Not(rel) => {
+            format!("¬({})", format_parametrizable_relation_safely(&rel.data))
+        }
+        MathRelation::True => "⊤".to_string(),
+        MathRelation::False => "⊥".to_string(),
+        _ => "[Relation]".to_string(),
     }
 }

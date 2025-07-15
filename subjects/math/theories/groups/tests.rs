@@ -53,6 +53,8 @@ fn default_topological_space(set_name: &str) -> TopologicalSpace {
 
 #[cfg(test)]
 mod group_operation_tests {
+    use crate::variant_set;
+
     use super::*;
 
     #[test]
@@ -64,12 +66,6 @@ mod group_operation_tests {
             identity: GroupIdentity::One,
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-            product_info: None,
         };
 
         let addition = GroupOperation {
@@ -78,12 +74,6 @@ mod group_operation_tests {
             identity: GroupIdentity::Zero,
             inverse: GroupInverse::AdditiveInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-            product_info: None,
         };
 
         let composition = GroupOperation {
@@ -92,12 +82,6 @@ mod group_operation_tests {
             identity: GroupIdentity::IdentityFunction,
             inverse: GroupInverse::FunctionInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
-            product_info: None,
         };
 
         // Verify operations have correct types
@@ -143,26 +127,6 @@ mod group_operation_tests {
         ));
         assert!(matches!(addition.inverse, GroupInverse::AdditiveInverse));
         assert!(matches!(composition.inverse, GroupInverse::FunctionInverse));
-
-        // Verify commutativity
-        let is_mult_commutative = multiplication.properties.iter().any(|p| {
-            if let GroupOperationProperty::Commutative(commutative) = p {
-                *commutative
-            } else {
-                false
-            }
-        });
-
-        let is_comp_commutative = composition.properties.iter().any(|p| {
-            if let GroupOperationProperty::Commutative(commutative) = p {
-                *commutative
-            } else {
-                false
-            }
-        });
-
-        assert!(is_mult_commutative);
-        assert!(!is_comp_commutative);
     }
 
     #[test]
@@ -174,12 +138,6 @@ mod group_operation_tests {
             identity: GroupIdentity::IdentityFunction, // Was Custom("e".to_string())
             inverse: GroupInverse::FunctionInverse,    // Was Custom("star-inverse".to_string())
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
-            product_info: None,
         };
 
         // Verify using standard variants now
@@ -210,11 +168,6 @@ mod group_operation_tests {
             identity: GroupIdentity::One,
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::Left,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-            ],
-            product_info: None,
         };
 
         let right_inverse_op = GroupOperation {
@@ -223,11 +176,6 @@ mod group_operation_tests {
             identity: GroupIdentity::One,
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::Right,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-            ],
-            product_info: None,
         };
 
         let two_sided_inverse_op = GroupOperation {
@@ -236,11 +184,6 @@ mod group_operation_tests {
             identity: GroupIdentity::One,
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-            ],
-            product_info: None,
         };
 
         // Verify inverse application types
@@ -261,6 +204,8 @@ mod group_operation_tests {
 
 #[cfg(test)]
 mod group_tests {
+    use crate::variant_set;
+
     use super::*;
 
     fn create_test_group() -> Group {
@@ -271,12 +216,6 @@ mod group_tests {
             identity: GroupIdentity::Zero,
             inverse: GroupInverse::AdditiveInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-            product_info: None,
         };
 
         // Use VariantSet::new() and insert
@@ -376,12 +315,6 @@ mod group_tests {
                 identity: GroupIdentity::IdentityPermutation,
                 inverse: GroupInverse::PermutationInverse,
                 inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![
-                    GroupOperationProperty::Associative,
-                    GroupOperationProperty::Closed,
-                    GroupOperationProperty::Commutative(false),
-                ],
-                product_info: None,
             },
             props: s3_props,
         };
@@ -402,12 +335,6 @@ mod group_tests {
                 identity: GroupIdentity::Zero,
                 inverse: GroupInverse::AdditiveInverse,
                 inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![
-                    GroupOperationProperty::Associative,
-                    GroupOperationProperty::Closed,
-                    GroupOperationProperty::Commutative(true),
-                ],
-                product_info: None,
             },
             props: z2_props,
         };
@@ -472,7 +399,7 @@ mod group_tests {
 #[cfg(test)]
 mod topological_group_tests {
     use super::*;
-    use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
+    use crate::{subjects::math::theories::topology::definitions::TopologicalSpace, variant_set};
 
     #[test]
     fn test_topological_group_creation() {
@@ -488,12 +415,6 @@ mod topological_group_tests {
                 identity: GroupIdentity::Zero,
                 inverse: GroupInverse::AdditiveInverse,
                 inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![
-                    GroupOperationProperty::Associative,
-                    GroupOperationProperty::Closed,
-                    GroupOperationProperty::Commutative(true),
-                ],
-                product_info: None,
             },
             props: group_props,
         };
@@ -559,12 +480,6 @@ mod topological_group_tests {
             identity: GroupIdentity::One,
             inverse: GroupInverse::MultiplicativeInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-            product_info: None,
         };
 
         let circle_core = GenericGroup {
@@ -601,12 +516,6 @@ mod topological_group_tests {
             identity: GroupIdentity::Zero,
             inverse: GroupInverse::AdditiveInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-            product_info: None,
         };
 
         let integer_core = GenericGroup {
@@ -673,7 +582,7 @@ mod topological_group_tests {
 #[cfg(test)]
 mod lie_group_tests {
     use super::*;
-    use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
+    use crate::{subjects::math::theories::topology::definitions::TopologicalSpace, variant_set};
 
     #[test]
     fn test_lie_group_creation() {
@@ -689,12 +598,6 @@ mod lie_group_tests {
                 identity: GroupIdentity::IdentityMatrix,
                 inverse: GroupInverse::MatrixInverse,
                 inverse_application: GroupInverseApplication::TwoSided,
-                properties: vec![
-                    GroupOperationProperty::Associative,
-                    GroupOperationProperty::Closed,
-                    GroupOperationProperty::Commutative(false),
-                ],
-                product_info: None,
             },
             props: glnr_props,
         };
@@ -757,12 +660,6 @@ mod lie_group_tests {
             identity: GroupIdentity::IdentityMatrix,
             inverse: GroupInverse::MatrixInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
-            product_info: None,
         };
 
         let so3_core = GenericGroup {
@@ -801,12 +698,6 @@ mod lie_group_tests {
             identity: GroupIdentity::IdentityMatrix,
             inverse: GroupInverse::MatrixInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
-            product_info: None,
         };
 
         let sl2r_core = GenericGroup {
@@ -865,6 +756,8 @@ mod lie_group_tests {
 
 #[cfg(test)]
 mod group_action_tests {
+    use crate::variant_set;
+
     use super::super::super::super::super::math::theories::VariantSet;
 
     use super::*;
@@ -882,12 +775,6 @@ mod group_action_tests {
             identity: GroupIdentity::IdentityPermutation,
             inverse: GroupInverse::PermutationInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(false),
-            ],
-            product_info: None,
         };
 
         let group = Group::Symmetric(SymmetricGroup {
@@ -945,17 +832,7 @@ mod group_action_tests {
             identity: GroupIdentity::Zero,
             inverse: GroupInverse::AdditiveInverse,
             inverse_application: GroupInverseApplication::TwoSided,
-            properties: vec![
-                GroupOperationProperty::Associative,
-                GroupOperationProperty::Closed,
-                GroupOperationProperty::Commutative(true),
-            ],
-            product_info: None,
         };
-
-        // Use ModularAdditive variant
-        let mut z2_mod_props = VariantSet::new();
-        z2_mod_props.insert(ModularProperty::Modulus(2));
 
         let z2_group = Group::ModularAdditive(ModularAdditiveGroup {
             core: GenericGroup {
@@ -964,7 +841,7 @@ mod group_action_tests {
                 props: z2_group_props,
             },
             modulus: 2,
-            modular_props: z2_mod_props,
+            modular_props: variant_set![ModularProperty::Modulus(2)],
         });
 
         // Create a space to act on

@@ -7,7 +7,7 @@ pub mod properties {
     use super::*;
 
     /// Properties for smallness of categories
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum SmallnessPropertyVariant {
         /// Small category (objects form a set)
         Small,
@@ -18,7 +18,7 @@ pub mod properties {
     }
 
     /// Properties for completeness of categories
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum CompletenessPropertyVariant {
         /// Has all small limits
         Complete,
@@ -29,7 +29,7 @@ pub mod properties {
     }
 
     /// Properties for cocompleteness of categories
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum CocompletenessPropertyVariant {
         /// Has all small colimits
         Cocomplete,
@@ -40,7 +40,7 @@ pub mod properties {
     }
 
     /// Properties for abelian categories
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum AbelianPropertyVariant {
         /// Abelian category
         Abelian,
@@ -51,7 +51,7 @@ pub mod properties {
     }
 
     /// Properties for cartesian closed categories
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum CartesianClosednessPropertyVariant {
         /// Cartesian closed
         CartesianClosed,
@@ -62,7 +62,7 @@ pub mod properties {
     }
 
     /// Properties for monoidal categories
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum MonoidalPropertyVariant {
         /// Strict monoidal
         Strict,
@@ -73,7 +73,7 @@ pub mod properties {
     }
 
     /// Properties for faithfulness of functors
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum FaithfulnessPropertyVariant {
         /// Faithful functor
         Faithful,
@@ -82,7 +82,7 @@ pub mod properties {
     }
 
     /// Properties for fullness of functors
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum FullnessPropertyVariant {
         /// Full functor
         Full,
@@ -91,7 +91,7 @@ pub mod properties {
     }
 
     /// Properties for essential surjectivity of functors
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum EssentialSurjectivityPropertyVariant {
         /// Essentially surjective
         EssentiallySurjective,
@@ -100,7 +100,7 @@ pub mod properties {
     }
 
     /// Properties for left adjointness of functors
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum LeftAdjointnessPropertyVariant {
         /// Left adjoint
         LeftAdjoint,
@@ -109,7 +109,7 @@ pub mod properties {
     }
 
     /// Properties for right adjointness of functors
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum RightAdjointnessPropertyVariant {
         /// Right adjoint
         RightAdjoint,
@@ -118,7 +118,7 @@ pub mod properties {
     }
 
     /// Properties for natural isomorphisms
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum NaturalIsomorphismPropertyVariant {
         /// Natural isomorphism
         NaturalIso,
@@ -127,7 +127,7 @@ pub mod properties {
     }
 
     /// Properties for component-wise properties
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum ComponentPropertyVariant {
         /// Component-wise isomorphism
         ComponentIso,
@@ -138,7 +138,7 @@ pub mod properties {
     }
 
     /// Properties for monadicity of adjunctions
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum MonadicityPropertyVariant {
         /// Monadic adjunction
         Monadic,
@@ -147,7 +147,7 @@ pub mod properties {
     }
 
     /// Properties for comonadicity of adjunctions
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum ComonadicityPropertyVariant {
         /// Comonadic adjunction
         Comonadic,
@@ -156,7 +156,7 @@ pub mod properties {
     }
 
     /// Properties for idempotency
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum IdempotencyPropertyVariant {
         /// Idempotent
         Idempotent,
@@ -165,7 +165,7 @@ pub mod properties {
     }
 
     /// Properties for strength of monads
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum StrongPropertyVariant {
         /// Strong monad
         Strong,
@@ -174,7 +174,7 @@ pub mod properties {
     }
 
     /// Properties for commutativity of monads
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
     pub enum CommutativityPropertyVariant {
         /// Commutative monad
         Commutative,
@@ -192,7 +192,7 @@ pub use self::properties::*;
 /// - For each triple of objects A,B,C, a composition operation
 ///   ∘: Hom(B,C) × Hom(A,B) → Hom(A,C)
 /// - For each object A, an identity morphism id_A ∈ Hom(A,A)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Category {
     /// Name of the category
     pub name: String,
@@ -201,7 +201,7 @@ pub struct Category {
 }
 
 /// Properties of a category
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CategoryProperty {
     /// Smallness properties
     Smallness(SmallnessPropertyVariant),
@@ -221,7 +221,7 @@ pub enum CategoryProperty {
 /// - For each object A ∈ C, an object F(A) ∈ D
 /// - For each morphism f: A → B in C, a morphism F(f): F(A) → F(B) in D
 /// - Preserves composition and identities
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Functor {
     /// Name of the functor
     pub name: String,
@@ -234,7 +234,7 @@ pub struct Functor {
 }
 
 /// Properties of a functor
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FunctorProperty {
     /// Faithfulness properties
     Faithfulness(FaithfulnessPropertyVariant),
@@ -251,7 +251,7 @@ pub enum FunctorProperty {
 /// A natural transformation α: F ⇒ G consists of:
 /// - For each object A ∈ C, a morphism α_A: F(A) → G(A) in D
 /// - For each morphism f: A → B in C, the naturality square commutes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct NaturalTransformation {
     /// Name of the natural transformation
     pub name: String,
@@ -264,7 +264,7 @@ pub struct NaturalTransformation {
 }
 
 /// Properties of a natural transformation
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NaturalTransformationProperty {
     /// Natural isomorphism properties
     NaturalIsomorphism(NaturalIsomorphismPropertyVariant),
@@ -276,7 +276,7 @@ pub enum NaturalTransformationProperty {
 /// - A functor F: C → D (left adjoint)
 /// - A functor G: D → C (right adjoint)
 /// - Natural isomorphism Hom_D(F(A),B) ≅ Hom_C(A,G(B))
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Adjunction {
     /// Name of the adjunction
     pub name: String,
@@ -289,7 +289,7 @@ pub struct Adjunction {
 }
 
 /// Properties of an adjunction
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AdjunctionProperty {
     /// Monadicity properties
     Monadicity(MonadicityPropertyVariant),
@@ -303,7 +303,7 @@ pub enum AdjunctionProperty {
 /// - An endofunctor T: C → C
 /// - A natural transformation η: 1_C ⇒ T (unit)
 /// - A natural transformation μ: T∘T ⇒ T (multiplication)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Monad {
     /// Name of the monad
     pub name: String,
@@ -314,7 +314,7 @@ pub struct Monad {
 }
 
 /// Properties of a monad
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MonadProperty {
     /// Strength properties
     Strength(StrongPropertyVariant),
@@ -327,7 +327,7 @@ pub enum MonadProperty {
 // Category theory relations
 
 /// Entity information for category theory relation operations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CategoryRelationEntity {
     /// Optional ID for referencing this relation
     pub id: Option<String>,
@@ -340,7 +340,7 @@ pub struct CategoryRelationEntity {
 }
 
 /// Relations specific to category theory
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CategoryRelation {
     /// Relation indicating an object belongs to a category
     ObjectInCategory {

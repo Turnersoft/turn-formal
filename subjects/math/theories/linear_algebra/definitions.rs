@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 /// - Linear independence
 /// - Spanning sets
 /// - Bases
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct VectorSpace {
     /// The underlying set of vectors
     pub base_set: Set,
@@ -32,7 +32,7 @@ pub struct VectorSpace {
 /// - Induced metric: d(x,y) = ‖x-y‖
 /// - Completeness: Cauchy sequences converge
 /// - Banach spaces: Complete normed spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct NormedSpace {
     /// The underlying vector space
     pub vector_space: VectorSpace,
@@ -50,7 +50,7 @@ pub struct NormedSpace {
 /// - Induced norm: ‖x‖ = √⟨x,x⟩
 /// - Orthogonality: x ⊥ y ⟺ ⟨x,y⟩ = 0
 /// - Hilbert spaces: Complete inner product spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct InnerProductSpace {
     /// The underlying normed space
     pub normed_space: NormedSpace,
@@ -61,7 +61,7 @@ pub struct InnerProductSpace {
 }
 
 /// Types of vector space dimension
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DimensionType {
     /// Zero dimensional
     Zero,
@@ -77,7 +77,7 @@ pub enum DimensionType {
 }
 
 /// Types of scalar fields
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ScalarFieldType {
     /// Real numbers ℝ
     Real,
@@ -93,7 +93,7 @@ pub enum ScalarFieldType {
 }
 
 /// Properties specific to vector spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum VectorSpaceProperty {
     /// Basis properties
     Basis(BasisType),
@@ -109,7 +109,7 @@ pub enum VectorSpaceProperty {
 }
 
 /// Types of bases for vector spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum BasisType {
     /// Standard basis
     Standard,
@@ -128,7 +128,7 @@ pub enum BasisType {
 }
 
 /// Types of topologies on vector spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TopologyType {
     /// Norm topology
     Norm,
@@ -144,7 +144,7 @@ pub enum TopologyType {
 }
 
 /// Types of duality for vector spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DualityType {
     /// Reflexive
     Reflexive,
@@ -157,7 +157,7 @@ pub enum DualityType {
 }
 
 /// Types of decompositions for vector spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DecompositionType {
     /// Direct sum
     DirectSum,
@@ -170,7 +170,7 @@ pub enum DecompositionType {
 }
 
 /// Types of norms on vector spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NormType {
     /// Euclidean norm
     Euclidean,
@@ -182,14 +182,14 @@ pub enum NormType {
     Maximum,
 
     /// p-norm
-    Lp(f64),
+    Lp(i64), // todo: what is this, it used to be f64, but I change it avoid trait bound error introduced by Eq
 
     /// Operator norm
     Operator,
 }
 
 /// Properties specific to normed spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NormedSpaceProperty {
     /// Completeness properties
     Complete(CompletenessType),
@@ -202,7 +202,7 @@ pub enum NormedSpaceProperty {
 }
 
 /// Types of completeness for normed spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum CompletenessType {
     /// Complete (Banach)
     Complete,
@@ -212,7 +212,7 @@ pub enum CompletenessType {
 }
 
 /// Types of convexity for normed spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ConvexityType {
     /// Strictly convex
     Strictly,
@@ -225,7 +225,7 @@ pub enum ConvexityType {
 }
 
 /// Types of separability for normed spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SeparabilityType {
     /// Separable
     Separable,
@@ -235,7 +235,7 @@ pub enum SeparabilityType {
 }
 
 /// Types of inner products
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum InnerProductType {
     /// Real inner product
     Real,
@@ -248,7 +248,7 @@ pub enum InnerProductType {
 }
 
 /// Properties specific to inner product spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum InnerProductSpaceProperty {
     /// Orthogonality properties
     Orthogonality(OrthogonalityType),
@@ -261,7 +261,7 @@ pub enum InnerProductSpaceProperty {
 }
 
 /// Types of orthogonality for inner product spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum OrthogonalityType {
     /// Has orthonormal basis
     OrthonormalBasis,
@@ -276,7 +276,7 @@ pub enum OrthogonalityType {
 /// A linear transformation T: V → W between vector spaces satisfies:
 /// 1. T(u + v) = T(u) + T(v)  (additivity)
 /// 2. T(av) = aT(v)           (homogeneity)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct LinearTransformation {
     /// Domain vector space
     pub domain: VectorSpace,
@@ -287,7 +287,7 @@ pub struct LinearTransformation {
 }
 
 /// Properties of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum LinearTransformationProperty {
     /// Kernel: ker(T) = {v ∈ V : T(v) = 0}
     Kernel(KernelProperty),
@@ -304,7 +304,7 @@ pub enum LinearTransformationProperty {
 }
 
 /// Properties for kernels of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum KernelProperty {
     /// Trivial kernel
     Trivial,
@@ -315,7 +315,7 @@ pub enum KernelProperty {
 }
 
 /// Properties for images of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ImageProperty {
     /// Closed image
     Closed,
@@ -326,7 +326,7 @@ pub enum ImageProperty {
 }
 
 /// Properties for rank of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RankProperty {
     /// Finite rank
     Finite(u32),
@@ -335,7 +335,7 @@ pub enum RankProperty {
 }
 
 /// Properties for nullity of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NullityProperty {
     /// Finite nullity
     Finite(u32),
@@ -344,7 +344,7 @@ pub enum NullityProperty {
 }
 
 /// Properties for invertibility of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum InvertibilityProperty {
     /// Invertible
     Invertible,
@@ -353,7 +353,7 @@ pub enum InvertibilityProperty {
 }
 
 /// Properties for diagonalizability of linear transformations
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum DiagonalizabilityProperty {
     /// Diagonalizable
     Diagonalizable,
@@ -369,7 +369,7 @@ pub enum DiagonalizabilityProperty {
 /// - Tensor product
 /// - Symmetry and antisymmetry
 /// - Contraction
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct TensorSpace {
     /// The underlying vector space
     pub vector_space: VectorSpace,
@@ -382,7 +382,7 @@ pub struct TensorSpace {
 }
 
 /// Structure of tensor products
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TensorProductStructure {
     /// Standard tensor product (no symmetry)
     Standard,
@@ -403,7 +403,7 @@ pub enum TensorProductStructure {
 }
 
 /// Properties specific to tensor spaces
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TensorSpaceProperty {
     /// Algebraic properties
     Algebraic {
@@ -424,7 +424,7 @@ pub enum TensorSpaceProperty {
 }
 
 /// Types of multilinearity
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MultilinearityType {
     /// Fully multilinear
     Full,
@@ -438,7 +438,7 @@ pub enum MultilinearityType {
 }
 
 /// Operations on tensors
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum TensorOperation {
     /// Tensor product (outer product)
     Product,

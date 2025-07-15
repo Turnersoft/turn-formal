@@ -1,10 +1,10 @@
-use super::{context::TacticalContext, GenericProof, TacticResult};
+use super::{GenericProof, TacticResult, context::TacticalContext};
 use crate::{
     formalize_v2::{
         foundational_theories::type_theory_v2::calculi::simply_typed::terms::Term,
         subjects::logic::propositional::{Foundation, Proposition},
     },
-    parse::{entities::Identifier, Parse},
+    parse::{Parse, entities::Identifier},
 };
 
 /// Status of a proof node's verification
@@ -99,6 +99,23 @@ impl ProofNode {
     /// Set a description for this proof step
     pub fn set_description(&mut self, description: String) {
         self.description = description;
+    }
+
+    /// Checks that the tactic application completed the proof branch, and panics if not.
+    pub fn should_complete(self) {
+        match self.role {
+            NodeRole::Completed => (),
+            NodeRole::Goal(g) => {
+                panic!(
+                    "Tactic did not complete the proof. New goal generated: {:?}",
+                    g
+                )
+            }
+            other => panic!(
+                "Tactic did not complete the proof. Unexpected node role: {:?}",
+                other
+            ),
+        }
     }
 }
 

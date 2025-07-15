@@ -6,11 +6,16 @@
 
 pub mod abstraction_level;
 pub mod checker;
-pub mod collect;
 pub mod complexity;
 pub mod definitions;
 pub mod extract;
 // pub mod leptos;
+pub mod axioms;
+pub mod case_generator;
+pub mod getters;
 pub mod render;
+pub mod replace;
+
+pub mod search;
 pub mod tests;
 pub mod theorems;

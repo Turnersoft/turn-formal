@@ -6,7 +6,6 @@
 
 pub mod abstraction_level;
 pub mod checker;
-pub mod collect;
 pub mod complexity;
 pub mod definitions;
 pub mod extract;
