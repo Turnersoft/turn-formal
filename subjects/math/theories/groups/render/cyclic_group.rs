@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -11,7 +13,7 @@ impl ToTurnMath for CyclicGroup {
         let gen_node = self.generator.to_turn_math(format!("{}-gen", master_id));
 
         let content = MathNodeContent::Bracketed {
-            inner: Box::new(gen_node),
+            inner: Arc::new(gen_node),
             style: BracketStyle::Angle,
             size: BracketSize::Auto,
         };
@@ -20,13 +22,13 @@ impl ToTurnMath for CyclicGroup {
         // For finite cyclic group (Z_n), add order information
         let final_content = if let Some(order) = self.order {
             // Use proper mathematical notation C_n with subscript for finite cyclic groups
-            Box::new(MathNodeContent::Power {
-                base: Box::new(MathNode::identifier(Identifier::new_simple(
+            Arc::new(MathNodeContent::Power {
+                base: Arc::new(MathNode::identifier(Identifier::new_simple(
                     "C".to_string(),
                 ))),
-                exponent: Box::new(MathNode {
+                exponent: Arc::new(MathNode {
                     id: format!("{}_order", master_id),
-                    content: Box::new(MathNodeContent::Quantity {
+                    content: Arc::new(MathNodeContent::Quantity {
                         number: order.to_string(),
                         scientific_notation: None,
                         unit: None,
@@ -34,7 +36,7 @@ impl ToTurnMath for CyclicGroup {
                 }),
             })
         } else {
-            Box::new(content)
+            Arc::new(content)
         };
 
         MathNode {

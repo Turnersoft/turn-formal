@@ -1,4 +1,4 @@
-use std::num::NonZeroI16;
+use std::{num::NonZeroI16, sync::Arc};
 
 use super::super::objects::MathObject;
 use super::super::{
@@ -92,7 +92,7 @@ impl ToSectionNode for ProofGoal {
                 .map(|q| {
                     MathNode {
                         id: format!("{}-quantifier-{:?}", id_prefix, q.variable_name),
-                        content: Box::new(MathNodeContent::QuantifiedExpression {
+                        content: Arc::new(MathNodeContent::QuantifiedExpression {
                             quantifier: match q.quantification {
                                 Quantification::Universal => QuantificationNode::Universal,
                                 Quantification::Existential => QuantificationNode::Existential,
@@ -102,7 +102,7 @@ impl ToSectionNode for ProofGoal {
                             },
                             variables: vec![MathNode {
                                 id: format!("{}-var-{:?}", id_prefix, q.variable_name),
-                                content: Box::new(MathNodeContent::Identifier(
+                                content: Arc::new(MathNodeContent::Identifier(
                                     q.variable_name.clone(),
                                 )),
                             }],
@@ -152,7 +152,11 @@ impl ToSectionNode for ProofGoal {
                     text: "⊢ ".to_string(),
                     styles: vec![],
                 }, // Turnstile symbol for "proves"
-                RichTextSegment::Math(self.statement.to_turn_math(format!("{}-stmt", id_prefix))),
+                RichTextSegment::Math(
+                    self.statement
+                        .data
+                        .to_turn_math(format!("{}-stmt", id_prefix)),
+                ),
             ],
             alignment: None,
         }));
@@ -196,6 +200,7 @@ impl ToSectionNode for Theorem {
                                         self.proofs
                                             .initial_goal
                                             .statement
+                                            .data
                                             .to_turn_math("theorem-statement".to_string()),
                                     ),
                                 ],

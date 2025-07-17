@@ -20,6 +20,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::fmt::{self, Display};
 use std::hash::Hash;
 use std::hash::Hasher;
+use std::sync::Arc;
 use thiserror::Error;
 
 use crate::subjects::math::formalism::abstraction_level::GetAbstractionLevel;
@@ -209,7 +210,7 @@ pub enum ProductOperation {
     /// Semidirect product (⋊): Normal subgroup with an action
     Semidirect {
         /// The action defining the semidirect product
-        action: Box<GroupAction>,
+        action: Arc<GroupAction>,
     },
 
     /// Free product (*): No relations between the groups
@@ -224,7 +225,7 @@ pub enum ProductOperation {
     /// Fibered product: Pullback along a homomorphism
     Fibered {
         /// The homomorphism defining the fibered product
-        homomorphism: Box<GroupHomomorphism>,
+        homomorphism: Arc<GroupHomomorphism>,
     },
 }
 
@@ -238,7 +239,7 @@ pub struct ProductGroup {
     pub operation: ProductOperation,
 
     /// The component groups
-    pub components: Vec<Box<Group>>,
+    pub components: Vec<Arc<Group>>,
 
     /// For semidirect products, identifies which component is normal
     pub normal_component: Option<usize>,
@@ -516,7 +517,7 @@ pub enum GroupAction {
         /// The space being acted on
         space: Set,
         /// The specific point in the space (if any)
-        point: Option<Box<GroupExpression>>,
+        point: Option<Arc<GroupExpression>>,
         /// Properties of the action
         properties: VariantSet<GroupActionProperty>,
     },
@@ -891,36 +892,36 @@ pub enum GroupExpression {
     /// A group operation between two element expressions
     Operation {
         group: Parametrizable<Group>, // Group can be variable
-        left: Box<Parametrizable<GroupExpression>>,
-        right: Box<Parametrizable<GroupExpression>>,
+        left: Parametrizable<Arc<GroupExpression>>,
+        right: Parametrizable<Arc<GroupExpression>>,
     },
     /// The inverse of an expression
     Inverse {
         group: Parametrizable<Group>, // Group can be variable
-        element: Box<Parametrizable<GroupExpression>>,
+        element: Parametrizable<Arc<GroupExpression>>,
     },
     /// A commutator of two elements
     Commutator {
         group: Parametrizable<Group>, // Group can be variable
-        a: Box<Parametrizable<GroupExpression>>,
-        b: Box<Parametrizable<GroupExpression>>,
+        a: Parametrizable<Arc<GroupExpression>>,
+        b: Parametrizable<Arc<GroupExpression>>,
     },
     /// A coset of a subgroup
     Coset {
         group: Parametrizable<Group>, // Group can be variable
-        element: Box<Parametrizable<GroupExpression>>,
+        element: Parametrizable<Arc<GroupExpression>>,
         subgroup: Parametrizable<Group>, // Subgroup can be variable
         is_left: bool,
     },
     /// A group action applied to an element
     ActionOnElement {
         action: Parametrizable<GroupAction>, // Action can be variable
-        element: Box<Parametrizable<GroupExpression>>,
+        element: Parametrizable<Arc<GroupExpression>>,
     },
     /// Represents a power (exponentiation) of an element
     Power {
         group: Parametrizable<Group>, // Group can be variable
-        base: Box<Parametrizable<GroupExpression>>,
+        base: Parametrizable<Arc<GroupExpression>>,
         exponent: Parametrizable<i32>, // Exponent can be variable
     },
     /// The order of a group: |G|
@@ -929,7 +930,7 @@ pub enum GroupExpression {
     },
     /// The order of an element: |g|
     ElementOrder {
-        element: Box<Parametrizable<GroupExpression>>,
+        element: Parametrizable<Arc<GroupExpression>>,
         group: Parametrizable<Group>, // Group can be variable
     },
     /// A homomorphism between groups: φ : G → H
@@ -1016,7 +1017,7 @@ impl GroupAction {
         GroupAction::SetAction {
             group,
             space,
-            point: Some(Box::new(point)),
+            point: Some(Arc::new(point)),
             properties,
         }
     }
@@ -1748,9 +1749,9 @@ pub struct QuotientGroup {
     /// The core algebraic group structure
     pub core: GenericGroup,
     /// The group
-    pub group: Box<Group>,
+    pub group: Arc<Group>,
     /// The normal subgroup
-    pub normal_subgroup: Box<Group>,
+    pub normal_subgroup: Arc<Group>,
     /// Quotient specific properties
     pub quotient_props: VariantSet<QuotientProperty>,
 }
@@ -1760,8 +1761,8 @@ impl QuotientGroup {
     pub fn new(group: Group, normal_subgroup: Group, is_maximal: bool) -> Self {
         QuotientGroup {
             core: GenericGroup::default(),
-            group: Box::new(group),
-            normal_subgroup: Box::new(normal_subgroup),
+            group: Arc::new(group),
+            normal_subgroup: Arc::new(normal_subgroup),
             quotient_props: VariantSet::new(),
         }
     }
@@ -1780,30 +1781,30 @@ pub struct TrivialGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct KernelGroup {
     pub core: GenericGroup,
-    pub defining_homomorphism: Box<GroupHomomorphism>,
-    // Potentially add domain_group: Box<Group> if needed for context
+    pub defining_homomorphism: Arc<GroupHomomorphism>,
+    // Potentially add domain_group: Arc<Group> if needed for context
 }
 
 /// A group defined as the image of a homomorphism
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ImageGroup {
     pub core: GenericGroup,
-    pub defining_homomorphism: Box<GroupHomomorphism>,
-    // Potentially add codomain_group: Box<Group> if needed for context
+    pub defining_homomorphism: Arc<GroupHomomorphism>,
+    // Potentially add codomain_group: Arc<Group> if needed for context
 }
 
 /// A group defined as the center of another group: Z(G)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CenterGroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
+    pub parent_group: Arc<Group>,
 }
 
 /// A group defined as a subgroup generated by a set of elements
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct GeneratedSubgroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
+    pub parent_group: Arc<Group>,
     pub generators: Vec<GroupElement>, // Or GroupExpression?
 }
 
@@ -1811,15 +1812,15 @@ pub struct GeneratedSubgroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct NormalizerGroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
-    pub subgroup_normalized: Box<Group>,
+    pub parent_group: Arc<Group>,
+    pub subgroup_normalized: Arc<Group>,
 }
 
 /// A group defined as the centralizer of an element: C_G(x)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CentralizerGroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
+    pub parent_group: Arc<Group>,
     pub element_centralized: GroupElement, // Or GroupExpression?
 }
 
@@ -1827,14 +1828,14 @@ pub struct CentralizerGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CommutatorSubgroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
+    pub parent_group: Arc<Group>,
 }
 
 /// A group defined as a Sylow p-subgroup: Syl_p(G)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct SylowSubgroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
+    pub parent_group: Arc<Group>,
     pub prime: u64, // Assuming prime is a number
 }
 
@@ -1842,8 +1843,8 @@ pub struct SylowSubgroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct WreathProductGroup {
     pub core: GenericGroup,
-    pub base_group: Box<Group>,
-    pub acting_group: Box<Group>,
+    pub base_group: Arc<Group>,
+    pub acting_group: Arc<Group>,
     // Add action details if needed
 }
 
@@ -1851,7 +1852,7 @@ pub struct WreathProductGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CentralProductGroup {
     pub core: GenericGroup,
-    pub component_groups: Vec<Box<Group>>,
+    pub component_groups: Vec<Arc<Group>>,
     pub center_identification_map: String, // Details on how centers are identified
 }
 
@@ -1859,8 +1860,8 @@ pub struct CentralProductGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct PullbackGroup {
     pub core: GenericGroup,
-    pub source_groups: Vec<Box<Group>>, // Groups being mapped from
-    pub target_group: Box<Group>,       // Group being mapped to
+    pub source_groups: Vec<Arc<Group>>, // Groups being mapped from
+    pub target_group: Arc<Group>,       // Group being mapped to
     pub defining_homomorphisms: Vec<GroupHomomorphism>,
 }
 
@@ -1868,7 +1869,7 @@ pub struct PullbackGroup {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct RestrictionGroup {
     pub core: GenericGroup,
-    pub parent_group: Box<Group>,
+    pub parent_group: Arc<Group>,
     pub restriction_description: String, // How the restriction is defined
 }
 
@@ -1915,90 +1916,5 @@ impl Group {
             operation: GroupOperation::default(),
             props: VariantSet::new(),
         })
-    }
-}
-
-impl GroupExpression {
-    pub fn matches_pattern_group_expr(&self, pattern: &GroupExpression) -> bool {
-        match (self, pattern) {
-            (
-                GroupExpression::Element {
-                    group: g1,
-                    element: e1,
-                },
-                GroupExpression::Element {
-                    group: g2,
-                    element: e2,
-                },
-            ) => {
-                let groups_match = g1.matches_pattern_param(g2);
-                let elements_match = match (e1, e2) {
-                    (Some(param1), Some(param2)) => param1.matches_pattern_param(param2),
-                    (None, None) => true, // Both are None - they match
-                    _ => false,           // One is Some, the other is None - they don't match
-                };
-                groups_match && elements_match
-            }
-            (GroupExpression::Identity(g1), GroupExpression::Identity(g2)) => {
-                g1.matches_pattern_param(g2)
-            }
-            (
-                GroupExpression::Operation {
-                    group: g1,
-                    left: l1,
-                    right: r1,
-                },
-                GroupExpression::Operation {
-                    group: g2,
-                    left: l2,
-                    right: r2,
-                },
-            ) => {
-                g1.matches_pattern_param(g2)
-                    && l1.matches_pattern_param(l2)
-                    && r1.matches_pattern_param(r2)
-            }
-            (
-                GroupExpression::Inverse {
-                    group: g1,
-                    element: e1,
-                },
-                GroupExpression::Inverse {
-                    group: g2,
-                    element: e2,
-                },
-            ) => g1.matches_pattern_param(g2) && e1.matches_pattern_param(e2),
-            // Add other GroupExpression variants
-            _ => false,
-        }
-    }
-}
-
-impl GroupRelation {
-    pub fn matches_pattern_group_relation(&self, pattern: &GroupRelation) -> bool {
-        match (self, pattern) {
-            (
-                GroupRelation::IsSubgroupOf {
-                    subgroup: sg1,
-                    group: g1,
-                },
-                GroupRelation::IsSubgroupOf {
-                    subgroup: sg2,
-                    group: g2,
-                },
-            ) => sg1.matches_pattern_param(sg2) && g1.matches_pattern_param(g2),
-            (
-                GroupRelation::HasOrder {
-                    group: g1,
-                    order: o1,
-                },
-                GroupRelation::HasOrder {
-                    group: g2,
-                    order: o2,
-                },
-            ) => g1.matches_pattern_param(g2) && o1.matches_pattern_param(o2),
-            // Add more GroupRelation variants here
-            _ => false, // Default to no match for unhandled or different variants
-        }
     }
 }

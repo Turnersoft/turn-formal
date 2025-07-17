@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -16,14 +18,14 @@ impl ToTurnMath for ProductGroup {
         if self.components.is_empty() {
             return MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Text("∅".to_string())),
+                content: Arc::new(MathNodeContent::Text("∅".to_string())),
             };
         }
 
         if self.components.len() == 1 {
             return MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Text("G_1".to_string())),
+                content: Arc::new(MathNodeContent::Text("G_1".to_string())),
             };
         }
 
@@ -34,7 +36,7 @@ impl ToTurnMath for ProductGroup {
 
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(group_names.join(" × "))),
+            content: Arc::new(MathNodeContent::Text(group_names.join(" × "))),
         }
     }
 }
@@ -48,7 +50,7 @@ impl ToSectionNode for ProductGroup {
             RichTextSegment::Text("Product Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Text(
+                content: Arc::new(MathNodeContent::Text(
                     "G_1 \\times G_2 \\times \\cdots \\times G_n".to_string(),
                 )),
             }),

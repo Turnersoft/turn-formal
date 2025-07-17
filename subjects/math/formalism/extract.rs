@@ -1,7 +1,8 @@
 use std::fmt::Debug;
 use std::{
-    any::Any,
+    any::{Any, TypeId},
     hash::{Hash, Hasher},
+    sync::Arc,
 };
 
 use serde::{Deserialize, Serialize};
@@ -80,11 +81,24 @@ impl<T: Extractable> Extractable for Located<T> {
 
 impl Extractable for MathExpression {
     fn try_extract<T: 'static + Clone>(&self) -> Option<T> {
+        // Special case: if T is Arc<MathExpression>, wrap self in Arc
+        if std::any::TypeId::of::<T>() == std::any::TypeId::of::<Arc<MathExpression>>() {
+            let arc_expr = Arc::new(self.clone());
+            return ((&arc_expr as &dyn Any).downcast_ref::<T>()).cloned();
+        }
+
         match self {
             MathExpression::Object(math_object) => math_object.try_extract::<T>(),
             MathExpression::Expression(theory_expression) => theory_expression.try_extract::<T>(),
             _ => (self as &dyn Any).downcast_ref::<T>().cloned(),
         }
+    }
+}
+
+// Generic implementation for Arc<T> where T: Extractable
+impl<T: Extractable> Extractable for Arc<T> {
+    fn try_extract<U: 'static + Clone>(&self) -> Option<U> {
+        (**self).try_extract::<U>()
     }
 }
 
@@ -153,6 +167,8 @@ impl Extractable for TheoryExpression {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
+
     use crate::subjects::math::theories::groups::definitions::GenericGroup;
     use crate::subjects::math::theories::groups::definitions::Group;
     use crate::subjects::math::theories::rings::definitions::Ring;
@@ -163,7 +179,7 @@ mod tests {
     fn test_extract_from_math_expression() {
         let group = Group::Generic(GenericGroup::default());
         let math_object = MathObject::Group(group.clone());
-        let expr = MathExpression::Object(Box::new(math_object));
+        let expr = MathExpression::Object(Arc::new(math_object));
         let extracted = expr.extract::<Group>();
         assert_eq!(extracted, group);
     }
@@ -173,7 +189,7 @@ mod tests {
     fn test_extract_panic() {
         let group = Group::Generic(GenericGroup::default());
         let math_object = MathObject::Group(group.clone());
-        let expr = MathExpression::Object(Box::new(math_object));
+        let expr = MathExpression::Object(Arc::new(math_object));
         expr.extract::<Ring>();
     }
 }

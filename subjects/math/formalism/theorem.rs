@@ -12,7 +12,6 @@ use uuid::Uuid;
 
 use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
 use crate::subjects::math::formalism::proof::ProofGoal;
-use crate::subjects::math::formalism::proof::tactics::implement::safe_clone;
 
 use super::expressions::{MathExpression, TheoryExpression};
 use super::proof::tactics::Tactic;

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -13,7 +15,7 @@ impl ToTurnMath for GenericGroup {
         let op_char = "×"; // Use clean notation for operation
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Text(format!(
+            content: Arc::new(MathNodeContent::Text(format!(
                 "({}, {})",
                 base_set_str, op_char
             ))),
@@ -33,7 +35,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("General Linear Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("GL(n, F)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("GL(n, F)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("special_linear") {
@@ -41,7 +43,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Special Linear Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("SL(n, F)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("SL(n, F)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("orthogonal") {
@@ -49,7 +51,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Orthogonal Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("O(n)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("O(n)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("special_orthogonal") {
@@ -57,7 +59,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Special Orthogonal Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("SO(n)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("SO(n)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("unitary") {
@@ -65,7 +67,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Unitary Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("U(n)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("U(n)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("special_unitary") {
@@ -73,7 +75,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Special Unitary Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("SU(n)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("SU(n)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("trivial") {
@@ -81,7 +83,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Trivial Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("\\{e\\}".to_string())),
+                    content: Arc::new(MathNodeContent::Text("\\{e\\}".to_string())),
                 }),
             ]
         } else if id_prefix.contains("modular_additive") {
@@ -89,7 +91,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Modular Additive Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text(
+                    content: Arc::new(MathNodeContent::Text(
                         "\\mathbb{Z}/n\\mathbb{Z}".to_string(),
                     )),
                 }),
@@ -99,7 +101,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Modular Multiplicative Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text(
+                    content: Arc::new(MathNodeContent::Text(
                         "(\\mathbb{Z}/n\\mathbb{Z})^*".to_string(),
                     )),
                 }),
@@ -109,7 +111,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Free Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("F_n".to_string())),
+                    content: Arc::new(MathNodeContent::Text("F_n".to_string())),
                 }),
             ]
         } else if id_prefix.contains("quotient") {
@@ -117,7 +119,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Quotient Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("G/N".to_string())),
+                    content: Arc::new(MathNodeContent::Text("G/N".to_string())),
                 }),
             ]
         } else if id_prefix.contains("kernel") {
@@ -125,7 +127,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Kernel Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("\\ker(\\phi)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("\\ker(\\phi)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("image") {
@@ -133,7 +135,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Image Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("\\text{im}(\\phi)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("\\text{im}(\\phi)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("center") {
@@ -141,7 +143,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Center Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("Z(G)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("Z(G)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("generated_subgroup") {
@@ -149,7 +151,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Generated Subgroup ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("\\langle S \\rangle".to_string())),
+                    content: Arc::new(MathNodeContent::Text("\\langle S \\rangle".to_string())),
                 }),
             ]
         } else if id_prefix.contains("normalizer") {
@@ -157,7 +159,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Normalizer Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("N_G(H)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("N_G(H)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("centralizer") {
@@ -165,7 +167,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Centralizer Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("C_G(x)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("C_G(x)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("commutator_subgroup") {
@@ -173,7 +175,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Commutator Subgroup ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("[G,G]".to_string())),
+                    content: Arc::new(MathNodeContent::Text("[G,G]".to_string())),
                 }),
             ]
         } else if id_prefix.contains("sylow_subgroup") {
@@ -181,7 +183,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Sylow Subgroup ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("\\text{Syl}_p(G)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("\\text{Syl}_p(G)".to_string())),
                 }),
             ]
         } else if id_prefix.contains("wreath_product") {
@@ -189,7 +191,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Wreath Product ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("G \\wr H".to_string())),
+                    content: Arc::new(MathNodeContent::Text("G \\wr H".to_string())),
                 }),
             ]
         } else if id_prefix.contains("central_product") {
@@ -197,7 +199,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Central Product ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("G \\times_Z H".to_string())),
+                    content: Arc::new(MathNodeContent::Text("G \\times_Z H".to_string())),
                 }),
             ]
         } else if id_prefix.contains("pullback") {
@@ -209,7 +211,7 @@ impl ToSectionNode for GenericGroup {
                 RichTextSegment::Text("Product Group ".to_string()),
                 RichTextSegment::Math(MathNode {
                     id: format!("{}-title-math", id_prefix),
-                    content: Box::new(MathNodeContent::Text("G \\times H".to_string())),
+                    content: Arc::new(MathNodeContent::Text("G \\times H".to_string())),
                 }),
             ]
         } else {
@@ -934,9 +936,9 @@ impl ToSectionNode for GenericGroup {
         };
 
         // Add subsections
-        content_nodes.push(SectionContentNode::SubSection(Box::new(definition_section)));
-        content_nodes.push(SectionContentNode::SubSection(Box::new(properties_section)));
-        content_nodes.push(SectionContentNode::SubSection(Box::new(examples_section)));
+        content_nodes.push(SectionContentNode::SubSection(Arc::new(definition_section)));
+        content_nodes.push(SectionContentNode::SubSection(Arc::new(properties_section)));
+        content_nodes.push(SectionContentNode::SubSection(Arc::new(examples_section)));
 
         Section {
             id: format!("{}.main_section", id_prefix),
@@ -1257,26 +1259,26 @@ impl GenericGroup {
         // Create variables a and b
         let a_el = MathNode {
             id: format!("{}_el_a", node_id),
-            content: Box::new(MathNodeContent::Text("a".to_string())),
+            content: Arc::new(MathNodeContent::Text("a".to_string())),
         };
 
         let b_el = MathNode {
             id: format!("{}_el_b", node_id),
-            content: Box::new(MathNodeContent::Text("b".to_string())),
+            content: Arc::new(MathNodeContent::Text("b".to_string())),
         };
 
         let g_set = MathNode {
             id: format!("{}_set_g", node_id),
-            content: Box::new(MathNodeContent::Text("G".to_string())),
+            content: Arc::new(MathNodeContent::Text("G".to_string())),
         };
 
         // Create a * b using CustomFunction
         let ab = MathNode {
             id: format!("{}_ab", node_id),
-            content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
+            content: Arc::new(MathNodeContent::FunctionCall {
+                name: Arc::new(MathNode {
                     id: format!("{}_func", node_id),
-                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                         body: "∘".to_string(),
                         pre_script: None,
                         mid_script: None,
@@ -1292,9 +1294,9 @@ impl GenericGroup {
         // Create a * b ∈ G using Relationship
         let result_membership = MathNode {
             id: format!("{}_result", node_id),
-            content: Box::new(MathNodeContent::Relationship {
-                lhs: Box::new(ab),
-                rhs: Box::new(g_set.clone()),
+            content: Arc::new(MathNodeContent::Relationship {
+                lhs: Arc::new(ab),
+                rhs: Arc::new(g_set.clone()),
                 operator: RelationOperatorNode::ElementOf,
             }),
         };
@@ -1302,14 +1304,14 @@ impl GenericGroup {
         // Create a, b ∈ G using Relationship with comma-separated variables
         let var_list = MathNode {
             id: format!("{}_var_list", node_id),
-            content: Box::new(MathNodeContent::Multiplications {
+            content: Arc::new(MathNodeContent::Multiplications {
                 terms: vec![
                     (RefinedMulOrDivOperation::None, a_el),
                     (
                         RefinedMulOrDivOperation::None,
                         MathNode {
                             id: format!("{}_comma", node_id),
-                            content: Box::new(MathNodeContent::Identifier(Identifier {
+                            content: Arc::new(MathNodeContent::Identifier(Identifier {
                                 body: ",".to_string(),
                                 pre_script: None,
                                 mid_script: None,
@@ -1326,9 +1328,9 @@ impl GenericGroup {
 
         let membership = MathNode {
             id: format!("{}_membership", node_id),
-            content: Box::new(MathNodeContent::Relationship {
-                lhs: Box::new(var_list),
-                rhs: Box::new(g_set),
+            content: Arc::new(MathNodeContent::Relationship {
+                lhs: Arc::new(var_list),
+                rhs: Arc::new(g_set),
                 operator: RelationOperatorNode::ElementOf,
             }),
         };
@@ -1336,11 +1338,11 @@ impl GenericGroup {
         // Create the full quantified expression
         MathNode {
             id: node_id.to_string(),
-            content: Box::new(MathNodeContent::QuantifiedExpression {
+            content: Arc::new(MathNodeContent::QuantifiedExpression {
                 quantifier: QuantificationNode::Universal,
                 variables: vec![],
-                domain: Some(Box::new(membership)),
-                predicate: Some(Box::new(result_membership)),
+                domain: Some(Arc::new(membership)),
+                predicate: Some(Arc::new(result_membership)),
             }),
         }
     }
@@ -1354,31 +1356,31 @@ impl GenericGroup {
         // Create variables
         let a_el = MathNode {
             id: format!("{}_el_a", node_id),
-            content: Box::new(MathNodeContent::Text("a".to_string())),
+            content: Arc::new(MathNodeContent::Text("a".to_string())),
         };
 
         let b_el = MathNode {
             id: format!("{}_el_b", node_id),
-            content: Box::new(MathNodeContent::Text("b".to_string())),
+            content: Arc::new(MathNodeContent::Text("b".to_string())),
         };
 
         let c_el = MathNode {
             id: format!("{}_el_c", node_id),
-            content: Box::new(MathNodeContent::Text("c".to_string())),
+            content: Arc::new(MathNodeContent::Text("c".to_string())),
         };
 
         let g_set = MathNode {
             id: format!("{}_set_g", node_id),
-            content: Box::new(MathNodeContent::Text("G".to_string())),
+            content: Arc::new(MathNodeContent::Text("G".to_string())),
         };
 
         // Create a * b using CustomFunction
         let ab = MathNode {
             id: format!("{}_ab", node_id),
-            content: Box::new(MathNodeContent::FunctionCall {
-                name: Box::new(MathNode {
+            content: Arc::new(MathNodeContent::FunctionCall {
+                name: Arc::new(MathNode {
                     id: format!("{}_func", node_id),
-                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                         body: "∘".to_string(),
                         pre_script: None,
                         mid_script: None,
@@ -1394,27 +1396,27 @@ impl GenericGroup {
         // Create (a * b) * c - simplified as text
         let left_assoc = MathNode {
             id: format!("{}_left", node_id),
-            content: Box::new(MathNodeContent::Text("(a ∘ b) ∘ c".to_string())),
+            content: Arc::new(MathNodeContent::Text("(a ∘ b) ∘ c".to_string())),
         };
 
         // Create b * c - simplified as text
         let bc = MathNode {
             id: format!("{}_bc", node_id),
-            content: Box::new(MathNodeContent::Text("b ∘ c".to_string())),
+            content: Arc::new(MathNodeContent::Text("b ∘ c".to_string())),
         };
 
         // Create a * (b * c) - simplified as text
         let right_assoc = MathNode {
             id: format!("{}_right", node_id),
-            content: Box::new(MathNodeContent::Text("a ∘ (b ∘ c)".to_string())),
+            content: Arc::new(MathNodeContent::Text("a ∘ (b ∘ c)".to_string())),
         };
 
         // Create equation
         let equation = MathNode {
             id: format!("{}_eq", node_id),
-            content: Box::new(MathNodeContent::Relationship {
-                lhs: Box::new(left_assoc),
-                rhs: Box::new(right_assoc),
+            content: Arc::new(MathNodeContent::Relationship {
+                lhs: Arc::new(left_assoc),
+                rhs: Arc::new(right_assoc),
                 operator: RelationOperatorNode::Equal,
             }),
         };
@@ -1422,14 +1424,14 @@ impl GenericGroup {
         // Create a, b, c ∈ G
         let var_list = MathNode {
             id: format!("{}_var_list", node_id),
-            content: Box::new(MathNodeContent::Multiplications {
+            content: Arc::new(MathNodeContent::Multiplications {
                 terms: vec![
                     (RefinedMulOrDivOperation::None, a_el),
                     (
                         RefinedMulOrDivOperation::None,
                         MathNode {
                             id: format!("{}_comma1", node_id),
-                            content: Box::new(MathNodeContent::Text(",".to_string())),
+                            content: Arc::new(MathNodeContent::Text(",".to_string())),
                         },
                     ),
                     (RefinedMulOrDivOperation::None, b_el),
@@ -1437,7 +1439,7 @@ impl GenericGroup {
                         RefinedMulOrDivOperation::None,
                         MathNode {
                             id: format!("{}_comma2", node_id),
-                            content: Box::new(MathNodeContent::Text(",".to_string())),
+                            content: Arc::new(MathNodeContent::Text(",".to_string())),
                         },
                     ),
                     (RefinedMulOrDivOperation::None, c_el),
@@ -1447,9 +1449,9 @@ impl GenericGroup {
 
         let membership = MathNode {
             id: format!("{}_membership", node_id),
-            content: Box::new(MathNodeContent::Relationship {
-                lhs: Box::new(var_list),
-                rhs: Box::new(g_set),
+            content: Arc::new(MathNodeContent::Relationship {
+                lhs: Arc::new(var_list),
+                rhs: Arc::new(g_set),
                 operator: RelationOperatorNode::ElementOf,
             }),
         };
@@ -1457,11 +1459,11 @@ impl GenericGroup {
         // Create the full quantified expression
         MathNode {
             id: node_id.to_string(),
-            content: Box::new(MathNodeContent::QuantifiedExpression {
+            content: Arc::new(MathNodeContent::QuantifiedExpression {
                 quantifier: QuantificationNode::Universal,
                 variables: vec![],
-                domain: Some(Box::new(membership)),
-                predicate: Some(Box::new(equation)),
+                domain: Some(Arc::new(membership)),
+                predicate: Some(Arc::new(equation)),
             }),
         }
     }
@@ -1471,7 +1473,7 @@ impl GenericGroup {
         // Simplified implementation to avoid compilation errors
         MathNode {
             id: node_id.to_string(),
-            content: Box::new(MathNodeContent::Text(
+            content: Arc::new(MathNodeContent::Text(
                 "∃ e ∈ G : ∀ a ∈ G : e ∘ a = a ∘ e = a".to_string(),
             )),
         }
@@ -1482,7 +1484,7 @@ impl GenericGroup {
         // Simplified implementation to avoid compilation errors
         MathNode {
             id: node_id.to_string(),
-            content: Box::new(MathNodeContent::Text(
+            content: Arc::new(MathNodeContent::Text(
                 "∀ a ∈ G : ∃ a⁻¹ ∈ G : a ∘ a⁻¹ = a⁻¹ ∘ a = e".to_string(),
             )),
         }

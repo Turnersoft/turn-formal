@@ -2,7 +2,7 @@
 // Defines relationships between mathematical objects and expressions
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use super::expressions::MathExpression;
 use super::{complexity::Complexity, objects::MathObject};
@@ -39,16 +39,16 @@ pub enum Quantification {
 pub enum MathRelation {
     // Core logical connectives only
     // Quantifier are encoded into theorem so that it is PNF directly.
-    And(Vec<Located<Parametrizable<MathRelation>>>),
-    Or(Vec<Located<Parametrizable<MathRelation>>>),
-    Not(Box<Located<Parametrizable<MathRelation>>>),
+    And(Vec<Located<Parametrizable<Arc<MathRelation>>>>),
+    Or(Vec<Located<Parametrizable<Arc<MathRelation>>>>),
+    Not(Located<Parametrizable<Arc<MathRelation>>>),
     Implies(
-        Box<Located<Parametrizable<MathRelation>>>,
-        Box<Located<Parametrizable<MathRelation>>>,
+        Located<Parametrizable<Arc<MathRelation>>>,
+        Located<Parametrizable<Arc<MathRelation>>>,
     ), // ->
     Equivalent(
-        Box<Located<Parametrizable<MathRelation>>>,
-        Box<Located<Parametrizable<MathRelation>>>,
+        Located<Parametrizable<Arc<MathRelation>>>,
+        Located<Parametrizable<Arc<MathRelation>>>,
     ), // <=>
     True,
     False,
@@ -64,8 +64,8 @@ pub enum MathRelation {
 
     // For basic equality that crosses domains
     Equal {
-        left: Located<Parametrizable<MathExpression>>,
-        right: Located<Parametrizable<MathExpression>>,
+        left: Located<Parametrizable<Arc<MathExpression>>>,
+        right: Located<Parametrizable<Arc<MathExpression>>>,
     },
 }
 
@@ -73,8 +73,8 @@ pub enum MathRelation {
 impl MathRelation {
     /// Creates an Equal relation with entity information
     pub fn equal(left: MathExpression, right: MathExpression) -> Self {
-        let left = Located::new(Parametrizable::Concrete(left));
-        let right = Located::new(Parametrizable::Concrete(right));
+        let left = Located::new(Parametrizable::Concrete(Arc::new(left)));
+        let right = Located::new(Parametrizable::Concrete(Arc::new(right)));
 
         MathRelation::Equal { left, right }
     }

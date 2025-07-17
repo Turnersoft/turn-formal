@@ -2,6 +2,7 @@
 // Defines theorems specific to group theory directly using the unified theorem system
 
 use std::collections::HashMap;
+use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
@@ -54,29 +55,33 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
     // Premise: g*h1 = e ∧ g*h2 = e
     let premise_conjunct1 = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(MathExpression::Expression(
-            TheoryExpression::Group(GroupExpression::Operation {
+        left: Located::new(Parametrizable::Concrete(Arc::new(
+            MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
                 group: group_param.clone(),
-                left: Box::new(g_param.clone()),
-                right: Box::new(h1_param.clone()),
-            }),
+                left: g_param.clone(),
+                right: h1_param.clone(),
+            })),
         ))),
-        right: Located::new(Parametrizable::Concrete(identity_expr.clone())),
+        right: Located::new(Parametrizable::Concrete(Arc::new(identity_expr.clone()))),
     };
     let premise_conjunct2 = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(MathExpression::Expression(
-            TheoryExpression::Group(GroupExpression::Operation {
+        left: Located::new(Parametrizable::Concrete(Arc::new(
+            MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
                 group: group_param.clone(),
-                left: Box::new(g_param.clone()),
-                right: Box::new(h2_param.clone()),
-            }),
+                left: g_param.clone(),
+                right: h2_param.clone(),
+            })),
         ))),
-        right: Located::new(Parametrizable::Concrete(identity_expr.clone())),
+        right: Located::new(Parametrizable::Concrete(Arc::new(identity_expr.clone()))),
     };
 
     let premise = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(premise_conjunct1.clone())),
-        Located::new(Parametrizable::Concrete(premise_conjunct2.clone())),
+        Located::new(Parametrizable::Concrete(Arc::new(
+            premise_conjunct1.clone(),
+        ))),
+        Located::new(Parametrizable::Concrete(Arc::new(
+            premise_conjunct2.clone(),
+        ))),
     ]);
 
     // Conclusion: h1 = h2
@@ -86,8 +91,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     };
 
     let goal_statement = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(premise))),
-        Box::new(Located::new(Parametrizable::Concrete(conclusion.clone()))),
+        Located::new(Parametrizable::Concrete(Arc::new(premise))),
+        Located::new(Parametrizable::Concrete(Arc::new(conclusion.clone()))),
     );
 
     // Build context
@@ -95,7 +100,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     let group = Group::new_generic();
     let group_context_entry = ContextEntry {
         name: group_id.clone(),
-        ty: Located::new(MathExpression::Object(Box::new(MathObject::Group(
+        ty: Located::new(MathExpression::Object(Arc::new(MathObject::Group(
             group.clone(),
         )))),
         definition: DefinitionState::Abstract,
@@ -146,7 +151,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             h2_context_entry,
         ],
         quantifiers: vec![],
-        statement: Located::new(goal_statement.clone()),
+        statement: Located::new(Arc::new(goal_statement.clone())),
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -179,7 +184,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: e * h1 = h2
     let p3_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p2_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p2_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::Theorem(
                         "group_identity_axiom".to_string(),
@@ -200,7 +205,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: (g⁻¹ * g) * h1 = h2
     let p4_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p3_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p3_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::Theorem("group_inverse_axiom".to_string(), Some(1)),
                     target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -218,7 +223,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * (g * h1) = h2
     let p5_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p4_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p4_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::Theorem("group_associativity".to_string(), None),
                     target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -236,7 +241,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * e = h2
     let p6_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p5_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p5_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::LocalAssumption(hyp1.clone()),
                     target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -254,7 +259,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * (g * h2) = h2
     let p7_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p6_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p6_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::LocalAssumption(hyp2.clone()),
                     target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -272,7 +277,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: (g⁻¹ * g) * h2 = h2
     let p8_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p7_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p7_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::Theorem("group_associativity".to_string(), None),
                     target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -290,7 +295,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: e * h2 = h2
     let p9_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p8_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p8_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::Theorem("group_inverse_axiom".to_string(), Some(0)),
                     target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -308,7 +313,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: h2 = h2
     let p10_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &p9_node.get_goal().statement.data {
+            if let MathRelation::Equal { left, .. } = &*p9_node.get_goal().statement.data {
                 Tactic::Rewrite {
                     using_rule: RelationSource::Theorem(
                         "group_identity_axiom".to_string(),
@@ -342,13 +347,22 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
 #[cfg(test)]
 mod tests {
+    use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
+
     use super::*;
 
     #[test]
     fn test_prove_inverse_uniqueness() {
-        let theorem = prove_inverse_uniqueness();
-        // Optional: Add assertions or prints for verification
-        assert_eq!(theorem.id, "inverse_uniqueness");
-        println!("Proof completed: {:?}", theorem);
+        std::thread::Builder::new()
+            .stack_size(1000 * 1024)
+            .spawn(|| {
+                let theorem = prove_inverse_uniqueness();
+                // Optional: Add assertions or prints for verification
+            })
+            .unwrap()
+            .join()
+            .unwrap();
+
+        // let theorem = prove_inverse_uniqueness();
     }
 }

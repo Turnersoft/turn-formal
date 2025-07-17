@@ -1,5 +1,6 @@
 use super::definitions::*;
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::turn_render::Identifier;
 
 /// Validation and checking utilities for probability theory concepts
@@ -444,13 +445,8 @@ pub fn validate_probability_relation(relation: &ProbabilityRelation) -> Result<(
         } => {
             // Check that all events belong to the same probability space
             for event in events {
-                if let crate::subjects::math::formalism::extract::Parametrizable::Concrete(event) =
-                    event
-                {
-                    if let crate::subjects::math::formalism::extract::Parametrizable::Concrete(
-                        space,
-                    ) = probability_space
-                    {
+                if let Parametrizable::Concrete(event) = event {
+                    if let Parametrizable::Concrete(space) = probability_space {
                         if event.probability_space.as_ref() != space {
                             return Err(
                                 "All events must belong to the same probability space".to_string()
@@ -466,13 +462,8 @@ pub fn validate_probability_relation(relation: &ProbabilityRelation) -> Result<(
         } => {
             // Check that all random variables are defined on the same probability space
             for variable in variables {
-                if let crate::subjects::math::formalism::extract::Parametrizable::Concrete(var) =
-                    variable
-                {
-                    if let crate::subjects::math::formalism::extract::Parametrizable::Concrete(
-                        space,
-                    ) = probability_space
-                    {
+                if let Parametrizable::Concrete(var) = variable {
+                    if let Parametrizable::Concrete(space) = probability_space {
                         if var.probability_space.as_ref() != space {
                             return Err("All random variables must be defined on the same probability space".to_string());
                         }

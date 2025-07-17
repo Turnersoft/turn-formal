@@ -1,6 +1,6 @@
 use super::definitions::{Group, GroupExpression};
 use crate::subjects::math::formalism::expressions::MathExpression;
-use crate::subjects::math::formalism::extract::{Extractable, Parametrizable};
+use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::proof::ContextEntry;
 use std::any::Any;
 

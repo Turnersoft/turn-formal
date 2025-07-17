@@ -3,12 +3,13 @@ use crate::subjects::math::formalism::objects::MathObject;
 use crate::subjects::math::formalism::proof::tactics::Case;
 use crate::subjects::math::theories::VariantSet;
 use crate::turn_render::section_node::{RichText, RichTextSegment};
+use std::sync::Arc;
 
 use super::definitions::*;
 
 impl Group {
     pub fn to_math_expression(&self) -> MathExpression {
-        MathExpression::Object(Box::new(MathObject::Group(self.clone())))
+        MathExpression::Object(Arc::new(MathObject::Group(self.clone())))
     }
 
     /// Performs a case split on the Abelian property.
@@ -190,7 +191,7 @@ impl Group {
 
 impl TopologicalGroup {
     pub fn to_math_expression(&self) -> MathExpression {
-        MathExpression::Object(Box::new(MathObject::Group(Group::Topological(
+        MathExpression::Object(Arc::new(MathObject::Group(Group::Topological(
             self.clone(),
         ))))
     }
@@ -314,7 +315,7 @@ impl TopologicalGroup {
 
 impl LieGroup {
     pub fn to_math_expression(&self) -> MathExpression {
-        MathExpression::Object(Box::new(MathObject::Group(Group::Lie(self.clone()))))
+        MathExpression::Object(Arc::new(MathObject::Group(Group::Lie(self.clone()))))
     }
 
     pub fn case_semisimple(&self) -> Result<Vec<Case>, String> {

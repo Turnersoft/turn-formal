@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 
 //--- Imports from crate::turn_render ---
 use crate::turn_render::*;
@@ -18,31 +19,31 @@ impl ToTurnMath for Field {
         match self {
             Field::Basic(_field_basic) => MathNode {
                 id: format!("{}-field-basic", master_id),
-                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                     "𝔽".to_string(),
                 ))),
             },
             Field::Finite(finite_field) => MathNode {
                 id: format!("{}-field-finite", master_id),
-                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                     format!("𝔽_{}", finite_field.order),
                 ))),
             },
             Field::PAdicNumbers(p_adic) => MathNode {
                 id: format!("{}-field-padic", master_id),
-                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                     format!("ℚ_{}", p_adic.prime),
                 ))),
             },
             Field::Function(_func_field) => MathNode {
                 id: format!("{}-field-function", master_id),
-                content: Box::new(MathNodeContent::FunctionCall {
-                    name: Box::new(MathNode::identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::FunctionCall {
+                    name: Arc::new(MathNode::identifier(Identifier::new_simple(
                         "K".to_string(),
                     ))),
                     parameters: vec![MathNode {
                         id: format!("{}-field-function-var", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                        content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                             "X".to_string(),
                         ))),
                     }],
@@ -50,19 +51,19 @@ impl ToTurnMath for Field {
             },
             Field::Topological(_topo_field) => MathNode {
                 id: format!("{}-field-topological", master_id),
-                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                     "𝔽_top".to_string(),
                 ))),
             },
             Field::Ordered(_ordered_field) => MathNode {
                 id: format!("{}-field-ordered", master_id),
-                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                     "𝔽_ord".to_string(),
                 ))),
             },
             Field::AlgebraicClosure(_alg_closure) => MathNode {
                 id: format!("{}-field-algebraic-closure", master_id),
-                content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+                content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                     "𝔽̄".to_string(),
                 ))),
             },
@@ -90,7 +91,7 @@ impl ToTurnMath for FieldProperty {
 
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Text(property_str)),
+            content: Arc::new(MathNodeContent::Text(property_str)),
         }
     }
 }
@@ -99,7 +100,7 @@ impl ToTurnMath for FieldOperation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Identifier(Identifier::new_simple(
+            content: Arc::new(MathNodeContent::Identifier(Identifier::new_simple(
                 self.symbol.clone(),
             ))),
         }
@@ -110,8 +111,8 @@ impl ToTurnMath for FieldRelation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         let content = match self {
             FieldRelation::IsSubfieldOf { subfield, field } => MathNodeContent::Relationship {
-                lhs: Box::new(subfield.to_turn_math(format!("{}-lhs", master_id))),
-                rhs: Box::new(field.to_turn_math(format!("{}-rhs", master_id))),
+                lhs: Arc::new(subfield.to_turn_math(format!("{}-lhs", master_id))),
+                rhs: Arc::new(field.to_turn_math(format!("{}-rhs", master_id))),
                 operator: crate::turn_render::math_node::RelationOperatorNode::SubsetOf,
             },
             FieldRelation::IsExtensionOf {
@@ -125,12 +126,12 @@ impl ToTurnMath for FieldRelation {
                 if let Some(deg) = degree {
                     // Show as [E : F] = n
                     MathNodeContent::Relationship {
-                        lhs: Box::new(MathNode {
+                        lhs: Arc::new(MathNode {
                             id: format!("{}-extension-degree", master_id),
-                            content: Box::new(MathNodeContent::Bracketed {
-                                inner: Box::new(MathNode {
+                            content: Arc::new(MathNodeContent::Bracketed {
+                                inner: Arc::new(MathNode {
                                     id: format!("{}-degree-expr", master_id),
-                                    content: Box::new(MathNodeContent::Text(format!(
+                                    content: Arc::new(MathNodeContent::Text(format!(
                                         "{} : {}",
                                         "E", "F"
                                     ))),
@@ -139,9 +140,9 @@ impl ToTurnMath for FieldRelation {
                                 size: BracketSize::Normal,
                             }),
                         }),
-                        rhs: Box::new(MathNode {
+                        rhs: Arc::new(MathNode {
                             id: format!("{}-degree-value", master_id),
-                            content: Box::new(MathNodeContent::Quantity {
+                            content: Arc::new(MathNodeContent::Quantity {
                                 number: deg.to_string(),
                                 scientific_notation: None,
                                 unit: None,
@@ -152,15 +153,15 @@ impl ToTurnMath for FieldRelation {
                 } else {
                     // Just show E/F
                     MathNodeContent::Division {
-                        numerator: Box::new(ext_node),
-                        denominator: Box::new(base_node),
+                        numerator: Arc::new(ext_node),
+                        denominator: Arc::new(base_node),
                         style: crate::turn_render::math_node::DivisionStyle::Inline,
                     }
                 }
             }
             FieldRelation::IsIsomorphicTo { first, second } => MathNodeContent::Relationship {
-                lhs: Box::new(first.to_turn_math(format!("{}-first", master_id))),
-                rhs: Box::new(second.to_turn_math(format!("{}-second", master_id))),
+                lhs: Arc::new(first.to_turn_math(format!("{}-first", master_id))),
+                rhs: Arc::new(second.to_turn_math(format!("{}-second", master_id))),
                 operator: crate::turn_render::math_node::RelationOperatorNode::IsIsomorphicTo,
             },
             _ => MathNodeContent::Text(format!("Field Relation: {:?}", self)),
@@ -168,7 +169,7 @@ impl ToTurnMath for FieldRelation {
 
         MathNode {
             id: master_id,
-            content: Box::new(content),
+            content: Arc::new(content),
         }
     }
 }

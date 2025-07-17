@@ -14,8 +14,7 @@ use crate::{
     },
     turn_render::Identifier,
 };
-use std::collections::HashMap;
-use std::fmt::Debug;
+use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
 /// A trait for instantiating meta-variables by comparing a concrete expression (`self`) to a pattern.
 pub trait Instantiable: Sized {
@@ -68,7 +67,7 @@ impl Replace for MathExpression {
         }
 
         match self {
-            MathExpression::Relation(rel) => MathExpression::Relation(Box::new(rel.replace(
+            MathExpression::Relation(rel) => MathExpression::Relation(Arc::new(rel.replace(
                 current_id,
                 target,
                 target_context,
@@ -76,7 +75,7 @@ impl Replace for MathExpression {
                 replacement,
                 pattern_and_replacement_context,
             ))),
-            MathExpression::Object(obj) => MathExpression::Object(Box::new(obj.replace(
+            MathExpression::Object(obj) => MathExpression::Object(Arc::new(obj.replace(
                 current_id,
                 target,
                 target_context,
@@ -139,16 +138,16 @@ impl Substitutable for MathExpression {
         // Otherwise, we recurse.
         match self {
             MathExpression::Relation(rel) => {
-                MathExpression::Relation(Box::new(rel.substitute(instantiations, context)))
+                MathExpression::Relation(rel.substitute(instantiations, context))
             }
             MathExpression::Object(obj) => {
-                MathExpression::Object(Box::new(obj.substitute(instantiations, context)))
+                MathExpression::Object(obj.substitute(instantiations, context))
             }
             MathExpression::Expression(expr) => {
                 MathExpression::Expression(expr.substitute(instantiations, context))
             }
             MathExpression::ViewAs { expression, view } => MathExpression::ViewAs {
-                expression: Box::new(expression.substitute(instantiations, context)),
+                expression: expression.substitute(instantiations, context),
                 view: view.clone(),
             },
             _ => self.clone(),
@@ -221,7 +220,21 @@ impl<T: Substitutable> Substitutable for Located<T> {
     }
 }
 
-impl<T: Substitutable + Clone + Debug + 'static> Substitutable for Parametrizable<T> {
+// Generic implementations for Arc-wrapped types
+impl<T: Substitutable> Substitutable for Arc<T> {
+    fn substitute(
+        &self,
+        instantiations: &HashMap<Identifier, MathExpression>,
+        context: &Vec<ContextEntry>,
+    ) -> Self {
+        Arc::new((**self).substitute(instantiations, context))
+    }
+}
+
+impl<T: Substitutable + Clone + Debug + 'static> Substitutable for Parametrizable<T>
+where
+    T: Extractable,
+{
     fn substitute(
         &self,
         instantiations: &HashMap<Identifier, MathExpression>,
@@ -271,40 +284,75 @@ impl Substitutable for MathRelation {
     ) -> Self {
         match self {
             MathRelation::Equal { left, right } => {
-                let new_left = left.substitute(instantiations, context);
-                let new_right = right.substitute(instantiations, context);
+                // For Arc-wrapped expressions, we need to unwrap, substitute, and re-wrap
+                let new_left_expr = left
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+                let new_right_expr = right
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+
                 MathRelation::Equal {
-                    left: new_left,
-                    right: new_right,
+                    left: Located::new(Parametrizable::Concrete(new_left_expr)),
+                    right: Located::new(Parametrizable::Concrete(new_right_expr)),
                 }
             }
             MathRelation::And(relations) => {
                 let new_relations = relations
                     .iter()
-                    .map(|r| r.substitute(instantiations, context))
+                    .map(|r| {
+                        let new_rel = r.data.unwrap(context).substitute(instantiations, context);
+                        Located::new(Parametrizable::Concrete(new_rel))
+                    })
                     .collect();
                 MathRelation::And(new_relations)
             }
             MathRelation::Or(relations) => {
                 let new_relations = relations
                     .iter()
-                    .map(|r| r.substitute(instantiations, context))
+                    .map(|r| {
+                        let new_rel = r.data.unwrap(context).substitute(instantiations, context);
+                        Located::new(Parametrizable::Concrete(new_rel))
+                    })
                     .collect();
                 MathRelation::Or(new_relations)
             }
             MathRelation::Not(relation) => {
-                let new_relation = relation.substitute(instantiations, context);
-                MathRelation::Not(Box::new(new_relation))
+                let new_rel = relation
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+                MathRelation::Not(Located::new(Parametrizable::Concrete(new_rel)))
             }
             MathRelation::Implies(left, right) => {
-                let new_left = left.substitute(instantiations, context);
-                let new_right = right.substitute(instantiations, context);
-                MathRelation::Implies(Box::new(new_left), Box::new(new_right))
+                let new_left = left
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+                let new_right = right
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+                MathRelation::Implies(
+                    Located::new(Parametrizable::Concrete(new_left)),
+                    Located::new(Parametrizable::Concrete(new_right)),
+                )
             }
             MathRelation::Equivalent(left, right) => {
-                let new_left = left.substitute(instantiations, context);
-                let new_right = right.substitute(instantiations, context);
-                MathRelation::Equivalent(Box::new(new_left), Box::new(new_right))
+                let new_left = left
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+                let new_right = right
+                    .data
+                    .unwrap(context)
+                    .substitute(instantiations, context);
+                MathRelation::Equivalent(
+                    Located::new(Parametrizable::Concrete(new_left)),
+                    Located::new(Parametrizable::Concrete(new_right)),
+                )
             }
             _ => self.clone(),
         }
@@ -329,7 +377,7 @@ impl Replace for MathObject {
         replacement: &MathExpression,
         pattern_and_replacement_context: &Vec<ContextEntry>,
     ) -> Self {
-        let expr_wrapper = MathExpression::Object(Box::new(self.clone()));
+        let expr_wrapper = MathExpression::Object(Arc::new(self.clone()));
         let result_expr = expr_wrapper.replace(
             current_id,
             target,
@@ -339,7 +387,7 @@ impl Replace for MathObject {
             pattern_and_replacement_context,
         );
         if let MathExpression::Object(new_obj) = result_expr {
-            *new_obj
+            (*new_obj).clone()
         } else {
             self.clone() // Fallback if the replacement is not an object, which indicates a rule logic error.
         }
@@ -358,7 +406,7 @@ impl Replace for MathRelation {
     ) -> Self {
         // If this node is the target, we perform the replacement at the MathExpression level.
         if current_id == target.id {
-            let expr_wrapper = MathExpression::Relation(Box::new(self.clone()));
+            let expr_wrapper = MathExpression::Relation(Arc::new(self.clone()));
             let instantiations = expr_wrapper.instantiate_meta_variables(
                 target_context,
                 pattern,
@@ -367,7 +415,7 @@ impl Replace for MathRelation {
             let result_expr =
                 replacement.substitute(&instantiations, pattern_and_replacement_context);
             if let MathExpression::Relation(new_rel) = result_expr {
-                return *new_rel;
+                return (*new_rel).clone();
             }
             return self.clone(); // Fallback on type mismatch
         }
@@ -378,22 +426,24 @@ impl Replace for MathRelation {
                 let new_left_expr = left.data.unwrap(target_context);
                 let new_right_expr = right.data.unwrap(target_context);
 
-                let new_left = Located::new(Parametrizable::Concrete(new_left_expr.replace(
-                    current_id,
-                    target,
-                    target_context,
-                    pattern,
-                    replacement,
-                    pattern_and_replacement_context,
-                )));
-                let new_right = Located::new(Parametrizable::Concrete(new_right_expr.replace(
-                    current_id,
-                    target,
-                    target_context,
-                    pattern,
-                    replacement,
-                    pattern_and_replacement_context,
-                )));
+                let new_left =
+                    Located::new(Parametrizable::Concrete(Arc::new(new_left_expr.replace(
+                        current_id,
+                        target,
+                        target_context,
+                        pattern,
+                        replacement,
+                        pattern_and_replacement_context,
+                    ))));
+                let new_right =
+                    Located::new(Parametrizable::Concrete(Arc::new(new_right_expr.replace(
+                        current_id,
+                        target,
+                        target_context,
+                        pattern,
+                        replacement,
+                        pattern_and_replacement_context,
+                    ))));
                 MathRelation::Equal {
                     left: new_left,
                     right: new_right,
@@ -420,37 +470,38 @@ impl Replace for MathRelation {
                     pattern_and_replacement_context,
                 );
                 MathRelation::Implies(
-                    Box::new(Located::new(Parametrizable::Concrete(new_left))),
-                    Box::new(Located::new(Parametrizable::Concrete(new_right))),
+                    Located::new(Parametrizable::Concrete(Arc::new(new_left))),
+                    Located::new(Parametrizable::Concrete(Arc::new(new_right))),
                 )
             }
             MathRelation::Equivalent(left, right) => {
                 let new_left = left.data.unwrap(target_context);
                 let new_right = right.data.unwrap(target_context);
 
-                let new_left = Located::new(Parametrizable::Concrete(new_left.replace(
+                let new_left = Located::new(Parametrizable::Concrete(Arc::new(new_left.replace(
                     current_id,
                     target,
                     target_context,
                     pattern,
                     replacement,
                     pattern_and_replacement_context,
-                )));
-                let new_right = Located::new(Parametrizable::Concrete(new_right.replace(
-                    current_id,
-                    target,
-                    target_context,
-                    pattern,
-                    replacement,
-                    pattern_and_replacement_context,
-                )));
-                MathRelation::Equivalent(Box::new(new_left), Box::new(new_right))
+                ))));
+                let new_right =
+                    Located::new(Parametrizable::Concrete(Arc::new(new_right.replace(
+                        current_id,
+                        target,
+                        target_context,
+                        pattern,
+                        replacement,
+                        pattern_and_replacement_context,
+                    ))));
+                MathRelation::Equivalent(new_left, new_right)
             }
             MathRelation::And(relations) => {
                 let new_relations = relations
                     .iter()
                     .map(|r| {
-                        Located::new(Parametrizable::Concrete(
+                        Located::new(Parametrizable::Concrete(Arc::new(
                             r.data.unwrap(target_context).replace(
                                 current_id,
                                 target,
@@ -459,7 +510,7 @@ impl Replace for MathRelation {
                                 replacement,
                                 pattern_and_replacement_context,
                             ),
-                        ))
+                        )))
                     })
                     .collect();
                 MathRelation::And(new_relations)
@@ -468,7 +519,7 @@ impl Replace for MathRelation {
                 let new_relations = relations
                     .iter()
                     .map(|r| {
-                        Located::new(Parametrizable::Concrete(
+                        Located::new(Parametrizable::Concrete(Arc::new(
                             r.data.unwrap(target_context).replace(
                                 current_id,
                                 target,
@@ -477,13 +528,13 @@ impl Replace for MathRelation {
                                 replacement,
                                 pattern_and_replacement_context,
                             ),
-                        ))
+                        )))
                     })
                     .collect();
                 MathRelation::Or(new_relations)
             }
             MathRelation::Not(relation) => {
-                let new_relation = Located::new(Parametrizable::Concrete(
+                let new_relation = Located::new(Parametrizable::Concrete(Arc::new(
                     relation.data.unwrap(target_context).replace(
                         current_id,
                         target,
@@ -492,8 +543,8 @@ impl Replace for MathRelation {
                         replacement,
                         pattern_and_replacement_context,
                     ),
-                ));
-                MathRelation::Not(Box::new(new_relation))
+                )));
+                MathRelation::Not(new_relation)
             }
             MathRelation::True => MathRelation::True,
             MathRelation::False => MathRelation::False,

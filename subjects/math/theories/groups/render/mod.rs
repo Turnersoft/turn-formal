@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 
 use crate::subjects::math::export::unified_exporter::TheoryExporter;
 use crate::subjects::math::formalism::extract::Parametrizable;
@@ -222,7 +223,7 @@ impl ToTurnMath for GroupElement {
         match self {
             GroupElement::Integer(n) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Quantity {
+                content: Arc::new(MathNodeContent::Quantity {
                     number: n.to_string(),
                     scientific_notation: None,
                     unit: None,
@@ -230,7 +231,7 @@ impl ToTurnMath for GroupElement {
             },
             GroupElement::Symbol(s) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: s.clone(),
                     pre_script: None,
                     mid_script: None,
@@ -241,7 +242,7 @@ impl ToTurnMath for GroupElement {
             },
             GroupElement::Permutation(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: "σ".to_string(),
                     pre_script: None,
                     mid_script: None,
@@ -252,7 +253,7 @@ impl ToTurnMath for GroupElement {
             },
             GroupElement::Matrix(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: "M".to_string(),
                     pre_script: None,
                     mid_script: None,
@@ -273,23 +274,23 @@ impl ToTurnMath for GroupExpression {
             GroupExpression::Operation { left, right, .. } => {
                 todo!()
             }
-            GroupExpression::Element { element, .. } => match element {
-                Some(param_element) => param_element.to_turn_math(master_id),
-                None => MathNode {
-                    id: master_id,
-                    content: Box::new(MathNodeContent::Identifier(Identifier {
-                        body: "?".to_string(),
-                        pre_script: None,
-                        mid_script: None,
-                        post_script: None,
-                        primes: 0,
-                        is_function: false,
-                    })),
-                },
-            },
+            // GroupExpression::Element { element, .. } => match element {
+            //     Some(param_element) => param_element.to_turn_math(master_id),
+            //     None => MathNode {
+            //         id: master_id,
+            //         content: Arc::new(MathNodeContent::Identifier(Identifier {
+            //             body: "?".to_string(),
+            //             pre_script: None,
+            //             mid_script: None,
+            //             post_script: None,
+            //             primes: 0,
+            //             is_function: false,
+            //         })),
+            //     },
+            // },
             GroupExpression::Identity(_) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: "e".to_string(),
                     pre_script: None,
                     mid_script: None,
@@ -300,11 +301,11 @@ impl ToTurnMath for GroupExpression {
             },
             GroupExpression::Inverse { element, .. } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Power {
-                    base: Box::new(element.to_turn_math(format!("{}-base", master_id))),
-                    exponent: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::Power {
+                    base: Arc::new(element.to_turn_math(format!("{}-base", master_id))),
+                    exponent: Arc::new(MathNode {
                         id: format!("{}-exp", master_id),
-                        content: Box::new(MathNodeContent::Quantity {
+                        content: Arc::new(MathNodeContent::Quantity {
                             number: "-1".to_string(),
                             scientific_notation: None,
                             unit: None,
@@ -314,7 +315,7 @@ impl ToTurnMath for GroupExpression {
             },
             _ => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text("⟨expr⟩".to_string())),
+                content: Arc::new(MathNodeContent::Text("⟨expr⟩".to_string())),
             },
         }
     }
@@ -327,49 +328,49 @@ impl ToTurnMath for GroupRelation {
         match self {
             GroupRelation::IsSubgroupOf { subgroup, group } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::Relationship {
+                    lhs: Arc::new(MathNode {
                         id: format!("{}-sub", master_id),
-                        content: Box::new(MathNodeContent::Text("H".to_string())),
+                        content: Arc::new(MathNodeContent::Text("H".to_string())),
                     }),
                     operator: RelationOperatorNode::SubsetOf,
-                    rhs: Box::new(MathNode {
+                    rhs: Arc::new(MathNode {
                         id: format!("{}-group", master_id),
-                        content: Box::new(MathNodeContent::Text("G".to_string())),
+                        content: Arc::new(MathNodeContent::Text("G".to_string())),
                     }),
                 }),
             },
             GroupRelation::IsIsomorphicTo { first, second } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::Relationship {
+                    lhs: Arc::new(MathNode {
                         id: format!("{}-first", master_id),
-                        content: Box::new(MathNodeContent::Text("G".to_string())),
+                        content: Arc::new(MathNodeContent::Text("G".to_string())),
                     }),
                     operator: RelationOperatorNode::Equal,
-                    rhs: Box::new(MathNode {
+                    rhs: Arc::new(MathNode {
                         id: format!("{}-second", master_id),
-                        content: Box::new(MathNodeContent::Text("H".to_string())),
+                        content: Arc::new(MathNodeContent::Text("H".to_string())),
                     }),
                 }),
             },
             GroupRelation::HasOrder { group, order } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::Relationship {
+                    lhs: Arc::new(MathNode {
                         id: format!("{}-order", master_id),
-                        content: Box::new(MathNodeContent::Text("|G|".to_string())),
+                        content: Arc::new(MathNodeContent::Text("|G|".to_string())),
                     }),
                     operator: RelationOperatorNode::Equal,
-                    rhs: Box::new(MathNode {
+                    rhs: Arc::new(MathNode {
                         id: format!("{}-value", master_id),
-                        content: Box::new(MathNodeContent::Text("n".to_string())),
+                        content: Arc::new(MathNodeContent::Text("n".to_string())),
                     }),
                 }),
             },
             _ => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Text("relation".to_string())),
+                content: Arc::new(MathNodeContent::Text("relation".to_string())),
             },
         }
     }
@@ -976,21 +977,21 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             }),
             Group::Quotient(QuotientGroup {
                 core: GenericGroup::default(),
-                group: Box::new(Group::Generic(GenericGroup::default())), // Abstract group
-                normal_subgroup: Box::new(Group::Generic(GenericGroup::default())), // Abstract normal subgroup
+                group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract group
+                normal_subgroup: Arc::new(Group::Generic(GenericGroup::default())), // Abstract normal subgroup
                 quotient_props: VariantSet::new(),
             }),
             // ===== HOMOMORPHISM-BASED CONSTRUCTIONS =====
             Group::Kernel(KernelGroup {
                 core: GenericGroup::default(),
-                defining_homomorphism: Box::new(GroupHomomorphism {
+                defining_homomorphism: Arc::new(GroupHomomorphism {
                     domain: Parametrizable::Variable(Identifier::new_simple("G".to_string())),
                     codomain: Parametrizable::Variable(Identifier::new_simple("H".to_string())),
                 }),
             }),
             Group::Image(ImageGroup {
                 core: GenericGroup::default(),
-                defining_homomorphism: Box::new(GroupHomomorphism {
+                defining_homomorphism: Arc::new(GroupHomomorphism {
                     domain: Parametrizable::Variable(Identifier::new_simple("G".to_string())),
                     codomain: Parametrizable::Variable(Identifier::new_simple("H".to_string())),
                 }),
@@ -998,37 +999,37 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             // ===== SUBGROUP CONSTRUCTIONS =====
             Group::Center(CenterGroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
             }),
             Group::GeneratedSubgroup(GeneratedSubgroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
                 generators: vec![GroupElement::Symbol("g".to_string())], // Abstract generators
             }),
             Group::Normalizer(NormalizerGroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
-                subgroup_normalized: Box::new(Group::Generic(GenericGroup::default())), // Abstract subgroup
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                subgroup_normalized: Arc::new(Group::Generic(GenericGroup::default())), // Abstract subgroup
             }),
             Group::Centralizer(CentralizerGroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
                 element_centralized: GroupElement::Symbol("x".to_string()),      // Abstract element
             }),
             Group::CommutatorSubgroup(CommutatorSubgroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
             }),
             Group::SylowSubgroup(SylowSubgroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
                 prime: 0, // Abstract - represents p-Sylow for any prime p
             }),
             // ===== ADVANCED CONSTRUCTIONS =====
             Group::WreathProduct(WreathProductGroup {
                 core: GenericGroup::default(),
-                base_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract base
-                acting_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract acting group
+                base_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract base
+                acting_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract acting group
             }),
             Group::CentralProduct(CentralProductGroup {
                 core: GenericGroup::default(),
@@ -1038,12 +1039,12 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             Group::Pullback(PullbackGroup {
                 core: GenericGroup::default(),
                 source_groups: vec![], // Abstract - no specific sources
-                target_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract target
+                target_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract target
                 defining_homomorphisms: vec![], // Abstract - no specific homomorphisms
             }),
             Group::Restriction(RestrictionGroup {
                 core: GenericGroup::default(),
-                parent_group: Box::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
                 restriction_description: "subset_restriction".to_string(),
             }),
         ]
@@ -1086,7 +1087,7 @@ where
             Parametrizable::Concrete(c) => c.to_turn_math(master_id),
             Parametrizable::Variable(id) => MathNode {
                 id: master_id,
-                content: Box::new(MathNodeContent::Identifier(id.clone())),
+                content: Arc::new(MathNodeContent::Identifier(id.clone())),
             },
         }
     }

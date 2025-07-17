@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 
 use crate::turn_render::ToMathDocument;
 use crate::turn_render::*;
@@ -14,7 +15,7 @@ impl ToTurnMath for GeneralLinearGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("GL({}, 𝔽)", self.dimension))),
+            content: Arc::new(MathNodeContent::Text(format!("GL({}, 𝔽)", self.dimension))),
         }
     }
 }
@@ -885,7 +886,7 @@ impl ToTurnMath for SpecialLinearGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!(
+            content: Arc::new(MathNodeContent::Text(format!(
                 "SL({}, 𝔽)",
                 self.general_linear.dimension
             ))),
@@ -897,7 +898,7 @@ impl ToTurnMath for OrthogonalGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("O({}, 𝔽)", self.dimension))),
+            content: Arc::new(MathNodeContent::Text(format!("O({}, 𝔽)", self.dimension))),
         }
     }
 }
@@ -906,7 +907,7 @@ impl ToTurnMath for SpecialOrthogonalGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!(
+            content: Arc::new(MathNodeContent::Text(format!(
                 "SO({}, 𝔽)",
                 self.orthogonal.dimension
             ))),
@@ -918,7 +919,7 @@ impl ToTurnMath for UnitaryGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("U({}, ℂ)", self.dimension))),
+            content: Arc::new(MathNodeContent::Text(format!("U({}, ℂ)", self.dimension))),
         }
     }
 }
@@ -927,7 +928,7 @@ impl ToTurnMath for SpecialUnitaryGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!(
+            content: Arc::new(MathNodeContent::Text(format!(
                 "SU({}, ℂ)",
                 self.unitary.dimension
             ))),

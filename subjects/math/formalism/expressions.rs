@@ -1,6 +1,8 @@
 // Module: src/formalize_v2/subjects/math/theorem/expressions.rs
 // Defines expressions used in mathematical statements and theorems
 
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::turn_render::Identifier;
@@ -35,7 +37,7 @@ pub enum MathExpression {
     // Var(Identifier),
 
     /// Reference to a mathematical object
-    Object(Box<MathObject>),
+    Object(Arc<MathObject>),
 
     /// expression that have both value and type
     Expression(TheoryExpression),
@@ -43,7 +45,7 @@ pub enum MathExpression {
     /// treating math relationships as first-flass citizens
     /// this makes relation a sub class of MathExpression, but it is not, we can choose which
     /// node is the root node at a given problem.
-    Relation(Box<MathRelation>),
+    Relation(Arc<MathRelation>),
 
     /// Numeric value
     Number(Number),
@@ -52,7 +54,7 @@ pub enum MathExpression {
     /// this is a central transit for all math theories
     ViewAs {
         /// The original expression
-        expression: Box<Located<Parametrizable<MathExpression>>>,
+        expression: Located<Parametrizable<Arc<MathExpression>>>,
         /// The view operator
         view: Located<TypeViewOperator>,
     },
@@ -107,18 +109,6 @@ impl From<String> for TypeViewError {
     }
 }
 
-impl TheoryExpression {
-    pub fn matches_pattern_theory_expr(&self, pattern: &TheoryExpression) -> bool {
-        match (self, pattern) {
-            (TheoryExpression::Group(g1), TheoryExpression::Group(g2)) => {
-                g1.matches_pattern_group_expr(g2)
-            }
-            // TODO: Add Ring and Field expression matching
-            _ => false,
-        }
-    }
-}
-
 impl MathExpression {
     // /// Create a variable expression from a name
     // pub fn var(name: &str) -> Self {
@@ -137,7 +127,7 @@ impl MathExpression {
     /// Apply a type view to this expression
     pub fn with_view(&self, view: TypeViewOperator) -> Self {
         MathExpression::ViewAs {
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
             view: Located::new(view),
         }
     }
@@ -210,14 +200,14 @@ impl From<FieldExpression> for MathExpression {
 // Implementation to convert MathRelation to MathExpression
 impl From<MathRelation> for MathExpression {
     fn from(relation: MathRelation) -> Self {
-        MathExpression::Relation(Box::new(relation))
+        MathExpression::Relation(Arc::new(relation))
     }
 }
 
 // Implementation to convert MathObject to MathExpression
 impl From<MathObject> for MathExpression {
     fn from(object: MathObject) -> Self {
-        MathExpression::Object(Box::new(object))
+        MathExpression::Object(Arc::new(object))
     }
 }
 

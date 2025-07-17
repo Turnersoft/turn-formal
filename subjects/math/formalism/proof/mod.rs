@@ -85,19 +85,10 @@ pub struct ProofGoal {
 
     /// The core logical statement to be proven (the part after the quantifiers).
     /// All free variables in this statement MUST be declared in the `context`.
-    pub statement: Located<MathRelation>,
+    pub statement: Located<Arc<MathRelation>>,
 }
 
 impl ProofGoal {
-    /// Create a new, empty proof goal.
-    pub fn new_empty() -> Self {
-        Self {
-            context: Vec::new(),
-            quantifiers: Vec::new(),
-            statement: Located::new(MathRelation::False),
-        }
-    }
-
     /// Add a variable declaration to the context (e.g., `g: Group`).
     /// This is for fundamental variables that will be quantified over or used in hypotheses.
     pub fn with_variable(
@@ -138,7 +129,7 @@ impl ProofGoal {
         let entry = ContextEntry {
             name: hypothesis_name.clone(),
             // Use a simple variable type instead of MathExpression::Relation to avoid circular reference
-            ty: Located::new(MathExpression::Relation(Box::new(proposition))),
+            ty: Located::new(MathExpression::Relation(Arc::new(proposition))),
             definition: DefinitionState::Abstract,
             description: description.map(|s| RichText {
                 segments: vec![RichTextSegment::Text(s)],
@@ -158,7 +149,7 @@ impl ProofGoal {
     ) -> (Self, Identifier) {
         // // In a full implementation, we would run type inference on `definition`
         // // to get its type, and verify well-formedness.
-        // let inferred_type = MathExpression::Object(Box::new(MathObject::Set(Set::empty())));
+        // let inferred_type = MathExpression::Object(Arc::new(MathObject::Set(Set::empty())));
 
         // let variable_name = Identifier::new_simple(name.to_string());
         // let entry = ContextEntry {
@@ -202,13 +193,13 @@ impl ProofGoal {
 
     /// Set the final statement after the context and quantifiers are in place.
     pub fn with_statement(mut self, statement: MathRelation) -> Self {
-        self.statement = Located::new(statement);
+        self.statement = Located::new(Arc::new(statement));
         self
     }
 
     /// Verifies that the proof goal is well-formed.
     pub fn verify(&self) -> Result<(), String> {
-        if matches!(self.statement.value(), MathRelation::False) {
+        if matches!(**self.statement.value(), MathRelation::False) {
             return Err("Statement has not been set.".to_string());
         }
 
@@ -637,10 +628,10 @@ impl ProofNode {
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Implies(
-                Box::new(Located::new(Parametrizable::Concrete(antecedent.clone()))),
-                Box::new(Located::new(Parametrizable::Concrete(consequent.clone()))),
-            )),
+            statement: Located::new(Arc::new(MathRelation::Implies(
+                Located::new(Parametrizable::Concrete(Arc::new(antecedent.clone()))),
+                Located::new(Parametrizable::Concrete(Arc::new(consequent.clone()))),
+            ))),
         };
 
         let tactic = Tactic::AssumeImplicationAntecedent {
@@ -650,7 +641,7 @@ impl ProofNode {
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::SingleGoal(new_goal) => {
                 // Verify the transformation worked
-                new_goal.statement.data == consequent && new_goal.context.len() == 1
+                *new_goal.statement.data == consequent && new_goal.context.len() == 1
             }
             _ => false,
         }
@@ -835,10 +826,10 @@ mod tests {
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Implies(
-                Box::new(Located::new(Parametrizable::Concrete(antecedent.clone()))),
-                Box::new(Located::new(Parametrizable::Concrete(consequent.clone()))),
-            )),
+            statement: Located::new(Arc::new(MathRelation::Implies(
+                Located::new(Parametrizable::Concrete(Arc::new(antecedent.clone()))),
+                Located::new(Parametrizable::Concrete(Arc::new(consequent.clone()))),
+            ))),
         };
 
         let tactic = Tactic::AssumeImplicationAntecedent {
@@ -848,7 +839,7 @@ mod tests {
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::SingleGoal(new_goal) => {
                 // The statement should now be just the consequent
-                assert_eq!(new_goal.statement.data, consequent);
+                assert_eq!(*new_goal.statement.data, consequent);
 
                 // There should be one hypothesis in the context
                 assert_eq!(new_goal.context.len(), 1);
@@ -883,15 +874,15 @@ mod tests {
         );
 
         let conjunction = MathRelation::And(vec![
-            Located::new(Parametrizable::Concrete(part1.clone())),
-            Located::new(Parametrizable::Concrete(part2.clone())),
-            Located::new(Parametrizable::Concrete(part3.clone())),
+            Located::new(Parametrizable::Concrete(Arc::new(part1.clone()))),
+            Located::new(Parametrizable::Concrete(Arc::new(part2.clone()))),
+            Located::new(Parametrizable::Concrete(Arc::new(part3.clone()))),
         ]);
 
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(conjunction.clone()),
+            statement: Located::new(Arc::new(conjunction.clone())),
         };
 
         let tactic = Tactic::SplitGoalConjunction;
@@ -901,9 +892,9 @@ mod tests {
                 assert_eq!(goals.len(), 3);
 
                 // Each goal should be one of the conjuncts
-                assert_eq!(goals[0].statement.data, part1);
-                assert_eq!(goals[1].statement.data, part2);
-                assert_eq!(goals[2].statement.data, part3);
+                assert_eq!(*goals[0].statement.data, part1);
+                assert_eq!(*goals[1].statement.data, part2);
+                assert_eq!(*goals[2].statement.data, part3);
             }
             other => panic!("Expected MultiGoal, got {:?}", other),
         }
@@ -926,7 +917,7 @@ pub struct QuantifiedMathObject {
 }
 
 /// Safely format a Parametrizable<MathExpression> to a string
-fn format_parametrizable_expression_safely(pexpr: &Parametrizable<MathExpression>) -> String {
+fn format_parametrizable_expression_safely(pexpr: &Parametrizable<Arc<MathExpression>>) -> String {
     match pexpr {
         Parametrizable::Concrete(expr) => format_expression_safely(expr),
         Parametrizable::Variable(id) => id.to_string(),
@@ -964,7 +955,7 @@ fn format_expression_safely(expr: &MathExpression) -> String {
 }
 
 /// Safely format a Parametrizable<MathRelation> to a string
-fn format_parametrizable_relation_safely(prel: &Parametrizable<MathRelation>) -> String {
+fn format_parametrizable_relation_safely(prel: &Parametrizable<Arc<MathRelation>>) -> String {
     match prel {
         Parametrizable::Concrete(rel) => format_relation_safely(rel),
         Parametrizable::Variable(id) => id.to_string(),

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 pub trait GetAbstractionLevel {
@@ -12,7 +14,7 @@ pub enum AbstractionLevel {
     Level4, // Concrete instance
 }
 
-impl<T: GetAbstractionLevel> GetAbstractionLevel for Box<T> {
+impl<T: GetAbstractionLevel> GetAbstractionLevel for Arc<T> {
     fn level(&self) -> AbstractionLevel {
         self.as_ref().level()
     }

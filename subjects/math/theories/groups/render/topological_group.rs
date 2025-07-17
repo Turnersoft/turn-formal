@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -22,7 +24,7 @@ impl ToTurnMath for TopologicalGroup {
 
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Text(format!(
+            content: Arc::new(MathNodeContent::Text(format!(
                 "({}, τ{})",
                 group_str, suffix
             ))),
@@ -39,7 +41,7 @@ impl ToSectionNode for TopologicalGroup {
             RichTextSegment::Text("Topological Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Text("(G, \\tau)".to_string())),
+                content: Arc::new(MathNodeContent::Text("(G, \\tau)".to_string())),
             }),
         ];
 

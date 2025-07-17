@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::expressions::{MathExpression, TheoryExpression};
 use super::interpretation::TypeViewOperator;
 use super::objects::MathObject;
@@ -64,7 +66,7 @@ impl MathExpression {
         }
     }
 
-    pub fn get_relation(&self) -> Result<&MathRelation, String> {
+    pub fn get_relation(&self) -> Result<&Arc<MathRelation>, String> {
         if let MathExpression::Relation(rel) = self {
             Ok(rel)
         } else {

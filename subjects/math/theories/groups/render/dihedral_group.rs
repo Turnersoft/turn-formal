@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -11,7 +13,7 @@ impl ToTurnMath for DihedralGroup {
         let n = self.order / 2; // Dihedral group D_n has order 2n
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("D_{}", n))),
+            content: Arc::new(MathNodeContent::Text(format!("D_{}", n))),
         }
     }
 }
@@ -25,7 +27,7 @@ impl ToSectionNode for DihedralGroup {
             RichTextSegment::Text("Dihedral Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Text("D_n".to_string())),
+                content: Arc::new(MathNodeContent::Text("D_n".to_string())),
             }),
         ];
 

@@ -14,6 +14,7 @@ use crate::{
     turn_render::Identifier,
 };
 use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Returns a list of all theorems in the probability theory module.
 pub fn all_probability_theorems() -> Vec<Theorem> {
@@ -37,7 +38,7 @@ fn create_probability_proof(statement: MathRelation) -> ProofForest {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(statement),
+        statement: Located::new(Arc::new(statement)),
     };
     ProofForest::new_from_goal(goal)
 }
@@ -176,12 +177,16 @@ fn prove_jensen_inequality() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::NumberTheory(
-                crate::subjects::math::theories::number_theory::definitions::NumberTheoryRelation::LessThanOrEqual {
-                    left: Located::new(Parametrizable::Variable(Identifier::new_simple("φ(E[X])".to_string()))),
-                    right: Located::new(Parametrizable::Variable(Identifier::new_simple("E[φ(X)]".to_string()))),
-                }
-            )),
+            statement: Located::new(Arc::new(MathRelation::NumberTheory(
+                NumberTheoryRelation::LessThanOrEqual {
+                    left: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                        "φ(E[X])".to_string(),
+                    ))),
+                    right: Located::new(Parametrizable::Variable(Identifier::new_simple(
+                        "E[φ(X)]".to_string(),
+                    ))),
+                },
+            ))),
         }),
     }
 }
@@ -194,14 +199,14 @@ fn prove_martingale_convergence_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Equal {
+            statement: Located::new(Arc::new(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "X_n".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "X_∞".to_string(),
                 ))),
-            }),
+            })),
         }),
     }
 }
@@ -214,14 +219,14 @@ fn prove_optional_stopping_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Equal {
+            statement: Located::new(Arc::new(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "E[X_τ]".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "E[X_0]".to_string(),
                 ))),
-            }),
+            })),
         }),
     }
 }
@@ -234,14 +239,14 @@ fn prove_kolmogorov_three_series_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Equal {
+            statement: Located::new(Arc::new(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "Σ X_n converges a.s.".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "Three series converge".to_string(),
                 ))),
-            }),
+            })),
         }),
     }
 }
@@ -254,14 +259,14 @@ fn prove_glivenko_cantelli_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Equal {
+            statement: Located::new(Arc::new(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "F_n(x)".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "F(x)".to_string(),
                 ))),
-            }),
+            })),
         }),
     }
 }

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -9,7 +11,7 @@ impl ToTurnMath for SymmetricGroup {
         // Use proper mathematical notation S_n with subscript
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("S_{}", self.degree))),
+            content: Arc::new(MathNodeContent::Text(format!("S_{}", self.degree))),
         }
     }
 }
@@ -23,7 +25,7 @@ impl ToSectionNode for SymmetricGroup {
             RichTextSegment::Text("Symmetric Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Text("S_n".to_string())),
+                content: Arc::new(MathNodeContent::Text("S_n".to_string())),
             }),
         ];
 

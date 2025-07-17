@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 
 use crate::turn_render::math_node::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
@@ -455,7 +456,7 @@ impl ToTurnMath for QuotientGroup {
         let normal_name = "N";
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!(
+            content: Arc::new(MathNodeContent::Text(format!(
                 "{}/{}",
                 group_name, normal_name
             ))),
@@ -467,7 +468,7 @@ impl ToTurnMath for FreeGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("F_{}", self.rank))),
+            content: Arc::new(MathNodeContent::Text(format!("F_{}", self.rank))),
         }
     }
 }
@@ -476,7 +477,7 @@ impl ToTurnMath for TrivialGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text("1".to_string())),
+            content: Arc::new(MathNodeContent::Text("1".to_string())),
         }
     }
 }

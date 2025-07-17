@@ -125,19 +125,23 @@ impl Search for MathRelation {
         pattern_context: &Vec<ContextEntry>,
         in_target_scope: bool,
     ) -> Vec<String> {
-        let pattern_rel = pattern.get_relation().unwrap();
         let mut matches = Vec::new();
         let is_in_scope_now = in_target_scope || current_id == target.id;
 
+        // Only check compatibility if the pattern is also a relation
         if is_in_scope_now {
-            if self.is_compatible(
-                target.clone(),
-                target_context,
-                &pattern_rel,
-                pattern_context,
-            ) {
-                matches.push(current_id.clone());
+            if let Ok(pattern_rel) = pattern.get_relation() {
+                if self.is_compatible(
+                    target.clone(),
+                    target_context,
+                    &pattern_rel,
+                    pattern_context,
+                ) {
+                    matches.push(current_id.clone());
+                }
             }
+            // If pattern is not a relation, we can't match at this level,
+            // but we should still search children
         }
 
         let sub_matches = match self {
@@ -294,19 +298,23 @@ impl Search for MathObject {
         pattern_context: &Vec<ContextEntry>,
         in_target_scope: bool,
     ) -> Vec<String> {
-        let pattern_obj = pattern.get_object().unwrap();
         let mut matches = Vec::new();
         let is_in_scope_now = in_target_scope || current_id == target.id;
 
+        // Only check compatibility if the pattern is also an object
         if is_in_scope_now {
-            if self.is_compatible(
-                target.clone(),
-                target_context,
-                &pattern_obj,
-                pattern_context,
-            ) {
-                matches.push(current_id.clone());
+            if let Ok(pattern_obj) = pattern.get_object() {
+                if self.is_compatible(
+                    target.clone(),
+                    target_context,
+                    &pattern_obj,
+                    pattern_context,
+                ) {
+                    matches.push(current_id.clone());
+                }
             }
+            // If pattern is not an object, we can't match at this level,
+            // but we should still search children
         }
 
         let sub_matches = match self {
@@ -355,7 +363,28 @@ impl Search for TheoryExpression {
         pattern_context: &Vec<ContextEntry>,
         in_target_scope: bool,
     ) -> Vec<String> {
-        todo!()
+        let mut matches = Vec::new();
+        let is_in_scope_now = in_target_scope || current_id == target.id;
+
+        // Only check compatibility if the pattern is also a theory expression
+        if is_in_scope_now {
+            if let Ok(pattern_expr) = pattern.get_expression() {
+                if self.is_compatible(
+                    target.clone(),
+                    target_context,
+                    &pattern_expr,
+                    pattern_context,
+                ) {
+                    matches.push(current_id.clone());
+                }
+            }
+            // If pattern is not a theory expression, we can't match at this level,
+            // but we should still search children
+        }
+
+        // For now, we don't recursively search within theory expressions
+        // This can be enhanced later to search within group/ring/field expressions
+        matches
     }
 }
 
@@ -367,6 +396,20 @@ impl IsCompatible<TheoryExpression> for TheoryExpression {
         pattern: &TheoryExpression,
         pattern_context: &Vec<ContextEntry>,
     ) -> bool {
-        todo!()
+        // Basic structural compatibility check
+        match (self, pattern) {
+            (TheoryExpression::Group(self_group), TheoryExpression::Group(pattern_group)) => {
+                // For now, we do a simple equality check
+                // This can be enhanced later with more sophisticated matching
+                self_group == pattern_group
+            }
+            (TheoryExpression::Ring(self_ring), TheoryExpression::Ring(pattern_ring)) => {
+                self_ring == pattern_ring
+            }
+            (TheoryExpression::Field(self_field), TheoryExpression::Field(pattern_field)) => {
+                self_field == pattern_field
+            }
+            _ => false,
+        }
     }
 }

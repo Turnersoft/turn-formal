@@ -16,6 +16,7 @@ use crate::turn_render::section_node::{
     VariableBindingType,
 };
 use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Result structure for rewrite transformations with actual before/after states
 struct RewriteTransformationResult {
@@ -91,7 +92,7 @@ impl Tactic {
                 };
 
                 // Create a placeholder expression from the target string
-                let target_expr = MathExpression::Relation(Box::new(MathRelation::True));
+                let target_expr = MathExpression::Relation(Arc::new(MathRelation::True));
 
                 // Compute meaningful transformation
                 let transformation = self.compute_rewrite_transformation(
@@ -159,22 +160,22 @@ impl Tactic {
                 TacticDisplayNode::AssumeImplicationAntecedent {
                     implication_statement: MathNode {
                         id: "implication".to_string(),
-                        content: Box::new(MathNodeContent::Text("implication".to_string())),
+                        content: Arc::new(MathNodeContent::Text("implication".to_string())),
                     },
                     hypothesis_name: RichText {
                         segments: vec![RichTextSegment::Math(MathNode {
                             id: "hyp-name".to_string(),
-                            content: Box::new(MathNodeContent::Identifier(with_name.clone())),
+                            content: Arc::new(MathNodeContent::Identifier(with_name.clone())),
                         })],
                         alignment: None,
                     },
                     antecedent: MathNode {
                         id: "antecedent".to_string(),
-                        content: Box::new(MathNodeContent::Text("antecedent".to_string())),
+                        content: Arc::new(MathNodeContent::Text("antecedent".to_string())),
                     },
                     consequent: MathNode {
                         id: "consequent".to_string(),
-                        content: Box::new(MathNodeContent::Text("consequent".to_string())),
+                        content: Arc::new(MathNodeContent::Text("consequent".to_string())),
                     },
                     context_explanation: RichText {
                         segments: vec![RichTextSegment::Text(format!(
@@ -236,7 +237,7 @@ impl Tactic {
                 },
                 variable_value: MathNode {
                     id: "let-binding".to_string(),
-                    content: Box::new(MathNodeContent::Text(target_expression.id.clone())),
+                    content: Arc::new(MathNodeContent::Text(target_expression.id.clone())),
                 },
                 binding_type: VariableBindingType::Let,
                 context_explanation: RichText {
@@ -285,7 +286,7 @@ impl Tactic {
             // For hypothesis, just show that it's applied
             MathNode {
                 id: "after-expr".to_string(),
-                content: Box::new(MathNodeContent::Text(format!(
+                content: Arc::new(MathNodeContent::Text(format!(
                     "Applied hypothesis: {}",
                     theorem_id
                 ))),
@@ -330,7 +331,7 @@ impl Tactic {
                 left: theorem_lhs,
                 right: theorem_rhs,
                 ..
-            } = &theorem.proofs.initial_goal.statement.data
+            } = &*theorem.proofs.initial_goal.statement.data
             {
                 // Apply instantiation to theorem sides
                 let mut instantiated_lhs = theorem_lhs.clone();
@@ -339,17 +340,17 @@ impl Tactic {
                 // Apply variable substitutions from instantiation
                 for (var, value) in instantiation {
                     instantiated_lhs =
-                        self.substitute_variable(&instantiated_lhs, &var.to_string(), value);
+                        self.substitute_variable_arc(&instantiated_lhs, &var.to_string(), value);
                     instantiated_rhs =
-                        self.substitute_variable(&instantiated_rhs, &var.to_string(), value);
+                        self.substitute_variable_arc(&instantiated_rhs, &var.to_string(), value);
                 }
 
                 // Apply the rewrite based on direction
                 let result_expr = match direction {
                     RewriteDirection::Forward => {
                         // If target matches LHS, replace with RHS
-                        if self.expressions_match(target, &instantiated_lhs.data) {
-                            instantiated_rhs.data
+                        if self.expressions_match_arc(target, &instantiated_lhs.data) {
+                            instantiated_rhs.data.clone()
                         } else {
                             // If target doesn't match exactly, show that we applied the theorem
                             return self
@@ -358,8 +359,8 @@ impl Tactic {
                     }
                     RewriteDirection::Backward => {
                         // If target matches RHS, replace with LHS
-                        if self.expressions_match(target, &instantiated_rhs.data) {
-                            instantiated_lhs.data
+                        if self.expressions_match_arc(target, &instantiated_rhs.data) {
+                            instantiated_lhs.data.clone()
                         } else {
                             // If target doesn't match exactly, show that we applied the theorem
                             return self
@@ -368,7 +369,9 @@ impl Tactic {
                     }
                 };
 
-                return result_expr.to_turn_math("after-expr".to_string());
+                return result_expr
+                    .unwrap(&vec![])
+                    .to_turn_math("after-expr".to_string());
             }
         }
 
@@ -386,7 +389,7 @@ impl Tactic {
         if theorem_id.starts_with("hyp_") {
             MathNode {
                 id: "after-expr".to_string(),
-                content: Box::new(MathNodeContent::Text(format!(
+                content: Arc::new(MathNodeContent::Text(format!(
                     "Applied hypothesis: {}",
                     theorem_id.replace("hyp_", "").replace("_", " ")
                 ))),
@@ -394,7 +397,7 @@ impl Tactic {
         } else {
             MathNode {
                 id: "after-expr".to_string(),
-                content: Box::new(MathNodeContent::Text(format!(
+                content: Arc::new(MathNodeContent::Text(format!(
                     "Applied {} ({})",
                     theorem_id,
                     match direction {
@@ -420,6 +423,20 @@ impl Tactic {
         }
     }
 
+    /// Check if two expressions match for Arc-wrapped types
+    fn expressions_match_arc(
+        &self,
+        expr1: &MathExpression,
+        expr2: &Parametrizable<Arc<MathExpression>>,
+    ) -> bool {
+        // Simple structural comparison - could be enhanced with unification
+        if let Parametrizable::Concrete(concrete_expr) = expr2 {
+            expr1 == &**concrete_expr
+        } else {
+            false
+        }
+    }
+
     /// Substitute a variable in an expression with a value
     fn substitute_variable(
         &self,
@@ -437,6 +454,23 @@ impl Tactic {
         new_expr
     }
 
+    /// Substitute a variable in an Arc-wrapped expression with a value
+    fn substitute_variable_arc(
+        &self,
+        expr: &Located<Parametrizable<Arc<MathExpression>>>,
+        var: &str,
+        value: &MathExpression,
+    ) -> Located<Parametrizable<Arc<MathExpression>>> {
+        let mut new_expr = expr.clone();
+        if let Parametrizable::Variable(id) = &new_expr.data {
+            if id.to_string() == var {
+                new_expr.data = Parametrizable::Concrete(Arc::new(value.clone()));
+            }
+        }
+        // This is a simplified substitution. A full implementation would recurse.
+        new_expr
+    }
+
     fn get_theorem_sides(
         &self,
         theorem_id: &str,
@@ -448,7 +482,7 @@ impl Tactic {
                 left,
                 right,
                 ..
-            } = &theorem.proofs.initial_goal.statement.data
+            } = &*theorem.proofs.initial_goal.statement.data
             {
                 // Apply instantiation
                 let lhs = left.clone();
@@ -458,8 +492,12 @@ impl Tactic {
                 // For now, we'll show the theorem as-is for simplicity
 
                 return (
-                    lhs.to_turn_math("theorem-lhs".to_string()),
-                    rhs.to_turn_math("theorem-rhs".to_string()),
+                    lhs.data
+                        .unwrap(&vec![])
+                        .to_turn_math("theorem-lhs".to_string()),
+                    rhs.data
+                        .unwrap(&vec![])
+                        .to_turn_math("theorem-rhs".to_string()),
                 );
             }
         }
@@ -468,14 +506,14 @@ impl Tactic {
         (
             MathNode {
                 id: "theorem-lhs".to_string(),
-                content: Box::new(MathNodeContent::Text(format!(
+                content: Arc::new(MathNodeContent::Text(format!(
                     "Failed to retrieve LHS of theorem '{}'",
                     theorem_id
                 ))),
             },
             MathNode {
                 id: "theorem-rhs".to_string(),
-                content: Box::new(MathNodeContent::Text(format!(
+                content: Arc::new(MathNodeContent::Text(format!(
                     "Failed to retrieve RHS of theorem '{}'",
                     theorem_id
                 ))),

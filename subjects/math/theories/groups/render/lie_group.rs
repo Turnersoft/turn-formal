@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -12,7 +14,7 @@ impl ToTurnMath for LieGroup {
 
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Text(format!("Lie({}, τ)", base_set_str))),
+            content: Arc::new(MathNodeContent::Text(format!("Lie({}, τ)", base_set_str))),
         }
     }
 }

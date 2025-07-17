@@ -1,9 +1,8 @@
 /// Module: src/formalize_v2/subjects/math/formalism/foundational_axioms.rs
 /// Provides foundational logical axioms that are available globally for all mathematical reasoning.
 /// These axioms should be registered before any domain-specific theorems.
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
-use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::location::Located;
 use crate::subjects::math::formalism::proof::{ProofForest, ProofGoal};
 use crate::subjects::math::formalism::relations::MathRelation;
@@ -24,7 +23,7 @@ pub fn equality_refl_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(reflexivity_relation),
+        statement: Located::new(Arc::new(reflexivity_relation)),
     };
     Theorem {
         id: "equality_is_reflexive".to_string(),
@@ -48,13 +47,13 @@ pub fn equality_symm_axiom() -> Axiom {
         right: Located::new(Parametrizable::Variable(x_var.clone())),
     };
     let symmetry_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(premise))),
-        Box::new(Located::new(Parametrizable::Concrete(conclusion))),
+        Located::new(Parametrizable::Concrete(Arc::new(premise))),
+        Located::new(Parametrizable::Concrete(Arc::new(conclusion))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(symmetry_relation),
+        statement: Located::new(Arc::new(symmetry_relation)),
     };
     Theorem {
         id: "equality_is_symmetric".to_string(),
@@ -79,21 +78,21 @@ pub fn equality_tran_axiom() -> Axiom {
         right: Located::new(Parametrizable::Variable(z_var.clone())),
     };
     let premises = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(premise1)),
-        Located::new(Parametrizable::Concrete(premise2)),
+        Located::new(Parametrizable::Concrete(Arc::new(premise1))),
+        Located::new(Parametrizable::Concrete(Arc::new(premise2))),
     ]);
     let conclusion = MathRelation::Equal {
         left: Located::new(Parametrizable::Variable(x_var.clone())),
         right: Located::new(Parametrizable::Variable(z_var.clone())),
     };
     let transitivity_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(premises))),
-        Box::new(Located::new(Parametrizable::Concrete(conclusion))),
+        Located::new(Parametrizable::Concrete(Arc::new(premises))),
+        Located::new(Parametrizable::Concrete(Arc::new(conclusion))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(transitivity_relation),
+        statement: Located::new(Arc::new(transitivity_relation)),
     };
     Theorem {
         id: "equality_is_transitive".to_string(),
@@ -114,13 +113,13 @@ pub fn law_of_identity_axiom() -> Axiom {
         ))),
     };
     let identity_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(p_relation.clone()))),
-        Box::new(Located::new(Parametrizable::Concrete(p_relation))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_relation.clone()))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_relation))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(identity_relation),
+        statement: Located::new(Arc::new(identity_relation)),
     };
     Theorem {
         id: "law_of_identity".to_string(),
@@ -148,21 +147,21 @@ pub fn modus_ponens_axiom() -> Axiom {
         ))),
     };
     let implication = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(p_true.clone()))),
-        Box::new(Located::new(Parametrizable::Concrete(q_true.clone()))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_true.clone()))),
+        Located::new(Parametrizable::Concrete(Arc::new(q_true.clone()))),
     );
     let premises = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(p_true.clone())),
-        Located::new(Parametrizable::Concrete(implication)),
+        Located::new(Parametrizable::Concrete(Arc::new(p_true.clone()))),
+        Located::new(Parametrizable::Concrete(Arc::new(implication))),
     ]);
     let modus_ponens_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(premises))),
-        Box::new(Located::new(Parametrizable::Concrete(q_true))),
+        Located::new(Parametrizable::Concrete(Arc::new(premises))),
+        Located::new(Parametrizable::Concrete(Arc::new(q_true))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(modus_ponens_relation),
+        statement: Located::new(Arc::new(modus_ponens_relation)),
     };
     Theorem {
         id: "modus_ponens".to_string(),
@@ -182,18 +181,18 @@ pub fn double_negation_axiom() -> Axiom {
             "true".to_string(),
         ))),
     };
-    let not_p = MathRelation::Not(Box::new(Located::new(Parametrizable::Concrete(
+    let not_p = MathRelation::Not(Located::new(Parametrizable::Concrete(Arc::new(
         p_true.clone(),
     ))));
-    let not_not_p = MathRelation::Not(Box::new(Located::new(Parametrizable::Concrete(not_p))));
+    let not_not_p = MathRelation::Not(Located::new(Parametrizable::Concrete(Arc::new(not_p))));
     let double_negation_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(not_not_p))),
-        Box::new(Located::new(Parametrizable::Concrete(p_true))),
+        Located::new(Parametrizable::Concrete(Arc::new(not_not_p))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_true))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(double_negation_relation),
+        statement: Located::new(Arc::new(double_negation_relation)),
     };
     Theorem {
         id: "double_negation".to_string(),
@@ -223,13 +222,13 @@ pub fn universal_instantiation_axiom() -> Axiom {
         ))),
     };
     let universal_instantiation_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(p_of_x))),
-        Box::new(Located::new(Parametrizable::Concrete(p_of_a))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_of_x))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_of_a))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(universal_instantiation_relation),
+        statement: Located::new(Arc::new(universal_instantiation_relation)),
     };
     Theorem {
         id: "universal_instantiation".to_string(),
@@ -259,13 +258,13 @@ pub fn existential_generalization_axiom() -> Axiom {
         ))),
     };
     let existential_generalization_relation = MathRelation::Implies(
-        Box::new(Located::new(Parametrizable::Concrete(p_of_a))),
-        Box::new(Located::new(Parametrizable::Concrete(p_of_x))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_of_a))),
+        Located::new(Parametrizable::Concrete(Arc::new(p_of_x))),
     );
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(existential_generalization_relation),
+        statement: Located::new(Arc::new(existential_generalization_relation)),
     };
     Theorem {
         id: "existential_generalization".to_string(),
@@ -313,10 +312,10 @@ mod tests {
         let reflexivity_goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::Equal {
+            statement: Located::new(Arc::new(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(x_var.clone())),
                 right: Located::new(Parametrizable::Variable(x_var.clone())),
-            }),
+            })),
         };
 
         let reflexivity_tactic = Tactic::ByReflexivity;
@@ -332,7 +331,7 @@ mod tests {
         let auto_goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(MathRelation::True), // Simple tautology that Auto should handle
+            statement: Located::new(Arc::new(MathRelation::True)), // Simple tautology that Auto should handle
         };
 
         let auto_tactic = Tactic::SearchAssumptions;

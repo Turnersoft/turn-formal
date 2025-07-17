@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 
 use crate::turn_render::math_node::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
@@ -327,7 +328,7 @@ impl ToTurnMath for ModularAdditiveGroup {
         // Use proper mathematical notation ℤ/nℤ
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("ℤ/{}ℤ", self.modulus))),
+            content: Arc::new(MathNodeContent::Text(format!("ℤ/{}ℤ", self.modulus))),
         }
     }
 }
@@ -337,7 +338,7 @@ impl ToTurnMath for ModularMultiplicativeGroup {
         // Use proper mathematical notation (ℤ/nℤ)×
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Text(format!("(ℤ/{}ℤ)×", self.modulus))),
+            content: Arc::new(MathNodeContent::Text(format!("(ℤ/{}ℤ)×", self.modulus))),
         }
     }
 }

@@ -1,5 +1,8 @@
 use super::definitions::*;
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::{
+    abstraction_level::{AbstractionLevel, GetAbstractionLevel},
+    extract::Parametrizable,
+};
 
 /// Implement abstraction level for probability spaces
 impl GetAbstractionLevel for ProbabilitySpace {
@@ -351,9 +354,7 @@ pub fn level_for_probability_relation(relation: &ProbabilityRelation) -> Abstrac
                 let event_levels: Vec<AbstractionLevel> = events
                     .iter()
                     .filter_map(|e| match e {
-                        crate::subjects::math::formalism::extract::Parametrizable::Concrete(
-                            event,
-                        ) => Some(event.level()),
+                        Parametrizable::Concrete(event) => Some(event.level()),
                         _ => None,
                     })
                     .collect();
@@ -378,9 +379,7 @@ pub fn level_for_probability_relation(relation: &ProbabilityRelation) -> Abstrac
                 let var_levels: Vec<AbstractionLevel> = variables
                     .iter()
                     .filter_map(|v| match v {
-                        crate::subjects::math::formalism::extract::Parametrizable::Concrete(
-                            var,
-                        ) => Some(var.level()),
+                        Parametrizable::Concrete(var) => Some(var.level()),
                         _ => None,
                     })
                     .collect();
@@ -400,11 +399,11 @@ pub fn level_for_probability_relation(relation: &ProbabilityRelation) -> Abstrac
             distribution,
         } => {
             let var_level = match variable {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+                Parametrizable::Concrete(v) => v.level(),
                 _ => AbstractionLevel::Level1,
             };
             let dist_level = match distribution {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(d) => d.level(),
+                Parametrizable::Concrete(d) => d.level(),
                 _ => AbstractionLevel::Level1,
             };
 
@@ -454,11 +453,11 @@ pub fn level_for_probability_expression(expression: &ProbabilityExpression) -> A
             probability_space,
         } => {
             let event_level = match event {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(e) => e.level(),
+                Parametrizable::Concrete(e) => e.level(),
                 _ => AbstractionLevel::Level1,
             };
             let space_level = match probability_space {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(s) => s.level(),
+                Parametrizable::Concrete(s) => s.level(),
                 _ => AbstractionLevel::Level1,
             };
 
@@ -474,12 +473,12 @@ pub fn level_for_probability_expression(expression: &ProbabilityExpression) -> A
         }
 
         ProbabilityExpression::ExpectedValue { variable } => match variable {
-            crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+            Parametrizable::Concrete(v) => v.level(),
             _ => AbstractionLevel::Level1,
         },
 
         ProbabilityExpression::Variance { variable } => match variable {
-            crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+            Parametrizable::Concrete(v) => v.level(),
             _ => AbstractionLevel::Level1,
         },
 
@@ -517,11 +516,11 @@ pub fn level_for_probability_expression(expression: &ProbabilityExpression) -> A
         // Operations between random variables
         ProbabilityExpression::RandomVariableSum { left, right } => {
             let left_level = match left.as_ref() {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+                Parametrizable::Concrete(v) => v.level(),
                 _ => AbstractionLevel::Level1,
             };
             let right_level = match right.as_ref() {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+                Parametrizable::Concrete(v) => v.level(),
                 _ => AbstractionLevel::Level1,
             };
 
@@ -538,11 +537,11 @@ pub fn level_for_probability_expression(expression: &ProbabilityExpression) -> A
 
         ProbabilityExpression::RandomVariableProduct { left, right } => {
             let left_level = match left.as_ref() {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+                Parametrizable::Concrete(v) => v.level(),
                 _ => AbstractionLevel::Level1,
             };
             let right_level = match right.as_ref() {
-                crate::subjects::math::formalism::extract::Parametrizable::Concrete(v) => v.level(),
+                Parametrizable::Concrete(v) => v.level(),
                 _ => AbstractionLevel::Level1,
             };
 

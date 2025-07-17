@@ -1,7 +1,9 @@
 use crate::turn_render::Identifier;
+use std::sync::Arc;
 
 use super::{
     expressions::{MathExpression, TheoryExpression},
+    extract::Parametrizable,
     location::Located,
     objects::MathObject,
     relations::MathRelation,
@@ -42,6 +44,28 @@ impl Complexity for bool {
     }
 }
 
+// Generic implementations for wrapper types
+impl<T: Complexity> Complexity for Arc<T> {
+    fn complexity(&self) -> usize {
+        (**self).complexity()
+    }
+}
+
+impl<T: Complexity> Complexity for Located<T> {
+    fn complexity(&self) -> usize {
+        self.data.complexity()
+    }
+}
+
+impl<T: Complexity> Complexity for Parametrizable<T> {
+    fn complexity(&self) -> usize {
+        match self {
+            Parametrizable::Concrete(value) => value.complexity(),
+            Parametrizable::Variable(_) => 1, // Variables have minimal complexity
+        }
+    }
+}
+
 // MathObject complexity (can be detailed based on variants)
 impl Complexity for MathObject {
     fn complexity(&self) -> usize {
@@ -61,7 +85,7 @@ impl Complexity for MathObject {
 
 impl Complexity for Identifier {
     fn complexity(&self) -> usize {
-        todo!()
+        1 + self.body.len() / 4 // Basic complexity based on identifier length
     }
 }
 
@@ -79,12 +103,12 @@ impl Complexity for MathExpression {
     fn complexity(&self) -> usize {
         match self {
             // MathExpression::Var(id) => id.complexity(),
-            MathExpression::Object(obj) => 1 + 0, // Assuming MathObject complexity will be added
+            MathExpression::Object(obj) => 1 + obj.complexity(),
             MathExpression::Expression(te) => 1 + te.complexity(),
             MathExpression::Relation(rel) => 1 + rel.complexity(),
             MathExpression::Number(_) => 1, // Simple number
             MathExpression::ViewAs { expression, view } => {
-                1 + expression.data.complexity() + 0 // Assuming TypeViewOperator complexity
+                1 + expression.complexity() + 1 // Simple complexity for view operator
             }
         }
     }
@@ -93,18 +117,16 @@ impl Complexity for MathExpression {
 impl Complexity for MathRelation {
     fn complexity(&self) -> usize {
         match self {
-            MathRelation::Equal { left, right, .. } => {
-                1 + left.data.complexity() + right.data.complexity()
-            }
+            MathRelation::Equal { left, right, .. } => 1 + left.complexity() + right.complexity(),
             MathRelation::And(relations) => {
-                1 + relations.iter().map(|r| r.data.complexity()).sum::<usize>()
+                1 + relations.iter().map(|r| r.complexity()).sum::<usize>()
             }
             MathRelation::Or(relations) => {
-                1 + relations.iter().map(|r| r.data.complexity()).sum::<usize>()
+                1 + relations.iter().map(|r| r.complexity()).sum::<usize>()
             }
-            MathRelation::Implies(a, b) => 1 + a.data.complexity() + b.data.complexity(),
-            MathRelation::Equivalent(a, b) => 1 + a.data.complexity() + b.data.complexity(),
-            MathRelation::Not(r) => 1 + r.data.complexity(),
+            MathRelation::Implies(a, b) => 1 + a.complexity() + b.complexity(),
+            MathRelation::Equivalent(a, b) => 1 + a.complexity() + b.complexity(),
+            MathRelation::Not(r) => 1 + r.complexity(),
             MathRelation::True => 1,
             MathRelation::False => 1,
             MathRelation::NumberTheory(_) => 1,
@@ -114,13 +136,6 @@ impl Complexity for MathRelation {
             MathRelation::TopologyTheory(_) => 1,
             MathRelation::CategoryTheory(_) => 1,
             MathRelation::ProbabilityTheory(_) => 1,
-            _ => 1,
         }
     }
 }
-
-// impl<T: Complexity> Complexity for Located<T> {
-//     fn complexity(&self) -> usize {
-//         self.data.complexity()
-//     }
-// }

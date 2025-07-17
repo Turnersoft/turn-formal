@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 
 use crate::subjects::math::export::unified_exporter::TheoryExporter;
 
@@ -60,16 +61,16 @@ impl ToTurnMath for GenericProbabilitySpace {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Bracketed {
-                inner: Box::new(MathNode {
+            content: Arc::new(MathNodeContent::Bracketed {
+                inner: Arc::new(MathNode {
                     id: format!("{}-tuple", master_id),
-                    content: Box::new(MathNodeContent::Multiplications {
+                    content: Arc::new(MathNodeContent::Multiplications {
                         terms: vec![
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-omega", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "Ω".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -83,7 +84,7 @@ impl ToTurnMath for GenericProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-sigma", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "ℱ".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -97,7 +98,7 @@ impl ToTurnMath for GenericProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-measure", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "P".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -121,23 +122,23 @@ impl ToTurnMath for DiscreteProbabilitySpace {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Bracketed {
-                inner: Box::new(MathNode {
+            content: Arc::new(MathNodeContent::Bracketed {
+                inner: Arc::new(MathNode {
                     id: format!("{}-tuple", master_id),
-                    content: Box::new(MathNodeContent::Multiplications {
+                    content: Arc::new(MathNodeContent::Multiplications {
                         terms: vec![
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-omega-discrete", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "Ω".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: Some(ScriptNode {
                                             subscripts: vec![MathNode {
                                                 id: format!("{}-discrete-sub", master_id),
-                                                content: Box::new(MathNodeContent::Identifier(
+                                                content: Arc::new(MathNodeContent::Identifier(
                                                     Identifier {
                                                         body: "discrete".to_string(),
                                                         pre_script: None,
@@ -159,7 +160,7 @@ impl ToTurnMath for DiscreteProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-sigma", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "ℱ".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -173,7 +174,7 @@ impl ToTurnMath for DiscreteProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-measure", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "P".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -197,23 +198,23 @@ impl ToTurnMath for ContinuousProbabilitySpace {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Bracketed {
-                inner: Box::new(MathNode {
+            content: Arc::new(MathNodeContent::Bracketed {
+                inner: Arc::new(MathNode {
                     id: format!("{}-tuple", master_id),
-                    content: Box::new(MathNodeContent::Multiplications {
+                    content: Arc::new(MathNodeContent::Multiplications {
                         terms: vec![
                             (
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-omega-continuous", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "Ω".to_string(),
                                         pre_script: None,
                                         mid_script: None,
                                         post_script: Some(ScriptNode {
                                             subscripts: vec![MathNode {
                                                 id: format!("{}-continuous-sub", master_id),
-                                                content: Box::new(MathNodeContent::Identifier(
+                                                content: Arc::new(MathNodeContent::Identifier(
                                                     Identifier {
                                                         body: "continuous".to_string(),
                                                         pre_script: None,
@@ -235,7 +236,7 @@ impl ToTurnMath for ContinuousProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-sigma", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "ℱ".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -249,7 +250,7 @@ impl ToTurnMath for ContinuousProbabilitySpace {
                                 RefinedMulOrDivOperation::None,
                                 MathNode {
                                     id: format!("{}-measure", master_id),
-                                    content: Box::new(MathNodeContent::Identifier(Identifier {
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
                                         body: "P".to_string(),
                                         pre_script: None,
                                         mid_script: None,
@@ -273,7 +274,7 @@ impl ToTurnMath for StochasticProcess {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier(Identifier {
+            content: Arc::new(MathNodeContent::Identifier(Identifier {
                 body: "X_t".to_string(),
                 pre_script: None,
                 mid_script: None,
@@ -493,10 +494,10 @@ impl ToTurnMath for ProbabilityExpression {
         match self {
             ProbabilityExpression::EventProbability { event, .. } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::FunctionCall {
-                    name: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::FunctionCall {
+                    name: Arc::new(MathNode {
                         id: format!("{}-prob-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "P".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -507,7 +508,7 @@ impl ToTurnMath for ProbabilityExpression {
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-event", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "A".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -524,10 +525,10 @@ impl ToTurnMath for ProbabilityExpression {
                 ..
             } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::FunctionCall {
-                    name: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::FunctionCall {
+                    name: Arc::new(MathNode {
                         id: format!("{}-prob-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "P".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -538,7 +539,7 @@ impl ToTurnMath for ProbabilityExpression {
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-conditional", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "A|B".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -551,10 +552,10 @@ impl ToTurnMath for ProbabilityExpression {
             },
             ProbabilityExpression::ExpectedValue { variable } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::FunctionCall {
-                    name: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::FunctionCall {
+                    name: Arc::new(MathNode {
                         id: format!("{}-exp-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "E".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -565,7 +566,7 @@ impl ToTurnMath for ProbabilityExpression {
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-rv", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "X".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -578,10 +579,10 @@ impl ToTurnMath for ProbabilityExpression {
             },
             ProbabilityExpression::Variance { variable } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::FunctionCall {
-                    name: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::FunctionCall {
+                    name: Arc::new(MathNode {
                         id: format!("{}-var-name", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "Var".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -592,7 +593,7 @@ impl ToTurnMath for ProbabilityExpression {
                     }),
                     parameters: vec![MathNode {
                         id: format!("{}-rv", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "X".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -605,7 +606,7 @@ impl ToTurnMath for ProbabilityExpression {
             },
             _ => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: "ProbExpr".to_string(),
                     pre_script: None,
                     mid_script: None,
@@ -623,10 +624,10 @@ impl ToTurnMath for ProbabilityRelation {
         match self {
             ProbabilityRelation::EventsAreIndependent { events, .. } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Relationship {
-                    lhs: Box::new(MathNode {
+                content: Arc::new(MathNodeContent::Relationship {
+                    lhs: Arc::new(MathNode {
                         id: format!("{}-lhs", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "P(A∩B)".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -635,9 +636,9 @@ impl ToTurnMath for ProbabilityRelation {
                             is_function: false,
                         })),
                     }),
-                    rhs: Box::new(MathNode {
+                    rhs: Arc::new(MathNode {
                         id: format!("{}-rhs", master_id),
-                        content: Box::new(MathNodeContent::Identifier(Identifier {
+                        content: Arc::new(MathNodeContent::Identifier(Identifier {
                             body: "P(A)P(B)".to_string(),
                             pre_script: None,
                             mid_script: None,
@@ -651,14 +652,14 @@ impl ToTurnMath for ProbabilityRelation {
             },
             ProbabilityRelation::RandomVariablesAreIndependent { variables, .. } => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Text(format!(
+                content: Arc::new(MathNodeContent::Text(format!(
                     "{} random variables are independent",
                     variables.len()
                 ))),
             },
             _ => MathNode {
                 id: master_id.clone(),
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: "ProbRel".to_string(),
                     pre_script: None,
                     mid_script: None,

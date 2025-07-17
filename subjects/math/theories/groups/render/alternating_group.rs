@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
@@ -11,14 +13,14 @@ impl ToTurnMath for AlternatingGroup {
         // Use proper mathematical notation A_n with subscript
         MathNode {
             id: master_id.clone(),
-            content: Box::new(MathNodeContent::Identifier(Identifier {
+            content: Arc::new(MathNodeContent::Identifier(Identifier {
                 body: "A".to_string(),
                 pre_script: None,
                 mid_script: None,
                 post_script: Some(ScriptNode {
                     subscripts: vec![MathNode {
                         id: format!("{}_subscript", master_id),
-                        content: Box::new(MathNodeContent::String(self.degree.to_string())),
+                        content: Arc::new(MathNodeContent::String(self.degree.to_string())),
                     }],
                     superscripts: vec![],
                 }),
@@ -38,14 +40,14 @@ impl ToSectionNode for AlternatingGroup {
             RichTextSegment::Text("Alternating Group ".to_string()),
             RichTextSegment::Math(MathNode {
                 id: format!("{}-title-math", id_prefix),
-                content: Box::new(MathNodeContent::Identifier(Identifier {
+                content: Arc::new(MathNodeContent::Identifier(Identifier {
                     body: "A".to_string(),
                     pre_script: None,
                     mid_script: None,
                     post_script: Some(ScriptNode {
                         subscripts: vec![MathNode {
                             id: format!("{}-title-math-subscript", id_prefix),
-                            content: Box::new(MathNodeContent::String("n".to_string())),
+                            content: Arc::new(MathNodeContent::String("n".to_string())),
                         }],
                         superscripts: vec![],
                     }),

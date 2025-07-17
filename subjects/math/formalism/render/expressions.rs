@@ -14,13 +14,13 @@ use crate::{
     turn_render::Identifier,
 };
 use serde::{Deserialize, Serialize};
-use std::string::String;
+use std::{string::String, sync::Arc};
 
 impl ToTurnMath for Identifier {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         MathNode {
             id: master_id,
-            content: Box::new(MathNodeContent::Identifier(self.clone())),
+            content: Arc::new(MathNodeContent::Identifier(self.clone())),
         }
     }
 }
@@ -33,7 +33,7 @@ impl ToTurnMath for MathExpression {
                 // Number is a struct with no members, just render it as a generic number
                 MathNode {
                     id: master_id,
-                    content: Box::new(MathNodeContent::Quantity {
+                    content: Arc::new(MathNodeContent::Quantity {
                         number: "0".to_string(), // Default representation
                         scientific_notation: None,
                         unit: None,
@@ -48,12 +48,15 @@ impl ToTurnMath for MathExpression {
             MathExpression::Relation(rel) => rel.to_turn_math(master_id),
             MathExpression::ViewAs { expression, view } => {
                 // For now, just wrap the expression in brackets
-                let inner = expression.to_turn_math(master_id.clone());
+                let inner = expression
+                    .data
+                    .unwrap(&vec![])
+                    .to_turn_math(master_id.clone());
 
                 MathNode {
                     id: master_id,
-                    content: Box::new(MathNodeContent::Bracketed {
-                        inner: Box::new(inner),
+                    content: Arc::new(MathNodeContent::Bracketed {
+                        inner: Arc::new(inner),
                         style: BracketStyle::Round,
                         size: BracketSize::Normal,
                     }),
@@ -71,16 +74,23 @@ impl ToTurnMath for TheoryExpression {
                 // TODO: Implement ToTurnMath for RingExpression or provide better placeholder
                 MathNode {
                     id: master_id,
-                    content: Box::new(MathNodeContent::Text("RingExpression (TODO)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("RingExpression (TODO)".to_string())),
                 }
             }
             TheoryExpression::Field(_field_expr) => {
                 // TODO: Implement ToTurnMath for FieldExpression or provide better placeholder
                 MathNode {
                     id: master_id,
-                    content: Box::new(MathNodeContent::Text("FieldExpression (TODO)".to_string())),
+                    content: Arc::new(MathNodeContent::Text("FieldExpression (TODO)".to_string())),
                 }
             }
         }
+    }
+}
+
+// Generic implementation for Arc<T> where T: ToTurnMath
+impl<T: ToTurnMath> ToTurnMath for Arc<T> {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        (**self).to_turn_math(master_id)
     }
 }

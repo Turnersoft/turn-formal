@@ -6,7 +6,7 @@ use super::super::theories::zfc::definitions::Set;
 use super::location::Located;
 use super::{super::formalism::expressions::MathExpression, extract::Parametrizable};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 /// Operator that changes the theoretical interpretation of a mathematical expression
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
@@ -32,27 +32,27 @@ pub enum TypeViewOperator {
     /// View a set as a group with specified operation
     AsGroup {
         /// Group operation type
-        operation: Option<Box<MathExpression>>,
+        operation: Option<Arc<MathExpression>>,
     },
 
     /// View a group as a ring (e.g., group ring construction)
     AsRing {
         /// Additional ring structure information
-        addition: Option<Box<MathExpression>>,
+        addition: Option<Arc<MathExpression>>,
     },
 
     /// View a set as a topological space
     AsTopologicalSpace {
         /// Optional topology specification
-        topology: Option<Box<MathExpression>>,
+        topology: Option<Arc<MathExpression>>,
     },
 
     /// View a function as a homomorphism between algebraic structures
     AsHomomorphism {
         /// Source structure
-        source: Box<MathExpression>,
+        source: Arc<MathExpression>,
         /// Target structure
-        target: Box<MathExpression>,
+        target: Arc<MathExpression>,
     },
 
     /// View a number as defining a cyclic group Z/nZ
@@ -235,7 +235,7 @@ impl MathExpression {
     pub fn as_group_element(&self, group: Group) -> Self {
         MathExpression::ViewAs {
             view: Located::new(TypeViewOperator::AsGroupElement { group }),
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
         }
     }
 
@@ -243,7 +243,7 @@ impl MathExpression {
     pub fn as_ring_element(&self, ring: Ring) -> Self {
         MathExpression::ViewAs {
             view: Located::new(TypeViewOperator::AsRingElement { ring }),
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
         }
     }
 
@@ -251,7 +251,7 @@ impl MathExpression {
     pub fn as_cyclic_group(&self) -> Self {
         MathExpression::ViewAs {
             view: Located::new(TypeViewOperator::AsCyclicGroup),
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
         }
     }
 
@@ -259,7 +259,7 @@ impl MathExpression {
     pub fn as_field_element(&self, field: Field) -> Self {
         MathExpression::ViewAs {
             view: Located::new(TypeViewOperator::AsFieldElement { field }),
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
         }
     }
 
@@ -267,9 +267,9 @@ impl MathExpression {
     pub fn as_group(&self, operation: Option<MathExpression>) -> Self {
         MathExpression::ViewAs {
             view: Located::new(TypeViewOperator::AsGroup {
-                operation: operation.map(Box::new),
+                operation: operation.map(Arc::new),
             }),
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
         }
     }
 
@@ -277,10 +277,10 @@ impl MathExpression {
     pub fn as_homomorphism(&self, source: MathExpression, target: MathExpression) -> Self {
         MathExpression::ViewAs {
             view: Located::new(TypeViewOperator::AsHomomorphism {
-                source: Box::new(source),
-                target: Box::new(target),
+                source: Arc::new(source),
+                target: Arc::new(target),
             }),
-            expression: Box::new(Located::new(Parametrizable::Concrete(self.clone()))),
+            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
         }
     }
 }
