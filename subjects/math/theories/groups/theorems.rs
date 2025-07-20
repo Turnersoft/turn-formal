@@ -39,40 +39,32 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     let g_id = Identifier::new_simple("g".to_string());
     let h1_id = Identifier::new_simple("h1".to_string());
     let h2_id = Identifier::new_simple("h2".to_string());
-
-    let group_param = Parametrizable::Variable(group_id.clone());
-    let g_param = Parametrizable::Variable(g_id.clone());
-    let h1_param = Parametrizable::Variable(h1_id.clone());
-    let h2_param = Parametrizable::Variable(h2_id.clone());
-
-    let g_var = Identifier::new_simple("g".to_string());
-    let h1_var = Identifier::new_simple("h1".to_string());
-    let h2_var = Identifier::new_simple("h2".to_string());
+    let e_id = Identifier::new_simple("e".to_string());
 
     let identity_expr = MathExpression::Expression(TheoryExpression::Group(
-        GroupExpression::Identity(group_param.clone()),
+        GroupExpression::Identity(Parametrizable::Variable(group_id.clone())),
     ));
 
     // Premise: g*h1 = e ∧ g*h2 = e
     let premise_conjunct1 = MathRelation::Equal {
         left: Located::new(Parametrizable::Concrete(Arc::new(
             MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
-                group: group_param.clone(),
-                left: g_param.clone(),
-                right: h1_param.clone(),
+                group: Parametrizable::Variable(group_id.clone()),
+                left: Parametrizable::Variable(g_id.clone()),
+                right: Parametrizable::Variable(h1_id.clone()),
             })),
         ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(identity_expr.clone()))),
+        right: Located::new(Parametrizable::Variable(e_id.clone())),
     };
     let premise_conjunct2 = MathRelation::Equal {
         left: Located::new(Parametrizable::Concrete(Arc::new(
             MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
-                group: group_param.clone(),
-                left: g_param.clone(),
-                right: h2_param.clone(),
+                group: Parametrizable::Variable(group_id.clone()),
+                left: Parametrizable::Variable(g_id.clone()),
+                right: Parametrizable::Variable(h2_id.clone()),
             })),
         ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(identity_expr.clone()))),
+        right: Located::new(Parametrizable::Variable(e_id.clone())),
     };
 
     let premise = MathRelation::And(vec![
@@ -86,8 +78,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
     // Conclusion: h1 = h2
     let conclusion = MathRelation::Equal {
-        left: Located::new(Parametrizable::Variable(h1_var.clone())),
-        right: Located::new(Parametrizable::Variable(h2_var.clone())),
+        left: Located::new(Parametrizable::Variable(h1_id.clone())),
+        right: Located::new(Parametrizable::Variable(h2_id.clone())),
     };
 
     let goal_statement = MathRelation::Implies(
@@ -95,60 +87,57 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         Located::new(Parametrizable::Concrete(Arc::new(conclusion.clone()))),
     );
 
-    // Build context
-    let group_id = Identifier::new_simple("G".to_string());
-    let group = Group::new_generic();
-    let group_context_entry = ContextEntry {
-        name: group_id.clone(),
-        ty: Located::new(MathExpression::Object(Arc::new(MathObject::Group(
-            group.clone(),
-        )))),
-        definition: DefinitionState::Abstract,
-        description: None,
-    };
-    let g_id = Identifier::new_simple("g".to_string());
-    let g_context_entry = ContextEntry {
-        name: g_id.clone(),
-        ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
-            GroupExpression::Element {
-                group: Parametrizable::Variable(group_id.clone()),
-                element: None,
-            },
-        ))),
-        definition: DefinitionState::Abstract,
-        description: None,
-    };
-    let h1_id = Identifier::new_simple("h1".to_string());
-    let h1_context_entry = ContextEntry {
-        name: h1_id.clone(),
-        ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
-            GroupExpression::Element {
-                group: Parametrizable::Variable(group_id.clone()),
-                element: None,
-            },
-        ))),
-        definition: DefinitionState::Abstract,
-        description: None,
-    };
-    let h2_id = Identifier::new_simple("h2".to_string());
-    let h2_context_entry = ContextEntry {
-        name: h2_id.clone(),
-        ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
-            GroupExpression::Element {
-                group: Parametrizable::Variable(group_id.clone()),
-                element: None,
-            },
-        ))),
-        definition: DefinitionState::Abstract,
-        description: None,
-    };
-
     let goal = ProofGoal {
         context: vec![
-            group_context_entry,
-            g_context_entry,
-            h1_context_entry,
-            h2_context_entry,
+            ContextEntry {
+                name: group_id.clone(),
+                ty: Located::new(MathExpression::Object(Arc::new(MathObject::Group(
+                    group.clone(),
+                )))),
+                definition: DefinitionState::Abstract,
+                description: None,
+            },
+            ContextEntry {
+                name: g_id.clone(),
+                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                    GroupExpression::Element {
+                        group: Parametrizable::Variable(group_id.clone()),
+                        element: None,
+                    },
+                ))),
+                definition: DefinitionState::Abstract,
+                description: None,
+            },
+            ContextEntry {
+                name: h1_id.clone(),
+                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                    GroupExpression::Element {
+                        group: Parametrizable::Variable(group_id.clone()),
+                        element: None,
+                    },
+                ))),
+                definition: DefinitionState::Abstract,
+                description: None,
+            },
+            ContextEntry {
+                name: h2_id.clone(),
+                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                    GroupExpression::Element {
+                        group: Parametrizable::Variable(group_id.clone()),
+                        element: None,
+                    },
+                ))),
+                definition: DefinitionState::Abstract,
+                description: None,
+            },
+            ContextEntry {
+                name: e_id.clone(),
+                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                    GroupExpression::Identity(Parametrizable::Variable(group_id.clone())),
+                ))),
+                definition: DefinitionState::Abstract,
+                description: None,
+            },
         ],
         quantifiers: vec![],
         statement: Located::new(Arc::new(goal_statement.clone())),
@@ -354,7 +343,7 @@ mod tests {
     #[test]
     fn test_prove_inverse_uniqueness() {
         std::thread::Builder::new()
-            .stack_size(1000 * 1024)
+            .stack_size(5000 * 1024)
             .spawn(|| {
                 let theorem = prove_inverse_uniqueness();
                 // Optional: Add assertions or prints for verification

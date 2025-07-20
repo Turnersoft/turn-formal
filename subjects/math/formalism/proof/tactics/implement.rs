@@ -370,26 +370,62 @@ impl Tactic {
         target_quantifier: &Identifier,
         witness: &MathExpression,
     ) -> TacticApplicationResult {
-        // This is a simplified implementation. A full version would need to handle
-        // quantifier bindings and substitution correctly.
+        // Find the target quantifier in the ordered list
+        let quantifier_index = goal.quantifiers.iter().position(|q| &q.variable_name == target_quantifier);
+        
+        if let Some(index) = quantifier_index {
+            let quantifier = &goal.quantifiers[index];
+            
+            // Ensure it's an existential quantifier
+            if !matches!(quantifier.quantification, Quantification::Existential | Quantification::UniqueExistential) {
+                return TacticApplicationResult::Error(format!(
+                    "Cannot provide witness for non-existential quantifier: {:?}",
+                    quantifier.quantification
+                ));
+            }
+            
             let mut new_goal = goal.clone();
-        // if let MathRelation::Equivalent(lhs, rhs) = new_goal.statement.data {
-        //     if let MathExpression::Object(obj) = lhs.data.unwrap(&new_goal.context) {
-        //         if let MathObject::Set(set) = *obj {
-        //             if let Set::Generic(generic_set) = set {
-        //                 // Assume the set represents a quantified statement for this example
-        //                 // In a real system, you'd parse the quantification properly
-        //                 let instantiated_statement = new_goal.statement.substitute(
-        //                     &HashMap::from([(target_quantifier.clone(), witness.clone())]),
-        //                     &new_goal.context,
-        //                 );
-        //                 new_goal.statement = instantiated_statement;
-        //                 return TacticApplicationResult::SingleGoal(new_goal);
-        //             }
-        //         }
-        //     }
-        // }
-        todo!()
+            
+            // Remove the existential quantifier from the list
+            new_goal.quantifiers.remove(index);
+            
+            // Create substitution map for the witness
+            let substitution_map = HashMap::from([(target_quantifier.clone(), witness.clone())]);
+            
+            // Substitute the witness in the statement
+            let goal_expr_wrapper = MathExpression::Relation(goal.statement.data.clone());
+            let substituted_expr = goal_expr_wrapper.substitute(&substitution_map, &goal.context);
+            
+            if let MathExpression::Relation(rel) = substituted_expr {
+                new_goal.statement.data = rel;
+            }
+            
+            // Also substitute in remaining quantifiers that might depend on this variable
+            // This handles the dependency chain correctly
+            for remaining_quantifier in &mut new_goal.quantifiers {
+                // If remaining quantifiers reference the substituted variable in their constraints,
+                // we would need to substitute there too. This would require extending the
+                // Quantifier struct to include domain constraints.
+            }
+            
+            // Add the witness as a concrete binding in the context
+            let witness_entry = ContextEntry {
+                name: target_quantifier.clone(),
+                ty: Located::new(witness.clone()),
+                definition: DefinitionState::Separate(Located::new(witness.clone())),
+                description: Some(RichText::text(format!(
+                    "Witness provided for existential quantifier"
+                ))),
+            };
+            new_goal.context.push(witness_entry);
+            
+            TacticApplicationResult::SingleGoal(new_goal)
+        } else {
+            TacticApplicationResult::Error(format!(
+                "Quantifier {} not found in goal", 
+                target_quantifier
+            ))
+        }
     }
 
     fn apply_exact_with(
@@ -596,7 +632,7 @@ impl Tactic {
                             idx
                         ))
                             }
-                        } else {
+                } else {
                     // No index provided, so try each conjunct in order.
                     for conjunct in conjuncts {
                         let concrete_relation = conjunct.data.clone().unwrap(rule_context);

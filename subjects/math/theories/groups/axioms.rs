@@ -10,7 +10,7 @@ use crate::subjects::math::formalism::proof::{
 };
 use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
 use crate::subjects::math::formalism::theorem::{Axiom, Theorem};
-use crate::turn_render::Identifier;
+use crate::turn_render::{Identifier, RichText, RichTextSegment};
 
 use super::definitions::{Group, GroupExpression};
 
@@ -178,48 +178,63 @@ pub fn group_associativity_axiom() -> Axiom {
 }
 
 /// Returns the identity axiom as a formal theorem.
-/// Statement: ∀ x ∈ G, e ∘ x = x ∧ x ∘ e = x (where e is the identity element)
+/// Statement: ∀ x ∈ G, ∀ e ∈ G, e ∘ x = x ∧ x ∘ e = x (where e is the identity element)
 pub fn group_identity_axiom() -> Axiom {
     // create identifier and context entries
-    let group = Parametrizable::Concrete(Group::new_generic());
+
     let x_id = Identifier::new_simple("x".to_string());
+    let e_id = Identifier::new_simple("e".to_string());
+
+    let group = Parametrizable::Concrete(Group::new_generic());
+
     let group_element_type =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
             group: group.clone(),
             element: None, // No specific element, this represents the type
         }));
 
-    let x_context_entry = crate::subjects::math::formalism::proof::ContextEntry {
-        name: x_id.clone(),
-        ty: Located::new(group_element_type),
-        definition: crate::subjects::math::formalism::proof::DefinitionState::Abstract,
-        description: Some(crate::turn_render::RichText {
-            segments: vec![crate::turn_render::RichTextSegment::Text(
-                "Group element x".to_string(),
-            )],
-            alignment: None,
-        }),
-    };
-    let x_quantifier = crate::subjects::math::formalism::proof::Quantifier {
-        variable_name: x_id.clone(),
-        quantification: Quantification::Universal,
-    };
-
     // create a vec to push them all in
-    let context = vec![x_context_entry];
-    let quantifiers = vec![x_quantifier];
+    let context = vec![
+        ContextEntry {
+            name: x_id.clone(),
+            ty: Located::new(group_element_type.clone()),
+            definition: DefinitionState::Abstract,
+            description: Some(RichText::text("Group element x".to_string())),
+        },
+        ContextEntry {
+            name: e_id.clone(),
+            ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                GroupExpression::Identity(group.clone()),
+            ))),
+            definition: DefinitionState::Abstract,
+            description: Some(RichText::text("Group identity element e".to_string())),
+        },
+    ];
+    let quantifiers = vec![
+        Quantifier {
+            variable_name: x_id.clone(),
+            quantification: Quantification::Universal,
+        },
+        Quantifier {
+            variable_name: e_id.clone(),
+            quantification: Quantification::Universal,
+        },
+    ];
 
     // create statement using the identifiers
     let x_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(x_id)),
+        element: Some(Parametrizable::Variable(x_id.clone())),
     };
-    let identity_gexpr = GroupExpression::Identity(group.clone());
+    let e_var = GroupExpression::Element {
+        group: group.clone(),
+        element: Some(Parametrizable::Variable(e_id.clone())),
+    };
 
     // e * x
     let e_mult_x_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(identity_gexpr.clone())),
+        left: Parametrizable::Concrete(Arc::new(e_var.clone())),
         right: Parametrizable::Concrete(Arc::new(x_var.clone())),
     };
 
@@ -227,7 +242,7 @@ pub fn group_identity_axiom() -> Axiom {
     let x_mult_e_gexpr = GroupExpression::Operation {
         group: group.clone(),
         left: Parametrizable::Concrete(Arc::new(x_var.clone())),
-        right: Parametrizable::Concrete(Arc::new(identity_gexpr)),
+        right: Parametrizable::Concrete(Arc::new(e_var)),
     };
 
     let x_var_mex = MathExpression::Expression(TheoryExpression::Group(x_var));
@@ -237,7 +252,7 @@ pub fn group_identity_axiom() -> Axiom {
         left: Located::new(Parametrizable::Concrete(Arc::new(
             MathExpression::Expression(TheoryExpression::Group(e_mult_x_gexpr)),
         ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(x_var_mex.clone()))),
+        right: Located::new(Parametrizable::Variable(x_id.clone())),
     };
 
     // x * e = x
@@ -245,7 +260,7 @@ pub fn group_identity_axiom() -> Axiom {
         left: Located::new(Parametrizable::Concrete(Arc::new(
             MathExpression::Expression(TheoryExpression::Group(x_mult_e_gexpr)),
         ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(x_var_mex))),
+        right: Located::new(Parametrizable::Variable(x_id.clone())),
     };
 
     let identity_relation = MathRelation::And(vec![
@@ -271,147 +286,69 @@ pub fn group_identity_axiom() -> Axiom {
     }
 }
 
-pub fn test_theorem() -> () {}
-
-pub fn test_theorem_2() -> Theorem {
-    Theorem {
-        id: "test_theorem_2".to_string(),
-        name: "Test Theorem 2".to_string(),
-        description: "This is a test theorem".to_string(),
-        proofs: ProofForest::new_from_goal(ProofGoal {
-            context: vec![],
-            quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::False)),
-        }),
-    }
-}
-
-pub fn group_identity_theorem() -> Theorem {
-    let group = Parametrizable::Concrete(Group::new_generic());
-
-    // Create identifier for the variable
-    let x_id = Identifier::new_simple("x".to_string());
-
-    // Create group element type for the variable
-    let group_element_type =
-        MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
-            group: group.clone(),
-            element: None, // No specific element, this represents the type
-        }));
-
-    // Create the context entry for x
-    let x_context_entry = crate::subjects::math::formalism::proof::ContextEntry {
-        name: x_id.clone(),
-        ty: Located::new(group_element_type),
-        definition: crate::subjects::math::formalism::proof::DefinitionState::Abstract,
-        description: Some(crate::turn_render::RichText {
-            segments: vec![crate::turn_render::RichTextSegment::Text(
-                "Group element x".to_string(),
-            )],
-            alignment: None,
-        }),
-    };
-
-    // Create the quantifier for x
-    let x_quantifier = crate::subjects::math::formalism::proof::Quantifier {
-        variable_name: x_id.clone(),
-        quantification: Quantification::Universal,
-    };
-
-    let x_var = GroupExpression::Element {
-        group: group.clone(),
-        element: Some(Parametrizable::Variable(x_id)),
-    };
-    let identity_gexpr = GroupExpression::Identity(group.clone());
-
-    // e * x
-    let e_mult_x_gexpr = GroupExpression::Operation {
-        group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(identity_gexpr.clone())),
-        right: Parametrizable::Concrete(Arc::new(x_var.clone())),
-    };
-
-    // x * e
-    let x_mult_e_gexpr = GroupExpression::Operation {
-        group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(x_var.clone())),
-        right: Parametrizable::Concrete(Arc::new(identity_gexpr)),
-    };
-
-    let x_var_mex = MathExpression::Expression(TheoryExpression::Group(x_var));
-
-    let left_identity_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(e_mult_x_gexpr)),
-        ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(x_var_mex.clone()))),
-    };
-
-    let right_identity_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(x_mult_e_gexpr)),
-        ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(x_var_mex))),
-    };
-
-    let identity_relation = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(Arc::new(left_identity_rel))),
-        Located::new(Parametrizable::Concrete(Arc::new(right_identity_rel))),
-    ]);
-
-    Theorem {
-        id: "group_identity_theorem".to_string(),
-        name: "Group Identity Theorem".to_string(),
-        description: "There exists an identity element e in G such that for every element x in G, e ∘ x = x and x ∘ e = x.".to_string(),
-        proofs: ProofForest::new_from_goal(ProofGoal {
-            context: vec![x_context_entry],
-            quantifiers: vec![x_quantifier],
-            statement: Located::new(Arc::new(identity_relation)),
-        }),
-    }
-}
-
 /// Returns the inverse axiom as a formal theorem.
-/// Statement: ∀ x ∈ G, x ∘ x⁻¹ = e ∧ x⁻¹ ∘ x = e (existence of inverse for every element)
+/// Statement: ∀ x ∈ G, ∀ e ∈ G, x ∘ x⁻¹ = e ∧ x⁻¹ ∘ x = e (existence of inverse for every element)
 pub fn group_inverse_axiom() -> Axiom {
-    // create identifier and context entries
+    // create identifiers and context entries
     let group = Parametrizable::Concrete(Group::new_generic());
     let x_id = Identifier::new_simple("x".to_string());
+    let e_id = Identifier::new_simple("e".to_string());
 
     let group_element_type =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
             group: group.clone(),
             element: None, // No specific element, this represents the type
         }));
-
-    let x_context_entry = crate::subjects::math::formalism::proof::ContextEntry {
-        name: x_id.clone(),
-        ty: Located::new(group_element_type),
-        definition: crate::subjects::math::formalism::proof::DefinitionState::Abstract,
-        description: Some(crate::turn_render::RichText {
-            segments: vec![crate::turn_render::RichTextSegment::Text(
-                "Group element x".to_string(),
-            )],
-            alignment: None,
-        }),
-    };
-    let x_quantifier = crate::subjects::math::formalism::proof::Quantifier {
-        variable_name: x_id.clone(),
-        quantification: Quantification::Universal,
-    };
 
     // create a vec to push them all in
-    let context = vec![x_context_entry];
-    let quantifiers = vec![x_quantifier];
+    let context = vec![
+        ContextEntry {
+            name: x_id.clone(),
+            ty: Located::new(group_element_type.clone()),
+            definition: DefinitionState::Abstract,
+            description: Some(crate::turn_render::RichText {
+                segments: vec![crate::turn_render::RichTextSegment::Text(
+                    "Group element x".to_string(),
+                )],
+                alignment: None,
+            }),
+        },
+        ContextEntry {
+            name: e_id.clone(),
+            ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                GroupExpression::Identity(group.clone()),
+            ))),
+            definition: DefinitionState::Abstract,
+            description: Some(crate::turn_render::RichText {
+                segments: vec![crate::turn_render::RichTextSegment::Text(
+                    "Group identity element e".to_string(),
+                )],
+                alignment: None,
+            }),
+        },
+    ];
+    let quantifiers = vec![
+        Quantifier {
+            variable_name: x_id.clone(),
+            quantification: Quantification::Universal,
+        },
+        Quantifier {
+            variable_name: e_id.clone(),
+            quantification: Quantification::Universal,
+        },
+    ];
 
     // create statement using the identifiers
     let x_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(x_id)),
+        element: Some(Parametrizable::Variable(x_id.clone())),
     };
-    let identity_gexpr = GroupExpression::Identity(group.clone());
+    let e_var = GroupExpression::Element {
+        group: group.clone(),
+        element: Some(Parametrizable::Variable(e_id.clone())),
+    };
 
-    // x⁻¹
+    // x⁻¹ (using GroupExpression::Inverse)
     let inverse_gexpr = GroupExpression::Inverse {
         group: group.clone(),
         element: Parametrizable::Concrete(Arc::new(x_var.clone())),
@@ -431,14 +368,12 @@ pub fn group_inverse_axiom() -> Axiom {
         right: Parametrizable::Concrete(Arc::new(x_var)),
     };
 
-    let identity_mex = MathExpression::Expression(TheoryExpression::Group(identity_gexpr));
-
     // x * x⁻¹ = e
     let right_inverse_rel = MathRelation::Equal {
         left: Located::new(Parametrizable::Concrete(Arc::new(
             MathExpression::Expression(TheoryExpression::Group(x_mult_inv_gexpr)),
         ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(identity_mex.clone()))),
+        right: Located::new(Parametrizable::Variable(e_id.clone())),
     };
 
     // x⁻¹ * x = e
@@ -446,7 +381,7 @@ pub fn group_inverse_axiom() -> Axiom {
         left: Located::new(Parametrizable::Concrete(Arc::new(
             MathExpression::Expression(TheoryExpression::Group(inv_mult_x_gexpr)),
         ))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(identity_mex))),
+        right: Located::new(Parametrizable::Variable(e_id)),
     };
 
     let inverse_relation = MathRelation::And(vec![

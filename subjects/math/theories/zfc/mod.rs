@@ -241,11 +241,168 @@ impl Set {
 
     /// Returns true if this set is a subset of another set
     pub fn is_subset_of(&self, other: &Set) -> bool {
-        match self {
-            Set::Empty => true, // Empty set is a subset of everything
-            Set::Singleton { element, .. } => other.contains(element),
-            Set::Enumeration { elements, .. } => elements.iter().all(|e| other.contains(e)),
-            _ => false, // Simplified implementation
+        match (self, other) {
+            // Empty set is a subset of everything
+            (Set::Empty, _) => true,
+
+            // Nothing is a subset of empty set except empty set
+            (_, Set::Empty) => matches!(self, Set::Empty),
+
+            // Generic set comparisons based on properties
+            (Set::Generic(self_generic), Set::Generic(other_generic)) => {
+                // For generic sets, self is a subset of other if:
+                // - self has more restrictive properties (self.properties is a superset of other.properties)
+                // - A set with more properties is more constrained, hence a subset of a less constrained set
+                other_generic.properties.is_subset(&self_generic.properties)
+            }
+
+            // Concrete sets are subsets of generic sets if they satisfy the generic properties
+            (
+                Set::Singleton {
+                    properties: self_props,
+                    ..
+                },
+                Set::Generic(other_generic),
+            )
+            | (
+                Set::Enumeration {
+                    properties: self_props,
+                    ..
+                },
+                Set::Generic(other_generic),
+            )
+            | (
+                Set::BinaryUnion {
+                    properties: self_props,
+                    ..
+                },
+                Set::Generic(other_generic),
+            )
+            | (
+                Set::BinaryIntersection {
+                    properties: self_props,
+                    ..
+                },
+                Set::Generic(other_generic),
+            )
+            | (
+                Set::Parametric {
+                    properties: self_props,
+                    ..
+                },
+                Set::Generic(other_generic),
+            ) => {
+                // Concrete set is subset of generic if its properties contain all required properties
+                other_generic.properties.is_subset(self_props)
+            }
+
+            // Generic sets are generally not subsets of concrete sets (too general)
+            (Set::Generic(_), _) => false,
+
+            // Singleton set cases
+            (Set::Singleton { element, .. }, other) => other.contains(element),
+
+            // Enumeration cases
+            (Set::Enumeration { elements, .. }, other) => {
+                elements.iter().all(|e| other.contains(e))
+            }
+
+            // Binary operations subset logic
+            (Set::BinaryUnion { left, right, .. }, other) => {
+                // A ∪ B ⊆ C iff A ⊆ C and B ⊆ C
+                left.is_subset_of(other) && right.is_subset_of(other)
+            }
+
+            (self_set, Set::BinaryUnion { left, right, .. }) => {
+                // A ⊆ B ∪ C iff A ⊆ B or A ⊆ C (or some combination)
+                // This is a conservative approximation - exact logic would be more complex
+                self_set.is_subset_of(left) || self_set.is_subset_of(right)
+            }
+
+            (Set::BinaryIntersection { left, right, .. }, other) => {
+                // A ∩ B ⊆ C iff (A ⊆ C and B ⊆ C) - this follows from A ∩ B ⊆ A and A ∩ B ⊆ B
+                // Actually, A ∩ B is always subset of both A and B, so if either A ⊆ C or B ⊆ C, then A ∩ B ⊆ C
+                // But we need both A ⊆ C and B ⊆ C for this to always hold
+                left.is_subset_of(other) && right.is_subset_of(other)
+            }
+
+            (self_set, Set::BinaryIntersection { left, right, .. }) => {
+                // A ⊆ B ∩ C iff A ⊆ B and A ⊆ C
+                self_set.is_subset_of(left) && self_set.is_subset_of(right)
+            }
+
+            // Set difference cases
+            (Set::SetDifference { left, right, .. }, other) => {
+                // A - B ⊆ C iff A - B ⊆ A ⊆ C (since A - B ⊆ A always)
+                // So we just need to check if left ⊆ other (conservative)
+                left.is_subset_of(other)
+            }
+
+            // Power set cases
+            (self_set, Set::PowerSet { base, .. }) => {
+                // A ⊆ P(B) iff every element of A is a subset of B
+                // This is complex to check without knowing elements, so conservative approach
+                false // Would need element-level analysis
+            }
+
+            (Set::PowerSet { base, .. }, other) => {
+                // P(A) ⊆ B is very restrictive - would need to check that every subset of A is in B
+                false // Conservative approach
+            }
+
+            // Separation cases
+            (Set::Separation { source, .. }, other) => {
+                // {x ∈ A | P(x)} ⊆ B iff {x ∈ A | P(x)} ⊆ A ⊆ B
+                source.is_subset_of(other)
+            }
+
+            // Parametric set cases
+            (
+                Set::Parametric {
+                    description: d1,
+                    membership_condition: m1,
+                    ..
+                },
+                Set::Parametric {
+                    description: d2,
+                    membership_condition: m2,
+                    ..
+                },
+            ) => {
+                // Two parametric sets: subset if same type but first is more constrained
+                d1 == d2 && m1.contains(m2) // Simple string containment check
+            }
+
+            // Cartesian product cases
+            (
+                Set::CartesianProduct {
+                    left: l1,
+                    right: r1,
+                    ..
+                },
+                Set::CartesianProduct {
+                    left: l2,
+                    right: r2,
+                    ..
+                },
+            ) => {
+                // A × B ⊆ C × D iff A ⊆ C and B ⊆ D
+                l1.is_subset_of(l2) && r1.is_subset_of(r2)
+            }
+
+            // Complex cases that need specialized logic
+            (Set::BigUnion { .. }, _)
+            | (Set::BigIntersection { .. }, _)
+            | (Set::Replacement { .. }, _)
+            | (Set::OrderedPair { .. }, _)
+            | (Set::Complement { .. }, _)
+            | (Set::SymmetricDifference { .. }, _) => {
+                // These cases require more sophisticated analysis
+                false // Conservative default - could be refined further
+            }
+
+            // Default case for unhandled combinations
+            _ => false,
         }
     }
 

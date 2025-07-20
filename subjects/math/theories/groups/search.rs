@@ -1,5 +1,5 @@
 use crate::subjects::math::formalism::{
-    expressions::MathExpression,
+    expressions::{MathExpression, TheoryExpression},
     proof::{ContextEntry, tactics::Target},
     search::{IsCompatible, Search},
 };
@@ -137,21 +137,95 @@ impl IsCompatible<TopologicalGroup> for TopologicalGroup {
     }
 }
 
-// impl Search for GroupExpression {
-//     fn find_matches(
-//         &self,
-//         target_id: String,
-//         current_id: String,
-//         target_context: &Vec<ContextEntry>,
-//         pattern: &MathExpression,
-//         pattern_context: &Vec<ContextEntry>,
-//         in_target_scope: bool,
-//     ) -> Vec<String> {
-//         match (self, with) {
-//             (GroupExpression::Identity(l), GroupExpression::Identity(r)) => {
-//                 vec![]
-//             }
-//             _ => vec![],
-//         }
-//     }
-// }
+impl Search for GroupExpression {
+    fn find_matches(
+        &self,
+        target: Target,
+        current_id: String,
+        target_context: &Vec<ContextEntry>,
+        pattern: &MathExpression,
+        pattern_context: &Vec<ContextEntry>,
+        in_target_scope: bool,
+    ) -> Vec<String> {
+        let mut matches = Vec::new();
+        let is_in_scope_now = in_target_scope || current_id == target.id;
+        if let MathExpression::Expression(theory_expr) = pattern {
+            if let TheoryExpression::Group(group_expr) = theory_expr {
+                if is_in_scope_now {
+                    if (*self).is_compatible(
+                        target.clone(),
+                        target_context,
+                        group_expr,
+                        pattern_context,
+                    ) {
+                        matches.push(current_id.clone());
+                    }
+                }
+            }
+        }
+
+        matches
+    }
+}
+
+impl IsCompatible<GroupExpression> for GroupExpression {
+    fn is_compatible(
+        &self,
+        target: Target,
+        target_context: &Vec<ContextEntry>,
+        pattern: &GroupExpression,
+        pattern_context: &Vec<ContextEntry>,
+    ) -> bool {
+        match (self, pattern) {
+            (GroupExpression::Identity(l), GroupExpression::Identity(r)) => {
+                l.unwrap(target_context).is_compatible(
+                    target.clone(),
+                    target_context,
+                    &r.unwrap(target_context),
+                    pattern_context,
+                )
+            }
+            (
+                GroupExpression::Inverse { group, element },
+                GroupExpression::Inverse {
+                    group: r_group,
+                    element: r_element,
+                },
+            ) => group.unwrap(target_context).is_compatible(
+                target.clone(),
+                target_context,
+                &r_group.unwrap(target_context),
+                pattern_context,
+            ),
+            (
+                GroupExpression::Operation { group, left, right },
+                GroupExpression::Operation {
+                    group: r_group,
+                    left: r_left,
+                    right: r_right,
+                },
+            ) => group.unwrap(target_context).is_compatible(
+                target.clone(),
+                target_context,
+                &r_group.unwrap(target_context),
+                pattern_context,
+            ),
+            (
+                GroupExpression::Element {
+                    group: l_group,
+                    element: l_element,
+                },
+                GroupExpression::Element {
+                    group: r_group,
+                    element: r_element,
+                },
+            ) => l_group.unwrap(target_context).is_compatible(
+                target,
+                target_context,
+                &r_group.unwrap(target_context),
+                pattern_context,
+            ),
+            _ => false,
+        }
+    }
+}

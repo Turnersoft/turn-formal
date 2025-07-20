@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-use super::{proof::ContextEntry, proof::tactics::Target};
+use super::proof::{ContextEntry, tactics::Target};
 
 pub trait Search {
     fn find_matches(
@@ -59,35 +59,6 @@ impl Search for MathExpression {
             }
         }
 
-        let sub_matches = match &self {
-            MathExpression::Relation(rel) => rel.find_matches(
-                target,
-                current_id,
-                target_context,
-                pattern,
-                pattern_context,
-                is_in_scope_now,
-            ),
-            MathExpression::Object(obj) => obj.find_matches(
-                target,
-                current_id,
-                target_context,
-                pattern,
-                pattern_context,
-                is_in_scope_now,
-            ),
-            MathExpression::Expression(expr) => expr.find_matches(
-                target,
-                current_id,
-                target_context,
-                pattern,
-                pattern_context,
-                is_in_scope_now,
-            ),
-            _ => Vec::new(),
-        };
-
-        matches.extend(sub_matches);
         matches
     }
 }
@@ -128,6 +99,13 @@ impl Search for MathRelation {
         let mut matches = Vec::new();
         let is_in_scope_now = in_target_scope || current_id == target.id;
 
+        println!("DEBUG: searching for matches in relation: {:#?}", self);
+        println!("DEBUG: target: {:#?}", target);
+        println!("DEBUG: current_id: {:#?}", current_id);
+        println!("DEBUG: target_context: {:#?}", target_context);
+        println!("DEBUG: pattern: {:#?}", pattern);
+        println!("DEBUG: pattern_context: {:#?}", pattern_context);
+        println!("DEBUG: in_target_scope: {:?}", in_target_scope);
         // Only check compatibility if the pattern is also a relation
         if is_in_scope_now {
             if let Ok(pattern_rel) = pattern.get_relation() {
@@ -138,7 +116,12 @@ impl Search for MathRelation {
                     pattern_context,
                 ) {
                     matches.push(current_id.clone());
+                    println!("DEBUG: found match in current scope: {:#?}", current_id);
+                } else {
+                    println!("DEBUG: no match in current scope: {:#?}", current_id);
                 }
+            } else {
+                println!("DEBUG: pattern is not a relation: {:#?}", pattern);
             }
             // If pattern is not a relation, we can't match at this level,
             // but we should still search children
@@ -146,22 +129,28 @@ impl Search for MathRelation {
 
         let sub_matches = match self {
             MathRelation::Equal { left, right } => {
+                println!(
+                    "DEBUG: searching for matches in equal relation: {:#?}",
+                    self
+                );
                 let mut left_matches = left.data.unwrap(&target_context).find_matches(
                     target.clone(),
-                    current_id.clone(),
+                    left.id.clone(),
                     target_context,
                     pattern,
                     pattern_context,
                     is_in_scope_now,
                 );
+                println!("DEBUG: left_matches: {:#?}", left_matches);
                 let right_matches = right.data.unwrap(&target_context).find_matches(
                     target.clone(),
-                    current_id.clone(),
+                    right.id.clone(),
                     target_context,
                     pattern,
                     pattern_context,
                     is_in_scope_now,
                 );
+                println!("DEBUG: right_matches: {:#?}", right_matches);
                 left_matches.extend(right_matches);
                 left_matches
             }
@@ -382,8 +371,21 @@ impl Search for TheoryExpression {
             // but we should still search children
         }
 
+        let sub_matches = match self {
+            TheoryExpression::Group(group) => group.find_matches(
+                target.clone(),
+                current_id.clone(),
+                target_context,
+                pattern,
+                pattern_context,
+                is_in_scope_now,
+            ),
+            _ => todo!(),
+        };
+
         // For now, we don't recursively search within theory expressions
         // This can be enhanced later to search within group/ring/field expressions
+        matches.extend(sub_matches);
         matches
     }
 }
@@ -396,19 +398,18 @@ impl IsCompatible<TheoryExpression> for TheoryExpression {
         pattern: &TheoryExpression,
         pattern_context: &Vec<ContextEntry>,
     ) -> bool {
-        // Basic structural compatibility check
+        // Deep structural compatibility check using StructurallyEquivalent trait
+
         match (self, pattern) {
             (TheoryExpression::Group(self_group), TheoryExpression::Group(pattern_group)) => {
-                // For now, we do a simple equality check
-                // This can be enhanced later with more sophisticated matching
-                self_group == pattern_group
+                self_group.is_compatible(target, target_context, pattern_group, pattern_context)
             }
-            (TheoryExpression::Ring(self_ring), TheoryExpression::Ring(pattern_ring)) => {
-                self_ring == pattern_ring
-            }
-            (TheoryExpression::Field(self_field), TheoryExpression::Field(pattern_field)) => {
-                self_field == pattern_field
-            }
+            // (TheoryExpression::Ring(self_ring), TheoryExpression::Ring(pattern_ring)) => {
+            //     self_ring.structurally_equivalent(pattern_ring, target_context)
+            // }
+            // (TheoryExpression::Field(self_field), TheoryExpression::Field(pattern_field)) => {
+            //     self_field.structurally_equivalent(pattern_field, target_context)
+            // }
             _ => false,
         }
     }

@@ -17,6 +17,7 @@ use crate::{
 use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
 /// A trait for instantiating meta-variables by comparing a concrete expression (`self`) to a pattern.
+/// we only map meta-variables in pattern to expression/variables in target, we will never allow pattern to have more
 pub trait Instantiable: Sized {
     fn instantiate_meta_variables(
         &self, // The concrete target expression
@@ -425,25 +426,29 @@ impl Replace for MathRelation {
             MathRelation::Equal { left, right } => {
                 let new_left_expr = left.data.unwrap(target_context);
                 let new_right_expr = right.data.unwrap(target_context);
-
-                let new_left =
-                    Located::new(Parametrizable::Concrete(Arc::new(new_left_expr.replace(
-                        current_id,
+                // during a replace, creating Located<> is important, we need to track the before and after so that we can
+                let new_left = Located {
+                    id: left.id.clone(),
+                    data: Parametrizable::Concrete(Arc::new(new_left_expr.replace(
+                        &left.id,
                         target,
                         target_context,
                         pattern,
                         replacement,
                         pattern_and_replacement_context,
-                    ))));
-                let new_right =
-                    Located::new(Parametrizable::Concrete(Arc::new(new_right_expr.replace(
-                        current_id,
+                    ))),
+                };
+                let new_right = Located {
+                    id: right.id.clone(),
+                    data: Parametrizable::Concrete(Arc::new(new_right_expr.replace(
+                        &right.id,
                         target,
                         target_context,
                         pattern,
                         replacement,
                         pattern_and_replacement_context,
-                    ))));
+                    ))),
+                };
                 MathRelation::Equal {
                     left: new_left,
                     right: new_right,
