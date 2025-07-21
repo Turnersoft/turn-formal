@@ -14,6 +14,7 @@ pub mod detag;
 pub mod render;
 pub mod replace;
 
+pub mod collect_identifier;
 pub mod search;
 pub mod tests;
 pub mod theorems;
