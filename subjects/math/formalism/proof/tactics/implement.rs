@@ -457,7 +457,7 @@ impl Tactic {
         let theorem_expr = MathExpression::Relation(theorem_statement.data.clone());
 
         let instantiations =
-            goal_expr.instantiate_meta_variables(&goal.context, &theorem_expr, &theorem_context);
+            goal_expr.instantiate(&goal.context, &theorem_expr, &theorem_context);
 
         // Create a MathExpression wrapper for substitution
         let theorem_expr_wrapper = MathExpression::Relation(theorem_statement.data.clone());

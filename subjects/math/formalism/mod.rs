@@ -8,10 +8,10 @@
 pub mod abstraction_level;
 pub mod automation;
 pub mod complexity;
+pub mod detag;
 pub mod expressions;
 pub mod extract;
 pub mod foundational_axioms;
-pub mod getter;
 pub mod interpretation;
 pub mod location;
 pub mod objects;

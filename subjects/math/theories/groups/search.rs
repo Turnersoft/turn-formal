@@ -1,4 +1,5 @@
 use crate::subjects::math::formalism::{
+    detag::TryDetag,
     expressions::{MathExpression, TheoryExpression},
     proof::{ContextEntry, tactics::Target},
     search::{IsCompatible, Search},
@@ -16,18 +17,20 @@ impl Search for Group {
         pattern_context: &Vec<ContextEntry>,
         in_target_scope: bool,
     ) -> Vec<String> {
-        let group_pattern = pattern.get_object().unwrap().get_group().unwrap();
         let mut matches = Vec::new();
-        let is_in_scope_now = in_target_scope || current_id == target.id;
 
-        if is_in_scope_now {
-            if (*self).is_compatible(
-                target.clone(),
-                target_context,
-                &group_pattern,
-                pattern_context,
-            ) {
-                matches.push(current_id.clone());
+        if let Ok(group_pattern) = pattern.try_detag() {
+            let is_in_scope_now = in_target_scope || current_id == target.id;
+
+            if is_in_scope_now {
+                if (*self).is_compatible(
+                    target.clone(),
+                    target_context,
+                    group_pattern,
+                    pattern_context,
+                ) {
+                    matches.push(current_id.clone());
+                }
             }
         }
 

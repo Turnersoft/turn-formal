@@ -5,14 +5,12 @@
 //! along with macros for convenient manipulation of group expressions.
 
 pub mod abstraction_level;
+pub mod axioms;
+pub mod case_generator;
 pub mod checker;
 pub mod complexity;
 pub mod definitions;
-// pub mod extract;
-// pub mod leptos;
-pub mod axioms;
-pub mod case_generator;
-pub mod getters;
+pub mod detag;
 pub mod render;
 pub mod replace;
 

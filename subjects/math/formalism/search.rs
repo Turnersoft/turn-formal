@@ -1,6 +1,7 @@
 use crate::{
     foundational_theories::type_theory::calculi::cic::reduction,
     subjects::math::formalism::{
+        detag::TryDetag,
         expressions::{MathExpression, TheoryExpression},
         location::Located,
         objects::MathObject,
@@ -108,7 +109,7 @@ impl Search for MathRelation {
         println!("DEBUG: in_target_scope: {:?}", in_target_scope);
         // Only check compatibility if the pattern is also a relation
         if is_in_scope_now {
-            if let Ok(pattern_rel) = pattern.get_relation() {
+            if let Ok(pattern_rel) = pattern.try_detag() {
                 if self.is_compatible(
                     target.clone(),
                     target_context,
@@ -292,7 +293,7 @@ impl Search for MathObject {
 
         // Only check compatibility if the pattern is also an object
         if is_in_scope_now {
-            if let Ok(pattern_obj) = pattern.get_object() {
+            if let Ok(pattern_obj) = pattern.try_detag() {
                 if self.is_compatible(
                     target.clone(),
                     target_context,
@@ -355,9 +356,9 @@ impl Search for TheoryExpression {
         let mut matches = Vec::new();
         let is_in_scope_now = in_target_scope || current_id == target.id;
 
-        // Only check compatibility if the pattern is also a theory expression
+        // Only check compatibility if the pattern is also an expression
         if is_in_scope_now {
-            if let Ok(pattern_expr) = pattern.get_expression() {
+            if let Ok(pattern_expr) = pattern.try_detag() {
                 if self.is_compatible(
                     target.clone(),
                     target_context,
@@ -367,7 +368,7 @@ impl Search for TheoryExpression {
                     matches.push(current_id.clone());
                 }
             }
-            // If pattern is not a theory expression, we can't match at this level,
+            // If pattern is not an expression, we can't match at this level,
             // but we should still search children
         }
 

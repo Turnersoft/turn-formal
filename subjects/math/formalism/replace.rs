@@ -6,7 +6,7 @@ use crate::subjects::math::theories::zfc::definitions::Set;
 use crate::{
     subjects::math::formalism::{
         expressions::{MathExpression, TheoryExpression},
-        extract::{Extractable, Parametrizable},
+        extract::Parametrizable,
         location::Located,
         objects::MathObject,
         proof::{ContextEntry, tactics::Target},
@@ -16,10 +16,12 @@ use crate::{
 };
 use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
+use super::detag::TryDetag;
+
 /// A trait for instantiating meta-variables by comparing a concrete expression (`self`) to a pattern.
 /// we only map meta-variables in pattern to expression/variables in target, we will never allow pattern to have more
 pub trait Instantiable: Sized {
-    fn instantiate_meta_variables(
+    fn instantiate(
         &self, // The concrete target expression
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
@@ -59,11 +61,8 @@ impl Replace for MathExpression {
         pattern_and_replacement_context: &Vec<ContextEntry>,
     ) -> Self {
         if current_id == target.id {
-            let instantiations = self.instantiate_meta_variables(
-                target_context,
-                pattern,
-                pattern_and_replacement_context,
-            );
+            let instantiations =
+                self.instantiate(target_context, pattern, pattern_and_replacement_context);
             return replacement.substitute(&instantiations, pattern_and_replacement_context);
         }
 
@@ -98,20 +97,14 @@ impl Replace for MathExpression {
 }
 
 impl Instantiable for MathExpression {
-    fn instantiate_meta_variables(
+    fn instantiate(
         &self,
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
     ) -> HashMap<Identifier, MathExpression> {
         let mut instantiations = HashMap::new();
-        instantiate_recursive(
-            self,
-            target_context,
-            pattern,
-            pattern_context,
-            &mut instantiations,
-        );
+
         instantiations
     }
 }
@@ -156,58 +149,6 @@ impl Substitutable for MathExpression {
     }
 }
 
-fn instantiate_recursive(
-    target: &MathExpression,
-    target_context: &Vec<ContextEntry>,
-    pattern: &MathExpression,
-    pattern_context: &Vec<ContextEntry>,
-    instantiations: &mut HashMap<Identifier, MathExpression>,
-) {
-    if let MathExpression::Object(obj) = pattern {
-        if let MathObject::Group(Group::Generic(generic_group)) = &**obj {
-            if let Set::Parametric { description, .. } = &generic_group.base_set {
-                if is_meta_variable(description, pattern_context) {
-                    instantiations
-                        .insert(Identifier::new_simple(description.clone()), target.clone());
-                    return;
-                }
-            }
-        }
-    }
-
-    match (target, pattern) {
-        (MathExpression::Relation(target_rel), MathExpression::Relation(pattern_rel)) => {
-            if let (
-                MathRelation::Equal {
-                    left: tl,
-                    right: tr,
-                },
-                MathRelation::Equal {
-                    left: pl,
-                    right: pr,
-                },
-            ) = (&**target_rel, &**pattern_rel)
-            {
-                instantiate_recursive(
-                    &tl.data.unwrap(target_context),
-                    target_context,
-                    &pl.data.unwrap(pattern_context),
-                    pattern_context,
-                    instantiations,
-                );
-                instantiate_recursive(
-                    &tr.data.unwrap(target_context),
-                    target_context,
-                    &pr.data.unwrap(pattern_context),
-                    pattern_context,
-                    instantiations,
-                );
-            }
-        }
-        _ => {}
-    }
-}
-
 impl<T: Substitutable> Substitutable for Located<T> {
     fn substitute(
         &self,
@@ -234,7 +175,7 @@ impl<T: Substitutable> Substitutable for Arc<T> {
 
 impl<T: Substitutable + Clone + Debug + 'static> Substitutable for Parametrizable<T>
 where
-    T: Extractable,
+    T: TryDetag<T>,
 {
     fn substitute(
         &self,
@@ -250,7 +191,7 @@ where
                     // This is tricky. The expression has a specific type `T`, but the
                     // substituted expression is a generic `MathExpression`. We need to
                     // attempt to extract the correct type.
-                    let concrete_value = expr.extract::<T>();
+                    let concrete_value = TryDetag::<T>::detag(expr).clone();
                     Parametrizable::Concrete(concrete_value)
                 } else {
                     self.clone()
@@ -408,11 +349,8 @@ impl Replace for MathRelation {
         // If this node is the target, we perform the replacement at the MathExpression level.
         if current_id == target.id {
             let expr_wrapper = MathExpression::Relation(Arc::new(self.clone()));
-            let instantiations = expr_wrapper.instantiate_meta_variables(
-                target_context,
-                pattern,
-                pattern_and_replacement_context,
-            );
+            let instantiations =
+                expr_wrapper.instantiate(target_context, pattern, pattern_and_replacement_context);
             let result_expr =
                 replacement.substitute(&instantiations, pattern_and_replacement_context);
             if let MathExpression::Relation(new_rel) = result_expr {
