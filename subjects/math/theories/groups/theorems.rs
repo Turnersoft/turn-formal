@@ -42,56 +42,52 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     let e_id = Identifier::new_simple("e".to_string());
 
     let identity_expr = MathExpression::Expression(TheoryExpression::Group(
-        GroupExpression::Identity(Parametrizable::Variable(group_id.clone())),
+        GroupExpression::Identity(Located::new_variable(group_id.clone())),
     ));
 
     // Premise: g*h1 = e ∧ g*h2 = e
     let premise_conjunct1 = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
-                group: Parametrizable::Variable(group_id.clone()),
-                left: Parametrizable::Variable(g_id.clone()),
-                right: Parametrizable::Variable(h1_id.clone()),
-            })),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            GroupExpression::Operation {
+                group: Located::new_variable(group_id.clone()),
+                left: Located::new_variable(g_id.clone()),
+                right: Located::new_variable(h1_id.clone()),
+            },
         ))),
-        right: Located::new(Parametrizable::Variable(e_id.clone())),
+        right: Located::new_variable(e_id.clone()),
     };
     let premise_conjunct2 = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
-                group: Parametrizable::Variable(group_id.clone()),
-                left: Parametrizable::Variable(g_id.clone()),
-                right: Parametrizable::Variable(h2_id.clone()),
-            })),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            GroupExpression::Operation {
+                group: Located::new_variable(group_id.clone()),
+                left: Located::new_variable(g_id.clone()),
+                right: Located::new_variable(h2_id.clone()),
+            },
         ))),
-        right: Located::new(Parametrizable::Variable(e_id.clone())),
+        right: Located::new_variable(e_id.clone()),
     };
 
     let premise = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(Arc::new(
-            premise_conjunct1.clone(),
-        ))),
-        Located::new(Parametrizable::Concrete(Arc::new(
-            premise_conjunct2.clone(),
-        ))),
+        Located::new_concrete(premise_conjunct1.clone()),
+        Located::new_concrete(premise_conjunct2.clone()),
     ]);
 
     // Conclusion: h1 = h2
     let conclusion = MathRelation::Equal {
-        left: Located::new(Parametrizable::Variable(h1_id.clone())),
-        right: Located::new(Parametrizable::Variable(h2_id.clone())),
+        left: Located::new_variable(h1_id.clone()),
+        right: Located::new_variable(h2_id.clone()),
     };
 
     let goal_statement = MathRelation::Implies(
-        Located::new(Parametrizable::Concrete(Arc::new(premise))),
-        Located::new(Parametrizable::Concrete(Arc::new(conclusion.clone()))),
+        Located::new_concrete(premise),
+        Located::new_concrete(conclusion.clone()),
     );
 
     let goal = ProofGoal {
         context: vec![
             ContextEntry {
                 name: group_id.clone(),
-                ty: Located::new(MathExpression::Object(Arc::new(MathObject::Group(
+                ty: Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
                     group.clone(),
                 )))),
                 definition: DefinitionState::Abstract,
@@ -99,9 +95,9 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             },
             ContextEntry {
                 name: g_id.clone(),
-                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
                     GroupExpression::Element {
-                        group: Parametrizable::Variable(group_id.clone()),
+                        group: Located::new_variable(group_id.clone()),
                         element: None,
                     },
                 ))),
@@ -110,9 +106,9 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             },
             ContextEntry {
                 name: h1_id.clone(),
-                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
                     GroupExpression::Element {
-                        group: Parametrizable::Variable(group_id.clone()),
+                        group: Located::new_variable(group_id.clone()),
                         element: None,
                     },
                 ))),
@@ -121,9 +117,9 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             },
             ContextEntry {
                 name: h2_id.clone(),
-                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
                     GroupExpression::Element {
-                        group: Parametrizable::Variable(group_id.clone()),
+                        group: Located::new_variable(group_id.clone()),
                         element: None,
                     },
                 ))),
@@ -132,15 +128,15 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             },
             ContextEntry {
                 name: e_id.clone(),
-                ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
-                    GroupExpression::Identity(Parametrizable::Variable(group_id.clone())),
+                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+                    GroupExpression::Identity(Located::new_variable(group_id.clone())),
                 ))),
                 definition: DefinitionState::Abstract,
                 description: None,
             },
         ],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(goal_statement.clone())),
+        statement: Located::new_concrete(goal_statement.clone()),
     };
 
     let mut proofs = ProofForest::new_from_goal(goal);
@@ -173,17 +169,21 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: e * h1 = h2
     let p3_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p2_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::Theorem(
-                        "group_identity_axiom".to_string(),
-                        Some(0),
-                    ),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Backward,
+            if let Some(statement_arc) = p2_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::Theorem(
+                            "group_inverse_axiom".to_string(),
+                            Some(1),
+                        ),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Backward,
+                    }
+                } else {
+                    panic!("p2 goal not an equality")
                 }
             } else {
-                panic!("p2 goal not an equality")
+                panic!("p2 goal is not a statement")
             }
         };
         p2_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -194,14 +194,21 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: (g⁻¹ * g) * h1 = h2
     let p4_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p3_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::Theorem("group_inverse_axiom".to_string(), Some(1)),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Backward,
+            if let Some(statement_arc) = p3_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::Theorem(
+                            "group_inverse_axiom".to_string(),
+                            Some(1),
+                        ),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Backward,
+                    }
+                } else {
+                    panic!("p3 goal not an equality")
                 }
             } else {
-                panic!("p3 goal not an equality")
+                panic!("p3 goal is not a statement")
             }
         };
         p3_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -212,14 +219,21 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * (g * h1) = h2
     let p5_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p4_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::Theorem("group_associativity".to_string(), None),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Forward,
+            if let Some(statement_arc) = p4_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::Theorem(
+                            "group_associativity".to_string(),
+                            None,
+                        ),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Forward,
+                    }
+                } else {
+                    panic!("p4 goal not an equality")
                 }
             } else {
-                panic!("p4 goal is not an equality")
+                panic!("p4 goal is not a statement")
             }
         };
         p4_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -230,14 +244,18 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * e = h2
     let p6_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p5_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::LocalAssumption(hyp1.clone()),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Forward,
+            if let Some(statement_arc) = p5_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::LocalAssumption(hyp1.clone()),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Forward,
+                    }
+                } else {
+                    panic!("p5 goal not an equality")
                 }
             } else {
-                panic!("p5 goal is not an equality")
+                panic!("p5 goal is not a statement")
             }
         };
         p5_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -248,14 +266,18 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * (g * h2) = h2
     let p7_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p6_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::LocalAssumption(hyp2.clone()),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Backward, // e -> g*h2
+            if let Some(statement_arc) = p6_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::LocalAssumption(hyp2.clone()),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Backward, // e -> g*h2
+                    }
+                } else {
+                    panic!("p6 goal not an equality")
                 }
             } else {
-                panic!("p6 goal is not an equality")
+                panic!("p6 goal is not a statement")
             }
         };
         p6_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -266,14 +288,21 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: (g⁻¹ * g) * h2 = h2
     let p8_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p7_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::Theorem("group_associativity".to_string(), None),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Forward,
+            if let Some(statement_arc) = p7_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::Theorem(
+                            "group_associativity".to_string(),
+                            None,
+                        ),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Forward,
+                    }
+                } else {
+                    panic!("p7 goal not an equality")
                 }
             } else {
-                panic!("p7 goal is not an equality")
+                panic!("p7 goal is not a statement")
             }
         };
         p7_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -284,14 +313,21 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: e * h2 = h2
     let p9_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p8_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::Theorem("group_inverse_axiom".to_string(), Some(0)),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Forward,
+            if let Some(statement_arc) = p8_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::Theorem(
+                            "group_inverse_axiom".to_string(),
+                            Some(0),
+                        ),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Forward,
+                    }
+                } else {
+                    panic!("p8 goal not an equality")
                 }
             } else {
-                panic!("p8 goal is not an equality")
+                panic!("p8 goal is not a statement")
             }
         };
         p8_node.apply_tactic(tactic, &mut proofs).primary_node()
@@ -302,17 +338,21 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: h2 = h2
     let p10_node = {
         let tactic = {
-            if let MathRelation::Equal { left, .. } = &*p9_node.get_goal().statement.data {
-                Tactic::Rewrite {
-                    using_rule: RelationSource::Theorem(
-                        "group_identity_axiom".to_string(),
-                        Some(0),
-                    ),
-                    target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                    direction: RewriteDirection::Forward,
+            if let Some(statement_arc) = p9_node.get_goal().statement.concrete_value() {
+                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::Theorem(
+                            "group_identity_axiom".to_string(),
+                            Some(0),
+                        ),
+                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
+                        direction: RewriteDirection::Forward,
+                    }
+                } else {
+                    panic!("p9 goal not an equality")
                 }
             } else {
-                panic!("p9 goal is not an equality")
+                panic!("p9 goal is not a statement")
             }
         };
         p9_node.apply_tactic(tactic, &mut proofs).primary_node()

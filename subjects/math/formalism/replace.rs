@@ -149,15 +149,34 @@ impl Substitutable for MathExpression {
     }
 }
 
-impl<T: Substitutable> Substitutable for Located<T> {
+impl<T: Substitutable + Clone + Debug + 'static> Substitutable for Located<T>
+where
+    T: TryDetag<T>,
+{
     fn substitute(
         &self,
         instantiations: &HashMap<Identifier, MathExpression>,
         context: &Vec<ContextEntry>,
     ) -> Self {
+        let new_data = match &self.data {
+            Parametrizable::Concrete(arc_value) => {
+                let substituted_value = arc_value.substitute(instantiations, context);
+                Parametrizable::Concrete(substituted_value)
+            }
+            Parametrizable::Variable(id) => {
+                if let Some(expr) = instantiations.get(id) {
+                    // Extract the correct type from the substituted expression
+                    let concrete_value = TryDetag::<T>::detag(expr).clone();
+                    Parametrizable::Concrete(Arc::new(concrete_value))
+                } else {
+                    self.data.clone()
+                }
+            }
+        };
+
         Located {
             id: self.id.clone(),
-            data: self.data.substitute(instantiations, context),
+            data: new_data,
         }
     }
 }
@@ -170,34 +189,6 @@ impl<T: Substitutable> Substitutable for Arc<T> {
         context: &Vec<ContextEntry>,
     ) -> Self {
         Arc::new((**self).substitute(instantiations, context))
-    }
-}
-
-impl<T: Substitutable + Clone + Debug + 'static> Substitutable for Parametrizable<T>
-where
-    T: TryDetag<T>,
-{
-    fn substitute(
-        &self,
-        instantiations: &HashMap<Identifier, MathExpression>,
-        context: &Vec<ContextEntry>,
-    ) -> Self {
-        match self {
-            Parametrizable::Concrete(value) => {
-                Parametrizable::Concrete(value.substitute(instantiations, context))
-            }
-            Parametrizable::Variable(id) => {
-                if let Some(expr) = instantiations.get(id) {
-                    // This is tricky. The expression has a specific type `T`, but the
-                    // substituted expression is a generic `MathExpression`. We need to
-                    // attempt to extract the correct type.
-                    let concrete_value = TryDetag::<T>::detag(expr).clone();
-                    Parametrizable::Concrete(concrete_value)
-                } else {
-                    self.clone()
-                }
-            }
-        }
     }
 }
 

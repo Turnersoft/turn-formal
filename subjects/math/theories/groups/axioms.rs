@@ -20,9 +20,9 @@ pub fn group_closure_axiom() -> Axiom {
     // TODO: The current system cannot formally express the typing judgement `a ∘ b ∈ G`.
     // This is a placeholder theorem. The statement is informally described.
     // A proper implementation requires extending MathRelation to support membership.
-    let group = Parametrizable::Concrete(Group::new_generic());
-    let a_var = Parametrizable::Variable(Identifier::new_simple("a".to_string()));
-    let b_var = Parametrizable::Variable(Identifier::new_simple("b".to_string()));
+    let group = Located::new_concrete(Group::new_generic());
+    let a_var = Located::new_variable(Identifier::new_simple("a".to_string()));
+    let b_var = Located::new_variable(Identifier::new_simple("b".to_string()));
 
     let operation =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
@@ -34,14 +34,14 @@ pub fn group_closure_axiom() -> Axiom {
     // Placeholder: Using an equality that is trivially true `a ∘ b = a ∘ b`.
     // The description field is the important part for now.
     let closure_relation = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(operation.clone()))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(operation))),
+        left: Located::new_concrete(operation.clone()),
+        right: Located::new_concrete(operation),
     };
 
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(closure_relation)),
+        statement: Located::new_concrete(closure_relation),
     };
 
     Axiom {
@@ -56,7 +56,7 @@ pub fn group_closure_axiom() -> Axiom {
 /// Statement: ∀ x, y, z ∈ G, (x ∘ y) ∘ z = x ∘ (y ∘ z)
 pub fn group_associativity_axiom() -> Axiom {
     // create identifier and context entries
-    let group = Parametrizable::Concrete(Group::new_generic());
+    let group = Located::new_concrete(Group::new_generic());
     let x_id = Identifier::new_simple("x".to_string());
     let y_id = Identifier::new_simple("y".to_string());
     let z_id = Identifier::new_simple("z".to_string());
@@ -69,7 +69,7 @@ pub fn group_associativity_axiom() -> Axiom {
 
     let x_context_entry = crate::subjects::math::formalism::proof::ContextEntry {
         name: x_id.clone(),
-        ty: Located::new(group_element_type.clone()),
+        ty: Located::new_concrete(group_element_type.clone()),
         definition: crate::subjects::math::formalism::proof::DefinitionState::Abstract,
         description: Some(crate::turn_render::RichText {
             segments: vec![crate::turn_render::RichTextSegment::Text(
@@ -80,7 +80,7 @@ pub fn group_associativity_axiom() -> Axiom {
     };
     let y_context_entry = ContextEntry {
         name: y_id.clone(),
-        ty: Located::new(group_element_type.clone()),
+        ty: Located::new_concrete(group_element_type.clone()),
         definition: DefinitionState::Abstract,
         description: Some(crate::turn_render::RichText {
             segments: vec![crate::turn_render::RichTextSegment::Text(
@@ -91,7 +91,7 @@ pub fn group_associativity_axiom() -> Axiom {
     };
     let z_context_entry = ContextEntry {
         name: z_id.clone(),
-        ty: Located::new(group_element_type),
+        ty: Located::new_concrete(group_element_type),
         definition: DefinitionState::Abstract,
         description: Some(crate::turn_render::RichText {
             segments: vec![crate::turn_render::RichTextSegment::Text(
@@ -121,51 +121,51 @@ pub fn group_associativity_axiom() -> Axiom {
     // create statement using the identifiers
     let x_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(x_id)),
+        element: Some(Located::new_variable(x_id)),
     };
     let y_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(y_id)),
+        element: Some(Located::new_variable(y_id)),
     };
     let z_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(z_id)),
+        element: Some(Located::new_variable(z_id)),
     };
 
     // (x * y) * z
     let xy_mult_z =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
             group: group.clone(),
-            left: Parametrizable::Concrete(Arc::new(GroupExpression::Operation {
+            left: Located::new_concrete(GroupExpression::Operation {
                 group: group.clone(),
-                left: Parametrizable::Concrete(Arc::new(x_var.clone())),
-                right: Parametrizable::Concrete(Arc::new(y_var.clone())),
-            })),
-            right: Parametrizable::Concrete(Arc::new(z_var.clone())),
+                left: Located::new_concrete(x_var.clone()),
+                right: Located::new_concrete(y_var.clone()),
+            }),
+            right: Located::new_concrete(z_var.clone()),
         }));
 
     // x * (y * z)
     let x_mult_yz =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
             group: group.clone(),
-            left: Parametrizable::Concrete(Arc::new(x_var.clone())),
-            right: Parametrizable::Concrete(Arc::new(GroupExpression::Operation {
+            left: Located::new_concrete(x_var.clone()),
+            right: Located::new_concrete(GroupExpression::Operation {
                 group: group.clone(),
-                left: Parametrizable::Concrete(Arc::new(y_var.clone())),
-                right: Parametrizable::Concrete(Arc::new(z_var.clone())),
-            })),
+                left: Located::new_concrete(y_var.clone()),
+                right: Located::new_concrete(z_var.clone()),
+            }),
         }));
 
     let associativity_relation = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(xy_mult_z))),
-        right: Located::new(Parametrizable::Concrete(Arc::new(x_mult_yz))),
+        left: Located::new_concrete(xy_mult_z),
+        right: Located::new_concrete(x_mult_yz),
     };
 
     // create the goal with statement, context, and quantifiers
     let goal = ProofGoal {
         context,
         quantifiers,
-        statement: Located::new(Arc::new(associativity_relation)),
+        statement: Located::new_concrete(associativity_relation),
     };
 
     // return the theorem
@@ -185,7 +185,7 @@ pub fn group_identity_axiom() -> Axiom {
     let x_id = Identifier::new_simple("x".to_string());
     let e_id = Identifier::new_simple("e".to_string());
 
-    let group = Parametrizable::Concrete(Group::new_generic());
+    let group = Located::new_concrete(Group::new_generic());
 
     let group_element_type =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Element {
@@ -197,13 +197,13 @@ pub fn group_identity_axiom() -> Axiom {
     let context = vec![
         ContextEntry {
             name: x_id.clone(),
-            ty: Located::new(group_element_type.clone()),
+            ty: Located::new_concrete(group_element_type.clone()),
             definition: DefinitionState::Abstract,
             description: Some(RichText::text("Group element x".to_string())),
         },
         ContextEntry {
             name: e_id.clone(),
-            ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+            ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
                 GroupExpression::Identity(group.clone()),
             ))),
             definition: DefinitionState::Abstract,
@@ -224,55 +224,55 @@ pub fn group_identity_axiom() -> Axiom {
     // create statement using the identifiers
     let x_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(x_id.clone())),
+        element: Some(Located::new_variable(x_id.clone())),
     };
     let e_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(e_id.clone())),
+        element: Some(Located::new_variable(e_id.clone())),
     };
 
     // e * x
     let e_mult_x_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(e_var.clone())),
-        right: Parametrizable::Concrete(Arc::new(x_var.clone())),
+        left: Located::new_concrete(e_var.clone()),
+        right: Located::new_concrete(x_var.clone()),
     };
 
     // x * e
     let x_mult_e_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(x_var.clone())),
-        right: Parametrizable::Concrete(Arc::new(e_var)),
+        left: Located::new_concrete(x_var.clone()),
+        right: Located::new_concrete(e_var),
     };
 
     let x_var_mex = MathExpression::Expression(TheoryExpression::Group(x_var));
 
     // e * x = x
     let left_identity_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(e_mult_x_gexpr)),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            e_mult_x_gexpr,
         ))),
-        right: Located::new(Parametrizable::Variable(x_id.clone())),
+        right: Located::new_variable(x_id.clone()),
     };
 
     // x * e = x
     let right_identity_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(x_mult_e_gexpr)),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            x_mult_e_gexpr,
         ))),
-        right: Located::new(Parametrizable::Variable(x_id.clone())),
+        right: Located::new_variable(x_id.clone()),
     };
 
     let identity_relation = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(Arc::new(left_identity_rel))),
-        Located::new(Parametrizable::Concrete(Arc::new(right_identity_rel))),
+        Located::new_concrete(left_identity_rel),
+        Located::new_concrete(right_identity_rel),
     ]);
 
     // create the goal with statement, context, and quantifiers
     let goal = ProofGoal {
         context,
         quantifiers,
-        statement: Located::new(Arc::new(identity_relation)),
+        statement: Located::new_concrete(identity_relation),
     };
 
     // return the theorem
@@ -290,7 +290,7 @@ pub fn group_identity_axiom() -> Axiom {
 /// Statement: ∀ x ∈ G, ∀ e ∈ G, x ∘ x⁻¹ = e ∧ x⁻¹ ∘ x = e (existence of inverse for every element)
 pub fn group_inverse_axiom() -> Axiom {
     // create identifiers and context entries
-    let group = Parametrizable::Concrete(Group::new_generic());
+    let group = Located::new_concrete(Group::new_generic());
     let x_id = Identifier::new_simple("x".to_string());
     let e_id = Identifier::new_simple("e".to_string());
 
@@ -304,7 +304,7 @@ pub fn group_inverse_axiom() -> Axiom {
     let context = vec![
         ContextEntry {
             name: x_id.clone(),
-            ty: Located::new(group_element_type.clone()),
+            ty: Located::new_concrete(group_element_type.clone()),
             definition: DefinitionState::Abstract,
             description: Some(crate::turn_render::RichText {
                 segments: vec![crate::turn_render::RichTextSegment::Text(
@@ -315,7 +315,7 @@ pub fn group_inverse_axiom() -> Axiom {
         },
         ContextEntry {
             name: e_id.clone(),
-            ty: Located::new(MathExpression::Expression(TheoryExpression::Group(
+            ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
                 GroupExpression::Identity(group.clone()),
             ))),
             definition: DefinitionState::Abstract,
@@ -341,59 +341,59 @@ pub fn group_inverse_axiom() -> Axiom {
     // create statement using the identifiers
     let x_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(x_id.clone())),
+        element: Some(Located::new_variable(x_id.clone())),
     };
     let e_var = GroupExpression::Element {
         group: group.clone(),
-        element: Some(Parametrizable::Variable(e_id.clone())),
+        element: Some(Located::new_variable(e_id.clone())),
     };
 
     // x⁻¹ (using GroupExpression::Inverse)
     let inverse_gexpr = GroupExpression::Inverse {
         group: group.clone(),
-        element: Parametrizable::Concrete(Arc::new(x_var.clone())),
+        element: Located::new_concrete(x_var.clone()),
     };
 
     // x * x⁻¹
     let x_mult_inv_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(x_var.clone())),
-        right: Parametrizable::Concrete(Arc::new(inverse_gexpr.clone())),
+        left: Located::new_concrete(x_var.clone()),
+        right: Located::new_concrete(inverse_gexpr.clone()),
     };
 
     // x⁻¹ * x
     let inv_mult_x_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(inverse_gexpr)),
-        right: Parametrizable::Concrete(Arc::new(x_var)),
+        left: Located::new_concrete(inverse_gexpr),
+        right: Located::new_concrete(x_var),
     };
 
     // x * x⁻¹ = e
     let right_inverse_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(x_mult_inv_gexpr)),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            x_mult_inv_gexpr,
         ))),
-        right: Located::new(Parametrizable::Variable(e_id.clone())),
+        right: Located::new_variable(e_id.clone()),
     };
 
     // x⁻¹ * x = e
     let left_inverse_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(inv_mult_x_gexpr)),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            inv_mult_x_gexpr,
         ))),
-        right: Located::new(Parametrizable::Variable(e_id)),
+        right: Located::new_variable(e_id),
     };
 
     let inverse_relation = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(Arc::new(right_inverse_rel))),
-        Located::new(Parametrizable::Concrete(Arc::new(left_inverse_rel))),
+        Located::new_concrete(right_inverse_rel),
+        Located::new_concrete(left_inverse_rel),
     ]);
 
     // create the goal with statement, context, and quantifiers
     let goal = ProofGoal {
         context,
         quantifiers,
-        statement: Located::new(Arc::new(inverse_relation)),
+        statement: Located::new_concrete(inverse_relation),
     };
 
     // return the theorem

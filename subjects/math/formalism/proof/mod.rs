@@ -85,7 +85,7 @@ pub struct ProofGoal {
 
     /// The core logical statement to be proven (the part after the quantifiers).
     /// All free variables in this statement MUST be declared in the `context`.
-    pub statement: Located<Arc<MathRelation>>,
+    pub statement: Located<MathRelation>,
 }
 
 impl ProofGoal {
@@ -102,7 +102,7 @@ impl ProofGoal {
         let variable_name = Identifier::new_simple(name.to_string());
         let entry = ContextEntry {
             name: variable_name.clone(),
-            ty: Located::new(ty),
+            ty: Located::new_concrete(ty),
             definition: DefinitionState::Abstract,
             description: description.map(|s| RichText {
                 segments: vec![RichTextSegment::Text(s)],
@@ -129,7 +129,7 @@ impl ProofGoal {
         let entry = ContextEntry {
             name: hypothesis_name.clone(),
             // Use a simple variable type instead of MathExpression::Relation to avoid circular reference
-            ty: Located::new(MathExpression::Relation(Arc::new(proposition))),
+            ty: Located::new_concrete(MathExpression::Relation(Arc::new(proposition))),
             definition: DefinitionState::Abstract,
             description: description.map(|s| RichText {
                 segments: vec![RichTextSegment::Text(s)],
@@ -193,14 +193,16 @@ impl ProofGoal {
 
     /// Set the final statement after the context and quantifiers are in place.
     pub fn with_statement(mut self, statement: MathRelation) -> Self {
-        self.statement = Located::new(Arc::new(statement));
+        self.statement = Located::new_concrete(statement);
         self
     }
 
     /// Verifies that the proof goal is well-formed.
     pub fn verify(&self) -> Result<(), String> {
-        if matches!(**self.statement.value(), MathRelation::False) {
-            return Err("Statement has not been set.".to_string());
+        if let Some(statement_arc) = self.statement.concrete_value() {
+            if matches!(statement_arc.as_ref(), MathRelation::False) {
+                return Err("Statement has not been set.".to_string());
+            }
         }
 
         let context_map: HashMap<_, _> = self.context.iter().map(|e| (&e.name, e)).collect();
@@ -628,10 +630,10 @@ impl ProofNode {
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Implies(
-                Located::new(Parametrizable::Concrete(Arc::new(antecedent.clone()))),
-                Located::new(Parametrizable::Concrete(Arc::new(consequent.clone()))),
-            ))),
+            statement: Located::new_concrete(MathRelation::Implies(
+                Located::new_concrete(antecedent.clone()),
+                Located::new_concrete(consequent.clone()),
+            )),
         };
 
         let tactic = Tactic::AssumeImplicationAntecedent {
@@ -641,7 +643,11 @@ impl ProofNode {
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::SingleGoal(new_goal) => {
                 // Verify the transformation worked
-                *new_goal.statement.data == consequent && new_goal.context.len() == 1
+                if let Some(statement_arc) = new_goal.statement.concrete_value() {
+                    statement_arc.as_ref() == &consequent && new_goal.context.len() == 1
+                } else {
+                    false
+                }
             }
             _ => false,
         }
@@ -826,10 +832,10 @@ mod tests {
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Implies(
-                Located::new(Parametrizable::Concrete(Arc::new(antecedent.clone()))),
-                Located::new(Parametrizable::Concrete(Arc::new(consequent.clone()))),
-            ))),
+            statement: Located::new_concrete(MathRelation::Implies(
+                Located::new_concrete(antecedent.clone()),
+                Located::new_concrete(consequent.clone()),
+            )),
         };
 
         let tactic = Tactic::AssumeImplicationAntecedent {
@@ -839,15 +845,16 @@ mod tests {
         match tactic.apply_to_goal(&goal) {
             TacticApplicationResult::SingleGoal(new_goal) => {
                 // The statement should now be just the consequent
-                assert_eq!(*new_goal.statement.data, consequent);
+                if let Some(statement_arc) = new_goal.statement.concrete_value() {
+                    assert_eq!(statement_arc.as_ref(), &consequent);
+                }
 
                 // There should be one hypothesis in the context
                 assert_eq!(new_goal.context.len(), 1);
                 // Check that the context entry is a hypothesis with a Relation type
-                assert!(matches!(
-                    new_goal.context[0].ty.data,
-                    MathExpression::Relation(_)
-                ));
+                if let Some(ty_arc) = new_goal.context[0].ty.concrete_value() {
+                    assert!(matches!(ty_arc.as_ref(), MathExpression::Relation(_)));
+                }
             }
             other => panic!("Expected SingleGoal, got {:?}", other),
         }
@@ -874,15 +881,15 @@ mod tests {
         );
 
         let conjunction = MathRelation::And(vec![
-            Located::new(Parametrizable::Concrete(Arc::new(part1.clone()))),
-            Located::new(Parametrizable::Concrete(Arc::new(part2.clone()))),
-            Located::new(Parametrizable::Concrete(Arc::new(part3.clone()))),
+            Located::new_concrete(part1.clone()),
+            Located::new_concrete(part2.clone()),
+            Located::new_concrete(part3.clone()),
         ]);
 
         let goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(conjunction.clone())),
+            statement: Located::new_concrete(conjunction.clone()),
         };
 
         let tactic = Tactic::SplitGoalConjunction;
@@ -892,9 +899,15 @@ mod tests {
                 assert_eq!(goals.len(), 3);
 
                 // Each goal should be one of the conjuncts
-                assert_eq!(*goals[0].statement.data, part1);
-                assert_eq!(*goals[1].statement.data, part2);
-                assert_eq!(*goals[2].statement.data, part3);
+                if let Some(goal0_arc) = goals[0].statement.concrete_value() {
+                    assert_eq!(goal0_arc.as_ref(), &part1);
+                }
+                if let Some(goal1_arc) = goals[1].statement.concrete_value() {
+                    assert_eq!(goal1_arc.as_ref(), &part2);
+                }
+                if let Some(goal2_arc) = goals[2].statement.concrete_value() {
+                    assert_eq!(goal2_arc.as_ref(), &part3);
+                }
             }
             other => panic!("Expected MultiGoal, got {:?}", other),
         }

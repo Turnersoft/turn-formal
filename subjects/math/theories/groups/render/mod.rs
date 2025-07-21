@@ -985,15 +985,15 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             Group::Kernel(KernelGroup {
                 core: GenericGroup::default(),
                 defining_homomorphism: Arc::new(GroupHomomorphism {
-                    domain: Parametrizable::Variable(Identifier::new_simple("G".to_string())),
-                    codomain: Parametrizable::Variable(Identifier::new_simple("H".to_string())),
+                    domain: Located::new_variable(Identifier::new_simple("G".to_string())),
+                    codomain: Located::new_variable(Identifier::new_simple("H".to_string())),
                 }),
             }),
             Group::Image(ImageGroup {
                 core: GenericGroup::default(),
                 defining_homomorphism: Arc::new(GroupHomomorphism {
-                    domain: Parametrizable::Variable(Identifier::new_simple("G".to_string())),
-                    codomain: Parametrizable::Variable(Identifier::new_simple("H".to_string())),
+                    domain: Located::new_variable(Identifier::new_simple("G".to_string())),
+                    codomain: Located::new_variable(Identifier::new_simple("H".to_string())),
                 }),
             }),
             // ===== SUBGROUP CONSTRUCTIONS =====

@@ -54,7 +54,7 @@ pub enum MathExpression {
     /// this is a central transit for all math theories
     ViewAs {
         /// The original expression
-        expression: Located<Parametrizable<Arc<MathExpression>>>,
+        expression: Located<MathExpression>,
         /// The view operator
         view: Located<TypeViewOperator>,
     },
@@ -127,8 +127,8 @@ impl MathExpression {
     /// Apply a type view to this expression
     pub fn with_view(&self, view: TypeViewOperator) -> Self {
         MathExpression::ViewAs {
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
-            view: Located::new(view),
+            expression: Located::new_concrete(self.clone()),
+            view: Located::new_concrete(view),
         }
     }
 

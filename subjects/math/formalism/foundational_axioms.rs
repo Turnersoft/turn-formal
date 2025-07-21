@@ -23,7 +23,7 @@ pub fn equality_refl_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(reflexivity_relation)),
+        statement: Located::new_concrete(reflexivity_relation),
     };
     Theorem {
         id: "equality_is_reflexive".to_string(),
@@ -53,7 +53,7 @@ pub fn equality_symm_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(symmetry_relation)),
+        statement: Located::new_concrete(symmetry_relation),
     };
     Theorem {
         id: "equality_is_symmetric".to_string(),
@@ -92,7 +92,7 @@ pub fn equality_tran_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(transitivity_relation)),
+        statement: Located::new_concrete(transitivity_relation),
     };
     Theorem {
         id: "equality_is_transitive".to_string(),
@@ -119,7 +119,7 @@ pub fn law_of_identity_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(identity_relation)),
+        statement: Located::new_concrete(identity_relation),
     };
     Theorem {
         id: "law_of_identity".to_string(),
@@ -161,7 +161,7 @@ pub fn modus_ponens_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(modus_ponens_relation)),
+        statement: Located::new_concrete(modus_ponens_relation),
     };
     Theorem {
         id: "modus_ponens".to_string(),
@@ -192,7 +192,7 @@ pub fn double_negation_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(double_negation_relation)),
+        statement: Located::new_concrete(double_negation_relation),
     };
     Theorem {
         id: "double_negation".to_string(),
@@ -228,7 +228,7 @@ pub fn universal_instantiation_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(universal_instantiation_relation)),
+        statement: Located::new_concrete(universal_instantiation_relation),
     };
     Theorem {
         id: "universal_instantiation".to_string(),
@@ -264,7 +264,7 @@ pub fn existential_generalization_axiom() -> Axiom {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(existential_generalization_relation)),
+        statement: Located::new_concrete(existential_generalization_relation),
     };
     Theorem {
         id: "existential_generalization".to_string(),
@@ -312,10 +312,10 @@ mod tests {
         let reflexivity_goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Equal {
+            statement: Located::new_concrete(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(x_var.clone())),
                 right: Located::new(Parametrizable::Variable(x_var.clone())),
-            })),
+            }),
         };
 
         let reflexivity_tactic = Tactic::ByReflexivity;
@@ -331,7 +331,7 @@ mod tests {
         let auto_goal = ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::True)), // Simple tautology that Auto should handle
+            statement: Located::new_concrete(MathRelation::True), // Simple tautology that Auto should handle
         };
 
         let auto_tactic = Tactic::SearchAssumptions;

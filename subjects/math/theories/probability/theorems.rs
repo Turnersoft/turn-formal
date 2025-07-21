@@ -38,7 +38,7 @@ fn create_probability_proof(statement: MathRelation) -> ProofForest {
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(statement)),
+        statement: Located::new_concrete(statement),
     };
     ProofForest::new_from_goal(goal)
 }
@@ -177,7 +177,7 @@ fn prove_jensen_inequality() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::NumberTheory(
+            statement: Located::new_concrete(MathRelation::NumberTheory(
                 NumberTheoryRelation::LessThanOrEqual {
                     left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                         "φ(E[X])".to_string(),
@@ -186,7 +186,7 @@ fn prove_jensen_inequality() -> Theorem {
                         "E[φ(X)]".to_string(),
                     ))),
                 },
-            ))),
+            )),
         }),
     }
 }
@@ -199,14 +199,14 @@ fn prove_martingale_convergence_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Equal {
+            statement: Located::new_concrete(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "X_n".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "X_∞".to_string(),
                 ))),
-            })),
+            }),
         }),
     }
 }
@@ -219,14 +219,14 @@ fn prove_optional_stopping_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Equal {
+            statement: Located::new_concrete(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "E[X_τ]".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "E[X_0]".to_string(),
                 ))),
-            })),
+            }),
         }),
     }
 }
@@ -239,14 +239,14 @@ fn prove_kolmogorov_three_series_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Equal {
+            statement: Located::new_concrete(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "Σ X_n converges a.s.".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "Three series converge".to_string(),
                 ))),
-            })),
+            }),
         }),
     }
 }
@@ -259,14 +259,14 @@ fn prove_glivenko_cantelli_theorem() -> Theorem {
         proofs: ProofForest::new_from_goal(ProofGoal {
             context: vec![],
             quantifiers: vec![],
-            statement: Located::new(Arc::new(MathRelation::Equal {
+            statement: Located::new_concrete(MathRelation::Equal {
                 left: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "F_n(x)".to_string(),
                 ))),
                 right: Located::new(Parametrizable::Variable(Identifier::new_simple(
                     "F(x)".to_string(),
                 ))),
-            })),
+            }),
         }),
     }
 }

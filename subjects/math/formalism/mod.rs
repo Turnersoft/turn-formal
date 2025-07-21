@@ -36,49 +36,49 @@ use crate::turn_render::Identifier;
 
 use super::theories::groups::definitions::{Group, GroupExpression};
 pub fn group_identity_theorem_2() -> Theorem {
-    let group = Parametrizable::Concrete(Group::new_generic());
+    let group = Located::new_concrete(Group::new_generic());
     let x_var = Identifier::new_simple("x".to_string());
     let identity_gexpr = GroupExpression::Identity(group.clone());
 
     // e * x
     let e_mult_x_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Concrete(Arc::new(identity_gexpr.clone())),
-        right: Parametrizable::Variable(x_var.clone()),
+        left: Located::new_concrete(identity_gexpr.clone()),
+        right: Located::new_variable(x_var.clone()),
     };
 
     // x * e
     let x_mult_e_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Parametrizable::Variable(x_var.clone()),
-        right: Parametrizable::Concrete(Arc::new(identity_gexpr)),
+        left: Located::new_variable(x_var.clone()),
+        right: Located::new_concrete(identity_gexpr),
     };
 
     let x_var_mex = Identifier::new_simple("x".to_string());
 
     let left_identity_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(e_mult_x_gexpr)),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            e_mult_x_gexpr,
         ))),
-        right: Located::new(Parametrizable::Variable(x_var_mex.clone())),
+        right: Located::new_variable(x_var_mex.clone()),
     };
 
     let right_identity_rel = MathRelation::Equal {
-        left: Located::new(Parametrizable::Concrete(Arc::new(
-            MathExpression::Expression(TheoryExpression::Group(x_mult_e_gexpr)),
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            x_mult_e_gexpr,
         ))),
-        right: Located::new(Parametrizable::Variable(x_var_mex.clone())),
+        right: Located::new_variable(x_var_mex.clone()),
     };
 
     let identity_relation = MathRelation::And(vec![
-        Located::new(Parametrizable::Concrete(Arc::new(left_identity_rel))),
-        Located::new(Parametrizable::Concrete(Arc::new(right_identity_rel))),
+        Located::new_concrete(left_identity_rel),
+        Located::new_concrete(right_identity_rel),
     ]);
 
     let goal = ProofGoal {
         context: vec![],
         quantifiers: vec![],
-        statement: Located::new(Arc::new(identity_relation)),
+        statement: Located::new_concrete(identity_relation),
     };
 
     Theorem {

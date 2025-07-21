@@ -234,53 +234,53 @@ impl MathExpression {
     /// Create a view of this expression as a group element
     pub fn as_group_element(&self, group: Group) -> Self {
         MathExpression::ViewAs {
-            view: Located::new(TypeViewOperator::AsGroupElement { group }),
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
+            view: Located::new_concrete(TypeViewOperator::AsGroupElement { group }),
+            expression: Located::new_concrete(self.clone()),
         }
     }
 
     /// Create a view of this expression as a ring element
     pub fn as_ring_element(&self, ring: Ring) -> Self {
         MathExpression::ViewAs {
-            view: Located::new(TypeViewOperator::AsRingElement { ring }),
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
+            view: Located::new_concrete(TypeViewOperator::AsRingElement { ring }),
+            expression: Located::new_concrete(self.clone()),
         }
     }
 
     /// Create a view of this expression as a cyclic group (for integers)
     pub fn as_cyclic_group(&self) -> Self {
         MathExpression::ViewAs {
-            view: Located::new(TypeViewOperator::AsCyclicGroup),
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
+            view: Located::new_concrete(TypeViewOperator::AsCyclicGroup),
+            expression: Located::new_concrete(self.clone()),
         }
     }
 
     /// Create a view of this expression as a field element
     pub fn as_field_element(&self, field: Field) -> Self {
         MathExpression::ViewAs {
-            view: Located::new(TypeViewOperator::AsFieldElement { field }),
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
+            view: Located::new_concrete(TypeViewOperator::AsFieldElement { field }),
+            expression: Located::new_concrete(self.clone()),
         }
     }
 
     /// Create a view of this expression as a group
     pub fn as_group(&self, operation: Option<MathExpression>) -> Self {
         MathExpression::ViewAs {
-            view: Located::new(TypeViewOperator::AsGroup {
+            view: Located::new_concrete(TypeViewOperator::AsGroup {
                 operation: operation.map(Arc::new),
             }),
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
+            expression: Located::new_concrete(self.clone()),
         }
     }
 
     /// Create a view of this expression as a homomorphism
     pub fn as_homomorphism(&self, source: MathExpression, target: MathExpression) -> Self {
         MathExpression::ViewAs {
-            view: Located::new(TypeViewOperator::AsHomomorphism {
+            view: Located::new_concrete(TypeViewOperator::AsHomomorphism {
                 source: Arc::new(source),
                 target: Arc::new(target),
             }),
-            expression: Located::new(Parametrizable::Concrete(Arc::new(self.clone()))),
+            expression: Located::new_concrete(self.clone()),
         }
     }
 }

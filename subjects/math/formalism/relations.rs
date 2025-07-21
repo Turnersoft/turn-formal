@@ -39,17 +39,11 @@ pub enum Quantification {
 pub enum MathRelation {
     // Core logical connectives only
     // Quantifier are encoded into theorem so that it is PNF directly.
-    And(Vec<Located<Parametrizable<Arc<MathRelation>>>>),
-    Or(Vec<Located<Parametrizable<Arc<MathRelation>>>>),
-    Not(Located<Parametrizable<Arc<MathRelation>>>),
-    Implies(
-        Located<Parametrizable<Arc<MathRelation>>>,
-        Located<Parametrizable<Arc<MathRelation>>>,
-    ), // ->
-    Equivalent(
-        Located<Parametrizable<Arc<MathRelation>>>,
-        Located<Parametrizable<Arc<MathRelation>>>,
-    ), // <=>
+    And(Vec<Located<MathRelation>>),
+    Or(Vec<Located<MathRelation>>),
+    Not(Located<MathRelation>),
+    Implies(Located<MathRelation>, Located<MathRelation>), // ->
+    Equivalent(Located<MathRelation>, Located<MathRelation>), // <=>
     True,
     False,
 
@@ -64,8 +58,8 @@ pub enum MathRelation {
 
     // For basic equality that crosses domains
     Equal {
-        left: Located<Parametrizable<Arc<MathExpression>>>,
-        right: Located<Parametrizable<Arc<MathExpression>>>,
+        left: Located<MathExpression>,
+        right: Located<MathExpression>,
     },
 }
 
@@ -73,8 +67,8 @@ pub enum MathRelation {
 impl MathRelation {
     /// Creates an Equal relation with entity information
     pub fn equal(left: MathExpression, right: MathExpression) -> Self {
-        let left = Located::new(Parametrizable::Concrete(Arc::new(left)));
-        let right = Located::new(Parametrizable::Concrete(Arc::new(right)));
+        let left = Located::new_concrete(left);
+        let right = Located::new_concrete(right);
 
         MathRelation::Equal { left, right }
     }

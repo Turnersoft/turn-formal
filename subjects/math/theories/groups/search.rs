@@ -181,10 +181,10 @@ impl IsCompatible<GroupExpression> for GroupExpression {
     ) -> bool {
         match (self, pattern) {
             (GroupExpression::Identity(l), GroupExpression::Identity(r)) => {
-                l.unwrap(target_context).is_compatible(
+                l.data.unwrap(target_context).is_compatible(
                     target.clone(),
                     target_context,
-                    &r.unwrap(target_context),
+                    &r.data.unwrap(target_context),
                     pattern_context,
                 )
             }
@@ -194,10 +194,10 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                     group: r_group,
                     element: r_element,
                 },
-            ) => group.unwrap(target_context).is_compatible(
+            ) => group.data.unwrap(target_context).is_compatible(
                 target.clone(),
                 target_context,
-                &r_group.unwrap(target_context),
+                &r_group.data.unwrap(target_context),
                 pattern_context,
             ),
             (
@@ -207,10 +207,10 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                     left: r_left,
                     right: r_right,
                 },
-            ) => group.unwrap(target_context).is_compatible(
+            ) => group.data.unwrap(target_context).is_compatible(
                 target.clone(),
                 target_context,
-                &r_group.unwrap(target_context),
+                &r_group.data.unwrap(target_context),
                 pattern_context,
             ),
             (
@@ -222,10 +222,10 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                     group: r_group,
                     element: r_element,
                 },
-            ) => l_group.unwrap(target_context).is_compatible(
+            ) => l_group.data.unwrap(target_context).is_compatible(
                 target,
                 target_context,
-                &r_group.unwrap(target_context),
+                &r_group.data.unwrap(target_context),
                 pattern_context,
             ),
             _ => false,

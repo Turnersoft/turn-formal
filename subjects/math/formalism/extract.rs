@@ -52,3 +52,15 @@ impl<T: Hash> Hash for Parametrizable<T> {
         }
     }
 }
+
+impl<T: 'static + Clone + Debug> Parametrizable<Arc<T>> {
+    /// Create a concrete parametrizable from a value
+    pub fn concrete(value: T) -> Self {
+        Parametrizable::Concrete(Arc::new(value))
+    }
+
+    /// Create a variable parametrizable from an identifier
+    pub fn variable(id: Identifier) -> Self {
+        Parametrizable::Variable(id)
+    }
+}

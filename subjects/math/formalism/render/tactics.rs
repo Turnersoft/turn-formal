@@ -326,52 +326,55 @@ impl Tactic {
         // Get the actual theorem from the registry
         let registry = get_theorem_registry();
         if let Some(theorem) = registry.get(theorem_id) {
-            // Extract the theorem's equality: LHS = RHS
-            if let MathRelation::Equal {
-                left: theorem_lhs,
-                right: theorem_rhs,
-                ..
-            } = &*theorem.proofs.initial_goal.statement.data
-            {
-                // Apply instantiation to theorem sides
-                let mut instantiated_lhs = theorem_lhs.clone();
-                let mut instantiated_rhs = theorem_rhs.clone();
+            if let Some(concrete_rel) = theorem.proofs.initial_goal.statement.concrete_value() {
+                if let MathRelation::Equal {
+                    left: theorem_lhs,
+                    right: theorem_rhs,
+                    ..
+                } = concrete_rel.as_ref()
+                {
+                    // Apply instantiation to theorem sides
+                    let mut instantiated_lhs = theorem_lhs.clone();
+                    let mut instantiated_rhs = theorem_rhs.clone();
 
-                // Apply variable substitutions from instantiation
-                for (var, value) in instantiation {
-                    instantiated_lhs =
-                        self.substitute_variable_arc(&instantiated_lhs, &var.to_string(), value);
-                    instantiated_rhs =
-                        self.substitute_variable_arc(&instantiated_rhs, &var.to_string(), value);
+                    // Apply variable substitutions from instantiation
+                    for (var, value) in instantiation {
+                        instantiated_lhs =
+                            self.substitute_variable(&instantiated_lhs, &var.to_string(), value);
+                        instantiated_rhs =
+                            self.substitute_variable(&instantiated_rhs, &var.to_string(), value);
+                    }
+
+                    // Apply the rewrite based on direction
+                    let result_expr = match direction {
+                        RewriteDirection::Forward => {
+                            // If target matches LHS, replace with RHS
+                            if self.expressions_match(target, &instantiated_lhs.data) {
+                                instantiated_rhs.data.clone()
+                            } else {
+                                // If target doesn't match exactly, show that we applied the theorem
+                                return self.create_transformation_description(
+                                    theorem_id, direction, target,
+                                );
+                            }
+                        }
+                        RewriteDirection::Backward => {
+                            // If target matches RHS, replace with LHS
+                            if self.expressions_match(target, &instantiated_rhs.data) {
+                                instantiated_lhs.data.clone()
+                            } else {
+                                // If target doesn't match exactly, show that we applied the theorem
+                                return self.create_transformation_description(
+                                    theorem_id, direction, target,
+                                );
+                            }
+                        }
+                    };
+
+                    return result_expr
+                        .unwrap(&vec![])
+                        .to_turn_math("after-expr".to_string());
                 }
-
-                // Apply the rewrite based on direction
-                let result_expr = match direction {
-                    RewriteDirection::Forward => {
-                        // If target matches LHS, replace with RHS
-                        if self.expressions_match_arc(target, &instantiated_lhs.data) {
-                            instantiated_rhs.data.clone()
-                        } else {
-                            // If target doesn't match exactly, show that we applied the theorem
-                            return self
-                                .create_transformation_description(theorem_id, direction, target);
-                        }
-                    }
-                    RewriteDirection::Backward => {
-                        // If target matches RHS, replace with LHS
-                        if self.expressions_match_arc(target, &instantiated_rhs.data) {
-                            instantiated_lhs.data.clone()
-                        } else {
-                            // If target doesn't match exactly, show that we applied the theorem
-                            return self
-                                .create_transformation_description(theorem_id, direction, target);
-                        }
-                    }
-                };
-
-                return result_expr
-                    .unwrap(&vec![])
-                    .to_turn_math("after-expr".to_string());
             }
         }
 
@@ -413,20 +416,6 @@ impl Tactic {
     fn expressions_match(
         &self,
         expr1: &MathExpression,
-        expr2: &Parametrizable<MathExpression>,
-    ) -> bool {
-        // Simple structural comparison - could be enhanced with unification
-        if let Parametrizable::Concrete(concrete_expr) = expr2 {
-            expr1 == concrete_expr
-        } else {
-            false
-        }
-    }
-
-    /// Check if two expressions match for Arc-wrapped types
-    fn expressions_match_arc(
-        &self,
-        expr1: &MathExpression,
         expr2: &Parametrizable<Arc<MathExpression>>,
     ) -> bool {
         // Simple structural comparison - could be enhanced with unification
@@ -440,14 +429,14 @@ impl Tactic {
     /// Substitute a variable in an expression with a value
     fn substitute_variable(
         &self,
-        expr: &Located<Parametrizable<MathExpression>>,
+        expr: &Located<MathExpression>,
         var: &str,
         value: &MathExpression,
-    ) -> Located<Parametrizable<MathExpression>> {
+    ) -> Located<MathExpression> {
         let mut new_expr = expr.clone();
-        if let Parametrizable::Variable(id) = &new_expr.data {
-            if id.to_string() == var {
-                new_expr.data = Parametrizable::Concrete(value.clone());
+        if let Some(var_id) = new_expr.variable_id() {
+            if var_id.to_string() == var {
+                new_expr = Located::new_concrete(value.clone());
             }
         }
         // This is a simplified substitution. A full implementation would recurse.
@@ -457,14 +446,14 @@ impl Tactic {
     /// Substitute a variable in an Arc-wrapped expression with a value
     fn substitute_variable_arc(
         &self,
-        expr: &Located<Parametrizable<Arc<MathExpression>>>,
+        expr: &Located<MathExpression>,
         var: &str,
         value: &MathExpression,
-    ) -> Located<Parametrizable<Arc<MathExpression>>> {
+    ) -> Located<MathExpression> {
         let mut new_expr = expr.clone();
-        if let Parametrizable::Variable(id) = &new_expr.data {
-            if id.to_string() == var {
-                new_expr.data = Parametrizable::Concrete(Arc::new(value.clone()));
+        if let Some(var_id) = new_expr.variable_id() {
+            if var_id.to_string() == var {
+                new_expr = Located::new_concrete(value.clone());
             }
         }
         // This is a simplified substitution. A full implementation would recurse.
@@ -478,27 +467,29 @@ impl Tactic {
     ) -> (MathNode, MathNode) {
         let registry = get_theorem_registry();
         if let Some(theorem) = registry.get(theorem_id) {
-            if let crate::subjects::math::formalism::relations::MathRelation::Equal {
-                left,
-                right,
-                ..
-            } = &*theorem.proofs.initial_goal.statement.data
-            {
-                // Apply instantiation
-                let lhs = left.clone();
-                let rhs = right.clone();
+            if let Some(concrete_rel) = theorem.proofs.initial_goal.statement.concrete_value() {
+                if let crate::subjects::math::formalism::relations::MathRelation::Equal {
+                    left,
+                    right,
+                    ..
+                } = concrete_rel.as_ref()
+                {
+                    // Apply instantiation
+                    let lhs = left.clone();
+                    let rhs = right.clone();
 
-                // TODO: Apply instantiation substitution
-                // For now, we'll show the theorem as-is for simplicity
+                    // TODO: Apply instantiation substitution
+                    // For now, we'll show the theorem as-is for simplicity
 
-                return (
-                    lhs.data
-                        .unwrap(&vec![])
-                        .to_turn_math("theorem-lhs".to_string()),
-                    rhs.data
-                        .unwrap(&vec![])
-                        .to_turn_math("theorem-rhs".to_string()),
-                );
+                    return (
+                        lhs.data
+                            .unwrap(&vec![])
+                            .to_turn_math("theorem-lhs".to_string()),
+                        rhs.data
+                            .unwrap(&vec![])
+                            .to_turn_math("theorem-rhs".to_string()),
+                    );
+                }
             }
         }
 

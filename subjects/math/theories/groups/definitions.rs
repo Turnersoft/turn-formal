@@ -1,4 +1,3 @@
-use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
 use crate::subjects::math::formalism::{complexity::Complexity, objects::MathObject};
 use crate::subjects::math::theories::zfc::definitions::GenericSet;
@@ -614,223 +613,223 @@ pub enum FreenessPropertyVariant {
 pub enum GroupRelation {
     /// One group is a subgroup of another
     IsSubgroupOf {
-        subgroup: Parametrizable<Group>,
-        group: Parametrizable<Group>,
+        subgroup: Located<Group>,
+        group: Located<Group>,
     },
 
     /// One group is a normal subgroup of another
     IsNormalSubgroupOf {
-        subgroup: Parametrizable<Group>,
-        group: Parametrizable<Group>,
+        subgroup: Located<Group>,
+        group: Located<Group>,
     },
 
     /// Two groups are isomorphic
     IsIsomorphicTo {
-        first: Parametrizable<Group>,
-        second: Parametrizable<Group>,
+        first: Located<Group>,
+        second: Located<Group>,
     },
 
     /// One group is a quotient of another
     IsQuotientOf {
-        quotient: Parametrizable<Group>,
-        group: Parametrizable<Group>,
-        normal_subgroup: Parametrizable<Group>,
+        quotient: Located<Group>,
+        group: Located<Group>,
+        normal_subgroup: Located<Group>,
     },
 
     /// Element is in the center of a group
     IsInCenterOf {
-        element: Parametrizable<GroupExpression>,
-        group: Parametrizable<Group>,
+        element: Located<GroupExpression>,
+        group: Located<Group>,
     },
 
     /// Two elements are conjugate in a group
     AreConjugateIn {
-        element1: Parametrizable<GroupElement>,
-        element2: Parametrizable<GroupElement>,
-        group: Parametrizable<Group>,
+        element1: Located<GroupElement>,
+        element2: Located<GroupElement>,
+        group: Located<Group>,
     },
 
     /// An element has a specified order in a group
     HasOrderInGroup {
-        element: Parametrizable<GroupExpression>,
-        group: Parametrizable<Group>,
-        order: Parametrizable<usize>,
+        element: Located<GroupExpression>,
+        group: Located<Group>,
+        order: Located<usize>,
     },
 
     /// A subgroup is of a specific index in a group
     HasIndexInGroup {
-        subgroup: Parametrizable<Group>,
-        group: Parametrizable<Group>,
-        index: Parametrizable<usize>,
+        subgroup: Located<Group>,
+        group: Located<Group>,
+        index: Located<usize>,
     },
 
     /// A group has a specific number of elements
     HasOrder {
-        group: Parametrizable<Group>,
-        order: Parametrizable<usize>,
+        group: Located<Group>,
+        order: Located<usize>,
     },
 
     /// A group is cyclic with a specific generator
     IsCyclicWithGenerator {
-        group: Parametrizable<Group>,
-        generator: Parametrizable<GroupExpression>,
+        group: Located<Group>,
+        generator: Located<GroupExpression>,
     },
 
     /// An element normalizes a subgroup
     NormalizesSubgroup {
-        element: Parametrizable<GroupExpression>,
-        subgroup: Parametrizable<Group>,
-        group: Parametrizable<Group>,
+        element: Located<GroupExpression>,
+        subgroup: Located<Group>,
+        group: Located<Group>,
     },
 
     /// An element centralizes a subgroup
     CentralizesSubgroup {
-        element: Parametrizable<GroupExpression>,
-        subgroup: Parametrizable<Group>,
-        group: Parametrizable<Group>,
+        element: Located<GroupExpression>,
+        subgroup: Located<Group>,
+        group: Located<Group>,
     },
 
     /// A subgroup is characteristic
     IsCharacteristicSubgroupOf {
-        subgroup: Parametrizable<Group>,
-        group: Parametrizable<Group>,
+        subgroup: Located<Group>,
+        group: Located<Group>,
     },
 
     /// The order of one group divides the order of another
     OrderDivides {
-        group1: Parametrizable<Group>,
-        group2: Parametrizable<Group>,
+        group1: Located<Group>,
+        group2: Located<Group>,
     },
 
     /// An element has a unique inverse in a group
     HasUniqueInverse {
-        element: Parametrizable<GroupExpression>,
-        group: Parametrizable<Group>,
+        element: Located<GroupExpression>,
+        group: Located<Group>,
     },
 
     /// Sylow p-subgroup properties
     SylowSubgroupProperties {
-        prime: Parametrizable<GroupExpression>, // Assuming prime expression can be variable
-        group: Parametrizable<Group>,
+        prime: Located<GroupExpression>, // Assuming prime expression can be variable
+        group: Located<Group>,
     },
 
     /// One element is the inverse of another
     IsInverseOf {
-        element: Parametrizable<GroupExpression>,
-        inverse: Parametrizable<GroupExpression>,
-        group: Parametrizable<Group>,
+        element: Located<GroupExpression>,
+        inverse: Located<GroupExpression>,
+        group: Located<Group>,
     },
 
     /// A homomorphism between groups
     IsHomomorphism {
-        homomorphism: Parametrizable<GroupExpression>,
-        domain: Parametrizable<Group>,
-        codomain: Parametrizable<Group>,
+        homomorphism: Located<GroupExpression>,
+        domain: Located<Group>,
+        codomain: Located<Group>,
     },
 
     /// An isomorphic embedding of one group into another
     IsomorphicEmbedding {
-        source: Parametrizable<Group>,
-        target: Parametrizable<Group>,
+        source: Located<Group>,
+        target: Located<Group>,
     },
 
     /// Asserts a basic group property on a Group.
     HasBasicProperty {
-        target: Parametrizable<Group>,
+        target: Located<Group>,
         property: GroupProperty,
     },
 
     HasTopologicalProperty {
-        target: Parametrizable<TopologicalGroup>,
+        target: Located<TopologicalGroup>,
         property: TopologicalGroupProperty,
     },
 
     HasLieProperty {
-        target: Parametrizable<LieGroup>,
+        target: Located<LieGroup>,
         property: LieGroupProperty,
     },
 
     /// Asserts a property on a Group Action.
     HasActionProperty {
-        target: Parametrizable<GroupAction>,
+        target: Located<GroupAction>,
         property: GroupActionProperty,
     },
 
     /// Asserts a property on a Product Group.
     HasProductProperty {
-        target: Parametrizable<ProductGroup>,
+        target: Located<ProductGroup>,
         property: ProductProperty,
     },
 
     /// Asserts a property on a Modular Additive Group.
     HasModularAdditiveProperty {
-        target: Parametrizable<ModularAdditiveGroup>,
+        target: Located<ModularAdditiveGroup>,
         property: ModularProperty,
     },
 
     /// Asserts a property on a Modular Multiplicative Group.
     HasModularMultiplicativeProperty {
-        target: Parametrizable<ModularMultiplicativeGroup>,
+        target: Located<ModularMultiplicativeGroup>,
         property: ModularProperty,
     },
 
     /// Asserts a Matrix property on a General Linear Group.
     HasGeneralLinearMatrixProperty {
-        target: Parametrizable<GeneralLinearGroup>,
+        target: Located<GeneralLinearGroup>,
         property: MatrixProperty,
     },
 
     /// Asserts a Linear property on a General Linear Group.
     HasGeneralLinearLinearProperty {
-        target: Parametrizable<GeneralLinearGroup>,
+        target: Located<GeneralLinearGroup>,
         property: LinearProperty,
     },
 
     /// Asserts a property on a Special Linear Group.
     HasSpecialLinearProperty {
-        target: Parametrizable<SpecialLinearGroup>,
+        target: Located<SpecialLinearGroup>,
         property: SpecialLinearProperty,
     },
 
     /// Asserts a Matrix property on an Orthogonal Group.
     HasOrthogonalMatrixProperty {
-        target: Parametrizable<OrthogonalGroup>,
+        target: Located<OrthogonalGroup>,
         property: MatrixProperty,
     },
 
     /// Asserts a property on a Special Orthogonal Group.
     HasSpecialOrthogonalProperty {
-        target: Parametrizable<SpecialOrthogonalGroup>,
+        target: Located<SpecialOrthogonalGroup>,
         property: SpecialOrthogonalProperty,
     },
 
     /// Asserts a Matrix property on a Unitary Group.
     HasUnitaryMatrixProperty {
-        target: Parametrizable<UnitaryGroup>,
+        target: Located<UnitaryGroup>,
         property: MatrixProperty,
     },
 
     /// Asserts a property on a Special Unitary Group.
     HasSpecialUnitaryProperty {
-        target: Parametrizable<SpecialUnitaryGroup>,
+        target: Located<SpecialUnitaryGroup>,
         property: SpecialUnitaryProperty,
     },
 
     /// Asserts a Permutation property on an Alternating Group.
     HasAlternatingPermutationProperty {
-        target: Parametrizable<AlternatingGroup>,
+        target: Located<AlternatingGroup>,
         property: PermutationProperty,
     },
 
     /// Asserts a property on a Free Group.
     HasFreeProperty {
-        target: Parametrizable<FreeGroup>,
+        target: Located<FreeGroup>,
         property: FreeProperty,
     },
 
     /// Asserts a property on a Quotient Group.
     HasQuotientProperty {
-        target: Parametrizable<QuotientGroup>,
+        target: Located<QuotientGroup>,
         property: QuotientProperty,
     },
 }
@@ -840,40 +839,40 @@ impl GroupRelation {
     /// Create a new IsSubgroupOf relation with concrete groups
     pub fn is_subgroup_of(subgroup: &Group, group: &Group) -> Self {
         GroupRelation::IsSubgroupOf {
-            subgroup: Parametrizable::Concrete(subgroup.clone()),
-            group: Parametrizable::Concrete(group.clone()),
+            subgroup: Located::new_concrete(subgroup.clone()),
+            group: Located::new_concrete(group.clone()),
         }
     }
 
     /// Create a new IsNormalSubgroupOf relation with concrete groups
     pub fn is_normal_subgroup_of(subgroup: &Group, group: &Group) -> Self {
         GroupRelation::IsNormalSubgroupOf {
-            subgroup: Parametrizable::Concrete(subgroup.clone()),
-            group: Parametrizable::Concrete(group.clone()),
+            subgroup: Located::new_concrete(subgroup.clone()),
+            group: Located::new_concrete(group.clone()),
         }
     }
 
     /// Create a new IsIsomorphicTo relation with concrete groups
     pub fn is_isomorphic_to(first: &Group, second: &Group) -> Self {
         GroupRelation::IsIsomorphicTo {
-            first: Parametrizable::Concrete(first.clone()),
-            second: Parametrizable::Concrete(second.clone()),
+            first: Located::new_concrete(first.clone()),
+            second: Located::new_concrete(second.clone()),
         }
     }
 
     /// Create a new HasOrder relation with concrete group and order
     pub fn has_order(group: &Group, order: usize) -> Self {
         GroupRelation::HasOrder {
-            group: Parametrizable::Concrete(group.clone()),
-            order: Parametrizable::Concrete(order), // Keep usize unboxed unless needed
+            group: Located::new_concrete(group.clone()),
+            order: Located::new_concrete(order), // Keep usize unboxed unless needed
         }
     }
 
     /// Create a new OrderDivides relation with concrete groups
     pub fn order_divides(group1: &Group, group2: &Group) -> Self {
         GroupRelation::OrderDivides {
-            group1: Parametrizable::Concrete(group1.clone()),
-            group2: Parametrizable::Concrete(group2.clone()),
+            group1: Located::new_concrete(group1.clone()),
+            group2: Located::new_concrete(group2.clone()),
         }
     }
 }
@@ -884,65 +883,65 @@ pub enum GroupExpression {
     /// A concrete element in a group, this is different to GroupRelation::ElementOf,
     /// becuase it is checked by default, not something to be proven
     Element {
-        group: Parametrizable<Group>,                  // Group can be variable
-        element: Option<Parametrizable<GroupElement>>, // Element can be variable
+        group: Located<Group>,                  // Group can be variable
+        element: Option<Located<GroupElement>>, // Element can be variable
     },
     /// The identity element of a group
-    Identity(Parametrizable<Group>), // Group can be variable
+    Identity(Located<Group>), // Group can be variable
     /// A group operation between two element expressions
     Operation {
-        group: Parametrizable<Group>, // Group can be variable
-        left: Parametrizable<Arc<GroupExpression>>,
-        right: Parametrizable<Arc<GroupExpression>>,
+        group: Located<Group>, // Group can be variable
+        left: Located<GroupExpression>,
+        right: Located<GroupExpression>,
     },
     /// The inverse of an expression
     Inverse {
-        group: Parametrizable<Group>, // Group can be variable
-        element: Parametrizable<Arc<GroupExpression>>,
+        group: Located<Group>, // Group can be variable
+        element: Located<GroupExpression>,
     },
     /// A commutator of two elements
     Commutator {
-        group: Parametrizable<Group>, // Group can be variable
-        a: Parametrizable<Arc<GroupExpression>>,
-        b: Parametrizable<Arc<GroupExpression>>,
+        group: Located<Group>, // Group can be variable
+        a: Located<GroupExpression>,
+        b: Located<GroupExpression>,
     },
     /// A coset of a subgroup
     Coset {
-        group: Parametrizable<Group>, // Group can be variable
-        element: Parametrizable<Arc<GroupExpression>>,
-        subgroup: Parametrizable<Group>, // Subgroup can be variable
+        group: Located<Group>, // Group can be variable
+        element: Located<GroupExpression>,
+        subgroup: Located<Group>, // Subgroup can be variable
         is_left: bool,
     },
     /// A group action applied to an element
     ActionOnElement {
-        action: Parametrizable<GroupAction>, // Action can be variable
-        element: Parametrizable<Arc<GroupExpression>>,
+        action: Located<GroupAction>, // Action can be variable
+        element: Located<GroupExpression>,
     },
     /// Represents a power (exponentiation) of an element
     Power {
-        group: Parametrizable<Group>, // Group can be variable
-        base: Parametrizable<Arc<GroupExpression>>,
-        exponent: Parametrizable<i32>, // Exponent can be variable
+        group: Located<Group>, // Group can be variable
+        base: Located<GroupExpression>,
+        exponent: Located<i32>, // Exponent can be variable
     },
     /// The order of a group: |G|
     GroupOrder {
-        group: Parametrizable<Group>, // Group can be variable
+        group: Located<Group>, // Group can be variable
     },
     /// The order of an element: |g|
     ElementOrder {
-        element: Parametrizable<Arc<GroupExpression>>,
-        group: Parametrizable<Group>, // Group can be variable
+        element: Located<GroupExpression>,
+        group: Located<Group>, // Group can be variable
     },
     /// A homomorphism between groups: φ : G → H
-    Homomorphism(Parametrizable<GroupHomomorphism>), // Homomorphism itself can be variable
+    Homomorphism(Located<GroupHomomorphism>), // Homomorphism itself can be variable
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct GroupHomomorphism {
     /// The domain group
-    pub domain: Parametrizable<Group>,
+    pub domain: Located<Group>,
     /// The codomain group
-    pub codomain: Parametrizable<Group>,
+    pub codomain: Located<Group>,
 }
 
 /// Different types of element values depending on the group structure
@@ -1104,16 +1103,16 @@ impl GroupRelation {
     /// Create a relation for element has unique inverse (simplified, concrete inputs)
     pub fn has_unique_inverse(element: &GroupExpression, group: &Group) -> Self {
         GroupRelation::HasUniqueInverse {
-            element: Parametrizable::Concrete(element.clone()),
-            group: Parametrizable::Concrete(group.clone()),
+            element: Located::new_concrete(element.clone()),
+            group: Located::new_concrete(group.clone()),
         }
     }
 
     /// Create a relation for Sylow p-subgroup properties (simplified, concrete inputs)
     pub fn sylow_subgroup_properties(prime: &GroupExpression, group: &Group) -> Self {
         GroupRelation::SylowSubgroupProperties {
-            prime: Parametrizable::Concrete(prime.clone()), // Keep Expr unboxed for now
-            group: Parametrizable::Concrete(group.clone()),
+            prime: Located::new_concrete(prime.clone()), // Keep Expr unboxed for now
+            group: Located::new_concrete(group.clone()),
         }
     }
 
@@ -1130,12 +1129,12 @@ impl GroupRelation {
         // Or ideally, use a representation that works with Parametrizable
         let group_order_expr =
             MathExpression::Expression(TheoryExpression::Group(GroupExpression::GroupOrder {
-                group: Parametrizable::Concrete(group.clone()),
+                group: Located::new_concrete(group.clone()),
             }));
 
         MathRelation::NumberTheory(NumberTheoryRelation::Divides {
-            divisor: Located::new(Parametrizable::Concrete(concrete_prime)),
-            dividend: Located::new(Parametrizable::Concrete(group_order_expr)),
+            divisor: Located::new_concrete(concrete_prime),
+            dividend: Located::new_concrete(group_order_expr),
         })
     }
 
@@ -1146,9 +1145,9 @@ impl GroupRelation {
         group: &Group,
     ) -> Self {
         GroupRelation::IsInverseOf {
-            element: Parametrizable::Concrete(element.clone()),
-            inverse: Parametrizable::Concrete(inverse.clone()),
-            group: Parametrizable::Concrete(group.clone()),
+            element: Located::new_concrete(element.clone()),
+            inverse: Located::new_concrete(inverse.clone()),
+            group: Located::new_concrete(group.clone()),
         }
     }
 
@@ -1159,9 +1158,9 @@ impl GroupRelation {
         codomain: &Group,
     ) -> Self {
         GroupRelation::IsHomomorphism {
-            homomorphism: Parametrizable::Concrete(homomorphism.clone()),
-            domain: Parametrizable::Concrete(domain.clone()),
-            codomain: Parametrizable::Concrete(codomain.clone()),
+            homomorphism: Located::new_concrete(homomorphism.clone()),
+            domain: Located::new_concrete(domain.clone()),
+            codomain: Located::new_concrete(codomain.clone()),
         }
     }
 
@@ -1169,8 +1168,8 @@ impl GroupRelation {
     /// Create a relation for an isomorphic embedding (simplified, concrete)
     pub fn isomorphic_embedding(source: &Group, target: &Group) -> Self {
         GroupRelation::IsomorphicEmbedding {
-            source: Parametrizable::Concrete(source.clone()),
-            target: Parametrizable::Concrete(target.clone()),
+            source: Located::new_concrete(source.clone()),
+            target: Located::new_concrete(target.clone()),
         }
     }
 }
