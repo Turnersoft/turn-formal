@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use uuid::Uuid;
 
+use crate::subjects::math::formalism::debug::ShortDebug;
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
@@ -163,6 +164,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p1_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p2_node:\n{}", p2_node.short_debug());
 
     // Step 3: Rewrite h1 on the LHS of the goal using the left identity axiom (h1 -> e * h1).
     // Goal: h1 = h2
@@ -173,11 +175,12 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
                     Tactic::Rewrite {
                         using_rule: RelationSource::Theorem(
-                            "group_inverse_axiom".to_string(),
-                            Some(1),
+                            "group_identity_axiom".to_string(),
+                            Some(0),
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Backward,
+                        instantiations: HashMap::new(), // No manual mappings needed for identity
                     }
                 } else {
                     panic!("p2 goal not an equality")
@@ -188,21 +191,38 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p2_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    // println!("DEBUG: p3_node:\n{}", p3_node.short_debug());
+    println!("DEBUG: p3_node:\n{:#?}", p3_node);
 
     // Step 4: Rewrite e on the LHS using the inverse property (e -> g⁻¹ * g).
     // Goal: e * h1 = h2
     // New Goal: (g⁻¹ * g) * h1 = h2
+    // ✅ FIXED: Map theorem variable 'x' to goal variable 'g'
     let p4_node = {
         let tactic = {
             if let Some(statement_arc) = p3_node.get_goal().statement.concrete_value() {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    println!("DEBUG: p4_node - Target expression: e*h1");
+                    println!(
+                        "DEBUG: p4_node - Looking for identity element 'e' within this expression"
+                    );
+                    println!(
+                        "DEBUG: p4_node - Will replace 'e' with 'g⁻¹*g' (using inverse axiom backward)"
+                    );
+
+                    let mut instantiations = HashMap::new();
+                    instantiations.insert(
+                        Identifier::new_simple("x".to_string()),
+                        Identifier::new_simple("g".to_string()),
+                    );
                     Tactic::Rewrite {
                         using_rule: RelationSource::Theorem(
                             "group_inverse_axiom".to_string(),
-                            Some(1),
+                            Some(0),
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Backward,
+                        instantiations,
                     }
                 } else {
                     panic!("p3 goal not an equality")
@@ -213,6 +233,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p3_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p4_node:\n{}", p4_node.short_debug());
 
     // Step 5: Apply associativity to regroup the expression on the LHS.
     // Goal: (g⁻¹ * g) * h1 = h2
@@ -223,11 +244,12 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
                     Tactic::Rewrite {
                         using_rule: RelationSource::Theorem(
-                            "group_associativity".to_string(),
-                            None,
+                            "group_associativity_axiom".to_string(),
+                            Some(0),
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Forward,
+                        instantiations: HashMap::new(),
                     }
                 } else {
                     panic!("p4 goal not an equality")
@@ -238,6 +260,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p4_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p5_node:\n{}", p5_node.short_debug());
 
     // Step 6: Rewrite (g * h1) using the hypothesis `hyp_gh1_eq_e`.
     // Goal: g⁻¹ * (g * h1) = h2
@@ -246,10 +269,25 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         let tactic = {
             if let Some(statement_arc) = p5_node.get_goal().statement.concrete_value() {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
-                    Tactic::Rewrite {
-                        using_rule: RelationSource::LocalAssumption(hyp1.clone()),
-                        target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                        direction: RewriteDirection::Forward,
+                    if let Some(left_concrete) = left.concrete_value() {
+                        if let MathExpression::Expression(TheoryExpression::Group(
+                            GroupExpression::Operation { right, .. },
+                        )) = left_concrete.as_ref()
+                        {
+                            Tactic::Rewrite {
+                                using_rule: RelationSource::LocalAssumption(hyp1.clone()),
+                                target: Target::new(
+                                    ContextOrStatement::Statement,
+                                    right.id.clone(),
+                                ),
+                                direction: RewriteDirection::Forward,
+                                instantiations: HashMap::new(), // No manual mappings needed for local assumptions
+                            }
+                        } else {
+                            panic!("p5 goal left not an GroupExpression")
+                        }
+                    } else {
+                        panic!("p5 goal left not a concrete value")
                     }
                 } else {
                     panic!("p5 goal not an equality")
@@ -260,6 +298,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p5_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p6_node:\n{}", p6_node.short_debug());
 
     // Step 7: Rewrite `e` to `g*h2` using hypothesis `hyp_gh2_eq_e`
     // Goal: g⁻¹ * e = h2
@@ -272,6 +311,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                         using_rule: RelationSource::LocalAssumption(hyp2.clone()),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Backward, // e -> g*h2
+                        instantiations: HashMap::new(), // No manual mappings needed for local assumptions
                     }
                 } else {
                     panic!("p6 goal not an equality")
@@ -292,11 +332,12 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
                     Tactic::Rewrite {
                         using_rule: RelationSource::Theorem(
-                            "group_associativity".to_string(),
-                            None,
+                            "group_associativity_axiom".to_string(),
+                            Some(0),
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Forward,
+                        instantiations: HashMap::new(), // No manual mappings needed
                     }
                 } else {
                     panic!("p7 goal not an equality")
@@ -315,6 +356,11 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         let tactic = {
             if let Some(statement_arc) = p8_node.get_goal().statement.concrete_value() {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    let mut instantiations = HashMap::new();
+                    instantiations.insert(
+                        Identifier::new_simple("x".to_string()),
+                        Identifier::new_simple("g".to_string()),
+                    );
                     Tactic::Rewrite {
                         using_rule: RelationSource::Theorem(
                             "group_inverse_axiom".to_string(),
@@ -322,6 +368,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Forward,
+                        instantiations,
                     }
                 } else {
                     panic!("p8 goal not an equality")
@@ -347,6 +394,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
                         direction: RewriteDirection::Forward,
+                        instantiations: HashMap::new(), // No manual mappings needed for identity
                     }
                 } else {
                     panic!("p9 goal not an equality")

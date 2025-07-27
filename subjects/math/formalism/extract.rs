@@ -26,24 +26,6 @@ pub enum Parametrizable<T> {
     Variable(Identifier),
 }
 
-impl<T: 'static + Clone + Debug> Parametrizable<T> {
-    pub fn unwrap(&self, context: &Vec<ContextEntry>) -> T {
-        match self {
-            Parametrizable::Concrete(t) => t.clone(),
-            Parametrizable::Variable(id) => {
-                let math_expr = &context
-                    .iter()
-                    .find(|entry| entry.name == *id)
-                    .unwrap_or_else(|| panic!("Variable with id {:?} not found in context", id))
-                    .ty
-                    .data;
-
-                TryDetag::<T>::detag(math_expr).clone()
-            }
-        }
-    }
-}
-
 impl<T: Hash> Hash for Parametrizable<T> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
@@ -54,6 +36,42 @@ impl<T: Hash> Hash for Parametrizable<T> {
 }
 
 impl<T: 'static + Clone + Debug> Parametrizable<Arc<T>> {
+    pub fn unwrap_arc(&self, context: &Vec<ContextEntry>) -> Arc<T> {
+        match self {
+            Parametrizable::Concrete(arc_t) => arc_t.clone(),
+            Parametrizable::Variable(id) => {
+                let math_expr = &context
+                    .iter()
+                    .find(|entry| entry.name == *id)
+                    .unwrap_or_else(|| panic!("Variable with id {:?} not found in context", id))
+                    .ty
+                    .data
+                    .unwrap_arc(context);
+
+                // Try to get Arc<T> directly
+                match TryDetag::<Arc<T>>::try_detag(math_expr) {
+                    Ok(result) => result.clone(),
+                    Err(_) => {
+                        // If that fails, try to get T and wrap it in Arc
+                        match TryDetag::<T>::try_detag(math_expr) {
+                            Ok(inner) => Arc::new(inner.clone()),
+                            Err(e) => panic!(
+                                "Could not extract {} or Arc<{}> from context: {}",
+                                std::any::type_name::<T>(),
+                                std::any::type_name::<T>(),
+                                e
+                            ),
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn unwrap(&self, context: &Vec<ContextEntry>) -> T {
+        self.unwrap_arc(context).as_ref().clone()
+    }
+
     /// Create a concrete parametrizable from a value
     pub fn concrete(value: T) -> Self {
         Parametrizable::Concrete(Arc::new(value))

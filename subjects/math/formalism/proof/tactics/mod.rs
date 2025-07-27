@@ -103,6 +103,7 @@ pub enum Tactic {
         using_rule: RelationSource,
         target: Target,
         direction: RewriteDirection,
+        instantiations: HashMap<Identifier, Identifier>, // meta-variable in theorem vs variable in current goal
     },
 
     /// Replaces a defined term with its definition.
@@ -174,7 +175,7 @@ pub enum Tactic {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum RelationSource {
     LocalAssumption(Identifier),
-    Theorem(String, Option<usize>), // theorem id, optional index of the theorem's node to use.
+    Theorem(String, Option<usize>), // theorem id, optional index of the theorem statement's node to use.
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

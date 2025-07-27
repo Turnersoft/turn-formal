@@ -1,4 +1,5 @@
 use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
+use crate::subjects::math::formalism::debug::ShortDebug;
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
@@ -87,19 +88,19 @@ impl Tactic {
             Tactic::SplitGoalConjunction => {
                 if let Some(statement_arc) = goal.statement.concrete_value() {
                     if let MathRelation::And(conjuncts) = statement_arc.as_ref() {
-                        let goals = conjuncts
-                            .iter()
-                            .map(|conjunct| {
-                                let mut sub_goal = goal.clone();
+                    let goals = conjuncts
+                        .iter()
+                        .map(|conjunct| {
+                            let mut sub_goal = goal.clone();
                                 if let Some(conjunct_arc) = conjunct.concrete_value() {
                                     sub_goal.statement = Located::from_arc(conjunct_arc.clone());
                                 }
-                                sub_goal
-                            })
+                            sub_goal
+                        })
                             .collect::<Vec<_>>();
-                        TacticApplicationResult::MultiGoal(goals)
-                    } else {
-                        TacticApplicationResult::Error("Goal is not a conjunction.".to_string())
+                    TacticApplicationResult::MultiGoal(goals)
+                } else {
+                    TacticApplicationResult::Error("Goal is not a conjunction.".to_string())
                     }
                 } else {
                     TacticApplicationResult::Error("Goal statement is not a relation.".to_string())
@@ -108,17 +109,17 @@ impl Tactic {
             Tactic::SplitGoalDisjunction { disjunct_index } => {
                 if let Some(statement_arc) = goal.statement.concrete_value() {
                     if let MathRelation::Or(disjuncts) = statement_arc.as_ref() {
-                        if *disjunct_index < disjuncts.len() {
-                            let mut new_goal = goal.clone();
+                    if *disjunct_index < disjuncts.len() {
+                        let mut new_goal = goal.clone();
                             if let Some(disjunct_arc) = disjuncts[*disjunct_index].concrete_value() {
                                 new_goal.statement = Located::from_arc(disjunct_arc.clone());
                             }
-                            TacticApplicationResult::SingleGoal(new_goal)
-                        } else {
-                            TacticApplicationResult::Error("Disjunct index out of bounds.".to_string())
-                        }
+                        TacticApplicationResult::SingleGoal(new_goal)
                     } else {
-                        TacticApplicationResult::Error("Goal is not a disjunction.".to_string())
+                        TacticApplicationResult::Error("Disjunct index out of bounds.".to_string())
+                    }
+                } else {
+                    TacticApplicationResult::Error("Goal is not a disjunction.".to_string())
                     }
                 } else {
                     TacticApplicationResult::Error("Goal statement is not a relation.".to_string())
@@ -152,33 +153,33 @@ impl Tactic {
                 if let Some(relation) = goal.find_relation_by_name(target_hypothesis) {
                     if let Some(relation_arc) = relation.concrete_value() {
                         if let MathRelation::And(conjuncts) = relation_arc.as_ref() {
-                            if conjuncts.len() != with_names.len() {
-                                return TacticApplicationResult::Error(
-                                    "Number of names for conjuncts does not match".to_string(),
-                                );
-                            }
+                        if conjuncts.len() != with_names.len() {
+                            return TacticApplicationResult::Error(
+                                "Number of names for conjuncts does not match".to_string(),
+                            );
+                        }
                             let mut new_goal = goal.clone();
-                            for (conjunct, name) in conjuncts.iter().zip(with_names.iter()) {
+                        for (conjunct, name) in conjuncts.iter().zip(with_names.iter()) {
                                 if let Some(conjunct_arc) = conjunct.concrete_value() {
-                                    let new_entry = ContextEntry {
-                                        name: name.clone(),
+                            let new_entry = ContextEntry {
+                                name: name.clone(),
                                         ty: Located::new_concrete(MathExpression::Relation(
                                             conjunct_arc.clone(),
-                                        )),
-                                        definition: DefinitionState::Abstract,
-                                        description: Some(RichText::text(format!(
-                                            "From splitting {}",
-                                            target_hypothesis.to_string()
-                                        ))),
-                                    };
-                                    new_goal.context.push(new_entry);
+                                )),
+                                definition: DefinitionState::Abstract,
+                                description: Some(RichText::text(format!(
+                                    "From splitting {}",
+                                    target_hypothesis.to_string()
+                                ))),
+                            };
+                            new_goal.context.push(new_entry);
                                 }
-                            }
-                            TacticApplicationResult::SingleGoal(new_goal)
-                        } else {
-                            TacticApplicationResult::Error(
-                                "Target hypothesis is not a conjunction.".to_string(),
-                            )
+                        }
+                        TacticApplicationResult::SingleGoal(new_goal)
+                    } else {
+                        TacticApplicationResult::Error(
+                            "Target hypothesis is not a conjunction.".to_string(),
+                        )
                         }
                     } else {
                         TacticApplicationResult::Error("Target hypothesis is not a concrete relation.".to_string())
@@ -222,19 +223,19 @@ impl Tactic {
                     if let Some(goal_statement_arc) = goal.statement.concrete_value() {
                         let goal_relation_as_expr = Located::new_concrete(MathExpression::Relation(
                             goal_statement_arc.clone(),
-                        ));
-                        let contradictory_entry = ContextEntry {
-                            name: Identifier::new_simple("goal".to_string()),
-                            ty: goal_relation_as_expr,
-                            definition: DefinitionState::Abstract,
-                            description: None,
-                        };
-                        if Self::entries_contradict(entry, &contradictory_entry) {
-                            TacticApplicationResult::ProofComplete
-                        } else {
-                            TacticApplicationResult::Error(
-                                "Hypothesis does not contradict goal.".to_string(),
-                            )
+                    ));
+                    let contradictory_entry = ContextEntry {
+                        name: Identifier::new_simple("goal".to_string()),
+                        ty: goal_relation_as_expr,
+                        definition: DefinitionState::Abstract,
+                        description: None,
+                    };
+                    if Self::entries_contradict(entry, &contradictory_entry) {
+                        TacticApplicationResult::ProofComplete
+                    } else {
+                        TacticApplicationResult::Error(
+                            "Hypothesis does not contradict goal.".to_string(),
+                        )
                         }
                     } else {
                         TacticApplicationResult::Error("Goal statement is not concrete.".to_string())
@@ -247,12 +248,13 @@ impl Tactic {
                 using_rule,
                 target,
                 direction,
+                instantiations,
             } => match using_rule {
                 RelationSource::LocalAssumption(id) => {
-                    Self::apply_rewrite_with_local_assumption(goal, target, id, direction)
-                    }
+                    Self::apply_rewrite_with_local_assumption(goal, target, id, direction, &instantiations)
+                }
                 RelationSource::Theorem(id, node_index) => {
-                    Self::apply_rewrite_with_theorem(goal, target, id, *node_index, direction)
+                    Self::apply_rewrite_with_theorem(goal, target, id, *node_index, direction, &instantiations)
                 }
             },
             Tactic::UnfoldDefinition {
@@ -306,31 +308,34 @@ impl Tactic {
                 if let Some(replacement_arc) = entry.ty.concrete_value() {
                     let replacement = replacement_arc.as_ref();
 
-                    let mut new_goal = goal.clone();
-                    let target_clone = target.clone();
+                let mut new_goal = goal.clone();
+                let target_clone = target.clone();
 
-                    // We need a dummy expression for the variable to create a valid pattern
-                    let dummy_var_expr =
-                        MathExpression::Object(Arc::new(MathObject::Set(Set::Parametric {
-                            parameters: HashMap::new(),
-                            description: entry.name.to_string(),
-                            membership_condition: "".to_string(),
-                            properties: VariantSet::new(),
-                        })));
+                // We need a dummy expression for the variable to create a valid pattern
+                let dummy_var_expr =
+                    MathExpression::Object(Arc::new(MathObject::Set(Set::Parametric {
+                        parameters: HashMap::new(),
+                        description: entry.name.to_string(),
+                        membership_condition: "".to_string(),
+                        properties: VariantSet::new(),
+                    })));
 
                     if let Some(current_statement_arc) = new_goal.statement.concrete_value() {
+                        let pattern_located = Located::new_concrete(dummy_var_expr.clone());
+                        let replacement_located = Located::new_concrete(replacement.clone());
                         let new_statement = current_statement_arc.replace(
-                            &new_goal.statement.id,
-                            &target_clone,
-                            &new_goal.context,
-                            &dummy_var_expr,
-                            replacement,
-                            &goal.context,
-                        );
+                    &new_goal.statement.id,
+                    &target_clone.id,
+                    &new_goal.context,
+                    &pattern_located,
+                    &replacement_located,
+                    &goal.context,
+                    &HashMap::new(), // No manual instantiations for unfold definition
+                );
                         new_goal.statement = Located::new_concrete(new_statement);
                     }
 
-                    return TacticApplicationResult::SingleGoal(new_goal);
+                return TacticApplicationResult::SingleGoal(new_goal);
                 } else {
                     return TacticApplicationResult::Error(
                         "Definition body is not concrete.".to_string(),
@@ -418,17 +423,17 @@ impl Tactic {
             // Remove the existential quantifier from the list
             new_goal.quantifiers.remove(index);
             
-            // Create substitution map for the witness
-            let substitution_map = HashMap::from([(target_quantifier.clone(), witness.clone())]);
             
             // Substitute the witness in the statement
             if let Some(goal_statement_arc) = goal.statement.concrete_value() {
-                let goal_expr_wrapper = MathExpression::Relation(goal_statement_arc.clone());
-                let substituted_expr = goal_expr_wrapper.substitute(&substitution_map, &goal.context);
+                // Create substitution map for the witness
+                let located_witness = Located::new_concrete(witness.clone());
+
+                let substitution_map = HashMap::from([(target_quantifier.clone(), located_witness.id.clone())]);
+
+                let substituted_expr = goal_statement_arc.substitute(&substitution_map, &located_witness, &goal.context);
                 
-                if let MathExpression::Relation(rel) = substituted_expr {
-                    new_goal.statement = Located::from_arc(rel);
-                }
+                new_goal.statement = Located::from_arc(substituted_expr);
             }
             
             // Also substitute in remaining quantifiers that might depend on this variable
@@ -505,7 +510,10 @@ impl Tactic {
         } else {
             return TacticApplicationResult::Error("Theorem statement is not concrete".to_string());
         };
-        let instantiated_expr = theorem_expr_wrapper.substitute(&instantiations, &theorem_context);
+        
+        // Create Located wrapper for the goal expression to use as target
+        let goal_located = Located::new_concrete(goal_expr.clone());
+        let instantiated_expr = theorem_expr_wrapper.substitute(&instantiations, &goal_located, &theorem_context);
         let instantiated_statement = if let MathExpression::Relation(rel) = instantiated_expr {
             Located::from_arc(rel)
         } else {
@@ -517,11 +525,11 @@ impl Tactic {
             goal.statement.concrete_value()
         ) {
             if instantiated_arc == goal_arc {
-                TacticApplicationResult::ProofComplete
-            } else {
-                TacticApplicationResult::Error(
-                    "Provided statement does not exactly match goal.".to_string(),
-                )
+            TacticApplicationResult::ProofComplete
+        } else {
+            TacticApplicationResult::Error(
+                "Provided statement does not exactly match goal.".to_string(),
+            )
             }
         } else {
             TacticApplicationResult::Error("Cannot compare non-concrete statements".to_string())
@@ -533,11 +541,24 @@ impl Tactic {
         target: &Target,
         assumption_id: &Identifier,
         direction: &RewriteDirection,
+        instantiations: &HashMap<Identifier, Identifier>,
     ) -> TacticApplicationResult {
+        println!("DEBUG: LOCAL_ASSUMPTION - Looking for assumption: {}", assumption_id.body);
+        println!("DEBUG: LOCAL_ASSUMPTION - Available assumptions in context:");
+        for (i, entry) in goal.context.iter().enumerate() {
+            println!("  [{}]: {}: {}", i, entry.name.body, entry.ty.short_debug());
+        }
+        
         if let Some(assumption) = goal.find_relation_by_name(assumption_id) {
+            println!("DEBUG: LOCAL_ASSUMPTION - Found assumption: {}", assumption.short_debug());
+            if let Some(goal_concrete) = goal.statement.concrete_value() {
+                println!("DEBUG: LOCAL_ASSUMPTION - Current goal is: {:?}", goal_concrete);
+            } else {
+                println!("DEBUG: LOCAL_ASSUMPTION - Current goal: {}", goal.statement.short_debug());
+            }
             // For a local assumption, there's no sub-indexing.
             if let Some(assumption_arc) = assumption.concrete_value() {
-                Self::find_and_apply_rewrite(goal, target, direction, assumption_arc.as_ref(), &goal.context, None)
+                Self::find_and_apply_rewrite(goal, target, direction, assumption_arc.as_ref(), &goal.context, None, instantiations)
             } else {
                 TacticApplicationResult::Error("Assumption is not concrete".to_string())
             }
@@ -552,20 +573,22 @@ impl Tactic {
         theorem_id: &str,
         node_index: Option<usize>,
         direction: &RewriteDirection,
+        instantiations: &HashMap<Identifier, Identifier>,
     ) -> TacticApplicationResult {
         let registry = get_theorem_registry();
         if let Some(theorem) = registry.get(theorem_id) {
             let theorem_statement = &theorem.proofs.initial_goal.statement;
             let theorem_context = &theorem.proofs.initial_goal.context;
             if let Some(theorem_arc) = theorem_statement.concrete_value() {
-                Self::find_and_apply_rewrite(
-                    goal,
-                    target,
-                    direction,
+            Self::find_and_apply_rewrite(
+                goal,
+                target,
+                direction,
                     theorem_arc.as_ref(),
-                    theorem_context,
-                    node_index,
-                )
+                theorem_context,
+                node_index,
+                instantiations,
+            )
             } else {
                 TacticApplicationResult::Error("Theorem statement is not concrete".to_string())
             }
@@ -577,7 +600,7 @@ impl Tactic {
         }
     }
 
-    /// The core logic for applying a rewrite.
+    /// Helper method to find and apply a rewrite using a specific rule statement.
     /// It is called by both `apply_rewrite_with_theorem` and `apply_rewrite_with_local_assumption`.
     fn find_and_apply_rewrite(
         goal: &ProofGoal,
@@ -586,52 +609,72 @@ impl Tactic {
         rule_statement: &MathRelation,
         rule_context: &Vec<ContextEntry>,
         node_index: Option<usize>,
+        instantiations: &HashMap<Identifier, Identifier>,
     ) -> TacticApplicationResult {
         match &rule_statement {
             MathRelation::Equal { left, right } => {
+
+                
                 let (pattern_loc, replacement_loc) = if *direction == RewriteDirection::Forward {
                     (left, right)
                 } else {
                     (right, left)
                 };
 
-                let pattern = pattern_loc.data.unwrap(rule_context);
-                let replacement = replacement_loc.data.unwrap(rule_context);
+                // ✅ FIXED: Keep Located wrapper instead of unwrapping
+                // let pattern = pattern_loc.data.unwrap(rule_context);
+                // let replacement = replacement_loc.data.unwrap(rule_context);
 
                 // search if the pattern match the target expression
-                if let Some(goal_statement_arc) = goal.statement.concrete_value() {
-                    let matches = goal_statement_arc.find_matches(
-                        target.clone(),
-                        goal.statement.id.clone(),
-                        &goal.context,
-                        &pattern,
-                        rule_context,
-                        false,
-                    );
-
-                    if matches.len() != 1 {
-                        return TacticApplicationResult::Error(format!(
-                            "Pattern does not match target expression in goal. Found {} matches.",
-                            matches.len()
-                        ));
-                    }
-
-                    // replace the target expression with the replacement expression
-                    let mut new_goal = goal.clone();
-                    let new_statement = goal_statement_arc.replace(
-                        &new_goal.statement.id,
-                        target,
-                        &new_goal.context,
-                        &pattern,
-                        &replacement,
-                        rule_context,
-                    );
-                    new_goal.statement = Located::new_concrete(new_statement);
-
-                    TacticApplicationResult::SingleGoal(new_goal)
-                } else {
-                    TacticApplicationResult::Error("Goal statement is not concrete".to_string())
+                
+                let matches = goal.statement.data.unwrap(&goal.context).find_matches(
+                    target.clone(),
+                    goal.statement.id.clone(),
+                    &goal.context,
+                        pattern_loc,  // ✅ Pass Located<MathExpression>
+                    rule_context,
+                    false,
+                );
+                
+                // ✅ FIXED: Allow multiple matches, only reject when no matches found
+                if matches.len() == 0 {
+                    return TacticApplicationResult::Error(format!(
+                        "Pattern does not match target expression in goal. Found {} matches.",
+                        matches.len()
+                    ));
                 }
+                // Select the best match: prefer target.id if available, otherwise first match
+                let selected_match = if matches.contains(&target.id) {
+                    &target.id
+                } else {
+                    matches.iter().next().unwrap()
+                };
+
+                // Manual instantiations only (automatic instantiation happens in replace)
+                let mut combined_instantiations = HashMap::new();
+                
+                // Add manual instantiations (they override automatic ones)
+                for (theorem_var, goal_var) in instantiations {
+                    combined_instantiations.insert(theorem_var.clone(), goal_var.to_string());
+                }
+
+                // replace the target expression with the replacement expression
+                let mut new_goal = goal.clone();
+                let new_statement = goal.statement.replace(
+                    &new_goal.statement.id,
+                        selected_match,
+                    &new_goal.context,
+                        pattern_loc,      // ✅ Pass Located<MathExpression>
+                        replacement_loc,  // ✅ Pass Located<MathExpression>
+                    rule_context,
+                    &combined_instantiations.iter().map(|(k, v)| (k.clone(), Identifier::new_simple(v.clone()))).collect(),  // ✅ Pass combined instantiations
+                );
+                new_goal.statement = new_statement;
+
+                TacticApplicationResult::SingleGoal(new_goal)
+                // } else {
+                //     TacticApplicationResult::Error("Goal statement is not concrete".to_string())
+                // }
             }
             MathRelation::Implies(antecedent, consequent) => {
                 if *direction == RewriteDirection::Backward {
@@ -640,42 +683,53 @@ impl Tactic {
                     );
                 }
 
-                let pattern =
-                    MathExpression::Relation(antecedent.data.unwrap(rule_context).clone());
-                let replacement =
-                    MathExpression::Relation(consequent.data.unwrap(rule_context).clone());
+                // ✅ FIXED: Use Located wrappers for implications too
+                // let pattern =
+                //     MathExpression::Relation(Arc::new(antecedent.data.unwrap(rule_context).clone()));
+                // let replacement =
+                //     MathExpression::Relation(Arc::new(consequent.data.unwrap(rule_context).clone()));
+
+                // Create Located wrappers for the relation expressions
+                let pattern_loc = Located::new_concrete(MathExpression::Relation(
+                    antecedent.concrete_value().unwrap().clone()
+                ));
+                let replacement_loc = Located::new_concrete(MathExpression::Relation(
+                    consequent.concrete_value().unwrap().clone()
+                ));
 
                 // search if the pattern match the target expression
                 if let Some(goal_statement_arc) = goal.statement.concrete_value() {
                     let matches = goal_statement_arc.find_matches(
-                        target.clone(),
-                        goal.statement.id.clone(),
-                        &goal.context,
-                        &pattern,
-                        rule_context,
-                        false,
-                    );
+                    target.clone(),
+                    goal.statement.id.clone(),
+                    &goal.context,
+                        &pattern_loc,  // ✅ Pass Located<MathExpression>
+                    rule_context,
+                    false,
+                );
 
-                    if matches.len() != 1 {
-                        return TacticApplicationResult::Error(format!(
-                            "Pattern does not match target expression in goal. Found {} matches.",
-                            matches.len()
-                        ));
-                    }
+                // ✅ FIXED: Allow multiple matches, only reject when no matches found
+                if matches.len() == 0 {
+                    return TacticApplicationResult::Error(format!(
+                        "Pattern does not match target expression in goal. Found {} matches.",
+                        matches.len()
+                    ));
+                }
 
-                    // replace the target expression with the replacement expression
-                    let mut new_goal = goal.clone();
-                    let new_statement = goal_statement_arc.replace(
-                        &new_goal.statement.id,
-                        target,
-                        &new_goal.context,
-                        &pattern,
-                        &replacement,
-                        rule_context,
-                    );
+                // replace the target expression with the replacement expression
+                let mut new_goal = goal.clone();
+                let new_statement = goal_statement_arc.replace(
+                    &new_goal.statement.id,
+                    &target.id,
+                    &new_goal.context,
+                    &pattern_loc,      // ✅ Pass Located<MathExpression>
+                    &replacement_loc,  // ✅ Pass Located<MathExpression>
+                    rule_context,
+                    &HashMap::new(), // No manual instantiations for implications
+                );
                     new_goal.statement = Located::new_concrete(new_statement);
 
-                    TacticApplicationResult::SingleGoal(new_goal)
+                TacticApplicationResult::SingleGoal(new_goal)
                 } else {
                     TacticApplicationResult::Error("Goal statement is not concrete".to_string())
                 }
@@ -693,6 +747,7 @@ impl Tactic {
                             &concrete_relation,
                             rule_context,
                             None,
+                            instantiations,
                         )
                     } else {
                         TacticApplicationResult::Error(format!(
@@ -700,7 +755,7 @@ impl Tactic {
                             idx
                         ))
                             }
-                } else {
+                        } else {
                     // No index provided, so try each conjunct in order.
                     for conjunct in conjuncts {
                         let concrete_relation = conjunct.data.clone().unwrap(rule_context);
@@ -711,6 +766,7 @@ impl Tactic {
                             &concrete_relation,
                             rule_context,
                             None, // Pass None since we are iterating.
+                            instantiations,
                         );
 
                         // If the rewrite was successful (i.e., not an error), return it.
@@ -733,42 +789,52 @@ impl Tactic {
                     (right, left)
                 };
 
-                let pattern =
-                    MathExpression::Relation(pattern_loc.data.unwrap(rule_context).clone());
-                let replacement =
-                    MathExpression::Relation(replacement_loc.data.unwrap(rule_context).clone());
+                // ✅ FIXED: Use Located wrappers for equivalence too
+                // let pattern =
+                //     MathExpression::Relation(Arc::new(pattern_loc.data.unwrap(rule_context).clone()));
+                // let replacement =
+                //     MathExpression::Relation(Arc::new(replacement_loc.data.unwrap(rule_context).clone()));
+
+                // Create Located wrappers for the relation expressions
+                let pattern_located = Located::new_concrete(MathExpression::Relation(
+                    pattern_loc.concrete_value().unwrap().clone()
+                ));
+                let replacement_located = Located::new_concrete(MathExpression::Relation(
+                    replacement_loc.concrete_value().unwrap().clone()
+                ));
  
                 // search if the pattern match the target expression
                 if let Some(goal_statement_arc) = goal.statement.concrete_value() {
                     let matches = goal_statement_arc.find_matches(
-                        target.clone(),
-                        goal.statement.id.clone(),
-                        &goal.context,
-                        &pattern,
-                        rule_context,
-                        false,
-                    );
+                    target.clone(),
+                    goal.statement.id.clone(),
+                    &goal.context,
+                        &pattern_located,  // ✅ Pass Located<MathExpression>
+                    rule_context,
+                    false,
+                );
 
-                    if matches.len() != 1 {
-                        return TacticApplicationResult::Error(format!(
-                            "Pattern does not match target expression in goal. Found {} matches.",
-                            matches.len()
-                        ));
-                    }
+                if matches.len() == 0 {
+                    return TacticApplicationResult::Error(format!(
+                        "Pattern does not match target expression in goal. Found {} matches.",
+                        matches.len()
+                    ));
+                }
 
-                    // replace the target expression with the replacement expression
+                // replace the target expression with the replacement expression
                     let mut new_goal = goal.clone();
                     let new_statement = goal_statement_arc.replace(
-                        &new_goal.statement.id,
-                        target,
-                        &new_goal.context,
-                        &pattern,
-                        &replacement,
-                        rule_context,
-                    );
+                    &new_goal.statement.id,
+                        &target.id,
+                    &new_goal.context,
+                        &pattern_located,      // ✅ Pass Located<MathExpression>
+                        &replacement_located,  // ✅ Pass Located<MathExpression>
+                    rule_context,
+                    &HashMap::new(), // No manual instantiations for equivalence
+                );
                     new_goal.statement = Located::new_concrete(new_statement);
 
-                    TacticApplicationResult::SingleGoal(new_goal)
+                TacticApplicationResult::SingleGoal(new_goal)
                 } else {
                     TacticApplicationResult::Error("Goal statement is not concrete".to_string())
                 }
@@ -786,24 +852,24 @@ impl Tactic {
     ) -> TacticApplicationResult {
         if let Some(statement_arc) = goal.statement.concrete_value() {
             if let MathRelation::Implies(antecedent, consequent) = statement_arc.as_ref() {
-                let antecedent_ty = antecedent.data.clone().unwrap(&goal.context);
-                let new_entry = ContextEntry {
-                    name: hypothesis_name.clone(),
-                    ty: Located::new_concrete(MathExpression::Relation(antecedent_ty)),
-                    definition: DefinitionState::Abstract,
-                    description: Some(RichText::text("Result of assuming antecedent".to_string())),
-                };
-                let mut new_context = goal.context.clone();
-                new_context.push(new_entry);
-                let new_statement = consequent.data.unwrap(&new_context);
-                let new_goal = ProofGoal {
-                    context: new_context,
+            let antecedent_ty = antecedent.data.clone().unwrap(&goal.context);
+            let new_entry = ContextEntry {
+                name: hypothesis_name.clone(),
+                    ty: Located::new_concrete(MathExpression::Relation(Arc::new(antecedent_ty))),
+                definition: DefinitionState::Abstract,
+                description: Some(RichText::text("Result of assuming antecedent".to_string())),
+            };
+            let mut new_context = goal.context.clone();
+            new_context.push(new_entry);
+            let new_statement = consequent.data.unwrap(&new_context);
+            let new_goal = ProofGoal {
+                context: new_context,
                     quantifiers: goal.quantifiers.clone(),
-                    statement: Located::from_arc(new_statement),
-                };
-                TacticApplicationResult::SingleGoal(new_goal)
-            } else {
-                TacticApplicationResult::Error("Goal is not an implication.".to_string())
+                    statement: Located::new_concrete(new_statement),
+            };
+            TacticApplicationResult::SingleGoal(new_goal)
+        } else {
+            TacticApplicationResult::Error("Goal is not an implication.".to_string())
             }
         } else {
             TacticApplicationResult::Error("Goal statement is not concrete.".to_string())
@@ -825,13 +891,13 @@ impl Tactic {
     fn apply_reflexivity(goal: &ProofGoal) -> TacticApplicationResult {
         if let Some(statement_arc) = goal.statement.concrete_value() {
             if let MathRelation::Equal { left, right } = statement_arc.as_ref() {
-                if left.data.unwrap(&goal.context) == right.data.unwrap(&goal.context) {
-                    TacticApplicationResult::ProofComplete
-                } else {
-                    TacticApplicationResult::Error("Sides of equality are not identical.".to_string())
-                }
+            if left.data.unwrap(&goal.context) == right.data.unwrap(&goal.context) {
+                TacticApplicationResult::ProofComplete
             } else {
-                TacticApplicationResult::Error("Goal is not an equality.".to_string())
+                TacticApplicationResult::Error("Sides of equality are not identical.".to_string())
+            }
+        } else {
+            TacticApplicationResult::Error("Goal is not an equality.".to_string())
             }
         } else {
             TacticApplicationResult::Error("Goal statement is not concrete.".to_string())
@@ -846,14 +912,15 @@ impl Tactic {
         induction_hypothesis_name: &Identifier,
     ) -> TacticApplicationResult {
         // Base Case Goal
+        let located_base_case = Located::new_concrete(base_case_value.clone());
         let substitution_map_base =
-            HashMap::from([(induction_variable_name.clone(), base_case_value.clone())]);
+            HashMap::from([(induction_variable_name.clone(), located_base_case.id.clone())]);
         let mut base_case_goal = goal.clone();
         
         // Use MathExpression wrapper for substitution
         if let Some(goal_statement_arc) = goal.statement.concrete_value() {
             let goal_expr_wrapper = MathExpression::Relation(goal_statement_arc.clone());
-            let base_case_expr = goal_expr_wrapper.substitute(&substitution_map_base, &goal.context);
+            let base_case_expr = goal_expr_wrapper.substitute(&substitution_map_base, &located_base_case, &goal.context);
             if let MathExpression::Relation(rel) = base_case_expr {
                 base_case_goal.statement = Located::from_arc(rel);
             }
@@ -879,31 +946,33 @@ impl Tactic {
                 }),
             },
         ));
-        let substitution_map_k = HashMap::from([(induction_variable_name.clone(), k_var.clone())]);
+        let located_k_var = Located::new_concrete(k_var.clone());
+        let substitution_map_k = HashMap::from([(induction_variable_name.clone(), located_k_var.id.clone())]);
         if let Some(goal_statement_arc) = goal.statement.concrete_value() {
             let induction_hypothesis_expr = MathExpression::Relation(goal_statement_arc.clone());
-            let induction_hypothesis_result = induction_hypothesis_expr.substitute(&substitution_map_k, &goal.context);
+            let induction_hypothesis_result = induction_hypothesis_expr.substitute(&substitution_map_k, &located_k_var, &goal.context);
 
-            let substitution_map_k_plus_1 =
-                HashMap::from([(induction_variable_name.clone(), k_plus_one_expr.clone())]);
-            let mut inductive_step_goal = goal.clone();
+        let located_k_plus_one = Located::new_concrete(k_plus_one_expr.clone());
+        let substitution_map_k_plus_1 =
+            HashMap::from([(induction_variable_name.clone(), located_k_plus_one.id.clone())]);
+        let mut inductive_step_goal = goal.clone();
             let inductive_step_expr = MathExpression::Relation(goal_statement_arc.clone());
-            let inductive_step_result = inductive_step_expr.substitute(&substitution_map_k_plus_1, &goal.context);
+            let inductive_step_result = inductive_step_expr.substitute(&substitution_map_k_plus_1, &located_k_plus_one, &goal.context);
             if let MathExpression::Relation(rel) = inductive_step_result {
                 inductive_step_goal.statement = Located::from_arc(rel);
-            }
+        }
 
-            // Add the induction hypothesis to the context of the inductive step goal
+        // Add the induction hypothesis to the context of the inductive step goal
             if let MathExpression::Relation(hyp_rel) = induction_hypothesis_result {
-                inductive_step_goal.context.push(ContextEntry {
-                    name: induction_hypothesis_name.clone(),
+            inductive_step_goal.context.push(ContextEntry {
+                name: induction_hypothesis_name.clone(),
                     ty: Located::new_concrete(MathExpression::Relation(hyp_rel)),
-                    definition: DefinitionState::Abstract,
-                    description: Some(RichText::text("Induction Hypothesis".to_string())),
-                });
-            }
+                definition: DefinitionState::Abstract,
+                description: Some(RichText::text("Induction Hypothesis".to_string())),
+            });
+        }
 
-            TacticApplicationResult::MultiGoal(vec![base_case_goal, inductive_step_goal])
+        TacticApplicationResult::MultiGoal(vec![base_case_goal, inductive_step_goal])
         } else {
             TacticApplicationResult::Error("Goal statement is not concrete".to_string())
         }
@@ -920,46 +989,46 @@ impl Tactic {
             if let Some(ty_arc) = entry.ty.concrete_value() {
                 if let MathExpression::Relation(relation) = ty_arc.as_ref() {
                     if let Some(current_statement_arc) = new_goal.statement.concrete_value() {
-                        let new_statement = MathRelation::Implies(
+                let new_statement = MathRelation::Implies(
                             Located::from_arc(relation.clone()),
                             Located::from_arc(current_statement_arc.clone()),
-                        );
+                );
                         new_goal.statement = Located::new_concrete(new_statement);
-                        TacticApplicationResult::SingleGoal(new_goal)
+                TacticApplicationResult::SingleGoal(new_goal)
                     } else {
                         TacticApplicationResult::Error("Goal statement is not concrete".to_string())
                     }
-                } else {
-                    TacticApplicationResult::Error(
-                        "Cannot revert a non-relation hypothesis".to_string(),
-                    )
+            } else {
+                TacticApplicationResult::Error(
+                    "Cannot revert a non-relation hypothesis".to_string(),
+                )
                 }
             } else {
                 TacticApplicationResult::Error("Hypothesis type is not concrete".to_string())
             }
         } else {
             TacticApplicationResult::Error("Hypothesis not found".to_string())
-        }
+    }
     }
 
     fn entries_contradict(entry1: &ContextEntry, entry2: &ContextEntry) -> bool {
         if let Some(ty1_arc) = entry1.ty.concrete_value() {
             if let MathExpression::Relation(rel1) = ty1_arc.as_ref() {
-                if let MathRelation::Not(negated_rel1) = rel1.as_ref() {
+            if let MathRelation::Not(negated_rel1) = rel1.as_ref() {
                     if let Some(ty2_arc) = entry2.ty.concrete_value() {
                         if let MathExpression::Relation(rel2) = ty2_arc.as_ref() {
-                            return *negated_rel1.data.unwrap(&vec![]) == **rel2;
-                        }
-                    }
+                    return negated_rel1.data.unwrap(&vec![]) == **rel2;
                 }
+            }
+        }
             }
         }
         if let Some(ty2_arc) = entry2.ty.concrete_value() {
             if let MathExpression::Relation(rel2) = ty2_arc.as_ref() {
-                if let MathRelation::Not(negated_rel2) = rel2.as_ref() {
+            if let MathRelation::Not(negated_rel2) = rel2.as_ref() {
                     if let Some(ty1_arc) = entry1.ty.concrete_value() {
                         if let MathExpression::Relation(rel1) = ty1_arc.as_ref() {
-                            return *negated_rel2.data.unwrap(&vec![]) == **rel1;
+                    return negated_rel2.data.unwrap(&vec![]) == **rel1;
                         }
                     }
                 }

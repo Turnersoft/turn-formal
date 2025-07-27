@@ -84,36 +84,63 @@ impl<T: 'static + Debug> TryDetag<T> for Group {
     }
 }
 
-impl<T: 'static + Debug> TryDetag<T> for GroupRelation {
-    fn try_detag(&self) -> Result<&T, String> {
-        if let Ok(res) = try_detag_as!(self, T) {
-            return Ok(res);
-        }
-        match self {
-            // Handle any other variants that might exist
-            _ => Err(format!(
-                "TryGet not implemented for this GroupRelation variant to find {}",
-                std::any::type_name::<T>()
-            )),
-        }
-    }
-}
+// impl<T: 'static + Debug> TryDetag<T> for GroupRelation {
+//     fn try_detag(&self) -> Result<&T, String> {
+//         if let Ok(res) = try_detag_as!(self, T) {
+//             return Ok(res);
+//         }
+//         match self {
+//             // Handle any other variants that might exist
+//             _ => Err(format!(
+//                 "TryGet not implemented for this GroupRelation variant to find {}",
+//                 std::any::type_name::<T>()
+//             )),
+//         }
+//     }
+// }
 
-impl<T: 'static + Debug> TryDetag<T> for GroupExpression {
-    fn try_detag(&self) -> Result<&T, String> {
-        if let Ok(res) = try_detag_as!(self, T) {
-            return Ok(res);
-        }
-        match self {
-            _ => Err(format!(
-                "TryGet not implemented for this GroupExpression variant to find {}",
-                std::any::type_name::<T>()
-            )),
-        }
-    }
-}
+// impl<T: 'static + Debug> TryDetag<T> for GroupExpression {
+//     fn try_detag(&self) -> Result<&T, String> {
+//         if let Ok(res) = try_detag_as!(self, T) {
+//             return Ok(res);
+//         }
+//         match self {
+//             _ => Err(format!(
+//                 "TryGet not implemented for this GroupExpression variant to find {}",
+//                 std::any::type_name::<T>()
+//             )),
+//         }
+//     }
+// }
 
 // Note: Group and GroupExpression implementations are already provided in subjects/math/formalism/getter.rs
+
+// ✅ MISSING: Add TryDetag<GroupExpression> for GroupExpression (self-conversion)
+impl TryDetag<GroupExpression> for GroupExpression {
+    fn try_detag(&self) -> Result<&GroupExpression, String> {
+        Ok(self) // Self-conversion: GroupExpression -> &GroupExpression
+    }
+}
+
+impl TryDetag<GroupElement> for GroupElement {
+    fn try_detag(&self) -> Result<&GroupElement, String> {
+        Ok(self) // Self-conversion: GroupElement -> &GroupElement
+    }
+}
+
+impl TryDetag<i32> for i32 {
+    fn try_detag(&self) -> Result<&i32, String> {
+        Ok(self) // Self-conversion: i32 -> &i32
+    }
+}
+
+impl TryDetag<GroupHomomorphism> for GroupHomomorphism {
+    fn try_detag(&self) -> Result<&GroupHomomorphism, String> {
+        Ok(self) // Self-conversion: GroupHomomorphism -> &GroupHomomorphism
+    }
+}
+
+// GroupAction TryDetag is already provided by impl_try_get_for_terminal_type! macro above
 
 impl Group {
     /// Gets a reference to the core `GenericGroup` contained within any `Group` variant.

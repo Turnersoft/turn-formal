@@ -109,14 +109,14 @@ impl TheoremRegistry {
         if let Some(theorem) = theorem_dispatch!(
             id, self,
             // Foundational Axioms
-            "equality_is_reflexive" => equality_refl_axiom,
-            "equality_is_symmetric" => equality_symm_axiom,
-            "equality_is_transitive" => equality_tran_axiom,
-            "law_of_identity" => law_of_identity_axiom,
-            "modus_ponens" => modus_ponens_axiom,
-            "double_negation" => double_negation_axiom,
-            "universal_instantiation" => universal_instantiation_axiom,
-            "existential_generalization" => existential_generalization_axiom,
+            "equality_refl_axiom" => equality_refl_axiom,
+            "equality_symm_axiom" => equality_symm_axiom,
+            "equality_tran_axiom" => equality_tran_axiom,
+            "law_of_identity_axiom" => law_of_identity_axiom,
+            "modus_ponens_axiom" => modus_ponens_axiom,
+            "double_negation_axiom" => double_negation_axiom,
+            "universal_instantiation_axiom" => universal_instantiation_axiom,
+            "existential_generalization_axiom" => existential_generalization_axiom,
             // Group Theory Axioms
             "group_closure_axiom" => group_closure_axiom,
             "group_associativity_axiom" => group_associativity_axiom,
@@ -142,14 +142,14 @@ impl TheoremRegistry {
     pub fn list_ids(&self) -> Vec<String> {
         vec![
             // Foundational Axioms
-            "equality_is_reflexive".to_string(),
-            "equality_is_symmetric".to_string(),
-            "equality_is_transitive".to_string(),
-            "law_of_identity".to_string(),
-            "modus_ponens".to_string(),
-            "double_negation".to_string(),
-            "universal_instantiation".to_string(),
-            "existential_generalization".to_string(),
+            "equality_refl_axiom".to_string(),
+            "equality_symm_axiom".to_string(),
+            "equality_tran_axiom".to_string(),
+            "law_of_identity_axiom".to_string(),
+            "modus_ponens_axiom".to_string(),
+            "double_negation_axiom".to_string(),
+            "universal_instantiation_axiom".to_string(),
+            "existential_generalization_axiom".to_string(),
             // Group Theory Axioms
             "group_closure_axiom".to_string(),
             "group_associativity_axiom".to_string(),

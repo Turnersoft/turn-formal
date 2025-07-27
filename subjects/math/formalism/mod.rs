@@ -9,6 +9,7 @@ pub mod abstraction_level;
 pub mod automation;
 pub mod collect_identifier;
 pub mod complexity;
+pub mod debug;
 pub mod detag;
 pub mod expressions;
 pub mod extract;

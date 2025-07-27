@@ -56,6 +56,8 @@ pub enum MathExpression {
         /// The original expression
         expression: Located<MathExpression>,
         /// The view operator
+        /// todo: change this to Located<MathExpression>
+        /// but here it needs to be more general than expression field.
         view: Located<TypeViewOperator>,
     },
 }

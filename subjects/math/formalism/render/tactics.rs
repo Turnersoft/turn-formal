@@ -85,6 +85,7 @@ impl Tactic {
                 using_rule,
                 target: at_target,
                 direction,
+                instantiations,
             } => {
                 let (theorem_id, instantiation) = match using_rule {
                     RelationSource::LocalAssumption(id) => (id.to_string(), HashMap::new()),

@@ -118,41 +118,28 @@ pub fn group_associativity_axiom() -> Axiom {
     let context = vec![x_context_entry, y_context_entry, z_context_entry];
     let quantifiers = vec![x_quantifier, y_quantifier, z_quantifier];
 
-    // create statement using the identifiers
-    let x_var = GroupExpression::Element {
-        group: group.clone(),
-        element: Some(Located::new_variable(x_id)),
-    };
-    let y_var = GroupExpression::Element {
-        group: group.clone(),
-        element: Some(Located::new_variable(y_id)),
-    };
-    let z_var = GroupExpression::Element {
-        group: group.clone(),
-        element: Some(Located::new_variable(z_id)),
-    };
-
+    // create statement using the identifiers directly as variables
     // (x * y) * z
     let xy_mult_z =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
             group: group.clone(),
             left: Located::new_concrete(GroupExpression::Operation {
                 group: group.clone(),
-                left: Located::new_concrete(x_var.clone()),
-                right: Located::new_concrete(y_var.clone()),
+                left: Located::new_variable(x_id.clone()),
+                right: Located::new_variable(y_id.clone()),
             }),
-            right: Located::new_concrete(z_var.clone()),
+            right: Located::new_variable(z_id.clone()),
         }));
 
     // x * (y * z)
     let x_mult_yz =
         MathExpression::Expression(TheoryExpression::Group(GroupExpression::Operation {
             group: group.clone(),
-            left: Located::new_concrete(x_var.clone()),
+            left: Located::new_variable(x_id.clone()),
             right: Located::new_concrete(GroupExpression::Operation {
                 group: group.clone(),
-                left: Located::new_concrete(y_var.clone()),
-                right: Located::new_concrete(z_var.clone()),
+                left: Located::new_variable(y_id.clone()),
+                right: Located::new_variable(z_id.clone()),
             }),
         }));
 
@@ -170,7 +157,7 @@ pub fn group_associativity_axiom() -> Axiom {
 
     // return the theorem
     Axiom {
-        id: "group_associativity".to_string(),
+        id: "group_associativity_axiom".to_string(),
         name: "Group Associativity".to_string(),
         description: "For all elements x, y, z in a group G, (x ∘ y) ∘ z = x ∘ (y ∘ z)".to_string(),
         proofs: ProofForest::new_from_goal(goal),
@@ -234,15 +221,15 @@ pub fn group_identity_axiom() -> Axiom {
     // e * x
     let e_mult_x_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Located::new_concrete(e_var.clone()),
-        right: Located::new_concrete(x_var.clone()),
+        left: Located::new_variable(e_id.clone()), // ← FIXED: Direct variable
+        right: Located::new_variable(x_id.clone()), // ← FIXED: Direct variable
     };
 
     // x * e
     let x_mult_e_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Located::new_concrete(x_var.clone()),
-        right: Located::new_concrete(e_var),
+        left: Located::new_variable(x_id.clone()), // ← FIXED: Direct variable
+        right: Located::new_variable(e_id.clone()), // ← FIXED: Direct variable
     };
 
     let x_var_mex = MathExpression::Expression(TheoryExpression::Group(x_var));
@@ -277,7 +264,7 @@ pub fn group_identity_axiom() -> Axiom {
 
     // return the theorem
     Axiom {
-        id: "group_identity".to_string(),
+        id: "group_identity_axiom".to_string(),
         name: "Group Identity".to_string(),
         description:
             "For every element x in G, e ∘ x = x and x ∘ e = x (where e is the identity element)."
@@ -351,13 +338,13 @@ pub fn group_inverse_axiom() -> Axiom {
     // x⁻¹ (using GroupExpression::Inverse)
     let inverse_gexpr = GroupExpression::Inverse {
         group: group.clone(),
-        element: Located::new_concrete(x_var.clone()),
+        element: Located::new_variable(x_id.clone()), // ← FIXED: Direct variable
     };
 
     // x * x⁻¹
     let x_mult_inv_gexpr = GroupExpression::Operation {
         group: group.clone(),
-        left: Located::new_concrete(x_var.clone()),
+        left: Located::new_variable(x_id.clone()), // ← FIXED: Direct variable
         right: Located::new_concrete(inverse_gexpr.clone()),
     };
 
@@ -365,9 +352,16 @@ pub fn group_inverse_axiom() -> Axiom {
     let inv_mult_x_gexpr = GroupExpression::Operation {
         group: group.clone(),
         left: Located::new_concrete(inverse_gexpr),
-        right: Located::new_concrete(x_var),
+        right: Located::new_variable(x_id.clone()), // ← FIXED: Direct variable
     };
 
+    // x⁻¹ * x = e
+    let left_inverse_rel = MathRelation::Equal {
+        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+            inv_mult_x_gexpr,
+        ))),
+        right: Located::new_variable(e_id.clone()),
+    };
     // x * x⁻¹ = e
     let right_inverse_rel = MathRelation::Equal {
         left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
@@ -376,17 +370,9 @@ pub fn group_inverse_axiom() -> Axiom {
         right: Located::new_variable(e_id.clone()),
     };
 
-    // x⁻¹ * x = e
-    let left_inverse_rel = MathRelation::Equal {
-        left: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
-            inv_mult_x_gexpr,
-        ))),
-        right: Located::new_variable(e_id),
-    };
-
     let inverse_relation = MathRelation::And(vec![
-        Located::new_concrete(right_inverse_rel),
         Located::new_concrete(left_inverse_rel),
+        Located::new_concrete(right_inverse_rel),
     ]);
 
     // create the goal with statement, context, and quantifiers
@@ -398,7 +384,7 @@ pub fn group_inverse_axiom() -> Axiom {
 
     // return the theorem
     Axiom {
-        id: "group_inverse".to_string(),
+        id: "group_inverse_axiom".to_string(),
         name: "Group Inverse".to_string(),
         description: "For every element x in G, there exists an inverse x⁻¹ such that x ∘ x⁻¹ = e and x⁻¹ ∘ x = e.".to_string(),
         proofs: ProofForest::new_from_goal(goal),

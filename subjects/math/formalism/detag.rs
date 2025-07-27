@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use super::expressions::{MathExpression, TheoryExpression};
 use super::extract::Parametrizable;
+use super::location::Located;
 use super::objects::MathObject;
 use super::relations::MathRelation;
 use crate::subjects::math::theories::fields::definitions::Field;
@@ -45,16 +46,6 @@ macro_rules! impl_try_get_for_terminal_type {
 /// A generic trait for recursively digging into nested expression types to find a value of a specific type `T`.
 pub trait TryDetag<T: 'static + Debug> {
     fn try_detag(&self) -> Result<&T, String>;
-
-    fn detag(&self) -> &T {
-        self.try_detag().unwrap_or_else(|err| {
-            panic!(
-                "Failed to get type `{}`. Error: {}",
-                std::any::type_name::<T>(),
-                err
-            )
-        })
-    }
 }
 
 // --- Manual Implementations ---
@@ -62,10 +53,31 @@ pub trait TryDetag<T: 'static + Debug> {
 // Implement for wrapper types that just pass the call down.
 impl<T, U> TryDetag<U> for Arc<T>
 where
-    T: TryDetag<U>,
+    T: TryDetag<U> + 'static,
     U: 'static + Debug,
 {
     fn try_detag(&self) -> Result<&U, String> {
+        use std::any::{Any, TypeId};
+
+        // Case 1: The caller wants the Arc<T> itself.
+        if TypeId::of::<U>() == TypeId::of::<Arc<T>>() {
+            let any_self: &dyn Any = self;
+            // This downcast should always succeed.
+            return any_self
+                .downcast_ref::<U>()
+                .ok_or_else(|| "downcast failed".to_string());
+        }
+
+        // Case 2: The caller wants the inner T.
+        if TypeId::of::<U>() == TypeId::of::<T>() {
+            let any_inner: &dyn Any = self.as_ref();
+            // This downcast should always succeed.
+            return any_inner
+                .downcast_ref::<U>()
+                .ok_or_else(|| "downcast failed".to_string());
+        }
+
+        // Case 3: The caller wants something inside T. Delegate.
         self.as_ref().try_detag()
     }
 }
@@ -88,6 +100,54 @@ where
     fn try_detag(&self) -> Result<&U, String> {
         match self {
             Parametrizable::Concrete(concrete) => concrete.try_detag(),
+            Parametrizable::Variable(id) => try_detag_as!(id, U),
+        }
+    }
+}
+
+impl<T, U> TryDetag<U> for Located<T>
+where
+    T: 'static + Debug,
+    U: 'static + Debug,
+{
+    fn try_detag(&self) -> Result<&U, String> {
+        use std::any::{Any, TypeId};
+
+        // Case 1: The caller wants the Located<T> itself.
+        if TypeId::of::<U>() == TypeId::of::<Located<T>>() {
+            let any_self: &dyn Any = self;
+            return any_self
+                .downcast_ref::<U>()
+                .ok_or_else(|| "downcast failed for Located<T>".to_string());
+        }
+
+        // Case 2: The caller wants the inner T (if it's concrete).
+        if TypeId::of::<U>() == TypeId::of::<T>() {
+            match &self.data {
+                Parametrizable::Concrete(arc_concrete) => {
+                    let any_inner: &dyn Any = arc_concrete.as_ref();
+                    return any_inner
+                        .downcast_ref::<U>()
+                        .ok_or_else(|| "downcast failed for concrete data".to_string());
+                }
+                Parametrizable::Variable(_) => {
+                    return Err("Cannot extract concrete type from variable".to_string());
+                }
+            }
+        }
+
+        // Case 3: Try direct conversion from Arc<T> content to U
+        match &self.data {
+            Parametrizable::Concrete(arc_concrete) => {
+                let any_arc_content: &dyn Any = arc_concrete.as_ref();
+                any_arc_content.downcast_ref::<U>().ok_or_else(|| {
+                    format!(
+                        "Cannot extract {} from Located<{}>",
+                        std::any::type_name::<U>(),
+                        std::any::type_name::<T>()
+                    )
+                })
+            }
             Parametrizable::Variable(id) => try_detag_as!(id, U),
         }
     }
@@ -131,7 +191,7 @@ impl<T: 'static + Debug> TryDetag<T> for MathRelation {
             return Ok(res);
         }
         match self {
-            MathRelation::GroupTheory(rel) => rel.try_detag(),
+            MathRelation::GroupTheory(rel) => try_detag_as!(rel, T),
             MathRelation::NumberTheory(rel) => todo!(),
             MathRelation::SetTheory(rel) => todo!(),
             MathRelation::RingTheory(ring_relation) => todo!(),
@@ -152,7 +212,7 @@ impl<T: 'static + Debug> TryDetag<T> for TheoryExpression {
             return Ok(res);
         }
         match self {
-            TheoryExpression::Group(g) => g.try_detag(),
+            TheoryExpression::Group(g) => try_detag_as!(g, T),
             TheoryExpression::Ring(r) => todo!(),
             TheoryExpression::Field(f) => todo!(),
             _ => Err(format!(
