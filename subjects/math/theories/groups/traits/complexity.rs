@@ -1,7 +1,7 @@
-use super::super::super::formalism::{complexity::Complexity, extract::Parametrizable};
-use super::definitions::{
+use super::super::definitions::{
     Group, GroupAction, GroupElement, GroupExpression, GroupHomomorphism, GroupRelation,
 };
+use crate::subjects::math::formalism::{extract::Parametrizable, traits::complexity::Complexity};
 
 impl<T: Complexity + PartialEq + Clone> Parametrizable<T> {
     pub fn complexity(&self) -> usize {

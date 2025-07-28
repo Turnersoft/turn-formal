@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Arc};
 
 use super::expressions::MathExpression;
-use super::{complexity::Complexity, objects::MathObject};
+use super::{objects::MathObject, traits::complexity::Complexity};
 
 // Import domain-specific relations from their respective modules
 use super::super::super::super::foundational_theories::category_theory::definitions::CategoryRelation;

@@ -5,12 +5,7 @@
 // Uncomment to see various examples of compile-time errors in action
 // pub mod counter_example;
 
-pub mod abstraction_level;
 pub mod automation;
-pub mod collect_identifier;
-pub mod complexity;
-pub mod debug;
-pub mod detag;
 pub mod expressions;
 pub mod extract;
 pub mod foundational_axioms;
@@ -20,10 +15,9 @@ pub mod objects;
 pub mod proof;
 pub mod relations;
 pub mod render;
-pub mod replace;
-pub mod search;
 pub mod test;
 pub mod theorem;
+pub mod traits;
 
 use std::sync::Arc;
 
@@ -33,6 +27,8 @@ use location::Located;
 use proof::{ProofForest, ProofGoal};
 use relations::MathRelation;
 use theorem::Theorem;
+use traits::debug::ShortDebug;
+use traits::detag::TryDetag;
 
 use crate::turn_render::Identifier;
 

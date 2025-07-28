@@ -6,7 +6,7 @@ use crate::subjects::math::formalism::proof::tactics::Tactic;
 use crate::subjects::math::formalism::proof::tactics::implement::TacticApplicationResult;
 use crate::subjects::math::formalism::proof::tactics::{RelationSource, RewriteDirection, Target};
 use crate::subjects::math::formalism::relations::MathRelation;
-use crate::subjects::math::formalism::search::Search;
+use crate::subjects::math::formalism::traits::search::Search;
 use crate::turn_render::Identifier;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
 use crate::turn_render::section_node::{

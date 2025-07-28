@@ -5,7 +5,9 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::theorem::Theorem;

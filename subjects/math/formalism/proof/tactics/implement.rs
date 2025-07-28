@@ -1,5 +1,5 @@
 use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
-use crate::subjects::math::formalism::debug::ShortDebug;
+use crate::subjects::math::formalism::traits::debug::ShortDebug;
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
@@ -8,8 +8,10 @@ use crate::subjects::math::formalism::proof::{
     ContextEntry, DefinitionState, ProofGoal, Tactic,
 };
 use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
-use crate::subjects::math::formalism::replace::{Instantiable, Replace, Substitutable};
-use crate::subjects::math::formalism::search::Search;
+use crate::subjects::math::formalism::traits::instantiable::Instantiable;
+use crate::subjects::math::formalism::traits::replace::Replace;
+use crate::subjects::math::formalism::traits::substitutable::Substitutable;
+use crate::subjects::math::formalism::traits::search::Search;
 use crate::subjects::math::formalism::theorem::Theorem;
 use crate::subjects::math::theories::groups::definitions::{Group, GroupElement, GroupExpression};
 use crate::subjects::math::theories::VariantSet;

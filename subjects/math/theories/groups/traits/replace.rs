@@ -6,7 +6,7 @@ use crate::{
             expressions::MathExpression,
             location::Located,
             proof::{ContextEntry, tactics::Target},
-            replace::{Replace, Substitutable},
+            traits::{Replace, Substitutable},
         },
         theories::groups::definitions::{
             GenericGroup, Group, GroupAction, GroupElement, GroupExpression, GroupHomomorphism,
@@ -16,7 +16,7 @@ use crate::{
     turn_render::Identifier,
 };
 
-use super::definitions::GroupRelation;
+use super::super::definitions::GroupRelation;
 
 impl Replace for Group {
     fn replace(

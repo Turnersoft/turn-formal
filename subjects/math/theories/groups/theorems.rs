@@ -5,11 +5,11 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use uuid::Uuid;
 
-use crate::subjects::math::formalism::debug::ShortDebug;
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
 use crate::subjects::math::formalism::objects::MathObject;
+use crate::subjects::math::formalism::traits::debug::ShortDebug;
 
 use crate::subjects::math::formalism::proof::tactics::{
     ContextOrStatement, RelationSource, RewriteDirection, Tactic, Target,
@@ -84,58 +84,59 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         Located::new_concrete(conclusion.clone()),
     );
 
+    let context = vec![
+        ContextEntry {
+            name: group_id.clone(),
+            ty: Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
+                group.clone(),
+            )))),
+            definition: DefinitionState::Abstract,
+            description: None,
+        },
+        ContextEntry {
+            name: g_id.clone(),
+            ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+                GroupExpression::Element {
+                    group: Located::new_variable(group_id.clone()),
+                    element: None,
+                },
+            ))),
+            definition: DefinitionState::Abstract,
+            description: None,
+        },
+        ContextEntry {
+            name: h1_id.clone(),
+            ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+                GroupExpression::Element {
+                    group: Located::new_variable(group_id.clone()),
+                    element: None,
+                },
+            ))),
+            definition: DefinitionState::Abstract,
+            description: None,
+        },
+        ContextEntry {
+            name: h2_id.clone(),
+            ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+                GroupExpression::Element {
+                    group: Located::new_variable(group_id.clone()),
+                    element: None,
+                },
+            ))),
+            definition: DefinitionState::Abstract,
+            description: None,
+        },
+        ContextEntry {
+            name: e_id.clone(),
+            ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
+                GroupExpression::Identity(Located::new_variable(group_id.clone())),
+            ))),
+            definition: DefinitionState::Abstract,
+            description: None,
+        },
+    ];
     let goal = ProofGoal {
-        context: vec![
-            ContextEntry {
-                name: group_id.clone(),
-                ty: Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                    group.clone(),
-                )))),
-                definition: DefinitionState::Abstract,
-                description: None,
-            },
-            ContextEntry {
-                name: g_id.clone(),
-                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
-                    GroupExpression::Element {
-                        group: Located::new_variable(group_id.clone()),
-                        element: None,
-                    },
-                ))),
-                definition: DefinitionState::Abstract,
-                description: None,
-            },
-            ContextEntry {
-                name: h1_id.clone(),
-                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
-                    GroupExpression::Element {
-                        group: Located::new_variable(group_id.clone()),
-                        element: None,
-                    },
-                ))),
-                definition: DefinitionState::Abstract,
-                description: None,
-            },
-            ContextEntry {
-                name: h2_id.clone(),
-                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
-                    GroupExpression::Element {
-                        group: Located::new_variable(group_id.clone()),
-                        element: None,
-                    },
-                ))),
-                definition: DefinitionState::Abstract,
-                description: None,
-            },
-            ContextEntry {
-                name: e_id.clone(),
-                ty: Located::new_concrete(MathExpression::Expression(TheoryExpression::Group(
-                    GroupExpression::Identity(Located::new_variable(group_id.clone())),
-                ))),
-                definition: DefinitionState::Abstract,
-                description: None,
-            },
-        ],
+        context: context.clone(),
         quantifiers: vec![],
         statement: Located::new_concrete(goal_statement.clone()),
     };
@@ -233,6 +234,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p3_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p4_node:\n{:#?}", p4_node);
     println!("DEBUG: p4_node:\n{}", p4_node.short_debug());
 
     // Step 5: Apply associativity to regroup the expression on the LHS.
@@ -260,6 +262,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p4_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p5_node:\n{:#?}", p5_node);
     println!("DEBUG: p5_node:\n{}", p5_node.short_debug());
 
     // Step 6: Rewrite (g * h1) using the hypothesis `hyp_gh1_eq_e`.
@@ -267,37 +270,34 @@ pub fn prove_inverse_uniqueness() -> Theorem {
     // New Goal: g⁻¹ * e = h2
     let p6_node = {
         let tactic = {
-            if let Some(statement_arc) = p5_node.get_goal().statement.concrete_value() {
-                if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
-                    if let Some(left_concrete) = left.concrete_value() {
-                        if let MathExpression::Expression(TheoryExpression::Group(
-                            GroupExpression::Operation { right, .. },
-                        )) = left_concrete.as_ref()
-                        {
-                            Tactic::Rewrite {
-                                using_rule: RelationSource::LocalAssumption(hyp1.clone()),
-                                target: Target::new(
-                                    ContextOrStatement::Statement,
-                                    right.id.clone(),
-                                ),
-                                direction: RewriteDirection::Forward,
-                                instantiations: HashMap::new(), // No manual mappings needed for local assumptions
-                            }
-                        } else {
-                            panic!("p5 goal left not an GroupExpression")
-                        }
-                    } else {
-                        panic!("p5 goal left not a concrete value")
+            if let MathRelation::Equal { left, right, .. } =
+                p5_node.get_goal().statement.data.unwrap(&context)
+            {
+                println!("DEBUG: yinfeng wants left: {:#?}", left);
+
+                if let MathExpression::Expression(TheoryExpression::Group(
+                    GroupExpression::Operation {
+                        group, left, right, ..
+                    },
+                )) = left.data.unwrap(&context)
+                {
+                    println!("DEBUG: yinfeng wants right: {:#?}", right);
+                    Tactic::Rewrite {
+                        using_rule: RelationSource::LocalAssumption(hyp1.clone()),
+                        target: Target::new(ContextOrStatement::Statement, right.id.clone()),
+                        direction: RewriteDirection::Forward,
+                        instantiations: HashMap::new(), // No manual mappings needed for local assumptions
                     }
                 } else {
-                    panic!("p5 goal not an equality")
+                    panic!("p5 goal left not an GroupExpression")
                 }
             } else {
-                panic!("p5 goal is not a statement")
+                panic!("p5 goal not an equality")
             }
         };
         p5_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p6_node:\n{:#?}", p6_node);
     println!("DEBUG: p6_node:\n{}", p6_node.short_debug());
 
     // Step 7: Rewrite `e` to `g*h2` using hypothesis `hyp_gh2_eq_e`

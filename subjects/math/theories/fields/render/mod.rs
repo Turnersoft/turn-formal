@@ -6,7 +6,9 @@ use std::sync::Arc;
 use crate::turn_render::*;
 
 //--- Imports from this crate (subjects) ---
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 
 // Field definitions from the current theory
 use super::definitions::{

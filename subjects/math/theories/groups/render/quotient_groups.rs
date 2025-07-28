@@ -10,7 +10,9 @@ use crate::turn_render::{
     StructuredMathNode, ToSectionNode,
 };
 
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::groups::definitions::{
     FreeGroup, GenericGroup, QuotientGroup, TrivialGroup,
 };

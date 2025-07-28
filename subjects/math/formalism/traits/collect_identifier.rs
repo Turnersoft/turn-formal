@@ -2,7 +2,7 @@ use std::{collections::HashSet, sync::Arc};
 
 use crate::turn_render::Identifier;
 
-use super::{
+use crate::subjects::math::formalism::{
     expressions::{MathExpression, TheoryExpression},
     extract::Parametrizable,
     interpretation::TypeViewOperator,

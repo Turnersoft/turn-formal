@@ -1,5 +1,4 @@
-use super::proof::tactics::{ContextOrStatement, RelationSource, RewriteDirection, Tactic, Target};
-use super::{
+use crate::subjects::math::formalism::{
     expressions::{MathExpression, TheoryExpression},
     extract::Parametrizable,
     interpretation::TypeViewOperator,
@@ -8,6 +7,7 @@ use super::{
     proof::{
         ContextEntry, DefinitionState, NodeRole, ProofForest, ProofGoal, ProofNode,
         QuantifiedMathObject, Quantifier, SubgoalCombination, TacticOutcome, ValueBindedVariable,
+        tactics::{ContextOrStatement, RelationSource, RewriteDirection, Tactic, Target},
     },
     relations::{MathRelation, Quantification},
 };

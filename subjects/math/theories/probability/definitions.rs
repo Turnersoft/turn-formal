@@ -1,5 +1,5 @@
 use crate::subjects::math::formalism::extract::Parametrizable;
-use crate::subjects::math::formalism::{complexity::Complexity, objects::MathObject};
+use crate::subjects::math::formalism::{objects::MathObject, traits::complexity::Complexity};
 use crate::turn_render::Identifier;
 
 use super::super::super::formalism::expressions::{MathExpression, TheoryExpression};

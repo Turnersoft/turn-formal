@@ -3,7 +3,9 @@ use std::collections::{BTreeMap, HashMap};
 
 use crate::turn_render::*;
 
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::groups::definitions::{
     CenterGroup, CentralizerGroup, CommutatorSubgroup, GeneratedSubgroup, GenericGroup, ImageGroup,
     KernelGroup, NormalizerGroup, SylowSubgroup,

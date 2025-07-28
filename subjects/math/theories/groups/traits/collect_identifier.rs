@@ -1,10 +1,13 @@
 use std::collections::HashSet;
 
 use crate::{
-    subjects::math::formalism::collect_identifier::CollectIdentifier, turn_render::Identifier,
+    subjects::math::formalism::traits::collect_identifier::CollectIdentifier,
+    turn_render::Identifier,
 };
 
-use super::definitions::{Group, GroupElement, GroupExpression, GroupHomomorphism, GroupRelation};
+use super::super::definitions::{
+    Group, GroupElement, GroupExpression, GroupHomomorphism, GroupRelation,
+};
 
 // ===== GROUP THEORY IMPLEMENTATIONS (Child nodes of MathExpression) =====
 

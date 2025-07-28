@@ -2,11 +2,11 @@ use std::any::Any;
 use std::fmt::Debug;
 use std::sync::Arc;
 
-use super::expressions::{MathExpression, TheoryExpression};
-use super::extract::Parametrizable;
-use super::location::Located;
-use super::objects::MathObject;
-use super::relations::MathRelation;
+use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
+use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::location::Located;
+use crate::subjects::math::formalism::objects::MathObject;
+use crate::subjects::math::formalism::relations::MathRelation;
 use crate::subjects::math::theories::fields::definitions::Field;
 use crate::subjects::math::theories::groups::definitions::{
     Group, GroupElement, GroupExpression, GroupHomomorphism,

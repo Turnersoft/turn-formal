@@ -1,7 +1,7 @@
 use super::definitions::*;
 use crate::subjects::math::formalism::{
-    abstraction_level::{AbstractionLevel, GetAbstractionLevel},
     extract::Parametrizable,
+    traits::abstraction_level::{AbstractionLevel, GetAbstractionLevel},
 };
 
 /// Implement abstraction level for probability spaces

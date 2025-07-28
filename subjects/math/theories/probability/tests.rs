@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::subjects::math::formalism::abstraction_level::{
+    use crate::subjects::math::formalism::traits::abstraction_level::{
         AbstractionLevel, GetAbstractionLevel,
     };
     use crate::subjects::math::theories::probability::checker::*;

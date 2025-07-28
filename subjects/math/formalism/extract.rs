@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::turn_render::Identifier;
 
-use super::detag::TryDetag;
+use super::traits::detag::TryDetag;
 use super::{
     expressions::{MathExpression, TheoryExpression},
     location::Located,

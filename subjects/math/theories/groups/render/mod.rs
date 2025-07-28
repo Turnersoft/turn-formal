@@ -16,7 +16,9 @@ use crate::turn_render::math_node::{
 use crate::turn_render::*;
 
 //--- Imports from this crate (subjects) ---
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::fields::definitions::Field;
 use crate::subjects::math::theories::fields::{FieldBasic, render::*};

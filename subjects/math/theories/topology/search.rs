@@ -1,5 +1,5 @@
 use crate::subjects::math::formalism::proof::{ContextEntry, tactics::Target};
-use crate::subjects::math::formalism::search::IsCompatible;
+use crate::subjects::math::formalism::traits::IsCompatible;
 
 use super::definitions::{TopologicalSpace, TopologicalSpaceProperty, Topology};
 use std::collections::HashSet;

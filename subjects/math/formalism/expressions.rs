@@ -10,7 +10,7 @@ use crate::turn_render::Identifier;
 use super::super::theories::groups::definitions::GroupExpression;
 use super::super::theories::rings::definitions::{FieldExpression, RingExpression};
 
-use super::complexity::Complexity;
+use super::traits::complexity::Complexity;
 
 use super::super::theories::{
     number_theory::definitions::Number,

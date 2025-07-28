@@ -1,6 +1,4 @@
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
-use crate::subjects::math::formalism::extract::Parametrizable;
-use crate::subjects::math::theories::groups::definitions::{
+use super::super::definitions::{
     AlternatingGroup, CenterGroup, CentralProductGroup, CentralizerGroup, CommutatorSubgroup,
     CyclicGroup, DihedralGroup, FreeGroup, GeneralLinearGroup, GeneratedSubgroup, GenericGroup,
     Group, GroupElement, GroupExpression, GroupHomomorphism, GroupOperation, GroupOperationVariant,
@@ -8,6 +6,10 @@ use crate::subjects::math::theories::groups::definitions::{
     NormalizerGroup, OrthogonalGroup, ProductGroup, PullbackGroup, QuotientGroup, RestrictionGroup,
     SpecialLinearGroup, SpecialOrthogonalGroup, SpecialUnitaryGroup, SylowSubgroup, SymmetricGroup,
     TopologicalGroup, TrivialGroup, UnitaryGroup, WreathProductGroup,
+};
+use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
 };
 use crate::subjects::math::theories::topology::definitions::TopologicalSpace;
 use crate::subjects::math::theories::zfc::definitions::Set;

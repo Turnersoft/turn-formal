@@ -1,4 +1,6 @@
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::probability::definitions::GenericProbabilitySpace;
 use crate::turn_render::*;
 

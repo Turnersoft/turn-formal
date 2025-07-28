@@ -20,7 +20,7 @@ impl<T: GetAbstractionLevel> GetAbstractionLevel for Arc<T> {
     }
 }
 
-use super::location::Located;
+use crate::subjects::math::formalism::location::Located;
 impl<T: GetAbstractionLevel> GetAbstractionLevel for Located<T> {
     fn level(&self) -> AbstractionLevel {
         self.data.level()

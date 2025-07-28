@@ -1,5 +1,5 @@
 use crate::subjects::math::formalism::location::Located;
-use crate::subjects::math::formalism::{complexity::Complexity, objects::MathObject};
+use crate::subjects::math::formalism::{objects::MathObject, traits::complexity::Complexity};
 use crate::subjects::math::theories::zfc::definitions::GenericSet;
 use crate::turn_render::Identifier;
 use crate::variant_set;
@@ -22,7 +22,7 @@ use std::hash::Hasher;
 use std::sync::Arc;
 use thiserror::Error;
 
-use crate::subjects::math::formalism::abstraction_level::GetAbstractionLevel;
+use crate::subjects::math::formalism::traits::abstraction_level::GetAbstractionLevel;
 
 //==== GROUP-SPECIFIC OPERATION TYPES ====//
 

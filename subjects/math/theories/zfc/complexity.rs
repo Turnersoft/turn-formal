@@ -1,4 +1,4 @@
-use crate::subjects::math::formalism::complexity::Complexity;
+use crate::subjects::math::formalism::traits::complexity::Complexity;
 use crate::subjects::math::theories::zfc::definitions::{Set, SetElement};
 
 impl Complexity for Set {

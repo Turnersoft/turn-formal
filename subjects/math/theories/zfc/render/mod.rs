@@ -1,5 +1,7 @@
 // This AbstractionLevel is for the GetAbstractionLevel trait implementations for ZFC types.
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::zfc::definitions::{
     CardinalityPropertyVariant, ElementCondition, Set, SetElement, SetExpression, SetMapping,

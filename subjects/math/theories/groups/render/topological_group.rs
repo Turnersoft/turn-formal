@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::theories::groups::definitions::GroupProperty;
 use crate::subjects::math::theories::groups::definitions::{
     CompactPropertyVariant, ConnectedPropertyVariant, MetrizablePropertyVariant, TopologicalGroup,

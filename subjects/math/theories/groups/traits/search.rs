@@ -1,20 +1,24 @@
 use std::collections::HashSet;
+use std::sync::Arc;
 
 use crate::subjects::math::formalism::{
-    detag::TryDetag,
     expressions::{MathExpression, TheoryExpression},
+    extract::Parametrizable,
     location::Located,
     proof::{ContextEntry, tactics::Target},
-    search::{IsCompatible, Search},
+    traits::{IsCompatible, Search, detag::TryDetag},
 };
 
-use super::definitions::{
+use super::super::definitions::{
     GenericGroup, Group, GroupAction, GroupElement, GroupExpression, GroupHomomorphism,
     TopologicalGroup, TrivialGroup,
 };
 
 impl Search for GroupHomomorphism {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         // GroupHomomorphism is a terminal type and doesn't contain Located<T> elements
         None
     }
@@ -58,7 +62,10 @@ impl IsCompatible<GroupHomomorphism> for GroupHomomorphism {
 }
 
 impl Search for GroupAction {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         // GroupAction is a terminal type and doesn't contain Located<T> elements
         None
     }
@@ -92,7 +99,10 @@ impl IsCompatible<GroupAction> for GroupAction {
 }
 
 impl Search for GroupElement {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         // GroupElement is a terminal type and doesn't contain Located<T> elements
         None
     }
@@ -154,9 +164,20 @@ impl IsCompatible<GroupElement> for GroupElement {
 }
 
 impl Search for Group {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
-        // Groups don't contain Located<T> elements directly, so return None
-        // This could be extended if Groups contained Located elements
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
+        // First, try to detag self to see if it matches the requested type T
+        if let Ok(detagged_self) = TryDetag::<T>::try_detag(self) {
+            return Some(Located {
+                id: target,
+                data: Parametrizable::Concrete(Arc::new((*detagged_self).clone())),
+            });
+        }
+
+        // If direct detagging doesn't work, return None
+        // The parent wrapper (like MathObject) should handle further type matching
         None
     }
 
@@ -304,20 +325,36 @@ impl IsCompatible<TopologicalGroup> for TopologicalGroup {
 }
 
 impl Search for GroupExpression {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
-        // GroupExpressions contain Located elements, so we need to search through them
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         match self {
-            GroupExpression::Element { group, element } => group
-                .get_located(target.clone())
-                .or_else(|| element.as_ref().and_then(|e| e.get_located(target))),
-            GroupExpression::Identity(group) => group.get_located(target),
             GroupExpression::Operation { group, left, right } => group
                 .get_located(target.clone())
                 .or_else(|| left.get_located(target.clone()))
                 .or_else(|| right.get_located(target)),
+            GroupExpression::Element { group, element } => {
+                group.get_located(target.clone()).or_else(|| {
+                    if let Some(elem) = element {
+                        elem.get_located(target)
+                    } else {
+                        None
+                    }
+                })
+            }
+            GroupExpression::Identity(group) => group.get_located(target),
             GroupExpression::Inverse { group, element } => group
                 .get_located(target.clone())
                 .or_else(|| element.get_located(target)),
+            GroupExpression::Power {
+                group,
+                base,
+                exponent,
+            } => group
+                .get_located(target.clone())
+                .or_else(|| base.get_located(target.clone()))
+                .or_else(|| exponent.get_located(target)),
             GroupExpression::Commutator { group, a, b } => group
                 .get_located(target.clone())
                 .or_else(|| a.get_located(target.clone()))
@@ -331,14 +368,6 @@ impl Search for GroupExpression {
                 .get_located(target.clone())
                 .or_else(|| element.get_located(target.clone()))
                 .or_else(|| subgroup.get_located(target)),
-            GroupExpression::Power {
-                group,
-                base,
-                exponent,
-            } => group
-                .get_located(target.clone())
-                .or_else(|| base.get_located(target.clone()))
-                .or_else(|| exponent.get_located(target)),
             GroupExpression::GroupOrder { group } => group.get_located(target),
             GroupExpression::ElementOrder { element, group } => element
                 .get_located(target.clone())
@@ -553,7 +582,28 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                 &r_group.data.unwrap(target_context),
                 pattern_context,
             ),
-            _ => false,
+            (
+                GroupExpression::Inverse { group, element },
+                GroupExpression::Element {
+                    group: r_group,
+                    element: r_element,
+                },
+            ) => {
+                let group_compatible = group.data.unwrap(target_context).is_compatible(
+                    target.clone(),
+                    target_context,
+                    &r_group.data.unwrap(pattern_context),
+                    pattern_context,
+                );
+                group_compatible
+            }
+            _ => {
+                println!(
+                    "unimplemented, trying to compare {:#?} with {:#?}",
+                    self, pattern
+                );
+                false
+            }
         }
     }
 }

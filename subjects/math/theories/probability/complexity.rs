@@ -1,5 +1,5 @@
 use super::definitions::*;
-use crate::subjects::math::formalism::complexity::Complexity;
+use crate::subjects::math::formalism::traits::complexity::Complexity;
 
 impl Complexity for ProbabilitySpace {
     fn complexity(&self) -> usize {

@@ -1,8 +1,6 @@
 use std::any::Any;
 use std::collections::HashSet;
 
-use crate::subjects::math::formalism::debug::ShortDebug;
-use crate::subjects::math::formalism::detag::TryDetag;
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
 use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
@@ -10,11 +8,31 @@ use crate::subjects::math::formalism::objects::MathObject;
 use crate::subjects::math::formalism::proof::ContextEntry;
 use crate::subjects::math::formalism::proof::tactics::{ContextOrStatement, Target};
 use crate::subjects::math::formalism::relations::MathRelation;
+use crate::subjects::math::formalism::traits::debug::ShortDebug;
+use crate::subjects::math::formalism::traits::detag::TryDetag;
 use crate::subjects::math::theories::groups::definitions::{Group, GroupExpression, GroupRelation};
 use std::fmt::Debug;
 
+pub trait Search {
+    // ✅ REPLACED: Located-aware version that preserves variable information
+    fn find_matches(
+        &self,
+        target: Target,
+        current_id: String,
+        target_context: &Vec<ContextEntry>,
+        pattern: &Located<MathExpression>,
+        pattern_context: &Vec<ContextEntry>,
+        in_target_scope: bool,
+    ) -> HashSet<String>;
+
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(&self, id: String) -> Option<Located<T>>;
+}
+
 impl Search for i32 {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         // i32 is a primitive type and doesn't contain Located<T> elements
         None
     }
@@ -33,46 +51,12 @@ impl Search for i32 {
     }
 }
 
-impl IsCompatible<i32> for i32 {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &i32,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool {
-        // For i32, compatibility is simple value equality
-        self == pattern
-    }
-}
-
-pub trait Search {
-    // ✅ REPLACED: Located-aware version that preserves variable information
-    fn find_matches(
-        &self,
-        target: Target,
-        current_id: String,
-        target_context: &Vec<ContextEntry>,
-        pattern: &Located<MathExpression>,
-        pattern_context: &Vec<ContextEntry>,
-        in_target_scope: bool,
-    ) -> HashSet<String>;
-
-    fn get_located<T: 'static + Clone>(&self, id: String) -> Option<Located<T>>;
-}
-
-pub trait IsCompatible<P> {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &P,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool;
-}
-
 impl Search for MathExpression {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
+        // First, try to find the expression with the given ID in sub-expressions
         match self {
             MathExpression::Object(obj) => obj.get_located(target),
             MathExpression::Relation(rel) => rel.get_located(target),
@@ -139,42 +123,43 @@ impl Search for MathExpression {
     }
 }
 
-impl IsCompatible<MathExpression> for MathExpression {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &MathExpression,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool {
-        match (self, pattern) {
-            (MathExpression::Object(self_obj), MathExpression::Object(pattern_obj)) => {
-                self_obj.is_compatible(target, target_context, &pattern_obj, pattern_context)
-            }
-            (MathExpression::Relation(self_rel), MathExpression::Relation(pattern_rel)) => {
-                self_rel.is_compatible(target, target_context, &pattern_rel, pattern_context)
-            }
-            (MathExpression::Expression(self_expr), MathExpression::Expression(pattern_expr)) => {
-                self_expr.is_compatible(target, target_context, &pattern_expr, pattern_context)
-            }
-            _ => false,
-        }
-    }
-}
-
 // Located<T> delegates to the inner unwrapped type
 impl<T: 'static + Clone + Search + std::fmt::Debug + IsCompatible<T> + ShortDebug> Search
     for Located<T>
 {
-    fn get_located<U: 'static + Clone>(&self, target: String) -> Option<Located<U>> {
+    fn get_located<U: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<U>> {
+        // First check if this Located<T> itself has the target ID
         if self.id == target {
-            // Try direct downcast
-            let any_self: &dyn Any = self;
-            if let Some(located_u) = any_self.downcast_ref::<Located<U>>() {
-                return Some(located_u.clone());
+            // Compare only the type name, not the exact type
+            // This allows finding Located<U> when we have Located<T> where T and U have the same type name
+            // For example: GroupExpression::Inverse can be found when GroupExpression::Element is expected
+            let t_type_name = std::any::type_name::<T>();
+            let u_type_name = std::any::type_name::<U>();
+
+            if t_type_name == u_type_name {
+                // Types match, return self directly
+                // This is safe because we've verified the types are the same
+                let any_self: &dyn Any = self;
+                if let Some(located_u) = any_self.downcast_ref::<Located<U>>() {
+                    return Some(located_u.clone());
+                }
             }
         }
-        None
+
+        // If not found at this level, recursively search through nested Located<T> objects
+        match &self.data {
+            Parametrizable::Concrete(arc_data) => {
+                // Recursively search through the inner data
+                arc_data.as_ref().get_located(target)
+            }
+            Parametrizable::Variable(_) => {
+                // Variables don't contain nested Located<T> objects
+                None
+            }
+        }
     }
 
     fn find_matches(
@@ -195,11 +180,12 @@ impl<T: 'static + Clone + Search + std::fmt::Debug + IsCompatible<T> + ShortDebu
         // );
 
         // First, check if we're in scope and can match the pattern directly
-        if is_in_scope_now {
-            match (&self.data, &pattern.data) {
-                (Parametrizable::Variable(self_var), Parametrizable::Variable(pattern_var)) => {
-                    // Both variables - check compatibility using try_detag to convert types
-                    // Pattern variable can unify with target variable if types are compatible
+
+        match (&self.data, &pattern.data) {
+            (Parametrizable::Variable(self_var), Parametrizable::Variable(pattern_var)) => {
+                // Both variables - check compatibility using try_detag to convert types
+                // Pattern variable can unify with target variable if types are compatible
+                if is_in_scope_now {
                     if let Ok(pattern_detagged) = pattern.data.unwrap(&pattern_context).try_detag()
                     {
                         if self.data.unwrap(&target_context).is_compatible(
@@ -212,44 +198,25 @@ impl<T: 'static + Clone + Search + std::fmt::Debug + IsCompatible<T> + ShortDebu
                         }
                     }
                 }
-                (Parametrizable::Variable(_), Parametrizable::Concrete(_)) => {
-                    // Our data is a variable, pattern is concrete - potential match but complex
-                    // Skip for now to avoid unwrap issues
-                    // println!(
-                    //     "DEBUG: unable to match because self is variable: {}, pattern is concrete: {}",
-                    //     self.short_debug(),
-                    //     pattern.short_debug()
-                    // );
-                }
-                (
-                    Parametrizable::Concrete(arc_inner),
-                    Parametrizable::Concrete(pattern_concrete),
-                ) => {
-                    matches.extend(arc_inner.find_matches(
-                        target.clone(),
-                        current_id.clone(),
-                        target_context,
-                        pattern,
-                        pattern_context,
-                        is_in_scope_now,
-                    ));
-                }
-                (Parametrizable::Concrete(arc_inner), Parametrizable::Variable(pattern_var)) => {
-                    // CRITICAL FIX: Concrete expression containing a variable that matches the pattern
-                    // This handles cases like GroupExpression::Element { element: Variable("e") }
-                    // matching against pattern Variable("e")
-
-                    // remove the Located<Parametrizable<>> to continue
-                    let inner_matches = arc_inner.find_matches(
-                        target.clone(),
-                        current_id.clone(),
-                        target_context,
-                        pattern,
-                        pattern_context,
-                        is_in_scope_now,
-                    );
-                    matches.extend(inner_matches);
-                }
+            }
+            (Parametrizable::Variable(_), Parametrizable::Concrete(_)) => {
+                // Our data is a variable, pattern is concrete - potential match but complex
+                // Skip for now to avoid unwrap issues
+                println!(
+                    "DEBUG: unable to match because self is variable: {}, pattern is concrete: {}",
+                    self.short_debug(),
+                    pattern.short_debug()
+                );
+            }
+            (Parametrizable::Concrete(arc_inner), _) => {
+                matches.extend(arc_inner.find_matches(
+                    target.clone(),
+                    current_id.clone(),
+                    target_context,
+                    pattern,
+                    pattern_context,
+                    is_in_scope_now,
+                ));
             }
         }
 
@@ -257,54 +224,11 @@ impl<T: 'static + Clone + Search + std::fmt::Debug + IsCompatible<T> + ShortDebu
     }
 }
 
-impl<T: 'static + Clone + IsCompatible<T> + Debug> IsCompatible<Located<T>> for Located<T> {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &Located<T>,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool {
-        match (&self.data, &pattern.data) {
-            (Parametrizable::Variable(self_var), Parametrizable::Variable(pattern_var)) => {
-                // Both are variables - check if they have compatible names or types
-                // For now, consider them compatible if they have the same name
-                // More sophisticated type checking could be added here
-                self.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &pattern.data.unwrap(&pattern_context),
-                    pattern_context,
-                )
-            }
-            (
-                Parametrizable::Concrete(self_concrete),
-                Parametrizable::Concrete(pattern_concrete),
-            ) => {
-                // Both concrete - delegate to inner type compatibility
-                self_concrete.is_compatible(
-                    target,
-                    target_context,
-                    pattern_concrete,
-                    pattern_context,
-                )
-            }
-            (Parametrizable::Variable(_), Parametrizable::Concrete(_)) => {
-                // Variable can potentially match concrete - this is complex type matching
-                // For now, return false but this could be enhanced
-                false
-            }
-            (Parametrizable::Concrete(_), Parametrizable::Variable(_)) => {
-                // Concrete can potentially unify with variable - this is unification
-                // For now, return false but this could be enhanced
-                false
-            }
-        }
-    }
-}
-
 impl Search for MathRelation {
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         match self {
             MathRelation::And(locateds) => todo!(),
             MathRelation::Or(locateds) => todo!(),
@@ -384,6 +308,10 @@ impl Search for MathRelation {
                     pattern_context,
                     is_in_scope_now,
                 );
+                println!(
+                    "DEBUG: finding right_matches with target: {:#?} vs pattern: {:#?}",
+                    right, pattern
+                );
                 println!("DEBUG: right_matches: {:#?}", right_matches);
                 left_matches.extend(right_matches);
                 left_matches
@@ -406,103 +334,6 @@ impl Search for MathRelation {
 
         matches.extend(sub_matches);
         matches
-    }
-}
-
-impl IsCompatible<MathRelation> for MathRelation {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &MathRelation,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool {
-        match (self, pattern) {
-            (
-                MathRelation::Equal { left, right },
-                MathRelation::Equal {
-                    left: pattern_left,
-                    right: pattern_right,
-                },
-            ) => {
-                // todo: we should check both equality from both hand side.
-                left.is_compatible(
-                    target.clone(),
-                    target_context,
-                    &pattern_left,
-                    pattern_context,
-                ) && right.is_compatible(target, target_context, &pattern_right, pattern_context)
-            }
-            (MathRelation::And(locateds), MathRelation::And(pattern_locateds)) => {
-                // todo: we should allow order difference, the list is cummutative and associative
-                locateds.iter().all(|located| {
-                    located.data.unwrap(&target_context).is_compatible(
-                        target.clone(),
-                        target_context,
-                        &located.data.unwrap(&pattern_context),
-                        pattern_context,
-                    )
-                })
-            }
-            (MathRelation::Or(locateds), MathRelation::Or(pattern_locateds)) => {
-                // todo: we should allow order random pair we need only one node from target and pattern list to make a valid pair
-                locateds.iter().any(|located| {
-                    located.data.unwrap(&target_context).is_compatible(
-                        target.clone(),
-                        target_context,
-                        &located.data.unwrap(&pattern_context),
-                        pattern_context,
-                    )
-                })
-            }
-            (MathRelation::Not(located), MathRelation::Not(pattern_located)) => {
-                located.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &located.data.unwrap(&pattern_context),
-                    pattern_context,
-                )
-            }
-            (
-                MathRelation::Implies(located, located1),
-                MathRelation::Implies(pattern_located, pattern_located1),
-            ) => {
-                located.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &located.data.unwrap(&pattern_context),
-                    pattern_context,
-                ) && located1.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &located1.data.unwrap(&pattern_context),
-                    pattern_context,
-                )
-            }
-            (
-                MathRelation::Equivalent(located, located1),
-                MathRelation::Equivalent(pattern_located, pattern_located1),
-            ) => {
-                // todo: the antecedent and precedent can we reversed, we need to try in both directions
-                located.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &located.data.unwrap(&pattern_context),
-                    pattern_context,
-                ) && located1.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &located.data.unwrap(&pattern_context),
-                    pattern_context,
-                ) && located1.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
-                    target_context,
-                    &located1.data.unwrap(&pattern_context),
-                    pattern_context,
-                )
-            }
-            _ => false,
-        }
     }
 }
 
@@ -561,7 +392,10 @@ impl Search for MathObject {
         matches
     }
 
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         match self {
             MathObject::Group(group) => group.get_located(target),
             MathObject::Ring(ring) => todo!(),
@@ -573,18 +407,6 @@ impl Search for MathObject {
             MathObject::Set(set) => todo!(),
             MathObject::Function(function) => todo!(),
         }
-    }
-}
-
-impl IsCompatible<MathObject> for MathObject {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &MathObject,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool {
-        todo!()
     }
 }
 
@@ -638,7 +460,10 @@ impl Search for TheoryExpression {
         matches
     }
 
-    fn get_located<T: 'static + Clone>(&self, target: String) -> Option<Located<T>> {
+    fn get_located<T: 'static + Clone + std::fmt::Debug>(
+        &self,
+        target: String,
+    ) -> Option<Located<T>> {
         match self {
             TheoryExpression::Group(group) => group.get_located(target),
             _ => todo!(),
@@ -646,27 +471,139 @@ impl Search for TheoryExpression {
     }
 }
 
-impl IsCompatible<TheoryExpression> for TheoryExpression {
-    fn is_compatible(
-        &self,
-        target: Target,
-        target_context: &Vec<ContextEntry>,
-        pattern: &TheoryExpression,
-        pattern_context: &Vec<ContextEntry>,
-    ) -> bool {
-        // Deep structural compatibility check using StructurallyEquivalent trait
+// Import the IsCompatible trait for use in Search implementations
+use crate::subjects::math::formalism::traits::is_compatible::IsCompatible;
 
-        match (self, pattern) {
-            (TheoryExpression::Group(self_group), TheoryExpression::Group(pattern_group)) => {
-                self_group.is_compatible(target, target_context, pattern_group, pattern_context)
-            }
-            // (TheoryExpression::Ring(self_ring), TheoryExpression::Ring(pattern_ring)) => {
-            //     self_ring.structurally_equivalent(pattern_ring, target_context)
-            // }
-            // (TheoryExpression::Field(self_field), TheoryExpression::Field(pattern_field)) => {
-            //     self_field.structurally_equivalent(pattern_field, target_context)
-            // }
-            _ => false,
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::subjects::math::theories::groups::definitions::{
+        GenericGroup, Group, GroupElement, GroupExpression,
+    };
+    use crate::turn_render::Identifier;
+    use std::sync::Arc;
+
+    #[test]
+    fn test_get_located_type_matching() {
+        // Test 1: Create a Located<GroupExpression> with GroupExpression::Inverse
+        let inverse_expr = GroupExpression::Inverse {
+            group: Located::new_variable(Identifier::new_simple("G".to_string())),
+            element: Located::new_variable(Identifier::new_simple("g".to_string())),
+        };
+        let mut located_inverse = Located::new_concrete(inverse_expr);
+        located_inverse.id = "test-inverse-id".to_string();
+
+        println!("=== Test 1: Located<GroupExpression> with Inverse ===");
+        println!(
+            "Type name of Located<GroupExpression>: {}",
+            std::any::type_name::<Located<GroupExpression>>()
+        );
+        println!(
+            "Type name of Located<GroupExpression::Inverse>: {}",
+            std::any::type_name::<Located<GroupExpression>>()
+        );
+        println!("Located inverse: {:#?}", located_inverse);
+
+        // Test 2: Try to get_located with GroupExpression type
+        let result = located_inverse.get_located::<GroupExpression>("test-inverse-id".to_string());
+        println!("get_located::<GroupExpression> result: {:#?}", result);
+
+        // Test 3: Try to get_located with a different GroupExpression variant type
+        // This should work because both are GroupExpression
+        let result2 = located_inverse.get_located::<GroupExpression>("test-inverse-id".to_string());
+        println!("get_located::<GroupExpression> result2: {:#?}", result2);
+
+        // Test 4: Create a Located<GroupExpression> with GroupExpression::Element
+        let element_expr = GroupExpression::Element {
+            group: Located::new_variable(Identifier::new_simple("G".to_string())),
+            element: None,
+        };
+        let mut located_element = Located::new_concrete(element_expr);
+        located_element.id = "test-element-id".to_string();
+
+        println!("\n=== Test 4: Located<GroupExpression> with Element ===");
+        println!("Located element: {:#?}", located_element);
+
+        // Test 5: Try to get_located with GroupExpression type
+        let result3 = located_element.get_located::<GroupExpression>("test-element-id".to_string());
+        println!("get_located::<GroupExpression> result3: {:#?}", result3);
+
+        // Test 6: Test type name comparison
+        let t_type_name = std::any::type_name::<GroupExpression>();
+        let u_type_name = std::any::type_name::<GroupExpression>();
+        println!("\n=== Test 6: Type name comparison ===");
+        println!("GroupExpression type name: {}", t_type_name);
+        println!("GroupExpression type name: {}", u_type_name);
+        println!("Type names match: {}", t_type_name == u_type_name);
+
+        // Test 7: Test with different types
+        let t_type_name = std::any::type_name::<GroupExpression>();
+        let u_type_name = std::any::type_name::<Group>();
+        println!("\n=== Test 7: Different type comparison ===");
+        println!("GroupExpression type name: {}", t_type_name);
+        println!("Group type name: {}", u_type_name);
+        println!("Type names match: {}", t_type_name == u_type_name);
+
+        // Test 8: Test the actual scenario from the failing test
+        println!("\n=== Test 8: Actual scenario simulation ===");
+        let target_id = "a269c683-014e-4246-8967-707f5d931e3e".to_string();
+        let result4 = located_inverse.get_located::<GroupExpression>(target_id.clone());
+        println!("Looking for ID: {}", target_id);
+        println!("Result: {:#?}", result4);
+
+        // Test 9: Test with wrong ID
+        let result5 = located_inverse.get_located::<GroupExpression>("wrong-id".to_string());
+        println!("Looking for wrong ID, result: {:#?}", result5);
+    }
+
+    #[test]
+    fn test_get_located_with_variables() {
+        // Test with variable data
+        let mut variable_located: Located<GroupExpression> =
+            Located::new_variable(Identifier::new_simple("test_var".to_string()));
+        variable_located.id = "variable-test-id".to_string();
+
+        println!("\n=== Test with Variable Data ===");
+        println!("Variable located: {:#?}", variable_located);
+
+        let result =
+            variable_located.get_located::<GroupExpression>("variable-test-id".to_string());
+        println!("get_located result: {:#?}", result);
+    }
+
+    #[test]
+    fn test_get_located_nested_search() {
+        // Test that get_located searches recursively through nested structures
+        let nested_inverse = GroupExpression::Inverse {
+            group: Located::new_variable(Identifier::new_simple("G".to_string())),
+            element: Located::new_variable(Identifier::new_simple("g".to_string())),
+        };
+
+        let operation = GroupExpression::Operation {
+            group: Located::new_variable(Identifier::new_simple("G".to_string())),
+            left: Located::new_concrete(nested_inverse),
+            right: Located::new_variable(Identifier::new_simple("h1".to_string())),
+        };
+
+        let mut located_operation = Located::new_concrete(operation);
+        located_operation.id = "top-level-id".to_string();
+
+        println!("\n=== Test Nested Search ===");
+        println!("Located operation: {:#?}", located_operation);
+
+        // The nested_inverse should have been assigned a random ID
+        // Let's try to find it by searching recursively
+        let result = located_operation.get_located::<GroupExpression>("top-level-id".to_string());
+        println!("get_located for top-level-id: {:#?}", result);
+
+        // This should demonstrate that we need recursive search
+        println!(
+            "Note: The nested Inverse has its own ID that we can't find with current implementation"
+        );
+
+        // Test finding the nested ID
+        let nested_id = "4ff3b55c-f418-4cdb-9ac8-4b492db7bdc6"; // This is the ID of the nested Inverse from the current output
+        let result2 = located_operation.get_located::<GroupExpression>(nested_id.to_string());
+        println!("get_located for nested ID {}: {:#?}", nested_id, result2);
     }
 }

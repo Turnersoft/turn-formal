@@ -1,5 +1,5 @@
-use super::definitions::*;
-use crate::subjects::math::{formalism::detag::TryDetag, theories::VariantSet};
+use super::super::definitions::*;
+use crate::subjects::math::{formalism::traits::detag::TryDetag, theories::VariantSet};
 use crate::{impl_try_get_for_terminal_type, try_detag_as};
 use std::{any::Any, fmt::Debug};
 

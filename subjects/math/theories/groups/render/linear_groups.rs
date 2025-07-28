@@ -5,7 +5,9 @@ use std::sync::Arc;
 use crate::turn_render::ToMathDocument;
 use crate::turn_render::*;
 
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::groups::definitions::{
     GeneralLinearGroup, GenericGroup, OrthogonalGroup, SpecialLinearGroup, SpecialOrthogonalGroup,
     SpecialUnitaryGroup, UnitaryGroup,

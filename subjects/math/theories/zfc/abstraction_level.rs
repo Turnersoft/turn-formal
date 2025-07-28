@@ -1,4 +1,6 @@
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::subjects::math::theories::VariantSet;
 use crate::subjects::math::theories::zfc::definitions::{
     CardinalityPropertyVariant, Set, SetElement, SetExpression, SetProperty, SetRelation,
@@ -66,9 +68,8 @@ impl GetAbstractionLevel for Set {
                 } else {
                     AbstractionLevel::Level3 // Parametrized construction
                 }
-            }
-            // Note: Parametric, NaturalNumbers, Integers, etc., variants were removed from Set enum.
-            // If any new variants are added, they need to be handled here.
+            } // Note: Parametric, NaturalNumbers, Integers, etc., variants were removed from Set enum.
+              // If any new variants are added, they need to be handled here.
         }
     }
 }

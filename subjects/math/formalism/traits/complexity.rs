@@ -1,7 +1,7 @@
 use crate::turn_render::Identifier;
 use std::sync::Arc;
 
-use super::{
+use crate::subjects::math::formalism::{
     expressions::{MathExpression, TheoryExpression},
     extract::Parametrizable,
     location::Located,

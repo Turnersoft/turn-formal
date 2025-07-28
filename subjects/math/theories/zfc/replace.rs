@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     subjects::math::formalism::{
-        expressions::MathExpression, location::Located, proof::ContextEntry, replace::Substitutable,
+        expressions::MathExpression, location::Located, proof::ContextEntry, traits::Substitutable,
     },
     turn_render::Identifier,
 };

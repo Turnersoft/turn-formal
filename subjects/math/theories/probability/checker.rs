@@ -1,6 +1,8 @@
 use super::definitions::*;
-use crate::subjects::math::formalism::abstraction_level::{AbstractionLevel, GetAbstractionLevel};
 use crate::subjects::math::formalism::extract::Parametrizable;
+use crate::subjects::math::formalism::traits::abstraction_level::{
+    AbstractionLevel, GetAbstractionLevel,
+};
 use crate::turn_render::Identifier;
 
 /// Validation and checking utilities for probability theory concepts
