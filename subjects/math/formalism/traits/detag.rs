@@ -19,7 +19,7 @@ use crate::subjects::math::theories::zfc::definitions::Set;
 
 /// A utility macro for ad-hoc, inline type checking.
 #[macro_export]
-macro_rules! try_detag_as {
+macro_rules! try_detag_as_with_no_digging {
     ($val:expr, $T:ty) => {
         ($val as &dyn Any).downcast_ref::<$T>().ok_or_else(|| {
             format!(
@@ -37,7 +37,7 @@ macro_rules! impl_try_get_for_terminal_type {
     ($type:ty) => {
         impl<T: 'static + Debug> TryDetag<T> for $type {
             fn try_detag(&self) -> Result<&T, String> {
-                try_detag_as!(self, T)
+                try_detag_as_with_no_digging!(self, T)
             }
         }
     };
@@ -100,7 +100,7 @@ where
     fn try_detag(&self) -> Result<&U, String> {
         match self {
             Parametrizable::Concrete(concrete) => concrete.try_detag(),
-            Parametrizable::Variable(id) => try_detag_as!(id, U),
+            Parametrizable::Variable(id) => try_detag_as_with_no_digging!(id, U),
         }
     }
 }
@@ -148,7 +148,7 @@ where
                     )
                 })
             }
-            Parametrizable::Variable(id) => try_detag_as!(id, U),
+            Parametrizable::Variable(id) => try_detag_as_with_no_digging!(id, U),
         }
     }
 }
@@ -158,9 +158,9 @@ where
 impl<T: 'static + Debug> TryDetag<T> for MathObject {
     fn try_detag(&self) -> Result<&T, String> {
         match self {
-            MathObject::Group(g) => try_detag_as!(g, T),
-            MathObject::Ring(r) => try_detag_as!(r, T),
-            MathObject::Field(f) => try_detag_as!(f, T),
+            MathObject::Group(g) => try_detag_as_with_no_digging!(g, T),
+            MathObject::Ring(r) => try_detag_as_with_no_digging!(r, T),
+            MathObject::Field(f) => try_detag_as_with_no_digging!(f, T),
             // The other variants from objects.rs need to be added here if they are used.
             _ => Err(format!(
                 "TryGet not implemented for this MathObject variant to find {}",
@@ -172,14 +172,14 @@ impl<T: 'static + Debug> TryDetag<T> for MathObject {
 
 impl<T: 'static + Debug> TryDetag<T> for MathExpression {
     fn try_detag(&self) -> Result<&T, String> {
-        if let Ok(res) = try_detag_as!(self, T) {
+        if let Ok(res) = try_detag_as_with_no_digging!(self, T) {
             return Ok(res);
         }
         match self {
             MathExpression::Object(obj) => obj.try_detag(),
             MathExpression::Expression(expr) => expr.try_detag(),
             MathExpression::Relation(rel) => rel.try_detag(),
-            MathExpression::Number(num) => try_detag_as!(num, T),
+            MathExpression::Number(num) => try_detag_as_with_no_digging!(num, T),
             MathExpression::ViewAs { expression, .. } => expression.data.try_detag(),
         }
     }
@@ -187,11 +187,11 @@ impl<T: 'static + Debug> TryDetag<T> for MathExpression {
 
 impl<T: 'static + Debug> TryDetag<T> for MathRelation {
     fn try_detag(&self) -> Result<&T, String> {
-        if let Ok(res) = try_detag_as!(self, T) {
+        if let Ok(res) = try_detag_as_with_no_digging!(self, T) {
             return Ok(res);
         }
         match self {
-            MathRelation::GroupTheory(rel) => try_detag_as!(rel, T),
+            MathRelation::GroupTheory(rel) => try_detag_as_with_no_digging!(rel, T),
             MathRelation::NumberTheory(rel) => todo!(),
             MathRelation::SetTheory(rel) => todo!(),
             MathRelation::RingTheory(ring_relation) => todo!(),
@@ -208,11 +208,11 @@ impl<T: 'static + Debug> TryDetag<T> for MathRelation {
 
 impl<T: 'static + Debug> TryDetag<T> for TheoryExpression {
     fn try_detag(&self) -> Result<&T, String> {
-        if let Ok(res) = try_detag_as!(self, T) {
+        if let Ok(res) = try_detag_as_with_no_digging!(self, T) {
             return Ok(res);
         }
         match self {
-            TheoryExpression::Group(g) => try_detag_as!(g, T),
+            TheoryExpression::Group(g) => try_detag_as_with_no_digging!(g, T),
             TheoryExpression::Ring(r) => todo!(),
             TheoryExpression::Field(f) => todo!(),
             _ => Err(format!(

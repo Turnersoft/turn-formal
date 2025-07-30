@@ -1,3 +1,4 @@
+use crate::subjects::math::formalism::proof::ContextEntryVecExt;
 use crate::subjects::math::theories::groups::definitions::{
     GenericGroup, Group, GroupExpression, GroupHomomorphism, GroupOperation,
 };
@@ -21,6 +22,9 @@ use crate::{
 };
 use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
+use super::IsCompatible;
+use super::instantiable::InstantiationType;
+
 pub trait Replace: Sized {
     // ✅ SIMPLIFIED: Remove target parameter since it's redundant
     fn replace(
@@ -36,7 +40,7 @@ pub trait Replace: Sized {
 }
 
 // ✅ FIXED: Implement Replace for Located<T> using pattern matching like Search
-impl<T: Replace + Clone + 'static + std::fmt::Debug> Replace for Located<T> {
+impl<T: Replace + Clone + 'static + Debug + Search + Instantiable> Replace for Located<T> {
     fn replace(
         &self,
         current_id: &str,
@@ -47,139 +51,63 @@ impl<T: Replace + Clone + 'static + std::fmt::Debug> Replace for Located<T> {
         pattern_and_replacement_context: &Vec<ContextEntry>,
         manual_instantiations: &HashMap<Identifier, Identifier>,
     ) -> Self {
-        if current_id == target_id {
-            println!(
-                "DEBUG: REPLACE - Replacement: {}",
-                replacement.short_debug()
-            );
-            println!(
-                "DEBUG: REPLACE - Manual instantiations: {:?}",
-                manual_instantiations
-            );
-        }
-        // ✅ FIXED: Match on (self.data, pattern.data) pairs like Search does
-        if current_id == target_id {
-            println!(
-                "DEBUG: REPLACE - self.data: {:?}",
-                match &self.data {
-                    Parametrizable::Concrete(_) => "Concrete",
-                    Parametrizable::Variable(_) => "Variable",
-                }
-            );
-            println!(
-                "DEBUG: REPLACE - pattern.data: {:?}",
-                match &pattern.data {
-                    Parametrizable::Concrete(_) => "Concrete",
-                    Parametrizable::Variable(_) => "Variable",
-                }
-            );
-        }
         match (&self.data, &pattern.data) {
             // Case 1: Self is concrete, pattern is variable - potential replacement target
-            (Parametrizable::Concrete(_), Parametrizable::Variable(pattern_var)) => {
+            (_, Parametrizable::Variable(pattern_var)) => {
                 if current_id == target_id {
                     // ✅ FOUND TARGET: Replace with instantiated replacement
-                    let mut instantiations = HashMap::new();
+                    let mut instantiations: HashMap<Identifier, InstantiationType> = HashMap::new();
 
-                    // Create instantiation mapping
-                    if let Some(target_var_id) = self.variable_id() {
-                        instantiations.insert(pattern_var.clone(), target_var_id.to_string());
-                    } else {
-                        instantiations.insert(pattern_var.clone(), current_id.to_string());
-                    }
-
-                    // Add manual instantiations
-                    for (theorem_var, goal_var) in manual_instantiations {
-                        instantiations.insert(theorem_var.clone(), goal_var.to_string());
-                    }
-
-                    // Create a MathExpression target for substitution
-                    let math_expr_target = if std::any::type_name::<T>()
-                        == std::any::type_name::<MathExpression>()
-                    {
-                        let any_self: &dyn std::any::Any = self;
-                        if let Some(math_expr_self) =
-                            any_self.downcast_ref::<Located<MathExpression>>()
-                        {
-                            math_expr_self.clone()
-                        } else {
-                            // Fallback: create a Located<MathExpression> containing self
-                            Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                                crate::subjects::math::theories::groups::definitions::Group::Generic(
-                                    crate::subjects::math::theories::groups::definitions::GenericGroup {
-                                        base_set: crate::subjects::math::theories::groups::definitions::GenericGroup::default().base_set,
-                                        operation: crate::subjects::math::theories::groups::definitions::GroupOperation::default(),
-                                        props: crate::subjects::math::theories::VariantSet::new(),
-                                    }
-                                )
-                            ))))
+                    match &self.data {
+                        Parametrizable::Variable(id) => {
+                            instantiations.insert(
+                                pattern_var.clone(),
+                                InstantiationType::Identifier(id.clone()),
+                            );
                         }
-                    } else {
-                        // For non-MathExpression types, convert self to a MathExpression wrapper
-                        // Use self's ID to maintain the reference structure
-                        Located {
-                            id: self.id.clone(),
-                            data: Parametrizable::Concrete(Arc::new(MathExpression::Object(Arc::new(MathObject::Group(
-                                crate::subjects::math::theories::groups::definitions::Group::Generic(
-                                    crate::subjects::math::theories::groups::definitions::GenericGroup {
-                                        base_set: crate::subjects::math::theories::groups::definitions::GenericGroup::default().base_set,
-                                        operation: crate::subjects::math::theories::groups::definitions::GroupOperation::default(),
-                                        props: crate::subjects::math::theories::VariantSet::new(),
-                                    }
-                                )
-                            ))))),
+                        Parametrizable::Concrete(_) => {
+                            instantiations.insert(
+                                pattern_var.clone(),
+                                InstantiationType::LocatedId(current_id.to_string()),
+                            );
                         }
                     };
 
-                    // Apply substitution to replacement
-                    println!(
-                        "DEBUG: SUBSTITUTE - About to substitute replacement: {}",
-                        replacement.short_debug()
-                    );
-                    println!(
-                        "DEBUG: SUBSTITUTE - With instantiations: {:?}",
-                        instantiations
-                    );
-                    let substituted_replacement =
-                        replacement.substitute(&instantiations, &math_expr_target, target_context);
-                    println!(
-                        "DEBUG: SUBSTITUTE - Result: {}",
-                        substituted_replacement.short_debug()
-                    );
+                    // Add manual instantiations, it overwrite the instantiation found in action.
+                    for (theorem_var, goal_var) in manual_instantiations {
+                        instantiations.insert(
+                            theorem_var.clone(),
+                            InstantiationType::Identifier(goal_var.clone()),
+                        );
+                    }
 
-                    // ✅ FIXED: Return the substituted replacement instead of self.clone()
-                    println!(
-                        "DEBUG: SUBSTITUTE - Type name T: {}",
-                        std::any::type_name::<T>()
+                    find_missing_var_in_replacement_and_extend_instantiations(
+                        target_context,
+                        replacement,
+                        pattern_and_replacement_context,
+                        &mut instantiations,
                     );
-                    if std::any::type_name::<T>() == std::any::type_name::<MathExpression>() {
-                        if let Some(math_expr) = substituted_replacement.concrete_value() {
-                            let new_located = Located::new_concrete(math_expr.as_ref().clone());
-                            if let Some(result) =
-                                (&new_located as &dyn std::any::Any).downcast_ref::<Located<T>>()
-                            {
-                                println!(
-                                    "DEBUG: SUBSTITUTE - Returning converted result: {}",
-                                    new_located.short_debug()
-                                );
-                                return result.clone();
+                    // todo: perform substitution on replacement in one .substitute() call.
+                    let substituted_replacement =
+                        replacement.substitute(&instantiations, self, target_context);
+                    // Convert Located<MathExpression> to Located<T> using the existing try_detag
+                    match TryDetag::<T>::try_detag(
+                        &substituted_replacement.data.unwrap(target_context),
+                    ) {
+                        Ok(inner_t) => {
+                            // We got a T directly, wrap it in a new Located<T>
+                            Located {
+                                id: substituted_replacement.id.clone(),
+                                data: Parametrizable::Concrete(Arc::new(inner_t.clone())),
                             }
                         }
-                        // If conversion failed, return the substituted replacement directly
-                        if let Some(result) = (&substituted_replacement as &dyn std::any::Any)
-                            .downcast_ref::<Located<T>>()
-                        {
-                            println!(
-                                "DEBUG: SUBSTITUTE - Returning direct result: {}",
-                                substituted_replacement.short_debug()
-                            );
-                            return result.clone();
+                        Err(e) => {
+                            println!("DEBUG: Failed to convert substituted replacement: {}", e);
+                            self.clone()
                         }
                     }
 
-                    // If all conversions fail, return self but this indicates a type issue
-
-                    return self.clone();
+                    // return self.clone();
                 } else {
                     // Not target - recurse into concrete content
                     match &self.data {
@@ -203,233 +131,144 @@ impl<T: Replace + Clone + 'static + std::fmt::Debug> Replace for Located<T> {
                 }
             }
 
-            // Case 2: Self is variable, pattern is variable - match any target variable
-            (Parametrizable::Variable(self_var), Parametrizable::Variable(pattern_var)) => {
+            // Case 2: Both concrete - recurse into inner content
+            (
+                Parametrizable::Concrete(self_concrete),
+                Parametrizable::Concrete(pattern_concrete),
+            ) => {
                 if current_id == target_id {
-                    // ✅ FIXED: Apply manual instantiations to replacement expression
-                    let mut instantiations = HashMap::new();
-                    println!(
-                        "DEBUG: CASE2_AUTO_INST - Creating {} -> {}",
-                        pattern_var.body, self_var
-                    );
-
-                    // Instead of mapping to string, map to the actual structured expression
-                    // Find the actual Located<T> for self_var in the target
-                    // Create a MathExpression target for lookup
-                    let math_expr_target = Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                        crate::subjects::math::theories::groups::definitions::Group::Generic(
-                            crate::subjects::math::theories::groups::definitions::GenericGroup {
-                                base_set: crate::subjects::math::theories::groups::definitions::GenericGroup::default().base_set,
-                                operation: crate::subjects::math::theories::groups::definitions::GroupOperation::default(),
-                                props: crate::subjects::math::theories::VariantSet::new(),
-                            }
-                        )
-                    ))));
-
-                    if let Some(located_expr) = math_expr_target
-                        .data
-                        .unwrap_arc(target_context)
-                        .get_located::<T>(self_var.to_string())
-                    {
-                        // Store the actual Located<T> instead of just the string
-                        instantiations.insert(pattern_var.clone(), located_expr.id.clone());
-                    } else {
-                        // Fallback to string mapping if lookup fails
-                        instantiations.insert(pattern_var.clone(), self_var.to_string());
-                    }
-
-                    // Add manual instantiations (these are the key ones like x -> g)
-                    for (theorem_var, goal_var) in manual_instantiations {
-                        println!(
-                            "DEBUG: MANUAL_INST - Adding {} -> {}",
-                            theorem_var.body, goal_var.body
-                        );
-                        instantiations.insert(theorem_var.clone(), goal_var.to_string());
-                    }
-
-                    // Create simple target for substitution (avoid unimplemented Set)
-                    let math_expr_target = Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                        crate::subjects::math::theories::groups::definitions::Group::Generic(
-                            crate::subjects::math::theories::groups::definitions::GenericGroup {
-                                base_set: crate::subjects::math::theories::groups::definitions::GenericGroup::default().base_set,
-                                operation: crate::subjects::math::theories::groups::definitions::GroupOperation::default(),
-                                props: crate::subjects::math::theories::VariantSet::new(),
-                            }
-                        )
-                    ))));
-
-                    let substituted_replacement =
-                        replacement.substitute(&instantiations, &math_expr_target, target_context);
-
-                    println!(
-                        "DEBUG: SUBSTITUTE - Result: {}",
-                        substituted_replacement.short_debug()
-                    );
-
-                    // ✅ FIXED: Return the substituted replacement
-
-                    // Handle MathExpression -> GroupExpression conversion
-                    if std::any::type_name::<T>()
-                        == std::any::type_name::<
-                            crate::subjects::math::theories::groups::definitions::GroupExpression,
-                        >()
-                    {
-                        if let Some(math_expr) = substituted_replacement.concrete_value() {
-                            if let crate::subjects::math::formalism::expressions::MathExpression::Expression(
-                                crate::subjects::math::formalism::expressions::TheoryExpression::Group(group_expr)
-                            ) = math_expr.as_ref() {
-                                let new_located = Located::new_concrete(group_expr.clone());
-                                if let Some(result) = (&new_located as &dyn std::any::Any).downcast_ref::<Located<T>>() {
-                                    return result.clone();
-                                }
-                            }
-                        }
-                    }
-
-                    if std::any::type_name::<T>() == std::any::type_name::<MathExpression>() {
-                        if let Some(math_expr) = substituted_replacement.concrete_value() {
-                            let new_located = Located::new_concrete(math_expr.as_ref().clone());
-                            if let Some(result) =
-                                (&new_located as &dyn std::any::Any).downcast_ref::<Located<T>>()
-                            {
-                                return result.clone();
-                            }
-                        }
-                        if let Some(result) = (&substituted_replacement as &dyn std::any::Any)
-                            .downcast_ref::<Located<T>>()
-                        {
-                            return result.clone();
-                        }
-                    }
-                }
-                self.clone()
-            }
-
-            // Case 3: Both concrete - recurse into inner content
-            (Parametrizable::Concrete(self_concrete), Parametrizable::Concrete(_)) => {
-                if current_id == target_id {
-                    // ✅ Create automatic instantiations by comparing concrete content
-                    let mut instantiations = HashMap::new();
-
                     // Try to get automatic instantiations for MathExpression
-                    if std::any::type_name::<T>() == std::any::type_name::<MathExpression>() {
-                        if let (Some(self_concrete), Some(pattern_concrete)) =
-                            (self.concrete_value(), pattern.concrete_value())
-                        {
-                            if let (Some(self_math), Some(pattern_math)) = (
-                                (self_concrete.as_ref() as &dyn std::any::Any)
-                                    .downcast_ref::<MathExpression>(),
-                                (pattern_concrete.as_ref() as &dyn std::any::Any)
-                                    .downcast_ref::<MathExpression>(),
+                    // instantiations.extend(self_concrete.instantiate(
+                    //     target_context,
+                    //     pattern_concrete,
+                    //     pattern_and_replacement_context,
+                    // ));
+                    // todo: perform instantiation on pattern vs target
+                    match TryDetag::<T>::try_detag(pattern_concrete.as_ref()) {
+                        Ok(pattern_concrete) => {
+                            let mut instantiations = self_concrete.as_ref().instantiate(
+                                target_context,
+                                pattern_concrete,
+                                pattern_and_replacement_context,
+                            );
+                            // todo: check if the instantiations has all meta-variables in replacement, if not panic
+                            find_missing_var_in_replacement_and_extend_instantiations(
+                                target_context,
+                                replacement,
+                                pattern_and_replacement_context,
+                                &mut instantiations,
+                            );
+                            // todo: perform substitution on replacement in one .substitute() call.
+                            let substituted_replacement =
+                                replacement.substitute(&instantiations, self, target_context);
+                            // todo: Convert Located<MathExpression> to Located<T> using the existing try_detag
+                            match TryDetag::<T>::try_detag(
+                                &substituted_replacement.data.unwrap(target_context),
                             ) {
-                                instantiations.extend(self_math.instantiate(
-                                    target_context,
-                                    pattern_math,
-                                    pattern_and_replacement_context,
-                                ));
-                            }
-                        }
-                    }
-
-                    // Add manual instantiations (they override automatic ones if needed)
-                    for (theorem_var, goal_var) in manual_instantiations {
-                        instantiations.insert(theorem_var.clone(), goal_var.to_string());
-                    }
-
-                    // Create target for substitution using self as the source of Located<> objects
-                    let self_as_target = if std::any::type_name::<T>()
-                        == std::any::type_name::<MathExpression>()
-                    {
-                        if let Some(self_concrete) = self.concrete_value() {
-                            if let Some(self_math) = (self_concrete.as_ref() as &dyn std::any::Any)
-                                .downcast_ref::<MathExpression>()
-                            {
-                                Located::new_concrete(self_math.clone())
-                            } else {
-                                // Fallback to generic target
-                                Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                                    crate::subjects::math::theories::groups::definitions::Group::Generic(
-                                        crate::subjects::math::theories::groups::definitions::GenericGroup::default()
-                                    )
-                                ))))
-                            }
-                        } else {
-                            // Fallback for non-concrete self
-                            Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                                crate::subjects::math::theories::groups::definitions::Group::Generic(
-                                    crate::subjects::math::theories::groups::definitions::GenericGroup::default()
-                                )
-                            ))))
-                        }
-                    } else {
-                        // Fallback for non-MathExpression types
-                        Located::new_concrete(MathExpression::Object(Arc::new(MathObject::Group(
-                            crate::subjects::math::theories::groups::definitions::Group::Generic(
-                                crate::subjects::math::theories::groups::definitions::GenericGroup::default()
-                            )
-                        ))))
-                    };
-
-                    // Apply substitution to replacement using self as target
-                    let substituted_replacement =
-                        replacement.substitute(&instantiations, &self_as_target, target_context);
-
-                    // Return the substituted replacement (try type conversion)
-                    if std::any::type_name::<T>() == std::any::type_name::<MathExpression>() {
-                        if let Some(math_expr) = substituted_replacement.concrete_value() {
-                            let new_located = Located::new_concrete(math_expr.as_ref().clone());
-                            if let Some(result) =
-                                (&new_located as &dyn std::any::Any).downcast_ref::<Located<T>>()
-                            {
-                                return result.clone();
-                            }
-                        }
-                        if let Some(result) = (&substituted_replacement as &dyn std::any::Any)
-                            .downcast_ref::<Located<T>>()
-                        {
-                            return result.clone();
-                        }
-                    }
-
-                    // Handle MathExpression -> GroupExpression conversion for Case 3
-                    if std::any::type_name::<T>()
-                        == std::any::type_name::<
-                            crate::subjects::math::theories::groups::definitions::GroupExpression,
-                        >()
-                    {
-                        if let Some(math_expr) = substituted_replacement.concrete_value() {
-                            if let crate::subjects::math::formalism::expressions::MathExpression::Expression(
-                                crate::subjects::math::formalism::expressions::TheoryExpression::Group(group_expr)
-                            ) = math_expr.as_ref() {
-                                let new_located = Located::new_concrete(group_expr.clone());
-                                if let Some(result) = (&new_located as &dyn std::any::Any).downcast_ref::<Located<T>>() {
-                                    return result.clone();
+                                Ok(inner_t) => {
+                                    // We got a T directly, wrap it in a new Located<T>
+                                    Located {
+                                        id: substituted_replacement.id.clone(),
+                                        data: Parametrizable::Concrete(Arc::new(inner_t.clone())),
+                                    }
+                                }
+                                Err(e) => {
+                                    println!(
+                                        "DEBUG: Failed to convert substituted replacement: {}",
+                                        e
+                                    );
+                                    self.clone()
                                 }
                             }
                         }
+                        Err(e) => {
+                            panic!(
+                                "Failed to convert pattern concrete: {:#?} to {}",
+                                pattern_concrete.as_ref(),
+                                std::any::type_name::<T>()
+                            );
+                            self.clone()
+                        }
                     }
 
-                    // Fallback: apply the recursive replacement
-                }
-
-                let new_concrete = self_concrete.replace(
-                    current_id,
-                    target_id,
-                    target_context,
-                    pattern,
-                    replacement,
-                    pattern_and_replacement_context,
-                    manual_instantiations,
-                );
-                Located {
-                    id: self.id.clone(),
-                    data: Parametrizable::Concrete(Arc::new(new_concrete)),
+                    // return self.clone();
+                } else {
+                    let new_concrete = self_concrete.replace(
+                        current_id,
+                        target_id,
+                        target_context,
+                        pattern,
+                        replacement,
+                        pattern_and_replacement_context,
+                        manual_instantiations,
+                    );
+                    Located {
+                        id: self.id.clone(),
+                        data: Parametrizable::Concrete(Arc::new(new_concrete)),
+                    }
                 }
             }
 
-            // Case 4: Self is variable, pattern is concrete - no structural match
+            // Case 3: Self is variable, pattern is concrete - no structural match possible
             (Parametrizable::Variable(_), Parametrizable::Concrete(_)) => self.clone(),
         }
+    }
+}
+
+fn find_missing_var_in_replacement_and_extend_instantiations(
+    target_context: &Vec<ContextEntry>,
+    replacement: &Located<MathExpression>,
+    pattern_and_replacement_context: &Vec<ContextEntry>,
+    instantiations: &mut HashMap<Identifier, InstantiationType>,
+) {
+    // todo: check if the instantiations has all meta-variables in replacement,
+    let replacement_meta_vars = replacement.collect_identifier();
+    let missing_vars: Vec<Identifier> = replacement_meta_vars
+        .iter()
+        .filter_map(|var| {
+            if !instantiations.contains_key(var) {
+                // todo: try to find replacement in the context.
+                // but be strict the name must be identical and type compatible.
+                // of it is the only variable that is compatible with this identifier
+                if let Some(entry) = target_context.find_variable(var) {
+                    if let Some(pattern_entry) = pattern_and_replacement_context.find_variable(var)
+                    {
+                        if entry.ty.is_compatible(
+                            target_context,
+                            &pattern_entry.ty,
+                            pattern_and_replacement_context,
+                        ) {
+                            // todo: Types are compatible, we can use this variable in the instantiation
+                            instantiations.insert(
+                                var.clone(),
+                                InstantiationType::Identifier(entry.name.clone()),
+                            );
+                            None // Not missing anymore
+                        } else {
+                            // Name matches but type is incompatible
+                            Some(var.clone())
+                        }
+                    } else {
+                        // Variable not found in pattern context, but found in target context
+                        // This might be a local variable that can be used
+                        None // Assume it's available
+                    }
+                } else {
+                    // Variable not found in target context at all
+                    Some(var.clone())
+                }
+            } else {
+                None
+            }
+        })
+        .collect();
+    // todo: if not: try to find replacement in the context. but be strict the name must be identical and type compatible.
+
+    if !missing_vars.is_empty() {
+        panic!(
+            "Missing instantiations for meta-variables in replacement: {:?}",
+            missing_vars
+        );
     }
 }
 

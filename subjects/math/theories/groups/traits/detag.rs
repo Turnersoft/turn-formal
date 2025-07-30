@@ -1,6 +1,6 @@
 use super::super::definitions::*;
 use crate::subjects::math::{formalism::traits::detag::TryDetag, theories::VariantSet};
-use crate::{impl_try_get_for_terminal_type, try_detag_as};
+use crate::{impl_try_get_for_terminal_type, try_detag_as_with_no_digging};
 use std::{any::Any, fmt::Debug};
 
 // Implement TryGet for all terminal group types (excluding Group and GroupExpression which are already implemented in the main getter.rs)
@@ -41,7 +41,7 @@ impl_try_get_for_terminal_type!(GroupAction);
 
 impl<T: 'static + Debug> TryDetag<T> for Group {
     fn try_detag(&self) -> Result<&T, String> {
-        if let Ok(res) = try_detag_as!(self, T) {
+        if let Ok(res) = try_detag_as_with_no_digging!(self, T) {
             return Ok(res);
         }
         match self {
@@ -113,9 +113,6 @@ impl<T: 'static + Debug> TryDetag<T> for Group {
 //     }
 // }
 
-// Note: Group and GroupExpression implementations are already provided in subjects/math/formalism/getter.rs
-
-// ✅ MISSING: Add TryDetag<GroupExpression> for GroupExpression (self-conversion)
 impl TryDetag<GroupExpression> for GroupExpression {
     fn try_detag(&self) -> Result<&GroupExpression, String> {
         Ok(self) // Self-conversion: GroupExpression -> &GroupExpression

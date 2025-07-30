@@ -40,7 +40,6 @@ impl Search for GroupHomomorphism {
 impl IsCompatible<GroupHomomorphism> for GroupHomomorphism {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &GroupHomomorphism,
         pattern_context: &Vec<ContextEntry>,
@@ -48,12 +47,10 @@ impl IsCompatible<GroupHomomorphism> for GroupHomomorphism {
         // For now, consider GroupHomomorphisms compatible if they have the same structure
         // This could be enhanced with more sophisticated checking
         self.domain.data.unwrap(target_context).is_compatible(
-            target.clone(),
             target_context,
             &pattern.domain.data.unwrap(pattern_context),
             pattern_context,
         ) && self.codomain.data.unwrap(target_context).is_compatible(
-            target,
             target_context,
             &pattern.codomain.data.unwrap(pattern_context),
             pattern_context,
@@ -87,7 +84,6 @@ impl Search for GroupAction {
 impl IsCompatible<GroupAction> for GroupAction {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &GroupAction,
         pattern_context: &Vec<ContextEntry>,
@@ -125,7 +121,6 @@ impl Search for GroupElement {
 
                     if is_in_scope_now {
                         if (*self).is_compatible(
-                            target.clone(),
                             target_context,
                             group_elem_pattern,
                             pattern_context,
@@ -147,7 +142,6 @@ impl Search for GroupElement {
 impl IsCompatible<GroupElement> for GroupElement {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &GroupElement,
         pattern_context: &Vec<ContextEntry>,
@@ -198,12 +192,7 @@ impl Search for Group {
                     let is_in_scope_now = in_target_scope || current_id == target.id;
 
                     if is_in_scope_now {
-                        if (*self).is_compatible(
-                            target.clone(),
-                            target_context,
-                            group_pattern,
-                            pattern_context,
-                        ) {
+                        if (*self).is_compatible(target_context, group_pattern, pattern_context) {
                             matches.insert(current_id.clone());
                         }
                     }
@@ -226,17 +215,16 @@ impl Search for Group {
 impl IsCompatible<Group> for Group {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &Group,
         pattern_context: &Vec<ContextEntry>,
     ) -> bool {
         match (self, pattern) {
             (Group::Generic(l), Group::Generic(r)) => {
-                l.is_compatible(target.clone(), target_context, &r, pattern_context)
+                l.is_compatible(target_context, &r, pattern_context)
             }
             (Group::Trivial(l), Group::Trivial(r)) => {
-                l.is_compatible(target.clone(), target_context, &r, pattern_context)
+                l.is_compatible(target_context, &r, pattern_context)
             }
             _ => false,
         }
@@ -246,7 +234,6 @@ impl IsCompatible<Group> for Group {
 impl IsCompatible<GenericGroup> for GenericGroup {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &GenericGroup,
         _pattern_context: &Vec<ContextEntry>,
@@ -278,7 +265,6 @@ impl IsCompatible<GenericGroup> for GenericGroup {
 impl IsCompatible<TrivialGroup> for TrivialGroup {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &TrivialGroup,
         pattern_context: &Vec<ContextEntry>,
@@ -290,28 +276,23 @@ impl IsCompatible<TrivialGroup> for TrivialGroup {
 impl IsCompatible<TopologicalGroup> for TopologicalGroup {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &TopologicalGroup,
         pattern_context: &Vec<ContextEntry>,
     ) -> bool {
         // 1. Check the core group structures.
-        if !self.core.is_compatible(
-            target.clone(),
-            target_context,
-            &pattern.core,
-            pattern_context,
-        ) {
+        if !self
+            .core
+            .is_compatible(target_context, &pattern.core, pattern_context)
+        {
             return false;
         }
 
         // 2. Check the topological space structures.
-        if !self.topology.is_compatible(
-            target.clone(),
-            target_context,
-            &pattern.topology,
-            pattern_context,
-        ) {
+        if !self
+            .topology
+            .is_compatible(target_context, &pattern.topology, pattern_context)
+        {
             return false;
         }
 
@@ -396,12 +377,7 @@ impl Search for GroupExpression {
             match pattern.concrete_value() {
                 Some(concrete_pattern) => {
                     if let Ok(pattern_expr) = concrete_pattern.try_detag() {
-                        if self.is_compatible(
-                            target.clone(),
-                            target_context,
-                            &pattern_expr,
-                            pattern_context,
-                        ) {
+                        if self.is_compatible(target_context, &pattern_expr, pattern_context) {
                             matches.insert(current_id.clone());
                         }
                     }
@@ -512,7 +488,6 @@ impl Search for GroupExpression {
 impl IsCompatible<GroupExpression> for GroupExpression {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &GroupExpression,
         pattern_context: &Vec<ContextEntry>,
@@ -520,7 +495,6 @@ impl IsCompatible<GroupExpression> for GroupExpression {
         match (self, pattern) {
             (GroupExpression::Identity(l), GroupExpression::Identity(r)) => {
                 l.data.unwrap(target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &r.data.unwrap(target_context),
                     pattern_context,
@@ -533,7 +507,6 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                     element: r_element,
                 },
             ) => group.data.unwrap(target_context).is_compatible(
-                target.clone(),
                 target_context,
                 &r_group.data.unwrap(target_context),
                 pattern_context,
@@ -547,7 +520,6 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                 },
             ) => {
                 let group_compatible = group.data.unwrap(target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &r_group.data.unwrap(pattern_context),
                     pattern_context,
@@ -577,7 +549,6 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                     element: r_element,
                 },
             ) => l_group.data.unwrap(target_context).is_compatible(
-                target,
                 target_context,
                 &r_group.data.unwrap(target_context),
                 pattern_context,
@@ -590,7 +561,6 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                 },
             ) => {
                 let group_compatible = group.data.unwrap(target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &r_group.data.unwrap(pattern_context),
                     pattern_context,

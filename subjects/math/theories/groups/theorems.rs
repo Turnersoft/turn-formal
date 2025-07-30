@@ -192,8 +192,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p2_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    // println!("DEBUG: p3_node:\n{}", p3_node.short_debug());
     println!("DEBUG: p3_node:\n{:#?}", p3_node);
+    println!("DEBUG: p3_node:\n{}", p3_node.short_debug());
 
     // Step 4: Rewrite e on the LHS using the inverse property (e -> g⁻¹ * g).
     // Goal: e * h1 = h2

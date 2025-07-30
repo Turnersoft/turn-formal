@@ -61,6 +61,17 @@ pub struct ContextEntry {
     pub description: Option<RichText>,
 }
 
+/// Extension trait for Vec<ContextEntry> to provide context-specific operations.
+pub trait ContextEntryVecExt {
+    fn find_variable(&self, name: &Identifier) -> Option<&ContextEntry>;
+}
+
+impl ContextEntryVecExt for Vec<ContextEntry> {
+    fn find_variable(&self, name: &Identifier) -> Option<&ContextEntry> {
+        self.iter().find(|entry| entry.name == *name)
+    }
+}
+
 /// Represents a quantified variable in the main statement's prenex form.
 /// The full definition of the variable is found by looking up its name in the context.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

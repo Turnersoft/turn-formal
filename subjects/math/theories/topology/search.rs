@@ -1,4 +1,4 @@
-use crate::subjects::math::formalism::proof::{ContextEntry, tactics::Target};
+use crate::subjects::math::formalism::proof::ContextEntry;
 use crate::subjects::math::formalism::traits::IsCompatible;
 
 use super::definitions::{TopologicalSpace, TopologicalSpaceProperty, Topology};
@@ -7,7 +7,6 @@ use std::collections::HashSet;
 impl IsCompatible<Topology> for Topology {
     fn is_compatible(
         &self,
-        target: Target,
         _target_context: &Vec<ContextEntry>,
         pattern: &Topology,
         _pattern_context: &Vec<ContextEntry>,
@@ -20,7 +19,6 @@ impl IsCompatible<Topology> for Topology {
 impl IsCompatible<TopologicalSpace> for TopologicalSpace {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &TopologicalSpace,
         pattern_context: &Vec<ContextEntry>,
@@ -31,12 +29,10 @@ impl IsCompatible<TopologicalSpace> for TopologicalSpace {
         }
 
         // 2. Check the topologies themselves.
-        if !self.topology.is_compatible(
-            target.clone(),
-            target_context,
-            &pattern.topology,
-            pattern_context,
-        ) {
+        if !self
+            .topology
+            .is_compatible(target_context, &pattern.topology, pattern_context)
+        {
             return false;
         }
 

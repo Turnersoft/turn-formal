@@ -80,7 +80,6 @@ impl Search for MathExpression {
 
         if is_in_scope_now {
             if self.is_compatible(
-                target.clone(),
                 target_context,
                 &pattern.data.unwrap(&pattern_context),
                 pattern_context,
@@ -189,9 +188,8 @@ impl<T: 'static + Clone + Search + std::fmt::Debug + IsCompatible<T> + ShortDebu
                     if let Ok(pattern_detagged) = pattern.data.unwrap(&pattern_context).try_detag()
                     {
                         if self.data.unwrap(&target_context).is_compatible(
-                            target.clone(),
                             target_context,
-                            &pattern_detagged, // ✅ FIXED: Now &T instead of &MathExpression
+                            &pattern_detagged,
                             pattern_context,
                         ) {
                             matches.insert(current_id.clone());
@@ -267,12 +265,7 @@ impl Search for MathRelation {
             match pattern.concrete_value() {
                 Some(concrete_pattern) => {
                     if let Ok(pattern_rel) = concrete_pattern.try_detag() {
-                        if self.is_compatible(
-                            target.clone(),
-                            target_context,
-                            &pattern_rel,
-                            pattern_context,
-                        ) {
+                        if self.is_compatible(target_context, &pattern_rel, pattern_context) {
                             matches.insert(current_id.clone());
                             println!("DEBUG: found match in current scope: {:#?}", current_id);
                         } else {
@@ -355,12 +348,7 @@ impl Search for MathObject {
             match pattern.concrete_value() {
                 Some(concrete_pattern) => {
                     if let Ok(pattern_obj) = concrete_pattern.try_detag() {
-                        if self.is_compatible(
-                            target.clone(),
-                            target_context,
-                            &pattern_obj,
-                            pattern_context,
-                        ) {
+                        if self.is_compatible(target_context, &pattern_obj, pattern_context) {
                             matches.insert(current_id.clone());
                         }
                     }
@@ -428,12 +416,7 @@ impl Search for TheoryExpression {
             match pattern.concrete_value() {
                 Some(concrete_pattern) => {
                     if let Ok(pattern_expr) = concrete_pattern.try_detag() {
-                        if self.is_compatible(
-                            target.clone(),
-                            target_context,
-                            &pattern_expr,
-                            pattern_context,
-                        ) {
+                        if self.is_compatible(target_context, &pattern_expr, pattern_context) {
                             matches.insert(current_id.clone());
                         }
                     }

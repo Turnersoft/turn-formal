@@ -11,7 +11,6 @@ use std::fmt::Debug;
 pub trait IsCompatible<P> {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &P,
         pattern_context: &Vec<ContextEntry>,
@@ -21,7 +20,6 @@ pub trait IsCompatible<P> {
 impl IsCompatible<i32> for i32 {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &i32,
         pattern_context: &Vec<ContextEntry>,
@@ -34,20 +32,19 @@ impl IsCompatible<i32> for i32 {
 impl IsCompatible<MathExpression> for MathExpression {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &MathExpression,
         pattern_context: &Vec<ContextEntry>,
     ) -> bool {
         match (self, pattern) {
             (MathExpression::Object(self_obj), MathExpression::Object(pattern_obj)) => {
-                self_obj.is_compatible(target, target_context, &pattern_obj, pattern_context)
+                self_obj.is_compatible(target_context, &pattern_obj, pattern_context)
             }
             (MathExpression::Relation(self_rel), MathExpression::Relation(pattern_rel)) => {
-                self_rel.is_compatible(target, target_context, &pattern_rel, pattern_context)
+                self_rel.is_compatible(target_context, &pattern_rel, pattern_context)
             }
             (MathExpression::Expression(self_expr), MathExpression::Expression(pattern_expr)) => {
-                self_expr.is_compatible(target, target_context, &pattern_expr, pattern_context)
+                self_expr.is_compatible(target_context, &pattern_expr, pattern_context)
             }
             _ => false,
         }
@@ -57,7 +54,6 @@ impl IsCompatible<MathExpression> for MathExpression {
 impl<T: 'static + Clone + IsCompatible<T> + Debug> IsCompatible<Located<T>> for Located<T> {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &Located<T>,
         pattern_context: &Vec<ContextEntry>,
@@ -68,7 +64,6 @@ impl<T: 'static + Clone + IsCompatible<T> + Debug> IsCompatible<Located<T>> for 
                 // For now, consider them compatible if they have the same name
                 // More sophisticated type checking could be added here
                 self.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &pattern.data.unwrap(&pattern_context),
                     pattern_context,
@@ -79,12 +74,7 @@ impl<T: 'static + Clone + IsCompatible<T> + Debug> IsCompatible<Located<T>> for 
                 Parametrizable::Concrete(pattern_concrete),
             ) => {
                 // Both concrete - delegate to inner type compatibility
-                self_concrete.is_compatible(
-                    target,
-                    target_context,
-                    pattern_concrete,
-                    pattern_context,
-                )
+                self_concrete.is_compatible(target_context, pattern_concrete, pattern_context)
             }
             (Parametrizable::Variable(_), Parametrizable::Concrete(_)) => {
                 // Variable can potentially match concrete - this is complex type matching
@@ -103,7 +93,6 @@ impl<T: 'static + Clone + IsCompatible<T> + Debug> IsCompatible<Located<T>> for 
 impl IsCompatible<MathRelation> for MathRelation {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &MathRelation,
         pattern_context: &Vec<ContextEntry>,
@@ -117,18 +106,13 @@ impl IsCompatible<MathRelation> for MathRelation {
                 },
             ) => {
                 // todo: we should check both equality from both hand side.
-                left.is_compatible(
-                    target.clone(),
-                    target_context,
-                    &pattern_left,
-                    pattern_context,
-                ) && right.is_compatible(target, target_context, &pattern_right, pattern_context)
+                left.is_compatible(target_context, &pattern_left, pattern_context)
+                    && right.is_compatible(target_context, &pattern_right, pattern_context)
             }
             (MathRelation::And(locateds), MathRelation::And(pattern_locateds)) => {
                 // todo: we should allow order difference, the list is cummutative and associative
                 locateds.iter().all(|located| {
                     located.data.unwrap(&target_context).is_compatible(
-                        target.clone(),
                         target_context,
                         &located.data.unwrap(&pattern_context),
                         pattern_context,
@@ -139,7 +123,6 @@ impl IsCompatible<MathRelation> for MathRelation {
                 // todo: we should allow order random pair we need only one node from target and pattern list to make a valid pair
                 locateds.iter().any(|located| {
                     located.data.unwrap(&target_context).is_compatible(
-                        target.clone(),
                         target_context,
                         &located.data.unwrap(&pattern_context),
                         pattern_context,
@@ -148,7 +131,6 @@ impl IsCompatible<MathRelation> for MathRelation {
             }
             (MathRelation::Not(located), MathRelation::Not(pattern_located)) => {
                 located.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &located.data.unwrap(&pattern_context),
                     pattern_context,
@@ -159,12 +141,10 @@ impl IsCompatible<MathRelation> for MathRelation {
                 MathRelation::Implies(pattern_located, pattern_located1),
             ) => {
                 located.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &located.data.unwrap(&pattern_context),
                     pattern_context,
                 ) && located1.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &located1.data.unwrap(&pattern_context),
                     pattern_context,
@@ -176,17 +156,14 @@ impl IsCompatible<MathRelation> for MathRelation {
             ) => {
                 // todo: the antecedent and precedent can we reversed, we need to try in both directions
                 located.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &located.data.unwrap(&pattern_context),
                     pattern_context,
                 ) && located1.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &located.data.unwrap(&pattern_context),
                     pattern_context,
                 ) && located1.data.unwrap(&target_context).is_compatible(
-                    target.clone(),
                     target_context,
                     &located1.data.unwrap(&pattern_context),
                     pattern_context,
@@ -200,7 +177,6 @@ impl IsCompatible<MathRelation> for MathRelation {
 impl IsCompatible<MathObject> for MathObject {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &MathObject,
         pattern_context: &Vec<ContextEntry>,
@@ -212,7 +188,6 @@ impl IsCompatible<MathObject> for MathObject {
 impl IsCompatible<TheoryExpression> for TheoryExpression {
     fn is_compatible(
         &self,
-        target: Target,
         target_context: &Vec<ContextEntry>,
         pattern: &TheoryExpression,
         pattern_context: &Vec<ContextEntry>,
@@ -221,7 +196,7 @@ impl IsCompatible<TheoryExpression> for TheoryExpression {
 
         match (self, pattern) {
             (TheoryExpression::Group(self_group), TheoryExpression::Group(pattern_group)) => {
-                self_group.is_compatible(target, target_context, pattern_group, pattern_context)
+                self_group.is_compatible(target_context, pattern_group, pattern_context)
             }
             // (TheoryExpression::Ring(self_ring), TheoryExpression::Ring(pattern_ring)) => {
             //     self_ring.structurally_equivalent(pattern_ring, target_context)

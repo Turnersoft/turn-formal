@@ -18,6 +18,11 @@ use crate::{
 };
 use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
+pub enum InstantiationType {
+    Identifier(Identifier),
+    LocatedId(String),
+}
+
 /// A trait for instantiating meta-variables by comparing a concrete expression (`self`) to a pattern.
 /// we only map meta-variables in pattern to expression/variables in target, we will never allow pattern to have more
 pub trait Instantiable: Sized {
@@ -26,7 +31,7 @@ pub trait Instantiable: Sized {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String>;
+    ) -> HashMap<Identifier, InstantiationType>;
 }
 
 impl Instantiable for MathExpression {
@@ -35,7 +40,7 @@ impl Instantiable for MathExpression {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -106,7 +111,7 @@ where
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (&self.data, &pattern.data) {
@@ -114,7 +119,10 @@ where
             (Parametrizable::Concrete(_), Parametrizable::Variable(pattern_var)) => {
                 // ✅ FIXED: Always use the ID of the matched Located<> wrapper
                 // This ensures proper recursive type matching during substitution
-                instantiations.insert(pattern_var.clone(), self.id.clone());
+                instantiations.insert(
+                    pattern_var.clone(),
+                    InstantiationType::LocatedId(self.id.clone()),
+                );
             }
             // ✅ ADD MISSING CASE: Target is variable, pattern is concrete - create instantiation
             (Parametrizable::Variable(target_var), Parametrizable::Concrete(_)) => {
@@ -138,12 +146,11 @@ where
             }
             // Both are variables - only match if they're the same variable
             (Parametrizable::Variable(target_var), Parametrizable::Variable(pattern_var)) => {
-                if target_var == pattern_var {
-                    // Same variable, no new instantiation needed
-                } else {
-                    // Different variables - create instantiation: pattern_var → target_var.body
-                    instantiations.insert(pattern_var.clone(), target_var.body.clone());
-                }
+                // Different variables - create instantiation: pattern_var → target_var.body
+                instantiations.insert(
+                    pattern_var.clone(),
+                    InstantiationType::Identifier(target_var.clone()),
+                );
             }
         }
 
@@ -158,7 +165,7 @@ impl<T: Instantiable> Instantiable for Arc<T> {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         (**self).instantiate(target_context, &**pattern, pattern_context)
     }
 }
@@ -170,7 +177,7 @@ impl Instantiable for TheoryExpression {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -202,7 +209,7 @@ impl Instantiable for MathRelation {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -308,7 +315,7 @@ impl Instantiable for MathObject {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -336,7 +343,7 @@ impl Instantiable for TypeViewOperator {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -448,7 +455,7 @@ impl<T: Instantiable> Instantiable for Option<T> {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -478,7 +485,7 @@ impl<T: Instantiable> Instantiable for Vec<T> {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         // Only instantiate if both vectors have the same length
@@ -503,7 +510,7 @@ impl Instantiable for crate::subjects::math::theories::groups::definitions::Grou
         _target_context: &Vec<ContextEntry>,
         _pattern: &Self,
         _pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         // GroupElement is a concrete type with no variables
         HashMap::new()
     }
@@ -518,7 +525,7 @@ impl Instantiable for Group {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         // For now, treat groups as atomic - we don't traverse into their internal structure
@@ -546,7 +553,7 @@ impl Instantiable for GroupExpression {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         match (self, pattern) {
@@ -774,7 +781,7 @@ impl Instantiable for GroupHomomorphism {
         target_context: &Vec<ContextEntry>,
         pattern: &Self,
         pattern_context: &Vec<ContextEntry>,
-    ) -> HashMap<Identifier, String> {
+    ) -> HashMap<Identifier, InstantiationType> {
         let mut instantiations = HashMap::new();
 
         instantiations.extend(self.domain.instantiate(

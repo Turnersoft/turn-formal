@@ -8,7 +8,7 @@ use crate::subjects::math::formalism::proof::{
     ContextEntry, DefinitionState, ProofGoal, Tactic,
 };
 use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
-use crate::subjects::math::formalism::traits::instantiable::Instantiable;
+use crate::subjects::math::formalism::traits::instantiable::{Instantiable, InstantiationType};
 use crate::subjects::math::formalism::traits::replace::Replace;
 use crate::subjects::math::formalism::traits::substitutable::Substitutable;
 use crate::subjects::math::formalism::traits::search::Search;
@@ -431,7 +431,7 @@ impl Tactic {
                 // Create substitution map for the witness
                 let located_witness = Located::new_concrete(witness.clone());
 
-                let substitution_map = HashMap::from([(target_quantifier.clone(), located_witness.id.clone())]);
+                let substitution_map = HashMap::from([(target_quantifier.clone(), InstantiationType::LocatedId(located_witness.id.clone()))]);
 
                 let substituted_expr = goal_statement_arc.substitute(&substitution_map, &located_witness, &goal.context);
                 
@@ -652,14 +652,6 @@ impl Tactic {
                     matches.iter().next().unwrap()
                 };
 
-                // Manual instantiations only (automatic instantiation happens in replace)
-                let mut combined_instantiations = HashMap::new();
-                
-                // Add manual instantiations (they override automatic ones)
-                for (theorem_var, goal_var) in instantiations {
-                    combined_instantiations.insert(theorem_var.clone(), goal_var.to_string());
-                }
-
                 // replace the target expression with the replacement expression
                 let mut new_goal = goal.clone();
                 let new_statement = goal.statement.replace(
@@ -669,7 +661,7 @@ impl Tactic {
                         pattern_loc,      // ✅ Pass Located<MathExpression>
                         replacement_loc,  // ✅ Pass Located<MathExpression>
                     rule_context,
-                    &combined_instantiations.iter().map(|(k, v)| (k.clone(), Identifier::new_simple(v.clone()))).collect(),  // ✅ Pass combined instantiations
+                    &instantiations,  // ✅ Pass combined instantiations
                 );
                 new_goal.statement = new_statement;
 
@@ -916,7 +908,7 @@ impl Tactic {
         // Base Case Goal
         let located_base_case = Located::new_concrete(base_case_value.clone());
         let substitution_map_base =
-            HashMap::from([(induction_variable_name.clone(), located_base_case.id.clone())]);
+            HashMap::from([(induction_variable_name.clone(), InstantiationType::LocatedId(located_base_case.id.clone()))]);
         let mut base_case_goal = goal.clone();
         
         // Use MathExpression wrapper for substitution
@@ -949,14 +941,14 @@ impl Tactic {
             },
         ));
         let located_k_var = Located::new_concrete(k_var.clone());
-        let substitution_map_k = HashMap::from([(induction_variable_name.clone(), located_k_var.id.clone())]);
+        let substitution_map_k = HashMap::from([(induction_variable_name.clone(), InstantiationType::LocatedId(located_k_var.id.clone()))]);
         if let Some(goal_statement_arc) = goal.statement.concrete_value() {
             let induction_hypothesis_expr = MathExpression::Relation(goal_statement_arc.clone());
             let induction_hypothesis_result = induction_hypothesis_expr.substitute(&substitution_map_k, &located_k_var, &goal.context);
 
         let located_k_plus_one = Located::new_concrete(k_plus_one_expr.clone());
         let substitution_map_k_plus_1 =
-            HashMap::from([(induction_variable_name.clone(), located_k_plus_one.id.clone())]);
+            HashMap::from([(induction_variable_name.clone(), InstantiationType::LocatedId(located_k_plus_one.id.clone()))]);
         let mut inductive_step_goal = goal.clone();
             let inductive_step_expr = MathExpression::Relation(goal_statement_arc.clone());
             let inductive_step_result = inductive_step_expr.substitute(&substitution_map_k_plus_1, &located_k_plus_one, &goal.context);

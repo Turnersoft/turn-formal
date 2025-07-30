@@ -1,12 +1,14 @@
 use std::collections::HashMap;
+use std::fmt::Debug;
 
+use super::{super::definitions::GroupRelation, Search};
 use crate::{
     subjects::math::{
         formalism::{
             expressions::MathExpression,
             location::Located,
             proof::{ContextEntry, tactics::Target},
-            traits::{Replace, Substitutable},
+            traits::{Replace, Substitutable, instantiable::InstantiationType},
         },
         theories::groups::definitions::{
             GenericGroup, Group, GroupAction, GroupElement, GroupExpression, GroupHomomorphism,
@@ -15,8 +17,6 @@ use crate::{
     },
     turn_render::Identifier,
 };
-
-use super::super::definitions::GroupRelation;
 
 impl Replace for Group {
     fn replace(
@@ -50,11 +50,11 @@ impl Replace for GenericGroup {
     }
 }
 
-impl Substitutable for Group {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for Group {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         match self {
@@ -93,11 +93,11 @@ impl Substitutable for Group {
     }
 }
 
-impl Substitutable for GenericGroup {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for GenericGroup {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         GenericGroup {
@@ -108,11 +108,11 @@ impl Substitutable for GenericGroup {
     }
 }
 
-impl Substitutable for GroupOperation {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for GroupOperation {
     fn substitute(
         &self,
-        _instantiations: &HashMap<Identifier, String>,
-        _target: &Located<MathExpression>,
+        _instantiations: &HashMap<Identifier, InstantiationType>,
+        _target: &Located<U>,
         _context: &Vec<ContextEntry>,
     ) -> Self {
         self.clone()
@@ -235,11 +235,11 @@ impl Replace for GroupExpression {
     }
 }
 
-impl Substitutable for GroupElement {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for GroupElement {
     fn substitute(
         &self,
-        _instantiations: &HashMap<Identifier, String>,
-        _target: &Located<MathExpression>,
+        _instantiations: &HashMap<Identifier, InstantiationType>,
+        _target: &Located<U>,
         _context: &Vec<ContextEntry>,
     ) -> Self {
         // GroupElement is typically atomic - no variable substitution needed
@@ -247,11 +247,11 @@ impl Substitutable for GroupElement {
     }
 }
 
-impl Substitutable for i32 {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for i32 {
     fn substitute(
         &self,
-        _instantiations: &HashMap<Identifier, String>,
-        _target: &Located<MathExpression>,
+        _instantiations: &HashMap<Identifier, InstantiationType>,
+        _target: &Located<U>,
         _context: &Vec<ContextEntry>,
     ) -> Self {
         // i32 is atomic - no variable substitution needed
@@ -259,11 +259,11 @@ impl Substitutable for i32 {
     }
 }
 
-impl Substitutable for GroupAction {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for GroupAction {
     fn substitute(
         &self,
-        _instantiations: &HashMap<Identifier, String>,
-        _target: &Located<MathExpression>,
+        _instantiations: &HashMap<Identifier, InstantiationType>,
+        _target: &Located<U>,
         _context: &Vec<ContextEntry>,
     ) -> Self {
         // GroupAction is typically atomic - no variable substitution needed for now
@@ -271,11 +271,11 @@ impl Substitutable for GroupAction {
     }
 }
 
-impl Substitutable for GroupHomomorphism {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for GroupHomomorphism {
     fn substitute(
         &self,
-        _instantiations: &HashMap<Identifier, String>,
-        _target: &Located<MathExpression>,
+        _instantiations: &HashMap<Identifier, InstantiationType>,
+        _target: &Located<U>,
         _context: &Vec<ContextEntry>,
     ) -> Self {
         // GroupHomomorphism is typically atomic - no variable substitution needed for now
@@ -283,11 +283,11 @@ impl Substitutable for GroupHomomorphism {
     }
 }
 
-impl Substitutable for GroupExpression {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for GroupExpression {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         match self {

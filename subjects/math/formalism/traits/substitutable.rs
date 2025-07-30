@@ -21,21 +21,23 @@ use crate::{
 };
 use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
+use super::instantiable::InstantiationType;
+
 /// A trait for substituting meta-variables in a template (`self`) using a pre-computed map.
-pub trait Substitutable: Sized {
+pub trait Substitutable<U: 'static + Clone + Debug>: Sized {
     fn substitute(
         &self, // The replacement template
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self;
 }
 
-impl Substitutable for MathExpression {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for MathExpression {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         // This is the base case for the recursion: if the expression is a meta-variable, we replace it.
@@ -73,14 +75,15 @@ impl Substitutable for MathExpression {
     }
 }
 
-impl<T: Substitutable + Clone + Debug + 'static> Substitutable for Located<T>
+impl<T: Substitutable<U> + Clone + Debug + 'static, U: 'static + Clone + Debug + Search>
+    Substitutable<U> for Located<T>
 where
     T: TryDetag<T>,
 {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         match &self.data {
@@ -94,28 +97,24 @@ where
             }
             Parametrizable::Variable(id) => {
                 if let Some(substituted_name) = instantiations.get(id) {
-                    // ✅ FIXED: Create a new variable with the substituted name
-                    // instead of trying to look it up by ID
-                    if !substituted_name.contains('-') && substituted_name.len() < 20 {
-                        // Looks like a variable name - create a new variable
-                        Located::new_variable(crate::turn_render::Identifier::new_simple(
-                            substituted_name.clone(),
-                        ))
-                    } else {
-                        // Looks like a UUID - try to look it up in target
-                        if let Some(located_expr) = target
-                            .data
-                            .unwrap_arc(context)
-                            .get_located::<T>(substituted_name.clone())
-                        {
-                            located_expr
-                        } else {
-                            // If lookup fails, return the original variable unchanged
-                            println!(
-                                "DEBUG: lookup failed for {} in target: {:#?}",
-                                substituted_name, target
-                            );
-                            self.clone()
+                    match substituted_name {
+                        InstantiationType::Identifier(identifier) => Located {
+                            id: self.id.clone(),
+                            data: Parametrizable::Variable(identifier.clone()),
+                        },
+                        InstantiationType::LocatedId(id) => {
+                            if let Some(located_expr) =
+                                target.data.unwrap(context).get_located::<T>(id.clone())
+                            {
+                                located_expr
+                            } else {
+                                // If lookup fails, return the original variable unchanged
+                                println!(
+                                    "DEBUG: lookup failed for {} in target: {:#?}",
+                                    id, target
+                                );
+                                self.clone()
+                            }
                         }
                     }
                 } else {
@@ -128,22 +127,22 @@ where
 }
 
 // Generic implementations for Arc-wrapped types
-impl<T: Substitutable> Substitutable for Arc<T> {
+impl<T: Substitutable<U>, U: 'static + Clone + Debug> Substitutable<U> for Arc<T> {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         Arc::new((**self).substitute(instantiations, target, context))
     }
 }
 
-impl Substitutable for MathObject {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for MathObject {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         match &self {
@@ -159,11 +158,11 @@ impl Substitutable for MathObject {
     }
 }
 
-impl Substitutable for MathRelation {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for MathRelation {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         match &self {
@@ -259,11 +258,11 @@ fn is_meta_variable(name: &str, _context: &Vec<ContextEntry>) -> bool {
 }
 
 // Implementation for TheoryExpression Substitutable
-impl Substitutable for TheoryExpression {
+impl<U: 'static + Clone + Debug + Search> Substitutable<U> for TheoryExpression {
     fn substitute(
         &self,
-        instantiations: &HashMap<Identifier, String>,
-        target: &Located<MathExpression>,
+        instantiations: &HashMap<Identifier, InstantiationType>,
+        target: &Located<U>,
         context: &Vec<ContextEntry>,
     ) -> Self {
         match self {
