@@ -43,7 +43,12 @@ impl<T: 'static + Clone + Debug> Parametrizable<Arc<T>> {
                 let math_expr = &context
                     .iter()
                     .find(|entry| entry.name == *id)
-                    .unwrap_or_else(|| panic!("Variable with id {:?} not found in context", id))
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "Variable with id {:?} not found in context: {:#?}",
+                            id, context
+                        )
+                    })
                     .ty
                     .data
                     .unwrap_arc(context);

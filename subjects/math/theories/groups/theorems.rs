@@ -307,6 +307,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         let tactic = {
             if let Some(statement_arc) = p6_node.get_goal().statement.concrete_value() {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
+                    println!("DEBUG: yinfeng wants left: {:#?}", left);
+
                     Tactic::Rewrite {
                         using_rule: RelationSource::LocalAssumption(hyp2.clone()),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
@@ -322,6 +324,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p6_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p7_node:\n{:#?}", p7_node);
+    println!("DEBUG: p7_node:\n{}", p7_node.short_debug());
 
     // Step 8: Apply associativity to regroup the expression on the LHS.
     // Goal: g⁻¹ * (g * h2) = h2
@@ -336,7 +340,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                             Some(0),
                         ),
                         target: Target::new(ContextOrStatement::Statement, left.id.clone()),
-                        direction: RewriteDirection::Forward,
+                        direction: RewriteDirection::Backward,
                         instantiations: HashMap::new(), // No manual mappings needed
                     }
                 } else {
@@ -348,6 +352,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p7_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p8_node:\n{:#?}", p8_node);
+    println!("DEBUG: p8_node:\n{}", p8_node.short_debug());
 
     // Step 9: Rewrite (g⁻¹ * g) to e using the inverse property.
     // Goal: (g⁻¹ * g) * h2 = h2
@@ -379,6 +385,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p8_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p9_node:\n{:#?}", p9_node);
+    println!("DEBUG: p9_node:\n{}", p9_node.short_debug());
 
     // Step 10: Rewrite e * h2 to h2 using the identity property.
     // Goal: e * h2 = h2
@@ -405,6 +413,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p9_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
+    println!("DEBUG: p10_node:\n{:#?}", p10_node);
+    println!("DEBUG: p10_node:\n{}", p10_node.short_debug());
 
     // Step 11: The goal is now h2 = h2, which is true by reflexivity.
     // Goal: h2 = h2
@@ -413,6 +423,8 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         .apply_tactic(Tactic::ByReflexivity, &mut proofs)
         .primary_node()
         .should_complete();
+    println!("DEBUG: final_outcome:\n{:#?}", final_outcome);
+    println!("DEBUG: final_outcome:\n{}", final_outcome.short_debug());
 
     Theorem {
         id: "inverse_uniqueness".to_string(),

@@ -372,19 +372,26 @@ impl Search for GroupExpression {
         let mut matches = HashSet::new();
         let is_in_scope_now = in_target_scope || current_id == target.id;
 
-        // Only check compatibility if the pattern is also an expression
+        // Only check compatibility if the pattern is also an expression, todo: this check is redundant to the parent check
+        // if is_in_scope_now {
+        //     match pattern.concrete_value() {
+        //         Some(concrete_pattern) => {
+        //             if let Ok(pattern_expr) = concrete_pattern.try_detag() {
+        //                 if self.is_compatible(target_context, &pattern_expr, pattern_context) {
+        //                     matches.insert(current_id.clone());
+        //                 }
+        //             }
+        //         }
+        //         None => {
+        //             // Pattern is a variable - could match this expression
+        //             // matches.insert(current_id.clone());
+        //         }
+        //     }
+        // }
         if is_in_scope_now {
-            match pattern.concrete_value() {
-                Some(concrete_pattern) => {
-                    if let Ok(pattern_expr) = concrete_pattern.try_detag() {
-                        if self.is_compatible(target_context, &pattern_expr, pattern_context) {
-                            matches.insert(current_id.clone());
-                        }
-                    }
-                }
-                None => {
-                    // Pattern is a variable - could match this expression
-                    // matches.insert(current_id.clone());
+            if let Ok(pattern_expr) = pattern.data.unwrap(&pattern_context).try_detag() {
+                if self.is_compatible(target_context, &pattern_expr, pattern_context) {
+                    matches.insert(current_id.clone());
                 }
             }
         }
@@ -524,20 +531,18 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                     &r_group.data.unwrap(pattern_context),
                     pattern_context,
                 );
-                // let left_compatible = left.data.unwrap(target_context).is_compatible(
-                //     target.clone(),
-                //     target_context,
-                //     &r_left.data.unwrap(pattern_context),
-                //     pattern_context,
-                // );
-                // let right_compatible = right.data.unwrap(target_context).is_compatible(
-                //     target.clone(),
-                //     target_context,
-                //     &r_right.data.unwrap(pattern_context),
-                //     pattern_context,
-                // );
-                // group_compatible && left_compatible && right_compatible
-                group_compatible
+                let left_compatible = left.data.unwrap(target_context).is_compatible(
+                    target_context,
+                    &r_left.data.unwrap(pattern_context),
+                    pattern_context,
+                );
+                let right_compatible = right.data.unwrap(target_context).is_compatible(
+                    target_context,
+                    &r_right.data.unwrap(pattern_context),
+                    pattern_context,
+                );
+                group_compatible && left_compatible && right_compatible
+                // group_compatible
             }
             (
                 GroupExpression::Element {

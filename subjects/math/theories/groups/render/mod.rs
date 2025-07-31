@@ -273,9 +273,21 @@ impl ToTurnMath for GroupElement {
 impl ToTurnMath for GroupExpression {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            GroupExpression::Operation { left, right, .. } => {
-                todo!()
-            }
+            GroupExpression::Operation { left, right, .. } => MathNode {
+                id: master_id,
+                content: Arc::new(MathNodeContent::Multiplications {
+                    terms: vec![
+                        (
+                            RefinedMulOrDivOperation::None,
+                            left.to_turn_math(left.id.clone()),
+                        ),
+                        (
+                            RefinedMulOrDivOperation::Multiplication(MulSymbol::Dot),
+                            right.to_turn_math(right.id.clone()),
+                        ),
+                    ],
+                }),
+            },
             // GroupExpression::Element { element, .. } => match element {
             //     Some(param_element) => param_element.to_turn_math(master_id),
             //     None => MathNode {

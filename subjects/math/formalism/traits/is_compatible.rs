@@ -181,7 +181,12 @@ impl IsCompatible<MathObject> for MathObject {
         pattern: &MathObject,
         pattern_context: &Vec<ContextEntry>,
     ) -> bool {
-        todo!()
+        match (self, pattern) {
+            (MathObject::Group(self_group), MathObject::Group(pattern_group)) => {
+                self_group.is_compatible(target_context, &pattern_group, pattern_context)
+            }
+            _ => false,
+        }
     }
 }
 

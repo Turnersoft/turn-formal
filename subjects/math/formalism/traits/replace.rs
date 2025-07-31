@@ -167,10 +167,22 @@ impl<T: Replace + Clone + 'static + Debug + Search + Instantiable> Replace for L
                             ) {
                                 Ok(inner_t) => {
                                     // We got a T directly, wrap it in a new Located<T>
-                                    Located {
-                                        id: substituted_replacement.id.clone(),
-                                        data: Parametrizable::Concrete(Arc::new(inner_t.clone())),
+                                    match substituted_replacement.data {
+                                        Parametrizable::Concrete(concrete) => Located {
+                                            id: substituted_replacement.id.clone(),
+                                            data: Parametrizable::Concrete(Arc::new(
+                                                inner_t.clone(),
+                                            )),
+                                        },
+                                        Parametrizable::Variable(variable) => Located {
+                                            id: substituted_replacement.id.clone(),
+                                            data: Parametrizable::Variable(variable.clone()),
+                                        },
                                     }
+                                    // Located {
+                                    //     id: substituted_replacement.id.clone(),
+                                    //     data: Parametrizable::Concrete(Arc::new(inner_t.clone())),
+                                    // }
                                 }
                                 Err(e) => {
                                     println!(

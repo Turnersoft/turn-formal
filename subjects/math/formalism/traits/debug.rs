@@ -685,11 +685,15 @@ impl ShortDebug for Set {
 impl ShortDebug for GroupExpression {
     fn short_debug(&self) -> String {
         match self {
-            GroupExpression::Element { element, .. } => match element {
-                Some(e) => extract_variable_name(e),
-                None => "elem".to_string(),
+            GroupExpression::Element { group, element, .. } => match element {
+                Some(e) => format!(
+                    "{}*{}",
+                    extract_variable_name(group),
+                    extract_variable_name(e)
+                ),
+                None => format!("elem({})", extract_variable_name(group)),
             },
-            GroupExpression::Identity(_) => "e".to_string(),
+            GroupExpression::Identity(g) => format!("Id({})", extract_variable_name(g)),
             GroupExpression::Operation { left, right, .. } => {
                 format!(
                     "({}*{})",

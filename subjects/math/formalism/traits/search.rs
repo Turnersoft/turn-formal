@@ -262,22 +262,12 @@ impl Search for MathRelation {
 
         // Only check compatibility if the pattern is also a relation
         if is_in_scope_now {
-            match pattern.concrete_value() {
-                Some(concrete_pattern) => {
-                    if let Ok(pattern_rel) = concrete_pattern.try_detag() {
-                        if self.is_compatible(target_context, &pattern_rel, pattern_context) {
-                            matches.insert(current_id.clone());
-                            println!("DEBUG: found match in current scope: {:#?}", current_id);
-                        } else {
-                            println!("DEBUG: no match in current scope: {:#?}", current_id);
-                        }
-                    } else {
-                        println!("DEBUG: pattern is not a relation: {:#?}", concrete_pattern);
-                    }
-                }
-                None => {
-                    // Pattern is a variable - could match this relation
-                    // matches.insert(current_id.clone());
+            if let Ok(pattern_rel) = pattern.data.unwrap(&pattern_context).try_detag() {
+                if self.is_compatible(target_context, &pattern_rel, pattern_context) {
+                    matches.insert(current_id.clone());
+                    println!("DEBUG: found match in current scope: {:#?}", current_id);
+                } else {
+                    println!("DEBUG: no match in current scope: {:#?}", current_id);
                 }
             }
         }
@@ -345,15 +335,10 @@ impl Search for MathObject {
 
         // Only check compatibility if the pattern is also an object
         if is_in_scope_now {
-            match pattern.concrete_value() {
-                Some(concrete_pattern) => {
-                    if let Ok(pattern_obj) = concrete_pattern.try_detag() {
-                        if self.is_compatible(target_context, &pattern_obj, pattern_context) {
-                            matches.insert(current_id.clone());
-                        }
-                    }
+            if let Ok(pattern_obj) = pattern.data.unwrap(&pattern_context).try_detag() {
+                if self.is_compatible(target_context, &pattern_obj, pattern_context) {
+                    matches.insert(current_id.clone());
                 }
-                None => (),
             }
         }
 
@@ -411,17 +396,12 @@ impl Search for TheoryExpression {
         let mut matches = HashSet::new();
         let is_in_scope_now = in_target_scope || current_id == target.id;
 
-        // Only check compatibility if the pattern is also an expression
+        // Only check compatibility if the pattern is also an expression, todo: this check is redundant to the parent check
         if is_in_scope_now {
-            match pattern.concrete_value() {
-                Some(concrete_pattern) => {
-                    if let Ok(pattern_expr) = concrete_pattern.try_detag() {
-                        if self.is_compatible(target_context, &pattern_expr, pattern_context) {
-                            matches.insert(current_id.clone());
-                        }
-                    }
+            if let Ok(pattern_expr) = pattern.data.unwrap(&pattern_context).try_detag() {
+                if self.is_compatible(target_context, &pattern_expr, pattern_context) {
+                    matches.insert(current_id.clone());
                 }
-                None => (),
             }
         }
 
