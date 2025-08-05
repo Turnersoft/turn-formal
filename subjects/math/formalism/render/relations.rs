@@ -1,3 +1,5 @@
+use super::super::extract::Parametrizable;
+use super::super::location::Located;
 use super::super::relations::MathRelation;
 use crate::turn_render::*;
 use std::{string::String, sync::Arc};
@@ -6,14 +8,8 @@ impl ToTurnMath for MathRelation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
             MathRelation::Equal { left, right, .. } => {
-                let lhs = left
-                    .data
-                    .unwrap(&vec![])
-                    .to_turn_math(format!("{}_left", master_id));
-                let rhs = right
-                    .data
-                    .unwrap(&vec![])
-                    .to_turn_math(format!("{}_right", master_id));
+                let lhs = left.data.to_turn_math(left.id.clone());
+                let rhs = right.data.to_turn_math(right.id.clone());
 
                 MathNode {
                     id: master_id,
@@ -29,14 +25,14 @@ impl ToTurnMath for MathRelation {
                     panic!("And relation vec with no elements inside");
                 } else if relations.len() == 1 {
                     // Single relation, just return it directly
-                    relations[0].data.unwrap(&vec![]).to_turn_math(master_id)
+                    relations[0].data.to_turn_math(relations[0].id.clone())
                 } else {
                     MathNode {
                         id: master_id.clone(),
                         content: Arc::new(MathNodeContent::And(
                             relations
                                 .iter()
-                                .map(|r| r.data.unwrap(&vec![]).to_turn_math(master_id.clone()))
+                                .map(|r| r.data.to_turn_math(r.id.clone()))
                                 .collect(),
                         )),
                     }
@@ -47,14 +43,14 @@ impl ToTurnMath for MathRelation {
                     panic!("And relation vec with no elements inside");
                 } else if relations.len() == 1 {
                     // Single relation, just return it directly
-                    relations[0].data.unwrap(&vec![]).to_turn_math(master_id)
+                    relations[0].data.to_turn_math(relations[0].id.clone())
                 } else {
                     MathNode {
                         id: master_id.clone(),
                         content: Arc::new(MathNodeContent::Or(
                             relations
                                 .iter()
-                                .map(|r| r.data.unwrap(&vec![]).to_turn_math(master_id.clone()))
+                                .map(|r| r.data.to_turn_math(r.id.clone()))
                                 .collect(),
                         )),
                     }
@@ -65,7 +61,7 @@ impl ToTurnMath for MathRelation {
                 MathNode {
                     id: master_id,
                     content: Arc::new(MathNodeContent::UnaryPrefixOperation {
-                        parameter: Arc::new(relation.data.unwrap(&vec![]).to_turn_math(inner_id)),
+                        parameter: Arc::new(relation.data.to_turn_math(relation.id.clone())),
                         operator: Arc::new(MathNode {
                             id: "unique id for this operator".to_string(),
                             content: Arc::new(MathNodeContent::Identifier(Identifier {
@@ -81,14 +77,8 @@ impl ToTurnMath for MathRelation {
                 }
             }
             MathRelation::Implies(antecedent, consequent) => {
-                let lhs = antecedent
-                    .data
-                    .unwrap(&vec![])
-                    .to_turn_math(format!("{}_ante", master_id));
-                let rhs = consequent
-                    .data
-                    .unwrap(&vec![])
-                    .to_turn_math(format!("{}_cons", master_id));
+                let lhs = antecedent.data.to_turn_math(antecedent.id.clone());
+                let rhs = consequent.data.to_turn_math(consequent.id.clone());
 
                 MathNode {
                     id: master_id,
@@ -100,14 +90,8 @@ impl ToTurnMath for MathRelation {
                 }
             }
             MathRelation::Equivalent(left, right) => {
-                let lhs = left
-                    .data
-                    .unwrap(&vec![])
-                    .to_turn_math(format!("{}_left", master_id));
-                let rhs = right
-                    .data
-                    .unwrap(&vec![])
-                    .to_turn_math(format!("{}_right", master_id));
+                let lhs = left.data.to_turn_math(left.id.clone());
+                let rhs = right.data.to_turn_math(right.id.clone());
 
                 MathNode {
                     id: master_id,
@@ -156,6 +140,61 @@ impl ToTurnMath for MathRelation {
                 id: "unknown_rel".to_string(),
                 content: Arc::new(MathNodeContent::Text("Unknown Relation".to_string())),
             },
+        }
+    }
+}
+
+impl ToLogicalNode for MathRelation {
+    fn to_logical_node(&self) -> LogicalNode {
+        match self {
+            MathRelation::And(relations) => {
+                LogicalNode::And(
+                    relations
+                        .iter()
+                        .map(|r| {
+                            // Use safe rendering to avoid infinite recursion
+                            match &r.data {
+                                Parametrizable::Concrete(arc) => {
+                                    // For concrete values, render the actual relation
+                                    arc.to_logical_node()
+                                }
+                                Parametrizable::Variable(id) => {
+                                    // For variables, just render the identifier
+                                    LogicalNode::Atomic(MathNode {
+                                        id: r.id.clone(),
+                                        content: Arc::new(MathNodeContent::Identifier(id.clone())),
+                                    })
+                                }
+                            }
+                        })
+                        .collect(),
+                )
+            }
+            MathRelation::Or(relations) => {
+                LogicalNode::Or(
+                    relations
+                        .iter()
+                        .map(|r| {
+                            // Use safe rendering to avoid infinite recursion
+                            match &r.data {
+                                Parametrizable::Concrete(arc) => {
+                                    // For concrete values, render the actual relation
+                                    arc.to_logical_node()
+                                }
+                                Parametrizable::Variable(id) => {
+                                    // For variables, just render the identifier
+                                    LogicalNode::Atomic(MathNode {
+                                        id: r.id.clone(),
+                                        content: Arc::new(MathNodeContent::Identifier(id.clone())),
+                                    })
+                                }
+                            }
+                        })
+                        .collect(),
+                )
+            }
+
+            _ => LogicalNode::Atomic(self.to_turn_math("".to_string())),
         }
     }
 }

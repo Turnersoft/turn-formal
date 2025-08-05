@@ -2,10 +2,10 @@
   "theory_name": "Group Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1751646074",
+  "exported_at": "1754407929",
   "content": [
     {
-      "id": "group_theory.inverse_uniqueness-doc",
+      "id": "group_theory.thm.group_inverse_uniqueness-doc",
       "content_type": {
         "ScientificPaper": {
           "title": "Inverse Uniqueness in a Group",
@@ -33,27 +33,25 @@
           },
           "structure": {
             "abstract_content": {
-              "id": "group_theory.inverse_uniqueness-abstract",
+              "id": "group_theory.thm.group_inverse_uniqueness-abstract",
               "title": null,
-              "content": [
-                {
-                  "RichText": {
-                    "segments": [
-                      {
-                        "Text": "In a group G, if two elements h1 and h2 are both right inverses of an element g, then h1 = h2"
-                      }
-                    ],
-                    "alignment": null
-                  }
+              "content": {
+                "RichText": {
+                  "segments": [
+                    {
+                      "Text": "Uniqueness of inverse: if g*h1=e and g*h2=e, then h1=h2"
+                    }
+                  ],
+                  "alignment": null
                 }
-              ],
+              },
               "metadata": [],
               "display_options": null
             },
             "table_of_contents": null,
             "body": [
               {
-                "id": "group_theory.inverse_uniqueness-main-main",
+                "id": "group_theory.thm.group_inverse_uniqueness-main-main",
                 "title": {
                   "segments": [
                     {
@@ -62,187 +60,291 @@
                   ],
                   "alignment": null
                 },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "TheoremLike": {
-                        "kind": "Theorem",
-                        "label": "inverse_uniqueness",
-                        "statement": {
-                          "Content": [
+                "content": {
+                  "SubSection": [
+                    {
+                      "id": "group_theory.thm.group_inverse_uniqueness-main-theorem",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Inverse Uniqueness in a Group"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "RichText": {
+                          "segments": [
                             {
-                              "RichText": {
-                                "segments": [
-                                  {
-                                    "StyledText": {
-                                      "text": "Statement: ",
-                                      "styles": [
-                                        "Bold"
-                                      ]
+                              "StyledText": {
+                                "text": "Theorem: ",
+                                "styles": [
+                                  "Bold"
+                                ]
+                              }
+                            },
+                            {
+                              "Text": "Inverse Uniqueness in a Group"
+                            }
+                          ],
+                          "alignment": null
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "group_theory.thm.group_inverse_uniqueness-main-proof-goal-proof-goal",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Proof Goal"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "SecondOrderMath": {
+                          "Judgement": {
+                            "non_quantifiers": [
+                              {
+                                "name": {
+                                  "id": "context-name-G",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "G",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
                                     }
-                                  },
-                                  {
-                                    "Math": {
-                                      "id": "theorem-statement",
+                                  }
+                                },
+                                "type_info": {
+                                  "segments": [
+                                    {
+                                      "Text": "Group"
+                                    }
+                                  ],
+                                  "alignment": null
+                                }
+                              },
+                              {
+                                "name": {
+                                  "id": "context-name-g",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "g",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "type_info": {
+                                  "segments": [
+                                    {
+                                      "Text": "element of "
+                                    },
+                                    {
+                                      "Math": {
+                                        "id": "group-name",
+                                        "content": {
+                                          "Identifier": {
+                                            "body": "G",
+                                            "pre_script": null,
+                                            "mid_script": null,
+                                            "post_script": null,
+                                            "primes": 0,
+                                            "is_function": false
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "alignment": null
+                                }
+                              },
+                              {
+                                "name": {
+                                  "id": "context-name-h1",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "h1",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "type_info": {
+                                  "segments": [
+                                    {
+                                      "Text": "element of "
+                                    },
+                                    {
+                                      "Math": {
+                                        "id": "group-name",
+                                        "content": {
+                                          "Identifier": {
+                                            "body": "G",
+                                            "pre_script": null,
+                                            "mid_script": null,
+                                            "post_script": null,
+                                            "primes": 0,
+                                            "is_function": false
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "alignment": null
+                                }
+                              },
+                              {
+                                "name": {
+                                  "id": "context-name-h2",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "h2",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "type_info": {
+                                  "segments": [
+                                    {
+                                      "Text": "element of "
+                                    },
+                                    {
+                                      "Math": {
+                                        "id": "group-name",
+                                        "content": {
+                                          "Identifier": {
+                                            "body": "G",
+                                            "pre_script": null,
+                                            "mid_script": null,
+                                            "post_script": null,
+                                            "primes": 0,
+                                            "is_function": false
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "alignment": null
+                                }
+                              },
+                              {
+                                "name": {
+                                  "id": "context-name-e",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "e",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                },
+                                "type_info": {
+                                  "segments": [
+                                    {
+                                      "Text": "identity of "
+                                    },
+                                    {
+                                      "Math": {
+                                        "id": "group-name",
+                                        "content": {
+                                          "Identifier": {
+                                            "body": "G",
+                                            "pre_script": null,
+                                            "mid_script": null,
+                                            "post_script": null,
+                                            "primes": 0,
+                                            "is_function": false
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "alignment": null
+                                }
+                              }
+                            ],
+                            "quantifiers": [],
+                            "statement": {
+                              "Atomic": {
+                                "id": "",
+                                "content": {
+                                  "Relationship": {
+                                    "lhs": {
+                                      "id": "48cd6964-f078-49e0-9bbb-c53b9cac00aa",
                                       "content": {
-                                        "Relationship": {
-                                          "lhs": {
-                                            "id": "theorem-statement_ante",
-                                            "content": {
-                                              "And": [
-                                                {
-                                                  "id": "theorem-statement_ante",
-                                                  "content": {
-                                                    "Relationship": {
-                                                      "lhs": {
-                                                        "id": "theorem-statement_ante_left-inner",
-                                                        "content": {
-                                                          "Multiplications": {
-                                                            "terms": [
-                                                              [
-                                                                "None",
-                                                                {
-                                                                  "id": "theorem-statement_ante_left-left",
-                                                                  "content": {
-                                                                    "Identifier": {
-                                                                      "body": "g",
-                                                                      "pre_script": null,
-                                                                      "mid_script": null,
-                                                                      "post_script": null,
-                                                                      "primes": 0,
-                                                                      "is_function": false
-                                                                    }
-                                                                  }
-                                                                }
-                                                              ],
-                                                              [
-                                                                {
-                                                                  "Multiplication": "Dot"
-                                                                },
-                                                                {
-                                                                  "id": "theorem-statement_ante_left-right",
-                                                                  "content": {
-                                                                    "Identifier": {
-                                                                      "body": "h1",
-                                                                      "pre_script": null,
-                                                                      "mid_script": null,
-                                                                      "post_script": null,
-                                                                      "primes": 0,
-                                                                      "is_function": false
-                                                                    }
-                                                                  }
-                                                                }
-                                                              ]
-                                                            ]
-                                                          }
-                                                        }
-                                                      },
-                                                      "rhs": {
-                                                        "id": "theorem-statement_ante_right",
-                                                        "content": {
-                                                          "Identifier": {
-                                                            "body": "e",
-                                                            "pre_script": null,
-                                                            "mid_script": null,
-                                                            "post_script": null,
-                                                            "primes": 0,
-                                                            "is_function": false
-                                                          }
-                                                        }
-                                                      },
-                                                      "operator": "Equal"
-                                                    }
-                                                  }
-                                                },
-                                                {
-                                                  "id": "theorem-statement_ante",
-                                                  "content": {
-                                                    "Relationship": {
-                                                      "lhs": {
-                                                        "id": "theorem-statement_ante_left-inner",
-                                                        "content": {
-                                                          "Multiplications": {
-                                                            "terms": [
-                                                              [
-                                                                "None",
-                                                                {
-                                                                  "id": "theorem-statement_ante_left-left",
-                                                                  "content": {
-                                                                    "Identifier": {
-                                                                      "body": "g",
-                                                                      "pre_script": null,
-                                                                      "mid_script": null,
-                                                                      "post_script": null,
-                                                                      "primes": 0,
-                                                                      "is_function": false
-                                                                    }
-                                                                  }
-                                                                }
-                                                              ],
-                                                              [
-                                                                {
-                                                                  "Multiplication": "Dot"
-                                                                },
-                                                                {
-                                                                  "id": "theorem-statement_ante_left-right",
-                                                                  "content": {
-                                                                    "Identifier": {
-                                                                      "body": "h2",
-                                                                      "pre_script": null,
-                                                                      "mid_script": null,
-                                                                      "post_script": null,
-                                                                      "primes": 0,
-                                                                      "is_function": false
-                                                                    }
-                                                                  }
-                                                                }
-                                                              ]
-                                                            ]
-                                                          }
-                                                        }
-                                                      },
-                                                      "rhs": {
-                                                        "id": "theorem-statement_ante_right",
-                                                        "content": {
-                                                          "Identifier": {
-                                                            "body": "e",
-                                                            "pre_script": null,
-                                                            "mid_script": null,
-                                                            "post_script": null,
-                                                            "primes": 0,
-                                                            "is_function": false
-                                                          }
-                                                        }
-                                                      },
-                                                      "operator": "Equal"
-                                                    }
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          },
-                                          "rhs": {
-                                            "id": "theorem-statement_cons",
+                                        "And": [
+                                          {
+                                            "id": "e15c54d1-6172-4fa5-93dc-e474a3548daf",
                                             "content": {
                                               "Relationship": {
                                                 "lhs": {
-                                                  "id": "theorem-statement_cons_left",
+                                                  "id": "3e4a3aad-1bab-4f02-9f2a-f0519cd2fec2",
                                                   "content": {
-                                                    "Identifier": {
-                                                      "body": "h1",
-                                                      "pre_script": null,
-                                                      "mid_script": null,
-                                                      "post_script": null,
-                                                      "primes": 0,
-                                                      "is_function": false
+                                                    "Multiplications": {
+                                                      "terms": [
+                                                        [
+                                                          "None",
+                                                          {
+                                                            "id": "13788f38-0abe-4a1b-81fc-59fe08a9bea0",
+                                                            "content": {
+                                                              "Identifier": {
+                                                                "body": "g",
+                                                                "pre_script": null,
+                                                                "mid_script": null,
+                                                                "post_script": null,
+                                                                "primes": 0,
+                                                                "is_function": false
+                                                              }
+                                                            }
+                                                          }
+                                                        ],
+                                                        [
+                                                          {
+                                                            "Multiplication": "Dot"
+                                                          },
+                                                          {
+                                                            "id": "d48ecde9-a71f-4731-b837-0d5c80aff8bc",
+                                                            "content": {
+                                                              "Identifier": {
+                                                                "body": "h1",
+                                                                "pre_script": null,
+                                                                "mid_script": null,
+                                                                "post_script": null,
+                                                                "primes": 0,
+                                                                "is_function": false
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      ]
                                                     }
                                                   }
                                                 },
                                                 "rhs": {
-                                                  "id": "theorem-statement_cons_right",
+                                                  "id": "e5862f10-84a4-4b3f-902a-b0e63aab248f",
                                                   "content": {
                                                     "Identifier": {
-                                                      "body": "h2",
+                                                      "body": "e",
                                                       "pre_script": null,
                                                       "mid_script": null,
                                                       "post_script": null,
@@ -255,170 +357,421 @@
                                               }
                                             }
                                           },
-                                          "operator": "Implies"
-                                        }
-                                      }
-                                    }
-                                  }
-                                ],
-                                "alignment": null
-                              }
-                            },
-                            {
-                              "RichText": {
-                                "segments": [
-                                  {
-                                    "StyledText": {
-                                      "text": "Quantifiers: ",
-                                      "styles": [
-                                        "Bold"
-                                      ]
-                                    }
-                                  }
-                                ],
-                                "alignment": null
-                              }
-                            },
-                            {
-                              "RichText": {
-                                "segments": [
-                                  {
-                                    "StyledText": {
-                                      "text": "Variables: ",
-                                      "styles": [
-                                        "Bold"
-                                      ]
-                                    }
-                                  }
-                                ],
-                                "alignment": null
-                              }
-                            },
-                            {
-                              "RichText": {
-                                "segments": [
-                                  {
-                                    "StyledText": {
-                                      "text": "Description: ",
-                                      "styles": [
-                                        "Italic"
-                                      ]
-                                    }
-                                  },
-                                  {
-                                    "Text": "In a group G, if two elements h1 and h2 are both right inverses of an element g, then h1 = h2"
-                                  }
-                                ],
-                                "alignment": null
-                              }
-                            }
-                          ]
-                        },
-                        "proof": {
-                          "title": {
-                            "segments": [
-                              {
-                                "Text": "Proof"
-                              }
-                            ],
-                            "alignment": null
-                          },
-                          "strategy": [],
-                          "steps": [
-                            {
-                              "TacticApplication": {
-                                "AssumeImplicationAntecedent": {
-                                  "implication_statement": {
-                                    "id": "implication",
-                                    "content": {
-                                      "Text": "implication"
-                                    }
-                                  },
-                                  "hypothesis_name": {
-                                    "segments": [
-                                      {
-                                        "Math": {
-                                          "id": "hyp-name",
-                                          "content": {
-                                            "Identifier": {
-                                              "body": "premise",
-                                              "pre_script": null,
-                                              "mid_script": null,
-                                              "post_script": {
-                                                "subscripts": [
-                                                  {
-                                                    "id": "inverses",
-                                                    "content": {
-                                                      "Text": "inverses"
+                                          {
+                                            "id": "5a5b053d-ef61-43ac-8114-8d5372c34e52",
+                                            "content": {
+                                              "Relationship": {
+                                                "lhs": {
+                                                  "id": "24540459-0509-4039-98d9-74bdd64223ed",
+                                                  "content": {
+                                                    "Multiplications": {
+                                                      "terms": [
+                                                        [
+                                                          "None",
+                                                          {
+                                                            "id": "3dc66026-f672-4f60-a7ac-0c775c98b4f0",
+                                                            "content": {
+                                                              "Identifier": {
+                                                                "body": "g",
+                                                                "pre_script": null,
+                                                                "mid_script": null,
+                                                                "post_script": null,
+                                                                "primes": 0,
+                                                                "is_function": false
+                                                              }
+                                                            }
+                                                          }
+                                                        ],
+                                                        [
+                                                          {
+                                                            "Multiplication": "Dot"
+                                                          },
+                                                          {
+                                                            "id": "af696bfb-6594-46f9-be1e-9388dd0cb024",
+                                                            "content": {
+                                                              "Identifier": {
+                                                                "body": "h2",
+                                                                "pre_script": null,
+                                                                "mid_script": null,
+                                                                "post_script": null,
+                                                                "primes": 0,
+                                                                "is_function": false
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      ]
                                                     }
                                                   }
-                                                ],
-                                                "superscripts": []
-                                              },
-                                              "primes": 0,
-                                              "is_function": false
+                                                },
+                                                "rhs": {
+                                                  "id": "7c2bb18b-32e5-4658-9a0a-ec65458bcfe2",
+                                                  "content": {
+                                                    "Identifier": {
+                                                      "body": "e",
+                                                      "pre_script": null,
+                                                      "mid_script": null,
+                                                      "post_script": null,
+                                                      "primes": 0,
+                                                      "is_function": false
+                                                    }
+                                                  }
+                                                },
+                                                "operator": "Equal"
+                                              }
                                             }
                                           }
+                                        ]
+                                      }
+                                    },
+                                    "rhs": {
+                                      "id": "a98a40ac-4d3c-4a02-b267-6b563a225299",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "41427c6b-2dfb-4eb7-a636-757b0ace0802",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "h1",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "ec84f41c-32ed-4e86-be57-2c41d12c4298",
+                                            "content": {
+                                              "Identifier": {
+                                                "body": "h2",
+                                                "pre_script": null,
+                                                "mid_script": null,
+                                                "post_script": null,
+                                                "primes": 0,
+                                                "is_function": false
+                                              }
+                                            }
+                                          },
+                                          "operator": "Equal"
                                         }
                                       }
-                                    ],
-                                    "alignment": null
-                                  },
-                                  "antecedent": {
-                                    "id": "antecedent",
-                                    "content": {
-                                      "Text": "antecedent"
-                                    }
-                                  },
-                                  "consequent": {
-                                    "id": "consequent",
-                                    "content": {
-                                      "Text": "consequent"
-                                    }
-                                  },
-                                  "context_explanation": {
-                                    "segments": [
-                                      {
-                                        "Text": "Assume antecedent as hypothesis 'premise'"
-                                      }
-                                    ],
-                                    "alignment": null
-                                  }
-                                }
-                              }
-                            },
-                            {
-                              "TacticApplication": {
-                                "Auto": {
-                                  "automated_tactic_type": {
-                                    "Auto": {
-                                      "search_tree": null,
-                                      "successful_tactics": [],
-                                      "failed_attempts": []
-                                    }
-                                  },
-                                  "search_depth": 0,
-                                  "tactics_attempted": [],
-                                  "successful_path": null,
-                                  "execution_summary": {
-                                    "segments": [
-                                      {
-                                        "Text": "Tactic not implemented for display: SplitAssumptionConjunction { target_hypothesis: Identifier { body: \"premise\", pre_script: None, mid_script: None, post_script: Some(ScriptNode { subscripts: [MathNode { id: \"inverses\", content: Text(\"inverses\") }], superscripts: [] }), primes: 0, is_function: false }, with_names: [Identifier { body: \"eq1\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }, Identifier { body: \"eq2\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }] }"
-                                      }
-                                    ],
-                                    "alignment": null
+                                    },
+                                    "operator": "Implies"
                                   }
                                 }
                               }
                             }
+                          }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "group_theory.thm.group_inverse_uniqueness-main-description",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Inverse Uniqueness in a Group"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "RichText": {
+                          "segments": [
+                            {
+                              "StyledText": {
+                                "text": "Description: ",
+                                "styles": [
+                                  "Italic"
+                                ]
+                              }
+                            },
+                            {
+                              "Text": "Uniqueness of inverse: if g*h1=e and g*h2=e, then h1=h2"
+                            }
                           ],
-                          "qed_symbol": null
-                        },
-                        "abstraction_meta": null
-                      }
+                          "alignment": null
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "group_theory.thm.group_inverse_uniqueness-main-proof-proof-forest",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Proof Forest"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "SubSection": [
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 08010359-2bf0-4ce5-af4e-eac67d323f32"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: ByReflexivity"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 7d32ea92-6974-4078-8a5d-9cf323105938"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: SplitAssumptionConjunction { target_hypothesis: Identifier { body: \"premise\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }, with_names: [Identifier { body: \"hyp_gh1_eq_e\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }, Identifier { body: \"hyp_gh2_eq_e\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }] }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 1a02c7e9-5fee-4835-bb60-06e533a5da25"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: Theorem(\"group_inverse_axiom\", Some(0)), target: Target { scope: Statement, id: \"b4b9e237-d6c8-4c61-be0d-f788d5930226\", vec_indices: None, allow_reordering: true }, direction: Backward, instantiations: {Identifier { body: \"x\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }: Identifier { body: \"g\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 1664ae69-9774-45c8-b0c6-791062d7ba16"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: Theorem(\"group_identity_axiom\", Some(0)), target: Target { scope: Statement, id: \"41427c6b-2dfb-4eb7-a636-757b0ace0802\", vec_indices: None, allow_reordering: true }, direction: Backward, instantiations: {} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 47a86a25-6ddf-440a-b207-de5e69c4e38e"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: LocalAssumption(Identifier { body: \"hyp_gh1_eq_e\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }), target: Target { scope: Statement, id: \"347b3748-af8d-4ff5-b1ef-bdac61fa6244\", vec_indices: None, allow_reordering: true }, direction: Forward, instantiations: {} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node b9d77638-862e-4608-963c-68906322ce03"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: Theorem(\"group_associativity_axiom\", Some(0)), target: Target { scope: Statement, id: \"72b5c890-4803-4ce9-92f2-4a384f05d72d\", vec_indices: None, allow_reordering: true }, direction: Backward, instantiations: {} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 4b774cda-07df-4bcf-8be6-21473f447bf8"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: Theorem(\"group_associativity_axiom\", Some(0)), target: Target { scope: Statement, id: \"b4b9e237-d6c8-4c61-be0d-f788d5930226\", vec_indices: None, allow_reordering: true }, direction: Forward, instantiations: {} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 928d8681-6e03-4461-b45a-754f90897329"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: LocalAssumption(Identifier { body: \"hyp_gh2_eq_e\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }), target: Target { scope: Statement, id: \"72b5c890-4803-4ce9-92f2-4a384f05d72d\", vec_indices: None, allow_reordering: true }, direction: Backward, instantiations: {} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node cc2cd638-8269-49b6-affb-3a4132898fb9"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: Theorem(\"group_inverse_axiom\", Some(0)), target: Target { scope: Statement, id: \"1886ff0b-15a8-46ce-9977-59b45be58a61\", vec_indices: None, allow_reordering: true }, direction: Forward, instantiations: {Identifier { body: \"x\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }: Identifier { body: \"g\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false }} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node 5807292b-ad02-47f8-ac28-08ed5ea76dd7"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: Rewrite { using_rule: Theorem(\"group_identity_axiom\", Some(0)), target: Target { scope: Statement, id: \"1886ff0b-15a8-46ce-9977-59b45be58a61\", vec_indices: None, allow_reordering: true }, direction: Forward, instantiations: {} }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.thm.group_inverse_uniqueness-main-proof-node-proof-node",
+                            "title": {
+                              "segments": [
+                                {
+                                  "Text": "Proof Node f550927a-957b-439c-b950-6e3900d589a5"
+                                }
+                              ],
+                              "alignment": null
+                            },
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Tactic: AssumeImplicationAntecedent { with_name: Identifier { body: \"premise\", pre_script: None, mid_script: None, post_script: None, primes: 0, is_function: false } }"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          }
+                        ]
+                      },
+                      "metadata": [],
+                      "display_options": null
                     }
-                  }
-                ],
+                  ]
+                },
                 "metadata": [
                   [
                     "type",

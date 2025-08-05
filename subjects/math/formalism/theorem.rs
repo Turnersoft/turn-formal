@@ -17,7 +17,6 @@ use super::expressions::{MathExpression, TheoryExpression};
 use super::proof::tactics::Tactic;
 use super::proof::{NodeRole, ProofForest, ProofNode};
 use super::relations::MathRelation;
-use crate::turn_render::ToProofDisplay;
 use crate::turn_render::{
     MathDocument, MathDocumentType, PaperType, ScientificPaperContent, ToMathDocument,
 };

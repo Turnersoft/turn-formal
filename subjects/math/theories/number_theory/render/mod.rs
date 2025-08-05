@@ -10,40 +10,44 @@ impl ToTurnMath for NumberTheoryRelation {
             NumberTheoryRelation::LessThan { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(left.to_turn_math(format!("{}:lhs", master_id))),
-                    rhs: Arc::new(right.to_turn_math(format!("{}:rhs", master_id))),
+                    lhs: Arc::new(left.value().to_turn_math(format!("{}:lhs", master_id))),
+                    rhs: Arc::new(right.value().to_turn_math(format!("{}:rhs", master_id))),
                     operator: RelationOperatorNode::Less,
                 }),
             },
             NumberTheoryRelation::LessThanOrEqual { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(left.to_turn_math(format!("{}:lhs", master_id))),
-                    rhs: Arc::new(right.to_turn_math(format!("{}:rhs", master_id))),
+                    lhs: Arc::new(left.value().to_turn_math(format!("{}:lhs", master_id))),
+                    rhs: Arc::new(right.value().to_turn_math(format!("{}:rhs", master_id))),
                     operator: RelationOperatorNode::LessEqual,
                 }),
             },
             NumberTheoryRelation::GreaterThan { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(left.to_turn_math(format!("{}:lhs", master_id))),
-                    rhs: Arc::new(right.to_turn_math(format!("{}:rhs", master_id))),
+                    lhs: Arc::new(left.value().to_turn_math(format!("{}:lhs", master_id))),
+                    rhs: Arc::new(right.value().to_turn_math(format!("{}:rhs", master_id))),
                     operator: RelationOperatorNode::Greater,
                 }),
             },
             NumberTheoryRelation::GreaterThanOrEqual { left, right } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(left.to_turn_math(format!("{}:lhs", master_id))),
-                    rhs: Arc::new(right.to_turn_math(format!("{}:rhs", master_id))),
+                    lhs: Arc::new(left.data.to_turn_math(format!("{}:lhs", master_id))),
+                    rhs: Arc::new(right.data.to_turn_math(format!("{}:rhs", master_id))),
                     operator: RelationOperatorNode::GreaterEqual,
                 }),
             },
             NumberTheoryRelation::Divides { divisor, dividend } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(divisor.to_turn_math(format!("{}:divisor", master_id))),
-                    rhs: Arc::new(dividend.to_turn_math(format!("{}:dividend", master_id))),
+                    lhs: Arc::new(divisor.data.to_turn_math(format!("{}:divisor", master_id))),
+                    rhs: Arc::new(
+                        dividend
+                            .data
+                            .to_turn_math(format!("{}:dividend", master_id)),
+                    ),
                     operator: RelationOperatorNode::Divides,
                 }),
             },
@@ -57,8 +61,8 @@ impl ToTurnMath for NumberTheoryRelation {
                 let base_relation = MathNode {
                     id: format!("{}:base", master_id.clone()),
                     content: Arc::new(MathNodeContent::Relationship {
-                        lhs: Arc::new(left.to_turn_math(format!("{}:lhs", master_id))),
-                        rhs: Arc::new(right.to_turn_math(format!("{}:rhs", master_id))),
+                        lhs: Arc::new(left.value().to_turn_math(format!("{}:lhs", master_id))),
+                        rhs: Arc::new(right.value().to_turn_math(format!("{}:rhs", master_id))),
                         operator: RelationOperatorNode::CongruentMod,
                     }),
                 };
@@ -83,22 +87,22 @@ impl ToTurnMath for NumberTheoryRelation {
             NumberTheoryRelation::IsPrime { number } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::UnaryRelationship {
-                    subject: Arc::new(number.to_turn_math(format!("{}:number", master_id))),
+                    subject: Arc::new(number.value().to_turn_math(format!("{}:number", master_id))),
                     predicate: UnaryRelationOperatorNode::IsPrime,
                 }),
             },
             NumberTheoryRelation::IsComposite { number } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::UnaryRelationship {
-                    subject: Arc::new(number.to_turn_math(format!("{}:number", master_id))),
+                    subject: Arc::new(number.value().to_turn_math(format!("{}:number", master_id))),
                     predicate: UnaryRelationOperatorNode::IsComposite,
                 }),
             },
             NumberTheoryRelation::AreCoprime { first, second } => MathNode {
                 id: master_id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(first.to_turn_math(format!("{}:first", master_id))),
-                    rhs: Arc::new(second.to_turn_math(format!("{}:second", master_id))),
+                    lhs: Arc::new(first.value().to_turn_math(format!("{}:first", master_id))),
+                    rhs: Arc::new(second.value().to_turn_math(format!("{}:second", master_id))),
                     operator: RelationOperatorNode::AreCoprime,
                 }),
             },
@@ -110,7 +114,11 @@ impl ToTurnMath for NumberTheoryRelation {
                 MathNode {
                     id: master_id.clone(),
                     content: Arc::new(MathNodeContent::Relationship {
-                        lhs: Arc::new(residue.to_turn_math(format!("{}:residue", master_id))),
+                        lhs: Arc::new(
+                            residue
+                                .value()
+                                .to_turn_math(format!("{}:residue", master_id)),
+                        ),
                         rhs: Arc::new(MathNode {
                             id: format!("{}:mod_text", master_id),
                             content: Arc::new(MathNodeContent::Text(math_text)),
@@ -126,7 +134,9 @@ impl ToTurnMath for NumberTheoryRelation {
                         id: master_id.clone(),
                         content: Arc::new(MathNodeContent::UnaryRelationship {
                             subject: Arc::new(
-                                parameters[0].to_turn_math(format!("{}:param0", master_id)),
+                                parameters[0]
+                                    .value()
+                                    .to_turn_math(format!("{}:param0", master_id)),
                             ),
                             predicate: UnaryRelationOperatorNode::Custom(name.clone()),
                         }),
@@ -137,10 +147,14 @@ impl ToTurnMath for NumberTheoryRelation {
                         id: master_id.clone(),
                         content: Arc::new(MathNodeContent::Relationship {
                             lhs: Arc::new(
-                                parameters[0].to_turn_math(format!("{}:param0", master_id)),
+                                parameters[0]
+                                    .value()
+                                    .to_turn_math(format!("{}:param0", master_id)),
                             ),
                             rhs: Arc::new(
-                                parameters[1].to_turn_math(format!("{}:param1", master_id)),
+                                parameters[1]
+                                    .value()
+                                    .to_turn_math(format!("{}:param1", master_id)),
                             ),
                             operator: RelationOperatorNode::Custom(name.clone()),
                         }),
@@ -157,7 +171,9 @@ impl ToTurnMath for NumberTheoryRelation {
                                 .iter()
                                 .enumerate()
                                 .map(|(i, param)| {
-                                    param.to_turn_math(format!("{}:param{}", master_id, i))
+                                    param
+                                        .value()
+                                        .to_turn_math(format!("{}:param{}", master_id, i))
                                 })
                                 .collect(),
                         }),

@@ -573,10 +573,10 @@ impl IsCompatible<GroupExpression> for GroupExpression {
                 group_compatible
             }
             _ => {
-                println!(
-                    "unimplemented, trying to compare {:#?} with {:#?}",
-                    self, pattern
-                );
+                // println!(
+                //     "unimplemented, trying to compare {:#?} with {:#?}",
+                //     self, pattern
+                // );
                 false
             }
         }

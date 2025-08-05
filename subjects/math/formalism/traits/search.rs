@@ -200,11 +200,11 @@ impl<T: 'static + Clone + Search + std::fmt::Debug + IsCompatible<T> + ShortDebu
             (Parametrizable::Variable(_), Parametrizable::Concrete(_)) => {
                 // Our data is a variable, pattern is concrete - potential match but complex
                 // Skip for now to avoid unwrap issues
-                println!(
-                    "DEBUG: unable to match because self is variable: {}, pattern is concrete: {}",
-                    self.short_debug(),
-                    pattern.short_debug()
-                );
+                // println!(
+                //     "DEBUG: unable to match because self is variable: {}, pattern is concrete: {}",
+                //     self.short_debug(),
+                //     pattern.short_debug()
+                // );
             }
             (Parametrizable::Concrete(arc_inner), _) => {
                 matches.extend(arc_inner.find_matches(
@@ -265,9 +265,9 @@ impl Search for MathRelation {
             if let Ok(pattern_rel) = pattern.data.unwrap(&pattern_context).try_detag() {
                 if self.is_compatible(target_context, &pattern_rel, pattern_context) {
                     matches.insert(current_id.clone());
-                    println!("DEBUG: found match in current scope: {:#?}", current_id);
+                    // println!("DEBUG: found match in current scope: {:#?}", current_id);
                 } else {
-                    println!("DEBUG: no match in current scope: {:#?}", current_id);
+                    // println!("DEBUG: no match in current scope: {:#?}", current_id);
                 }
             }
         }
@@ -282,7 +282,7 @@ impl Search for MathRelation {
                     pattern_context,
                     is_in_scope_now,
                 );
-                println!("DEBUG: left_matches: {:#?}", left_matches);
+                // println!("DEBUG: left_matches: {:#?}", left_matches);
                 let right_matches = right.find_matches(
                     target.clone(),
                     right.id.clone(),
@@ -291,11 +291,11 @@ impl Search for MathRelation {
                     pattern_context,
                     is_in_scope_now,
                 );
-                println!(
-                    "DEBUG: finding right_matches with target: {:#?} vs pattern: {:#?}",
-                    right, pattern
-                );
-                println!("DEBUG: right_matches: {:#?}", right_matches);
+                // println!(
+                //     "DEBUG: finding right_matches with target: {:#?} vs pattern: {:#?}",
+                //     right, pattern
+                // );
+                // println!("DEBUG: right_matches: {:#?}", right_matches);
                 left_matches.extend(right_matches);
                 left_matches
             }

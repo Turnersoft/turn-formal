@@ -32,7 +32,7 @@ use super::definitions::{
 };
 
 /// Prove the theorem that in a group, inverses are unique
-pub fn prove_inverse_uniqueness() -> Theorem {
+pub fn group_inverse_uniqueness() -> Theorem {
     // Create a simple, direct proof using left cancellation
     let group = Group::new_generic();
     let group_id = Identifier::new_simple("G".to_string());
@@ -152,6 +152,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         proofs.apply_initial_tactic(tactic).clone()
     };
+    println!("DEBUG: p1_node:\n{}", p1_node.short_debug());
 
     // Step 2: Split the conjunctive premise into two separate hypotheses.
     // Premise: g*h1 = e ∧ g*h2 = e
@@ -192,7 +193,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p2_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p3_node:\n{:#?}", p3_node);
+    // println!("DEBUG: p3_node:\n{:#?}", p3_node);
     println!("DEBUG: p3_node:\n{}", p3_node.short_debug());
 
     // Step 4: Rewrite e on the LHS using the inverse property (e -> g⁻¹ * g).
@@ -203,13 +204,13 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         let tactic = {
             if let Some(statement_arc) = p3_node.get_goal().statement.concrete_value() {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
-                    println!("DEBUG: p4_node - Target expression: e*h1");
-                    println!(
-                        "DEBUG: p4_node - Looking for identity element 'e' within this expression"
-                    );
-                    println!(
-                        "DEBUG: p4_node - Will replace 'e' with 'g⁻¹*g' (using inverse axiom backward)"
-                    );
+                    // println!("DEBUG: p4_node - Target expression: e*h1");
+                    // println!(
+                    //     "DEBUG: p4_node - Looking for identity element 'e' within this expression"
+                    // );
+                    // println!(
+                    //     "DEBUG: p4_node - Will replace 'e' with 'g⁻¹*g' (using inverse axiom backward)"
+                    // );
 
                     let mut instantiations = HashMap::new();
                     instantiations.insert(
@@ -234,7 +235,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p3_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p4_node:\n{:#?}", p4_node);
+    // println!("DEBUG: p4_node:\n{:#?}", p4_node);
     println!("DEBUG: p4_node:\n{}", p4_node.short_debug());
 
     // Step 5: Apply associativity to regroup the expression on the LHS.
@@ -262,7 +263,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p4_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p5_node:\n{:#?}", p5_node);
+    // println!("DEBUG: p5_node:\n{:#?}", p5_node);
     println!("DEBUG: p5_node:\n{}", p5_node.short_debug());
 
     // Step 6: Rewrite (g * h1) using the hypothesis `hyp_gh1_eq_e`.
@@ -273,7 +274,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
             if let MathRelation::Equal { left, right, .. } =
                 p5_node.get_goal().statement.data.unwrap(&context)
             {
-                println!("DEBUG: yinfeng wants left: {:#?}", left);
+                // println!("DEBUG: yinfeng wants left: {:#?}", left);
 
                 if let MathExpression::Expression(TheoryExpression::Group(
                     GroupExpression::Operation {
@@ -281,7 +282,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
                     },
                 )) = left.data.unwrap(&context)
                 {
-                    println!("DEBUG: yinfeng wants right: {:#?}", right);
+                    // println!("DEBUG: yinfeng wants right: {:#?}", right);
                     Tactic::Rewrite {
                         using_rule: RelationSource::LocalAssumption(hyp1.clone()),
                         target: Target::new(ContextOrStatement::Statement, right.id.clone()),
@@ -297,7 +298,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p5_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p6_node:\n{:#?}", p6_node);
+    // println!("DEBUG: p6_node:\n{:#?}", p6_node);
     println!("DEBUG: p6_node:\n{}", p6_node.short_debug());
 
     // Step 7: Rewrite `e` to `g*h2` using hypothesis `hyp_gh2_eq_e`
@@ -307,7 +308,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         let tactic = {
             if let Some(statement_arc) = p6_node.get_goal().statement.concrete_value() {
                 if let MathRelation::Equal { left, .. } = statement_arc.as_ref() {
-                    println!("DEBUG: yinfeng wants left: {:#?}", left);
+                    // println!("DEBUG: yinfeng wants left: {:#?}", left);
 
                     Tactic::Rewrite {
                         using_rule: RelationSource::LocalAssumption(hyp2.clone()),
@@ -324,7 +325,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p6_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p7_node:\n{:#?}", p7_node);
+    // println!("DEBUG: p7_node:\n{:#?}", p7_node);
     println!("DEBUG: p7_node:\n{}", p7_node.short_debug());
 
     // Step 8: Apply associativity to regroup the expression on the LHS.
@@ -352,7 +353,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p7_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p8_node:\n{:#?}", p8_node);
+    // println!("DEBUG: p8_node:\n{:#?}", p8_node);
     println!("DEBUG: p8_node:\n{}", p8_node.short_debug());
 
     // Step 9: Rewrite (g⁻¹ * g) to e using the inverse property.
@@ -385,7 +386,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p8_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p9_node:\n{:#?}", p9_node);
+    // println!("DEBUG: p9_node:\n{:#?}", p9_node);
     println!("DEBUG: p9_node:\n{}", p9_node.short_debug());
 
     // Step 10: Rewrite e * h2 to h2 using the identity property.
@@ -413,7 +414,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         };
         p9_node.apply_tactic(tactic, &mut proofs).primary_node()
     };
-    println!("DEBUG: p10_node:\n{:#?}", p10_node);
+    // println!("DEBUG: p10_node:\n{:#?}", p10_node);
     println!("DEBUG: p10_node:\n{}", p10_node.short_debug());
 
     // Step 11: The goal is now h2 = h2, which is true by reflexivity.
@@ -423,7 +424,7 @@ pub fn prove_inverse_uniqueness() -> Theorem {
         .apply_tactic(Tactic::ByReflexivity, &mut proofs)
         .primary_node()
         .should_complete();
-    println!("DEBUG: final_outcome:\n{:#?}", final_outcome);
+    // println!("DEBUG: final_outcome:\n{:#?}", final_outcome);
     println!("DEBUG: final_outcome:\n{}", final_outcome.short_debug());
 
     Theorem {
@@ -436,22 +437,29 @@ pub fn prove_inverse_uniqueness() -> Theorem {
 
 #[cfg(test)]
 mod tests {
-    use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
+    use crate::{
+        subjects::math::formalism::automation::registry::get_theorem_registry,
+        turn_render::ToMathDocument,
+    };
 
     use super::*;
 
     #[test]
     fn test_prove_inverse_uniqueness() {
-        std::thread::Builder::new()
-            .stack_size(5000 * 1024)
-            .spawn(|| {
-                let theorem = prove_inverse_uniqueness();
-                // Optional: Add assertions or prints for verification
-            })
-            .unwrap()
-            .join()
-            .unwrap();
+        // std::thread::Builder::new()
+        //     .stack_size(5000 * 1024)
+        //     .spawn(|| {
+        //         let theorem = group_inverse_uniqueness();
+        //         // Optional: Add assertions or prints for verification
+        //     })
+        //     .unwrap()
+        //     .join()
+        //     .unwrap();
 
-        // let theorem = prove_inverse_uniqueness();
+        let theorem = group_inverse_uniqueness();
+        // println!(
+        //     "DEBUG: theorem:\n{:#?}",
+        //     theorem.to_math_document("test_id")
+        // );
     }
 }

@@ -20,6 +20,7 @@ use super::super::theories::{
 use super::super::formalism::interpretation::TypeViewOperator;
 use super::extract::Parametrizable;
 use super::{location::Located, objects::MathObject, relations::MathRelation};
+use crate::turn_render::{RichText, RichTextSegment};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum TheoryExpression {

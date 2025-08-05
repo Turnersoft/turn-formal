@@ -2,7 +2,9 @@
 // This file should only declare its submodules.
 
 pub mod expressions;
+pub mod extract;
 pub mod interpretation;
+pub mod location;
 pub mod math_object;
 pub mod proof;
 pub mod relations;

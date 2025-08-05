@@ -6,8 +6,8 @@ use crate::turn_render::math_node::{
     BracketSize, BracketStyle, MathNode, MathNodeContent, ToTurnMath,
 };
 use crate::turn_render::{
-    AbstractionMetadata, LinkTarget, RichText, RichTextSegment, Section, SectionContentNode,
-    StructuredMathNode, ToSectionNode,
+    AbstractionMetadata, CollapsibleBlockNode, LinkTarget, RichText, RichTextSegment,
+    SecondOrderMathNode, Section, SectionContentNode, TextStyle, ToSectionNode,
 };
 
 use crate::subjects::math::formalism::traits::abstraction_level::{
@@ -58,24 +58,41 @@ impl ToSectionNode for QuotientGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "QuotientGroupDefinition".to_string())],
             display_options: None,
         }
@@ -164,13 +181,13 @@ impl QuotientGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "The quotient group {}/{} formed by the cosets of the normal subgroup {} in {}.",
                     group_name, normal_name, normal_name, group_name
                 ))],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }
@@ -205,24 +222,41 @@ impl ToSectionNode for FreeGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "FreeGroupDefinition".to_string())],
             display_options: None,
         }
@@ -303,13 +337,13 @@ impl FreeGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "The free group F_{} on {} generators. This is the most general group with {} generators, subject only to the group axioms.",
                     self.rank, self.rank, self.rank
                 ))],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }
@@ -342,24 +376,41 @@ impl ToSectionNode for TrivialGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "TrivialGroupDefinition".to_string())],
             display_options: None,
         }
@@ -440,12 +491,12 @@ impl TrivialGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The trivial group {1}, containing only the identity element.".to_string(),
                 )],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }

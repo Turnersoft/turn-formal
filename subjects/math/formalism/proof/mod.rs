@@ -31,8 +31,8 @@ use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::theories::groups::definitions::GroupExpression;
 use crate::subjects::math::theories::rings::definitions::{FieldExpression, RingExpression};
 use crate::turn_render::{
-    Identifier, MathNode, MathNodeContent, ProofDisplayNode, ProofStepNode, RichText,
-    RichTextSegment, Section, SectionContentNode, ToProofDisplay, ToProofStep, ToTurnMath,
+    Identifier, MathNode, MathNodeContent, RichText, RichTextSegment, Section, SectionContentNode,
+    ToRichText, ToTurnMath,
 };
 
 pub mod helpers;
@@ -78,6 +78,59 @@ impl ContextEntryVecExt for Vec<ContextEntry> {
 pub struct Quantifier {
     pub variable_name: Identifier,
     pub quantification: Quantification, // Universal or Existential
+}
+
+impl ContextEntry {
+    /// Export as a VariableDeclaration variant
+    pub fn to_variable_declaration(
+        &self,
+        id_prefix: &str,
+    ) -> crate::turn_render::SecondOrderMathNode {
+        crate::turn_render::SecondOrderMathNode::VariableDeclaration(
+            crate::turn_render::VariableDeclaration {
+                name: self
+                    .name
+                    .to_turn_math(format!("{}-name-{}", id_prefix, self.name)),
+                type_info: match &self.ty.data {
+                    Parametrizable::Concrete(arc_expr) => arc_expr.to_rich_text(),
+                    Parametrizable::Variable(id) => RichText {
+                        segments: vec![RichTextSegment::Text(id.to_string())],
+                        alignment: None,
+                    },
+                },
+            },
+        )
+    }
+}
+
+impl Quantifier {
+    /// Export as a VariableDeclaration variant
+    pub fn to_variable_declaration(
+        &self,
+        context: &[ContextEntry],
+        id_prefix: &str,
+    ) -> crate::turn_render::SecondOrderMathNode {
+        // Find the corresponding context entry for this quantifier's variable
+        let context_entry = context
+            .iter()
+            .find(|entry| entry.name == self.variable_name)
+            .expect("Quantifier variable must exist in context");
+
+        crate::turn_render::SecondOrderMathNode::VariableDeclaration(
+            crate::turn_render::VariableDeclaration {
+                name: self
+                    .variable_name
+                    .to_turn_math(format!("{}-name-{}", id_prefix, self.variable_name)),
+                type_info: match &context_entry.ty.data {
+                    Parametrizable::Concrete(arc_expr) => arc_expr.to_rich_text(),
+                    Parametrizable::Variable(id) => RichText {
+                        segments: vec![RichTextSegment::Text(id.to_string())],
+                        alignment: None,
+                    },
+                },
+            },
+        )
+    }
 }
 
 /// Represents a complete state in a proof, structured with a unified, ordered context.
@@ -610,73 +663,6 @@ impl ProofNode {
             }
         }
     }
-
-    pub fn to_proof_display(&self, forest: &ProofForest) -> ProofDisplayNode {
-        ProofDisplayNode {
-            title: None,
-            strategy: vec![],
-            steps: vec![self.to_proof_step()],
-            qed_symbol: None,
-        }
-    }
-
-    /// Simple test function to verify tactic application works
-    #[cfg(test)]
-    pub fn test_tactic_application_directly() -> bool {
-        use crate::subjects::math::formalism::expressions::MathExpression;
-        use crate::subjects::math::formalism::proof::tactics::{Tactic, TacticApplicationResult};
-        use crate::subjects::math::formalism::relations::MathRelation;
-        use crate::subjects::math::theories::number_theory::definitions::Number;
-        use crate::turn_render::Identifier;
-
-        let antecedent = MathRelation::equal(
-            MathExpression::Number(Number {}),
-            MathExpression::Number(Number {}),
-        );
-        let consequent = MathRelation::equal(
-            MathExpression::Number(Number {}),
-            MathExpression::Number(Number {}),
-        );
-
-        let goal = ProofGoal {
-            context: vec![],
-            quantifiers: vec![],
-            statement: Located::new_concrete(MathRelation::Implies(
-                Located::new_concrete(antecedent.clone()),
-                Located::new_concrete(consequent.clone()),
-            )),
-        };
-
-        let tactic = Tactic::AssumeImplicationAntecedent {
-            with_name: Identifier::new_simple("H".to_string()),
-        };
-
-        match tactic.apply_to_goal(&goal) {
-            TacticApplicationResult::SingleGoal(new_goal) => {
-                // Verify the transformation worked
-                if let Some(statement_arc) = new_goal.statement.concrete_value() {
-                    statement_arc.as_ref() == &consequent && new_goal.context.len() == 1
-                } else {
-                    false
-                }
-            }
-            _ => false,
-        }
-    }
-}
-
-impl ToProofStep for ProofNode {
-    fn to_proof_step(&self) -> ProofStepNode {
-        let tactic_name = format!("{:?}", self.tactic);
-
-        ProofStepNode::Statement {
-            claim: vec![RichTextSegment::Text(format!(
-                "Apply tactic: {}",
-                tactic_name
-            ))],
-            justification: vec![RichTextSegment::Text("Tactic application".to_string())],
-        }
-    }
 }
 
 /// A forest of proof exploration nodes
@@ -819,11 +805,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_direct_tactic_application() {
-        assert!(ProofNode::test_tactic_application_directly());
-    }
-
-    #[test]
     fn test_assume_implication_transforms_goal() {
         use crate::subjects::math::formalism::expressions::MathExpression;
         use crate::subjects::math::formalism::proof::tactics::{Tactic, TacticApplicationResult};
@@ -938,90 +919,4 @@ pub struct QuantifiedMathObject {
     pub variable: Identifier,
     pub object_type: MathObject,
     pub description: Option<String>,
-}
-
-/// Safely format a Parametrizable<MathExpression> to a string
-fn format_parametrizable_expression_safely(pexpr: &Parametrizable<Arc<MathExpression>>) -> String {
-    match pexpr {
-        Parametrizable::Concrete(expr) => format_expression_safely(expr),
-        Parametrizable::Variable(id) => id.to_string(),
-    }
-}
-
-/// Safely format a MathExpression to a string without causing circular references
-fn format_expression_safely(expr: &MathExpression) -> String {
-    match expr {
-        MathExpression::Relation(_) => "[Relation]".to_string(), // Avoid circular reference
-        MathExpression::Object(obj) => format!(
-            "[Object: {}]",
-            match obj.as_ref() {
-                MathObject::Group(_) => "Group",
-                MathObject::Ring(_) => "Ring",
-                MathObject::Field(_) => "Field",
-                MathObject::Module(_) => "Module",
-                MathObject::Algebra(_) => "Algebra",
-                MathObject::TopologicalSpace(_) => "TopologicalSpace",
-                MathObject::VectorSpace(_) => "VectorSpace",
-                MathObject::Set(_) => "Set",
-                MathObject::Function(_) => "Function",
-            }
-        ),
-        MathExpression::Expression(_theory_expr) => "[TheoryExpression]".to_string(),
-        MathExpression::Number(num) => format!("[Number: {:?}]", num),
-        MathExpression::ViewAs { expression, view } => {
-            format!(
-                "[ViewAs: {} as {:?}]",
-                format_parametrizable_expression_safely(&expression.data),
-                view
-            )
-        }
-    }
-}
-
-/// Safely format a Parametrizable<MathRelation> to a string
-fn format_parametrizable_relation_safely(prel: &Parametrizable<Arc<MathRelation>>) -> String {
-    match prel {
-        Parametrizable::Concrete(rel) => format_relation_safely(rel),
-        Parametrizable::Variable(id) => id.to_string(),
-    }
-}
-
-/// Safely format a MathRelation to a string without causing circular references
-fn format_relation_safely(rel: &MathRelation) -> String {
-    match rel {
-        MathRelation::Equal { left, right, .. } => {
-            format!(
-                "{} = {}",
-                format_parametrizable_expression_safely(&left.data),
-                format_parametrizable_expression_safely(&right.data)
-            )
-        }
-        MathRelation::Implies(antecedent, consequent) => {
-            format!(
-                "{} → {}",
-                format_parametrizable_relation_safely(&antecedent.data),
-                format_parametrizable_relation_safely(&consequent.data)
-            )
-        }
-        MathRelation::And(relations) => {
-            let parts: Vec<String> = relations
-                .iter()
-                .map(|r| format_parametrizable_relation_safely(&r.data))
-                .collect();
-            format!("({})", parts.join(" ∧ "))
-        }
-        MathRelation::Or(relations) => {
-            let parts: Vec<String> = relations
-                .iter()
-                .map(|r| format_parametrizable_relation_safely(&r.data))
-                .collect();
-            format!("({})", parts.join(" ∨ "))
-        }
-        MathRelation::Not(rel) => {
-            format!("¬({})", format_parametrizable_relation_safely(&rel.data))
-        }
-        MathRelation::True => "⊤".to_string(),
-        MathRelation::False => "⊥".to_string(),
-        _ => "[Relation]".to_string(),
-    }
 }

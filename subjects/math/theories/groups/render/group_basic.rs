@@ -249,7 +249,12 @@ impl ToSectionNode for GenericGroup {
                         segments: title_segments,
                         alignment: None,
                     }),
-                    content: content_nodes,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![
+                            RichTextSegment::Text("WARNING: For Level 1 schema, please use render_as_l1_schema() instead of to_section_node().".to_string()),
+                        ],
+                        alignment: None,
+                    }),
                     metadata: vec![
                         ("type".to_string(), "GroupBasicDefinition".to_string()),
                         ("abstraction_level".to_string(), "1".to_string()),
@@ -403,30 +408,44 @@ impl ToSectionNode for GenericGroup {
                         segments: title_segments.clone(),
                         alignment: None,
                     }),
-                    content: vec![SectionContentNode::StructuredMath(
-                        StructuredMathNode::Definition {
-                            term_display: RichText {
-                                segments: title_segments.clone(),
+                    content: SectionContentNode::SubSection(vec![
+                        Section {
+                            id: format!("{}-definition-text", id_prefix),
+                            title: None,
+                            content: SectionContentNode::RichText(RichText {
+                                segments: vec![RichTextSegment::StyledText {
+                                    text: format!("Definition: {}", title_text),
+                                    styles: vec![TextStyle::Bold],
+                                }],
                                 alignment: None,
-                            },
-                            formal_term: Some(
+                            }),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                        Section {
+                            id: format!("{}-formal-term", id_prefix),
+                            title: None,
+                            content: SectionContentNode::Math(
                                 self.to_turn_math(format!("{}-formalTerm", id_prefix)),
                             ),
-                            label: Some(format!("Definition ({})", title_text)),
-                            body: content_nodes,
-                            abstraction_meta: Some(AbstractionMetadata {
-                                level: Some(formalism_obj_level as u8),
-                                source_template_id: Some(format!("{}-l1-doc", id_prefix)),
-                                specified_parameters: vec![],
-                                universally_quantified_properties: vec![],
-                            }),
-                            selectable_properties: if selectable_props.is_empty() {
-                                vec![]
-                            } else {
-                                selectable_props
-                            },
+                            metadata: vec![],
+                            display_options: None,
                         },
-                    )],
+                        Section {
+                            id: format!("{}-collapsible-definition", id_prefix),
+                            title: None,
+                            content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                                summary: vec![RichTextSegment::Text(format!(
+                                    "Definition ({})",
+                                    title_text
+                                ))],
+                                details: content_nodes,
+                                initially_collapsed: Some(false),
+                            }),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                    ]),
                     metadata: vec![
                         ("type".to_string(), "GroupBasicDefinition".to_string()),
                         ("abstraction_level".to_string(), "2".to_string()),
@@ -460,7 +479,18 @@ impl ToSectionNode for GenericGroup {
                         segments: vec![RichTextSegment::Text(title)],
                         alignment: None,
                     }),
-                    content: content_nodes,
+                    content: SectionContentNode::SubSection(
+                        content_nodes
+                            .into_iter()
+                            .map(|node| Section {
+                                id: format!("{}-content-node", id_prefix),
+                                title: None,
+                                content: node,
+                                metadata: vec![],
+                                display_options: None,
+                            })
+                            .collect(),
+                    ),
                     metadata: vec![
                         ("type".to_string(), "GroupBasicDefinition".to_string()),
                         ("abstraction_level".to_string(), "3".to_string()),
@@ -638,30 +668,44 @@ impl ToSectionNode for GenericGroup {
                         segments: title_segments.clone(),
                         alignment: None,
                     }),
-                    content: vec![SectionContentNode::StructuredMath(
-                        StructuredMathNode::Definition {
-                            term_display: RichText {
-                                segments: title_segments.clone(),
+                    content: SectionContentNode::SubSection(vec![
+                        Section {
+                            id: format!("{}-definition-text", id_prefix),
+                            title: None,
+                            content: SectionContentNode::RichText(RichText {
+                                segments: vec![RichTextSegment::StyledText {
+                                    text: format!("Definition: Concrete Group ({})", title_text),
+                                    styles: vec![TextStyle::Bold],
+                                }],
                                 alignment: None,
-                            },
-                            formal_term: Some(
+                            }),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                        Section {
+                            id: format!("{}-formal-term", id_prefix),
+                            title: None,
+                            content: SectionContentNode::Math(
                                 self.to_turn_math(format!("{}-formalTerm", id_prefix)),
                             ),
-                            label: Some(format!("Concrete Group ({})", title_text)),
-                            body: content_nodes,
-                            abstraction_meta: Some(AbstractionMetadata {
-                                level: Some(formalism_obj_level as u8),
-                                source_template_id: Some(format!("{}-l2-doc", id_prefix)),
-                                specified_parameters: vec![],
-                                universally_quantified_properties: vec![],
-                            }),
-                            selectable_properties: if selectable_props.is_empty() {
-                                vec![]
-                            } else {
-                                selectable_props
-                            },
+                            metadata: vec![],
+                            display_options: None,
                         },
-                    )],
+                        Section {
+                            id: format!("{}-collapsible-definition", id_prefix),
+                            title: None,
+                            content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                                summary: vec![RichTextSegment::Text(format!(
+                                    "Concrete Group ({})",
+                                    title_text
+                                ))],
+                                details: content_nodes,
+                                initially_collapsed: Some(false),
+                            }),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                    ]),
                     metadata: vec![
                         ("type".to_string(), "GroupBasicDefinition".to_string()),
                         ("abstraction_level".to_string(), "4".to_string()),
@@ -805,39 +849,57 @@ impl ToSectionNode for GenericGroup {
                 segments: vec![RichTextSegment::Text("Definition".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "A group (G, *) consists of a set G and a binary operation * such that:"
-                            .to_string(),
-                    )],
-                    alignment: None,
-                }),
-                // Closure axiom using structured format
-                SectionContentNode::MathNode {
-                    math: self.create_closure_axiom(&format!("{}-closure", id_prefix)),
-                    label: Some("Closure".to_string()),
-                    caption: None,
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "A group (G, *) consists of a set G and a binary operation * such that:"
+                                .to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
                 },
-                // Associativity axiom using structured format
-                SectionContentNode::MathNode {
-                    math: self.create_associativity_axiom(&format!("{}-assoc", id_prefix)),
-                    label: Some("Associativity".to_string()),
-                    caption: None,
+                Section {
+                    id: format!("{}-closure-axiom", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.create_closure_axiom(&format!("{}-closure", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
                 },
-                // Identity axiom using structured format
-                SectionContentNode::MathNode {
-                    math: self.create_identity_axiom(&format!("{}-identity", id_prefix)),
-                    label: Some("Identity Element".to_string()),
-                    caption: None,
+                Section {
+                    id: format!("{}-associativity-axiom", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.create_associativity_axiom(&format!("{}-assoc", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
                 },
-                // Inverse axiom using structured format
-                SectionContentNode::MathNode {
-                    math: self.create_inverse_axiom(&format!("{}-inverse", id_prefix)),
-                    label: Some("Inverse Elements".to_string()),
-                    caption: None,
+                Section {
+                    id: format!("{}-identity-axiom", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.create_identity_axiom(&format!("{}-identity", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
                 },
-            ],
+                Section {
+                    id: format!("{}-inverse-axiom", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.create_inverse_axiom(&format!("{}-inverse", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![],
             display_options: None,
         };
@@ -848,42 +910,78 @@ impl ToSectionNode for GenericGroup {
                 segments: vec![RichTextSegment::Text("Properties".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text("Groups can have various properties:".to_string())],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Abelian/Commutative: If a * b = b * a for all a, b ∈ G".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Finite/Infinite: Whether the group has a finite or infinite number of elements".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Simple: If the group has no proper normal subgroups".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Solvable: If the group has a subnormal series with abelian factors".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Nilpotent: If the lower central series terminates at the identity".to_string(),
-                    )],
-                    alignment: None,
-                }),
-            ],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-properties-intro", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text("Groups can have various properties:".to_string())],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-abelian-property", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Abelian/Commutative: If a * b = b * a for all a, b ∈ G".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-finite-property", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Finite/Infinite: Whether the group has a finite or infinite number of elements".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-simple-property", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Simple: If the group has no proper normal subgroups".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-solvable-property", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Solvable: If the group has a subnormal series with abelian factors".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-nilpotent-property", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Nilpotent: If the lower central series terminates at the identity".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![],
             display_options: None,
         };
@@ -894,53 +992,88 @@ impl ToSectionNode for GenericGroup {
                 segments: vec![RichTextSegment::Text("Examples".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Common examples of groups include:".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Integers under addition: (Z, +)".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Non-zero rational numbers under multiplication: (Q\\{0}, ×)".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Symmetric groups: S_n (permutations of n elements)".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Cyclic groups: Z_n or C_n (integers modulo n)".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "- Matrix groups: GL(n, F) (n×n invertible matrices over a field F)"
-                            .to_string(),
-                    )],
-                    alignment: None,
-                }),
-            ],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-examples-intro", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Common examples of groups include:".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-integers-example", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Integers under addition: (Z, +)".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-rationals-example", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Non-zero rational numbers under multiplication: (Q\\{0}, ×)"
+                                .to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-symmetric-example", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Symmetric groups: S_n (permutations of n elements)".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-cyclic-example", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Cyclic groups: Z_n or C_n (integers modulo n)".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-matrix-example", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "- Matrix groups: GL(n, F) (n×n invertible matrices over a field F)"
+                                .to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![],
             display_options: None,
         };
 
-        // Add subsections
-        content_nodes.push(SectionContentNode::SubSection(Arc::new(definition_section)));
-        content_nodes.push(SectionContentNode::SubSection(Arc::new(properties_section)));
-        content_nodes.push(SectionContentNode::SubSection(Arc::new(examples_section)));
+        // Collect all subsections
+        let subsections = vec![definition_section, properties_section, examples_section];
 
         Section {
             id: format!("{}.main_section", id_prefix),
@@ -948,7 +1081,7 @@ impl ToSectionNode for GenericGroup {
                 segments: vec![RichTextSegment::Text(title)],
                 alignment: None,
             }),
-            content: content_nodes,
+            content: SectionContentNode::SubSection(subsections),
             metadata: vec![
                 ("type".to_string(), "GroupBasicDefinition".to_string()),
                 ("abstraction_level".to_string(), "1".to_string()),
@@ -987,12 +1120,12 @@ impl ToSectionNode for GenericGroup {
             abstract_content: Some(Section {
                 id: format!("{}-l1-abstract", id_prefix),
                 title: None,
-                        content: vec![SectionContentNode::RichText(RichText {
+                        content: SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text(
                                 "A comprehensive document covering the general theory of groups, including definitions, properties, and examples.".to_string(),
                             )],
                             alignment: None,
-                        })],
+                        }),
                 metadata: vec![],
                 display_options: None,
             }),
@@ -1072,13 +1205,13 @@ impl ToMathDocument for GenericGroup {
                             abstract_content: Some(Section {
                                 id: format!("{}-abstract", id_prefix),
                                 title: None,
-                                content: vec![SectionContentNode::RichText(RichText {
+                                content: SectionContentNode::RichText(RichText {
                                     segments: vec![RichTextSegment::Text(format!(
                                         "A document describing a specific group type on set {:?} with its properties.",
                                         self.base_set
                                     ))],
                                     alignment: None,
-                                })],
+                                }),
                                 metadata: vec![],
                                 display_options: None,
                             }),
@@ -1107,20 +1240,32 @@ impl ToMathDocument for GenericGroup {
                         segments: vec![RichTextSegment::Text("Group Constructor (Level 3)".to_string())],
                         alignment: None,
                     }),
-                    content: vec![
-                        SectionContentNode::RichText(RichText {
-                            segments: vec![RichTextSegment::Text(
-                                "This abstraction level (L3) should be handled by a different Group variant, not GroupBasic.".to_string(),
-                            )],
-                            alignment: None,
-                        }),
-                        SectionContentNode::RichText(RichText {
-                            segments: vec![RichTextSegment::Text(
-                                "Please refer to other Group constructors such as ProductGroup, QuotientGroup, etc.".to_string(),
-                            )],
-                            alignment: None,
-                        }),
-                    ],
+                    content: SectionContentNode::SubSection(vec![
+                        Section {
+                            id: format!("{}-l3-warning-1", id_prefix),
+                            title: None,
+                            content: SectionContentNode::RichText(RichText {
+                                segments: vec![RichTextSegment::Text(
+                                    "This abstraction level (L3) should be handled by a different Group variant, not GroupBasic.".to_string(),
+                                )],
+                                alignment: None,
+                            }),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                        Section {
+                            id: format!("{}-l3-warning-2", id_prefix),
+                            title: None,
+                            content: SectionContentNode::RichText(RichText {
+                                segments: vec![RichTextSegment::Text(
+                                    "Please refer to other Group constructors such as ProductGroup, QuotientGroup, etc.".to_string(),
+                                )],
+                                alignment: None,
+                            }),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                    ]),
                     metadata: vec![],
                     display_options: None,
                 };
@@ -1151,13 +1296,13 @@ impl ToMathDocument for GenericGroup {
                             abstract_content: Some(Section {
                                 id: format!("{}-l3-abstract", id_prefix),
                                 title: None,
-                                content: vec![SectionContentNode::RichText(RichText {
+                                content: SectionContentNode::RichText(RichText {
                                     segments: vec![RichTextSegment::Text(
                                         "A reference document for group construction methods."
                                             .to_string(),
                                     )],
                                     alignment: None,
-                                })],
+                                }),
                                 metadata: vec![],
                                 display_options: None,
                             }),
@@ -1220,13 +1365,13 @@ impl ToMathDocument for GenericGroup {
                             abstract_content: Some(Section {
                                 id: format!("{}-l4-abstract", id_prefix),
                                 title: None,
-                                content: vec![SectionContentNode::RichText(RichText {
+                                content: SectionContentNode::RichText(RichText {
                                     segments: vec![RichTextSegment::Text(format!(
                                         "A document describing a concrete group instance on set {:?} with explicit elements and structure.",
                                         self.base_set
                                     ))],
                                     alignment: None,
-                                })],
+                                }),
                                 metadata: vec![],
                                 display_options: None,
                             }),

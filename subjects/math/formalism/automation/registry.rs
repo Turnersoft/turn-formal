@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::{Arc, LazyLock, Mutex};
 
-use crate::subjects::math::theories::groups::theorems::prove_inverse_uniqueness;
+use crate::subjects::math::theories::groups::theorems::group_inverse_uniqueness;
 use crate::subjects::math::{
     formalism::{
         foundational_axioms::{

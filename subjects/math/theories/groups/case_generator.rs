@@ -2,7 +2,7 @@ use crate::subjects::math::formalism::expressions::MathExpression;
 use crate::subjects::math::formalism::objects::MathObject;
 use crate::subjects::math::formalism::proof::tactics::Case;
 use crate::subjects::math::theories::VariantSet;
-use crate::turn_render::section_node::{RichText, RichTextSegment};
+use crate::turn_render::{RichText, RichTextSegment};
 use std::sync::Arc;
 
 use super::definitions::*;

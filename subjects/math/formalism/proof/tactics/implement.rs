@@ -545,19 +545,12 @@ impl Tactic {
         direction: &RewriteDirection,
         instantiations: &HashMap<Identifier, Identifier>,
     ) -> TacticApplicationResult {
-        println!("DEBUG: LOCAL_ASSUMPTION - Looking for assumption: {}", assumption_id.body);
-        println!("DEBUG: LOCAL_ASSUMPTION - Available assumptions in context:");
         for (i, entry) in goal.context.iter().enumerate() {
             println!("  [{}]: {}: {}", i, entry.name.body, entry.ty.short_debug());
         }
         
         if let Some(assumption) = goal.find_relation_by_name(assumption_id) {
-            println!("DEBUG: LOCAL_ASSUMPTION - Found assumption: {}", assumption.short_debug());
-            if let Some(goal_concrete) = goal.statement.concrete_value() {
-                println!("DEBUG: LOCAL_ASSUMPTION - Current goal is: {:?}", goal_concrete);
-            } else {
-                println!("DEBUG: LOCAL_ASSUMPTION - Current goal: {}", goal.statement.short_debug());
-            }
+           
             // For a local assumption, there's no sub-indexing.
             if let Some(assumption_arc) = assumption.concrete_value() {
                 Self::find_and_apply_rewrite(goal, target, direction, assumption_arc.as_ref(), &goal.context, None, instantiations)

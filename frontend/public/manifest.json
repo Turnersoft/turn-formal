@@ -55,7 +55,7 @@
           "content_type": "theorems",
           "item_count": 1,
           "items": [
-            "group_theory.inverse_uniqueness-doc"
+            "group_theory.thm.group_inverse_uniqueness-doc"
           ]
         }
       ],
@@ -108,6 +108,6 @@
     }
   ],
   "total_items": 50,
-  "generated_at": "1751646074",
+  "generated_at": "1754407929",
   "version": "1.0.0"
 }

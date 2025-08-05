@@ -194,28 +194,41 @@ impl ToSectionNode for LieGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: if selectable_props.is_empty() {
-                        vec![]
-                    } else {
-                        selectable_props
-                    },
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "LieGroupDefinition".to_string())],
             display_options: None,
         }

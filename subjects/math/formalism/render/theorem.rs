@@ -13,6 +13,7 @@ use crate::turn_render::{
 
 use crate::subjects::math::formalism::{
     expressions::MathExpression,
+    extract::Parametrizable,
     proof::{ContextEntry, DefinitionState},
     relations::{MathRelation, Quantification},
 };
@@ -23,146 +24,97 @@ use crate::turn_render::*;
 
 use crate::subjects::math::formalism::automation::registry::TheoremRegistry;
 
+use crate::subjects::math::theories::groups::definitions::GroupExpression;
+
 // use crate::subjects::math::theories::groups::theorems::{
 //     prove_abelian_squared_criterion, prove_inverse_product_rule,
 // };
 
 impl ToSectionNode for ProofGoal {
     fn to_section_node(&self, id_prefix: &str) -> Section {
-        let mut content = vec![];
+        // Show the formal statement as Judgement
+        let content = SectionContentNode::SecondOrderMath(SecondOrderMathNode::Judgement({
+            // Process context once to create both non_quantifiers and quantifiers
+            let mut non_quantifiers = Vec::new();
+            let mut quantifiers = Vec::new();
+            let mut current_universal_group = Vec::new();
 
-        // RENDER CONTEXT
-        if !self.context.is_empty() {
-            content.push(SectionContentNode::RichText(RichText {
-                segments: vec![RichTextSegment::StyledText {
-                    text: "Context:".to_string(),
-                    styles: vec![TextStyle::Bold],
-                }],
-                alignment: None,
-            }));
-
+            // Process each context entry
             for entry in &self.context {
-                let mut segments = vec![RichTextSegment::Text("• ".to_string())];
-
-                // Render name
-                segments.push(RichTextSegment::StyledText {
-                    text: format!("{:?}: ", entry.name),
-                    styles: vec![TextStyle::Italic],
-                });
-
-                // Render type
-                segments.push(RichTextSegment::Math(
-                    entry
-                        .ty
-                        .to_turn_math(format!("{}-type-{:?}", id_prefix, entry.name)),
-                ));
-
-                // Render definition if it exists
-                match &entry.definition {
-                    DefinitionState::Separate(def) => {
-                        segments.push(RichTextSegment::Text(" := ".to_string()));
-                        segments.push(RichTextSegment::Math(
-                            def.to_turn_math(format!("{}-def-{:?}", id_prefix, entry.name)),
-                        ));
-                    }
-                    DefinitionState::Inlined => {
-                        segments.push(RichTextSegment::Text(" (defined inline)".to_string()));
-                    }
-                    DefinitionState::ContainedInType => {
-                        segments.push(RichTextSegment::Text(
-                            " (value is self-contained)".to_string(),
-                        ));
-                    }
-                    DefinitionState::Abstract => { /* Do nothing for abstract entries */ }
-                }
-
-                content.push(SectionContentNode::RichText(RichText {
-                    segments,
-                    alignment: None,
-                }));
-            }
-        }
-
-        // RENDER QUANTIFIERS
-        if !self.quantifiers.is_empty() {
-            // Create formal mathematical representation using MathNode
-            let quantifier_nodes: Vec<MathNode> = self
-                .quantifiers
-                .iter()
-                .map(|q| {
-                    MathNode {
-                        id: format!("{}-quantifier-{:?}", id_prefix, q.variable_name),
-                        content: Arc::new(MathNodeContent::QuantifiedExpression {
-                            quantifier: match q.quantification {
-                                Quantification::Universal => QuantificationNode::Universal,
-                                Quantification::Existential => QuantificationNode::Existential,
-                                Quantification::UniqueExistential => {
-                                    QuantificationNode::UniqueExistential
-                                }
-                            },
-                            variables: vec![MathNode {
-                                id: format!("{}-var-{:?}", id_prefix, q.variable_name),
-                                content: Arc::new(MathNodeContent::Identifier(
-                                    q.variable_name.clone(),
-                                )),
-                            }],
-                            domain: None, // Could be enhanced to show domain if available
-                            predicate: None, // Could be enhanced to show constraints if available
-                        }),
-                    }
-                })
-                .collect();
-
-            // Add formal mathematical quantifier representation
-            // Since there's no Group variant, we'll add each quantifier separately
-            for quantifier_node in quantifier_nodes {
-                content.push(SectionContentNode::RichText(RichText {
-                    segments: vec![
-                        RichTextSegment::StyledText {
-                            text: "Quantifier: ".to_string(),
-                            styles: vec![TextStyle::Bold],
+                let variable_declaration = VariableDeclaration {
+                    name: entry
+                        .name
+                        .to_turn_math(format!("context-name-{}", entry.name)),
+                    type_info: match &entry.ty.data {
+                        Parametrizable::Concrete(arc_expr) => arc_expr.to_rich_text(),
+                        Parametrizable::Variable(id) => RichText {
+                            segments: vec![RichTextSegment::Text(id.to_string())],
+                            alignment: None,
                         },
-                        RichTextSegment::Math(quantifier_node),
-                    ],
-                    alignment: None,
-                }));
+                    },
+                };
+
+                // Check if this variable is quantified
+                if let Some(quantifier) = self
+                    .quantifiers
+                    .iter()
+                    .find(|q| q.variable_name == entry.name)
+                {
+                    // This is a quantified variable
+                    match quantifier.quantification {
+                        Quantification::Universal => {
+                            // Add to current universal group
+                            current_universal_group.push(variable_declaration);
+                        }
+                        Quantification::Existential => {
+                            // First, finalize any pending universal group
+                            if !current_universal_group.is_empty() {
+                                quantifiers.push(QuantifiedVariableDeclarationGroup::ForAll(
+                                    current_universal_group.clone(),
+                                ));
+                                current_universal_group.clear();
+                            }
+                            // Create single existential quantifier group
+                            quantifiers.push(QuantifiedVariableDeclarationGroup::Exists(
+                                variable_declaration,
+                            ));
+                        }
+                        Quantification::UniqueExistential => {
+                            // First, finalize any pending universal group
+                            if !current_universal_group.is_empty() {
+                                quantifiers.push(QuantifiedVariableDeclarationGroup::ForAll(
+                                    current_universal_group.clone(),
+                                ));
+                                current_universal_group.clear();
+                            }
+                            // Create single unique existential quantifier group
+                            quantifiers.push(QuantifiedVariableDeclarationGroup::UniqueExists(
+                                variable_declaration,
+                            ));
+                        }
+                    }
+                } else {
+                    // This is a non-quantified variable
+                    non_quantifiers.push(variable_declaration);
+                }
             }
 
-            // Also provide informal text representation for accessibility
-            let quantifier_text = self
-                .quantifiers
-                .iter()
-                .map(|q| format!("{:?} {:?}", q.quantification, q.variable_name))
-                .collect::<Vec<_>>()
-                .join(", ");
+            // Finalize any remaining universal group
+            if !current_universal_group.is_empty() {
+                quantifiers.push(QuantifiedVariableDeclarationGroup::ForAll(
+                    current_universal_group,
+                ));
+            }
 
-            content.push(SectionContentNode::RichText(RichText {
-                segments: vec![RichTextSegment::StyledText {
-                    text: format!("(In words: {})", quantifier_text),
-                    styles: vec![TextStyle::Italic],
-                }],
-                alignment: None,
-            }));
-        }
-
-        // RENDER STATEMENT
-        content.push(SectionContentNode::RichText(RichText {
-            segments: vec![
-                RichTextSegment::StyledText {
-                    text: "⊢ ".to_string(),
-                    styles: vec![],
-                }, // Turnstile symbol for "proves"
-                RichTextSegment::Math(
-                    self.statement
-                        .data
-                        .to_turn_math(format!("{}-stmt", id_prefix)),
-                ),
-            ],
-            alignment: None,
+            Judgement {
+                non_quantifiers,
+                quantifiers,
+                statement: self.statement.to_logical_node(),
+            }
         }));
 
         Section {
-            id: format!("{}-statement", id_prefix),
+            id: format!("{}-proof-goal", id_prefix),
             title: Some(RichText {
                 segments: vec![RichTextSegment::Text("Proof Goal".to_string())],
                 alignment: None,
@@ -176,97 +128,65 @@ impl ToSectionNode for ProofGoal {
 
 impl ToSectionNode for Theorem {
     fn to_section_node(&self, id_prefix: &str) -> Section {
+        let mut content = vec![
+            // Theorem as structured mathematical content - using basic rich text for now
+            Section {
+                id: format!("{}-theorem", id_prefix),
+                title: Some(RichText {
+                    segments: vec![RichTextSegment::Text(self.name.clone())],
+                    alignment: None,
+                }),
+                content: SectionContentNode::RichText(RichText {
+                    segments: vec![
+                        RichTextSegment::StyledText {
+                            text: "Theorem: ".to_string(),
+                            styles: vec![TextStyle::Bold],
+                        },
+                        RichTextSegment::Text(self.name.clone()),
+                    ],
+                    alignment: None,
+                }),
+                metadata: vec![],
+                display_options: None,
+            },
+            // Show the formal statement as Judgement
+            self.proofs
+                .initial_goal
+                .to_section_node(&format!("{}-proof-goal", id_prefix)),
+            // Show the description as commentary
+            Section {
+                id: format!("{}-description", id_prefix),
+                title: Some(RichText {
+                    segments: vec![RichTextSegment::Text(self.name.clone())],
+                    alignment: None,
+                }),
+                content: SectionContentNode::RichText(RichText {
+                    segments: vec![
+                        RichTextSegment::StyledText {
+                            text: "Description: ".to_string(),
+                            styles: vec![TextStyle::Italic],
+                        },
+                        RichTextSegment::Text(self.description.clone()),
+                    ],
+                    alignment: None,
+                }),
+                metadata: vec![],
+                display_options: None,
+            },
+        ];
+
+        // Add proof structure if available
+        if self.proofs.node_values().next().is_some() {
+            content.push(self.proofs.to_section_node(&format!("{}-proof", id_prefix)));
+        }
+
         Section {
             id: format!("{}-main", id_prefix),
             title: Some(RichText {
                 segments: vec![RichTextSegment::Text(self.name.clone())],
                 alignment: None,
             }),
-            content: {
-                let mut content = vec![
-                    // Theorem as structured mathematical content
-                    SectionContentNode::StructuredMath(StructuredMathNode::TheoremLike {
-                        kind: TheoremLikeKind::Theorem,
-                        label: Some(self.id.clone()),
-                        statement: TheoremStatement::Content(vec![
-                            // Show the formal statement
-                            SectionContentNode::RichText(RichText {
-                                segments: vec![
-                                    RichTextSegment::StyledText {
-                                        text: "Statement: ".to_string(),
-                                        styles: vec![TextStyle::Bold],
-                                    },
-                                    RichTextSegment::Math(
-                                        self.proofs
-                                            .initial_goal
-                                            .statement
-                                            .data
-                                            .to_turn_math("theorem-statement".to_string()),
-                                    ),
-                                ],
-                                alignment: None,
-                            }),
-                            // Show quantifiers if any
-                            if !self.proofs.initial_goal.quantifiers.is_empty() {
-                                SectionContentNode::RichText(RichText {
-                                    segments: vec![RichTextSegment::StyledText {
-                                        text: "Quantifiers: ".to_string(),
-                                        styles: vec![TextStyle::Bold],
-                                    }],
-                                    alignment: None,
-                                })
-                            } else {
-                                SectionContentNode::RichText(RichText {
-                                    segments: vec![],
-                                    alignment: None,
-                                })
-                            },
-                            // Show value variables if any
-                            {
-                                let variable_assumptions: Vec<_> = self
-                                    .proofs
-                                    .initial_goal
-                                    .context
-                                    .iter()
-                                    .filter(|entry| {
-                                        matches!(entry.definition, DefinitionState::Abstract)
-                                    })
-                                    .collect();
-
-                                if !variable_assumptions.is_empty() {
-                                    SectionContentNode::RichText(RichText {
-                                        segments: vec![RichTextSegment::StyledText {
-                                            text: "Variables: ".to_string(),
-                                            styles: vec![TextStyle::Bold],
-                                        }],
-                                        alignment: None,
-                                    })
-                                } else {
-                                    SectionContentNode::RichText(RichText {
-                                        segments: vec![],
-                                        alignment: None,
-                                    })
-                                }
-                            },
-                            // Show the description as commentary
-                            SectionContentNode::RichText(RichText {
-                                segments: vec![
-                                    RichTextSegment::StyledText {
-                                        text: "Description: ".to_string(),
-                                        styles: vec![TextStyle::Italic],
-                                    },
-                                    RichTextSegment::Text(self.description.clone()),
-                                ],
-                                alignment: None,
-                            }),
-                        ]),
-                        proof: Some(self.proofs.to_proof_display()),
-                        abstraction_meta: None,
-                    }),
-                ];
-
-                content
-            },
+            content: SectionContentNode::SubSection(content),
             metadata: vec![
                 ("type".to_string(), "theorem".to_string()),
                 ("theorem_id".to_string(), self.id.clone()),
@@ -306,10 +226,10 @@ impl ToMathDocument for Theorem {
                     abstract_content: Some(Section {
                         id: format!("{}-abstract", id_prefix),
                         title: None,
-                        content: vec![SectionContentNode::RichText(RichText {
+                        content: SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text(self.description.clone())],
                             alignment: None,
-                        })],
+                        }),
                         metadata: vec![],
                         display_options: None,
                     }),
@@ -334,16 +254,44 @@ impl ToMathDocument for Theorem {
 #[cfg(test)]
 mod tests {
     use crate::subjects::math::formalism::automation::registry::get_theorem_registry;
-    use crate::subjects::math::theories::groups::theorems::prove_inverse_uniqueness;
+    use crate::subjects::math::theories::groups::theorems::group_inverse_uniqueness;
 
     use super::*;
+
+    #[test]
+    fn test_simple_theorem_creation() {
+        // Test just creating the theorem without rendering
+        let _ = get_theorem_registry();
+        let theorem = group_inverse_uniqueness();
+        // Just test that we can create the theorem
+        assert_eq!(theorem.id, "inverse_uniqueness");
+    }
+
+    #[test]
+    fn test_theorem_to_section_node() {
+        // Test just the to_section_node method
+        let _ = get_theorem_registry();
+        let theorem = group_inverse_uniqueness();
+        let section = theorem.to_section_node("test_id");
+        assert_eq!(section.id, "test_id-main");
+    }
+
+    #[test]
+    fn test_proof_goal_to_section_node() {
+        // Test just the ProofGoal::to_section_node method
+        let _ = get_theorem_registry();
+        let theorem = group_inverse_uniqueness();
+        let proof_goal = &theorem.proofs.initial_goal;
+        let section = proof_goal.to_section_node("test_id");
+        assert_eq!(section.id, "test_id-proof-goal");
+    }
 
     #[test]
     fn test_theorem_to_math_document() {
         // The call to get_theorem_registry() is enough to ensure axioms are registered.
         let _ = get_theorem_registry();
-        let theorem = prove_inverse_uniqueness();
+        let theorem = group_inverse_uniqueness();
         let math_document = theorem.to_math_document("test_id");
-        assert_eq!(math_document.id, "test_id_doc");
+        assert_eq!(math_document.id, "test_id-doc");
     }
 }

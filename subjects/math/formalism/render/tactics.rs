@@ -10,11 +10,10 @@ use crate::subjects::math::formalism::traits::search::Search;
 use crate::turn_render::Identifier;
 use crate::turn_render::math_node::{MathNode, MathNodeContent, ToTurnMath};
 use crate::turn_render::section_node::{
-    AutomatedTacticDisplay, CaseDisplayNode, InstantiationPair, LinkTarget, MatchVerification,
-    ProofDisplayNode, RewriteDirectionDisplay, RewriteStep, RichText, RichTextSegment,
-    SectionContentNode, SimplificationStep, SubstitutionPreview, TacticDisplayNode,
-    VariableBindingType,
+    BranchingContainer, BranchingNode, ContainerLayout, ContainerType, LayoutAlignment,
+    LayoutDirection, LayoutType, NodeState, NodeType, SectionContentNode,
 };
+use crate::turn_render::{LinkTarget, RichText, RichTextSegment, TextStyle};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -24,7 +23,7 @@ struct RewriteTransformationResult {
     after_expression: MathNode,
     theorem_lhs: MathNode,
     theorem_rhs: MathNode,
-    explanation: crate::turn_render::section_node::RichText,
+    explanation: crate::turn_render::RichText,
     transformation_meaningful: bool,
     proof_completed: bool,
 }
@@ -78,198 +77,106 @@ impl ProofStateTracker {
 }
 
 impl Tactic {
-    /// Convert this tactic to a rich display node for frontend rendering
-    pub fn to_display_node(&self) -> crate::turn_render::section_node::TacticDisplayNode {
-        match self {
-            Tactic::Rewrite {
-                using_rule,
-                target: at_target,
-                direction,
-                instantiations,
-            } => {
-                let (theorem_id, instantiation) = match using_rule {
-                    RelationSource::LocalAssumption(id) => (id.to_string(), HashMap::new()),
-                    RelationSource::Theorem(id, index) => (id.to_string(), HashMap::new()),
-                };
+    /// Convert a tactic application to BranchingContainer for export
+    pub fn to_branching_container(
+        &self,
+        target: &MathExpression,
+        theorem_id: &str,
+        direction: &RewriteDirection,
+        instantiation: &HashMap<Identifier, MathExpression>,
+        id_prefix: &str,
+    ) -> BranchingContainer {
+        let transformation =
+            self.compute_rewrite_transformation(target, theorem_id, direction, instantiation);
 
-                // Create a placeholder expression from the target string
-                let target_expr = MathExpression::Relation(Arc::new(MathRelation::True));
+        let mut content = Vec::new();
 
-                // Compute meaningful transformation
-                let transformation = self.compute_rewrite_transformation(
-                    &target_expr,
-                    &theorem_id,
-                    direction,
-                    &instantiation,
-                );
-
-                let direction_display = match direction {
-                    RewriteDirection::Forward => RewriteDirectionDisplay::LeftToRight {
-                        left_side: transformation.theorem_lhs.clone(),
-                        right_side: transformation.theorem_rhs.clone(),
-                        explanation: RichText {
-                            segments: vec![
-                                RichTextSegment::Text("Result: ".to_string()),
-                                RichTextSegment::Math(transformation.after_expression.clone()),
-                            ],
-                            alignment: None,
-                        },
-                    },
-                    RewriteDirection::Backward => RewriteDirectionDisplay::RightToLeft {
-                        left_side: transformation.theorem_rhs.clone(),
-                        right_side: transformation.theorem_lhs.clone(),
-                        explanation: RichText {
-                            segments: vec![
-                                RichTextSegment::Text("Result: ".to_string()),
-                                RichTextSegment::Math(transformation.after_expression.clone()),
-                            ],
-                            alignment: None,
-                        },
-                    },
-                };
-
-                let instantiation_pairs = instantiation
-                    .iter()
-                    .map(|(var, expr)| InstantiationPair {
-                        variable_name: RichText {
-                            segments: vec![RichTextSegment::Text(var.to_string())],
-                            alignment: None,
-                        },
-                        variable_value: expr.to_turn_math(format!("inst-{}", var.to_string())),
-                        type_information: None,
-                    })
-                    .collect();
-
-                TacticDisplayNode::Rewrite {
-                    target_expression: transformation.before_expression.clone(),
-                    theorem_name: RichText {
-                        segments: vec![RichTextSegment::Text(theorem_id.clone())],
-                        alignment: None,
-                    },
-                    theorem_rule: RichText {
-                        segments: vec![RichTextSegment::Text(format!("Theorem: {}", theorem_id))],
-                        alignment: None,
-                    },
-                    instantiation_mapping: instantiation_pairs,
-                    direction: direction_display,
-                    step_by_step_transformation: vec![],
-                    theorem_link: Some(LinkTarget::TheoremId(theorem_id.clone())),
-                }
-            }
-
-            Tactic::AssumeImplicationAntecedent { with_name } => {
-                TacticDisplayNode::AssumeImplicationAntecedent {
-                    implication_statement: MathNode {
-                        id: "implication".to_string(),
-                        content: Arc::new(MathNodeContent::Text("implication".to_string())),
-                    },
-                    hypothesis_name: RichText {
-                        segments: vec![RichTextSegment::Math(MathNode {
-                            id: "hyp-name".to_string(),
-                            content: Arc::new(MathNodeContent::Identifier(with_name.clone())),
-                        })],
-                        alignment: None,
-                    },
-                    antecedent: MathNode {
-                        id: "antecedent".to_string(),
-                        content: Arc::new(MathNodeContent::Text("antecedent".to_string())),
-                    },
-                    consequent: MathNode {
-                        id: "consequent".to_string(),
-                        content: Arc::new(MathNodeContent::Text("consequent".to_string())),
-                    },
-                    context_explanation: RichText {
-                        segments: vec![RichTextSegment::Text(format!(
-                            "Assume antecedent as hypothesis '{}'",
-                            with_name.to_string()
-                        ))],
-                        alignment: None,
-                    },
-                }
-            }
-
-            Tactic::ProvideWitness {
-                target_quantifier,
-                witness,
-            } => TacticDisplayNode::ProvideWitness {
-                target_quantifier: RichText {
-                    segments: vec![
-                        RichTextSegment::Text("∃".to_string()),
-                        RichTextSegment::Math(
-                            target_quantifier.to_turn_math("target-quantifier".to_string()),
-                        ),
-                    ],
-                    alignment: None,
+        // Add before expression
+        content.push(SectionContentNode::RichText(RichText {
+            segments: vec![
+                RichTextSegment::StyledText {
+                    text: "Before: ".to_string(),
+                    styles: vec![crate::turn_render::TextStyle::Bold],
                 },
-                witness_expression: witness.to_turn_math("witness".to_string()),
-                witness_explanation: RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Provide concrete witness for existential quantifier".to_string(),
-                    )],
-                    alignment: None,
+                RichTextSegment::Math(transformation.before_expression),
+            ],
+            alignment: None,
+        }));
+
+        // Add after expression
+        content.push(SectionContentNode::RichText(RichText {
+            segments: vec![
+                RichTextSegment::StyledText {
+                    text: "After: ".to_string(),
+                    styles: vec![crate::turn_render::TextStyle::Bold],
                 },
-                verification_steps: vec![],
+                RichTextSegment::Math(transformation.after_expression),
+            ],
+            alignment: None,
+        }));
+
+        // Add theorem information
+        content.push(SectionContentNode::RichText(RichText {
+            segments: vec![
+                RichTextSegment::StyledText {
+                    text: "Theorem: ".to_string(),
+                    styles: vec![crate::turn_render::TextStyle::Bold],
+                },
+                RichTextSegment::Math(transformation.theorem_lhs),
+                RichTextSegment::Text(" = ".to_string()),
+                RichTextSegment::Math(transformation.theorem_rhs),
+            ],
+            alignment: None,
+        }));
+
+        // Add explanation
+        content.push(SectionContentNode::RichText(transformation.explanation));
+
+        let tactic_node = BranchingNode {
+            node_id: format!("{}-tactic", id_prefix),
+            parent_id: None,
+            node_type: NodeType::ProofStep,
+            content,
+            node_metadata: vec![
+                ("theorem_id".to_string(), theorem_id.to_string()),
+                ("direction".to_string(), format!("{:?}", direction)),
+                (
+                    "meaningful".to_string(),
+                    transformation.transformation_meaningful.to_string(),
+                ),
+                (
+                    "completed".to_string(),
+                    transformation.proof_completed.to_string(),
+                ),
+            ],
+            children: Vec::new(),
+            node_state: if transformation.proof_completed {
+                NodeState::Completed
+            } else {
+                NodeState::Active
             },
+        };
 
-            Tactic::ByReflexivity => TacticDisplayNode::Auto {
-                automated_tactic_type: AutomatedTacticDisplay::Auto {
-                    search_tree: None,
-                    successful_tactics: vec![],
-                    failed_attempts: vec![],
-                },
-                search_depth: Some(0),
-                tactics_attempted: vec![],
-                successful_path: None,
-                execution_summary: RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Applied reflexivity (x = x)".to_string(),
-                    )],
-                    alignment: None,
-                },
-            },
-
-            Tactic::IntroduceLetBinding {
-                target_expression,
-                with_name,
-            } => TacticDisplayNode::IntroduceValueVariable {
-                variable_name: RichText {
-                    segments: vec![RichTextSegment::Text(with_name.to_string())],
-                    alignment: None,
-                },
-                variable_value: MathNode {
-                    id: "let-binding".to_string(),
-                    content: Arc::new(MathNodeContent::Text(target_expression.id.clone())),
-                },
-                binding_type: VariableBindingType::Let,
-                context_explanation: RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Let binding introduction".to_string(),
-                    )],
-                    alignment: None,
-                },
-                position: Some(0),
-            },
-
-            // Other tactics with placeholder display nodes
-            _ => TacticDisplayNode::Auto {
-                automated_tactic_type: AutomatedTacticDisplay::Auto {
-                    search_tree: None,
-                    successful_tactics: vec![],
-                    failed_attempts: vec![],
-                },
-                search_depth: Some(0),
-                tactics_attempted: vec![],
-                successful_path: None,
-                execution_summary: RichText {
-                    segments: vec![RichTextSegment::Text(format!(
-                        "Tactic not implemented for display: {:?}",
-                        self
-                    ))],
-                    alignment: None,
-                },
-            },
+        BranchingContainer {
+            container_id: format!("{}-tactic-application", id_prefix),
+            container_type: ContainerType::ProofForest,
+            nodes: vec![tactic_node],
+            layout_config: Some(ContainerLayout {
+                layout_type: LayoutType::Flow,
+                direction: LayoutDirection::LeftRight,
+                spacing: Some("10px".to_string()),
+                alignment: Some(LayoutAlignment::Start),
+                max_depth: Some(1),
+                collapse_branches: Some(false),
+            }),
+            container_metadata: vec![
+                ("type".to_string(), "tactic_application".to_string()),
+                ("theorem_id".to_string(), theorem_id.to_string()),
+            ],
         }
     }
+
+    // to_tactic_application_node method removed since proof types are not exported from section_node
 
     /// Compute meaningful rewrite transformation showing actual mathematical changes
     fn compute_rewrite_transformation(
@@ -372,9 +279,7 @@ impl Tactic {
                         }
                     };
 
-                    return result_expr
-                        .unwrap(&vec![])
-                        .to_turn_math("after-expr".to_string());
+                    return result_expr.to_turn_math("after-expr".to_string());
                 }
             }
         }
@@ -469,12 +374,7 @@ impl Tactic {
         let registry = get_theorem_registry();
         if let Some(theorem) = registry.get(theorem_id) {
             if let Some(concrete_rel) = theorem.proofs.initial_goal.statement.concrete_value() {
-                if let crate::subjects::math::formalism::relations::MathRelation::Equal {
-                    left,
-                    right,
-                    ..
-                } = concrete_rel.as_ref()
-                {
+                if let MathRelation::Equal { left, right, .. } = concrete_rel.as_ref() {
                     // Apply instantiation
                     let lhs = left.clone();
                     let rhs = right.clone();
@@ -483,14 +383,46 @@ impl Tactic {
                     // For now, we'll show the theorem as-is for simplicity
 
                     return (
-                        lhs.data
-                            .unwrap(&vec![])
-                            .to_turn_math("theorem-lhs".to_string()),
-                        rhs.data
-                            .unwrap(&vec![])
-                            .to_turn_math("theorem-rhs".to_string()),
+                        lhs.data.to_turn_math("theorem-lhs".to_string()),
+                        rhs.data.to_turn_math("theorem-rhs".to_string()),
+                    );
+                } else {
+                    // Handle non-equality theorems
+                    return (
+                        MathNode {
+                            id: "theorem-lhs".to_string(),
+                            content: Arc::new(MathNodeContent::Text(format!(
+                                "Theorem '{}' is not an equality",
+                                theorem_id
+                            ))),
+                        },
+                        MathNode {
+                            id: "theorem-rhs".to_string(),
+                            content: Arc::new(MathNodeContent::Text(format!(
+                                "Theorem '{}' is not an equality",
+                                theorem_id
+                            ))),
+                        },
                     );
                 }
+            } else {
+                // Theorem statement is not concrete
+                return (
+                    MathNode {
+                        id: "theorem-lhs".to_string(),
+                        content: Arc::new(MathNodeContent::Text(format!(
+                            "Theorem '{}' statement is not concrete",
+                            theorem_id
+                        ))),
+                    },
+                    MathNode {
+                        id: "theorem-rhs".to_string(),
+                        content: Arc::new(MathNodeContent::Text(format!(
+                            "Theorem '{}' statement is not concrete",
+                            theorem_id
+                        ))),
+                    },
+                );
             }
         }
 
@@ -499,14 +431,14 @@ impl Tactic {
             MathNode {
                 id: "theorem-lhs".to_string(),
                 content: Arc::new(MathNodeContent::Text(format!(
-                    "Failed to retrieve LHS of theorem '{}'",
+                    "Theorem '{}' not found in registry",
                     theorem_id
                 ))),
             },
             MathNode {
                 id: "theorem-rhs".to_string(),
                 content: Arc::new(MathNodeContent::Text(format!(
-                    "Failed to retrieve RHS of theorem '{}'",
+                    "Theorem '{}' not found in registry",
                     theorem_id
                 ))),
             },

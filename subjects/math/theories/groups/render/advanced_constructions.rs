@@ -43,24 +43,41 @@ impl ToSectionNode for WreathProductGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![(
                 "type".to_string(),
                 "WreathProductGroupDefinition".to_string(),
@@ -147,24 +164,13 @@ impl ToSectionNode for CentralProductGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
-                        alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
-                    }),
-                    selectable_properties: vec![],
-                },
-            )],
+            content: SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::StyledText {
+                    text: format!("Definition: {}", title),
+                    styles: vec![TextStyle::Bold],
+                }],
+                alignment: None,
+            }),
             metadata: vec![(
                 "type".to_string(),
                 "CentralProductGroupDefinition".to_string(),
@@ -182,12 +188,12 @@ impl ToSectionNode for CentralProductGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "A central product group formed by identifying the centers of component groups. This construction allows for combining groups while maintaining certain structural properties.".to_string(),
                 )],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }
@@ -275,24 +281,41 @@ impl ToSectionNode for PullbackGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "PullbackGroupDefinition".to_string())],
             display_options: None,
         }
@@ -307,13 +330,13 @@ impl ToSectionNode for PullbackGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The pullback (fibered product) G ×_H K of groups over a common target H."
                         .to_string(),
                 )],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }
@@ -401,24 +424,41 @@ impl ToSectionNode for RestrictionGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "RestrictionGroupDefinition".to_string())],
             display_options: None,
         }
@@ -453,12 +493,12 @@ impl ToSectionNode for RestrictionGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "The restriction G|_S of a group G to a subset S satisfying specific conditions.".to_string(),
                 )],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }

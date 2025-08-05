@@ -711,30 +711,45 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                 segments: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Basic probability spaces and measures.".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::StructuredMath(StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text("Fundamental Concepts".to_string())],
-                        alignment: None,
-                    },
-                    formal_term: None,
-                    label: Some("Fundamental probability concepts".to_string()),
-                    body: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-basic-intro", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Basic probability spaces and measures.".to_string(),
                         )],
                         alignment: None,
-                    })],
-                    abstraction_meta: None,
-                    selectable_properties: vec![],
-                }),
-            ],
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-fundamental-concepts", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: "Definition: Fundamental Concepts".to_string(),
+                            styles: vec![TextStyle::Bold],
+                        }],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-basic-description", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Basic probability spaces and measures.".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![],
             display_options: None,
         };
@@ -745,30 +760,45 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                 segments: vec![RichTextSegment::Text("Continuous Probability".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Continuous probability spaces and measure theory.".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::StructuredMath(StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text("Continuous Probability".to_string())],
-                        alignment: None,
-                    },
-                    formal_term: None,
-                    label: Some("Continuous probability theory".to_string()),
-                    body: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-continuous-intro", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Continuous probability spaces and measure theory.".to_string(),
                         )],
                         alignment: None,
-                    })],
-                    abstraction_meta: None,
-                    selectable_properties: vec![],
-                }),
-            ],
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-continuous-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: "Definition: Continuous Probability".to_string(),
+                            styles: vec![TextStyle::Bold],
+                        }],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-continuous-description", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Continuous probability spaces and measure theory.".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![],
             display_options: None,
         };
@@ -779,30 +809,45 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                 segments: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Time-dependent random phenomena and processes.".to_string(),
-                    )],
-                    alignment: None,
-                }),
-                SectionContentNode::StructuredMath(StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text("Stochastic Processes".to_string())],
-                        alignment: None,
-                    },
-                    formal_term: None,
-                    label: Some("Stochastic processes and Markov chains".to_string()),
-                    body: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-processes-intro", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
                         segments: vec![RichTextSegment::Text(
                             "Time-dependent random phenomena and processes.".to_string(),
                         )],
                         alignment: None,
-                    })],
-                    abstraction_meta: None,
-                    selectable_properties: vec![],
-                }),
-            ],
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-processes-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: "Definition: Stochastic Processes".to_string(),
+                            styles: vec![TextStyle::Bold],
+                        }],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-processes-description", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::Text(
+                            "Time-dependent random phenomena and processes.".to_string(),
+                        )],
+                        alignment: None,
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![],
             display_options: None,
         };
@@ -833,12 +878,12 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                     abstract_content: Some(Section {
                         id: format!("{}.abstract", id_prefix),
                         title: None,
-                        content: vec![SectionContentNode::RichText(RichText {
+                        content: SectionContentNode::RichText(RichText {
                             segments: vec![RichTextSegment::Text(
                                 "Probability theory provides a rigorous mathematical framework for analyzing randomness and uncertainty. This comprehensive overview covers probability spaces, random variables, distributions, and stochastic processes.".to_string(),
                             )],
                             alignment: None,
-                        })],
+                        }),
                         metadata: vec![],
                         display_options: None,
                     }),
@@ -953,21 +998,28 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                         segments: vec![RichTextSegment::Text("Expression".to_string())],
                         alignment: None,
                     }),
-                    content: vec![SectionContentNode::StructuredMath(
-                        StructuredMathNode::Definition {
-                            term_display: RichText {
-                                segments: vec![RichTextSegment::Math(
-                                    expr.to_turn_math(id.clone()),
-                                )],
+                    content: SectionContentNode::SubSection(vec![
+                        Section {
+                            id: format!("{}-probability-expression-definition", id),
+                            title: None,
+                            content: SectionContentNode::RichText(RichText {
+                                segments: vec![RichTextSegment::StyledText {
+                                    text: "Definition: Probability Expression".to_string(),
+                                    styles: vec![TextStyle::Bold],
+                                }],
                                 alignment: None,
-                            },
-                            formal_term: None,
-                            label: Some("Probability Expression".to_string()),
-                            body: vec![],
-                            abstraction_meta: None,
-                            selectable_properties: vec![],
+                            }),
+                            metadata: vec![],
+                            display_options: None,
                         },
-                    )],
+                        Section {
+                            id: format!("{}-probability-expression-math", id),
+                            title: None,
+                            content: SectionContentNode::Math(expr.to_turn_math(id.clone())),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                    ]),
                     metadata: vec![],
                     display_options: None,
                 };
@@ -1028,19 +1080,28 @@ impl TheoryExporter<ProbabilitySpace, ProbabilityExpression, ProbabilityRelation
                         segments: vec![RichTextSegment::Text("Relation".to_string())],
                         alignment: None,
                     }),
-                    content: vec![SectionContentNode::StructuredMath(
-                        StructuredMathNode::Definition {
-                            term_display: RichText {
-                                segments: vec![RichTextSegment::Math(rel.to_turn_math(id.clone()))],
+                    content: SectionContentNode::SubSection(vec![
+                        Section {
+                            id: format!("{}-probability-relation-definition", id),
+                            title: None,
+                            content: SectionContentNode::RichText(RichText {
+                                segments: vec![RichTextSegment::StyledText {
+                                    text: "Definition: Probability Relation".to_string(),
+                                    styles: vec![TextStyle::Bold],
+                                }],
                                 alignment: None,
-                            },
-                            formal_term: None,
-                            label: Some("Probability Relation".to_string()),
-                            body: vec![],
-                            abstraction_meta: None,
-                            selectable_properties: vec![],
+                            }),
+                            metadata: vec![],
+                            display_options: None,
                         },
-                    )],
+                        Section {
+                            id: format!("{}-probability-relation-math", id),
+                            title: None,
+                            content: SectionContentNode::Math(rel.to_turn_math(id.clone())),
+                            metadata: vec![],
+                            display_options: None,
+                        },
+                    ]),
                     metadata: vec![],
                     display_options: None,
                 };

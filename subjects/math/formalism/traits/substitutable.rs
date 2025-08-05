@@ -109,10 +109,10 @@ where
                                 located_expr
                             } else {
                                 // If lookup fails, return the original variable unchanged
-                                println!(
-                                    "DEBUG: lookup failed for {} in target: {:#?}",
-                                    id, target
-                                );
+                                // println!(
+                                //     "DEBUG: lookup failed for {} in target: {:#?}",
+                                //     id, target
+                                // );
                                 self.clone()
                             }
                         }

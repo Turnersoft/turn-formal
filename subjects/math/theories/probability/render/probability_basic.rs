@@ -12,14 +12,12 @@ impl ToSectionNode for GenericProbabilitySpace {
                 segments: vec![RichTextSegment::Text("Generic Probability Space".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "A probability space (Ω, ℱ, P) consists of a sample space Ω, a σ-algebra ℱ of events, and a probability measure P.".to_string()
-                    )],
-                    alignment: None,
-                })
-            ],
+            content: SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::Text(
+                    "A probability space (Ω, ℱ, P) consists of a sample space Ω, a σ-algebra ℱ of events, and a probability measure P.".to_string()
+                )],
+                alignment: None,
+            }),
             metadata: vec![],
             display_options: None,
         }
@@ -90,14 +88,12 @@ impl GenericProbabilitySpace {
                 segments: vec![RichTextSegment::Text("Probability Space Schema".to_string())],
                 alignment: None,
             }),
-            content: vec![
-                SectionContentNode::RichText(RichText {
-                    segments: vec![RichTextSegment::Text(
-                        "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure.".to_string()
-                    )],
-                    alignment: None,
-                })
-            ],
+            content: SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::Text(
+                    "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure.".to_string()
+                )],
+                alignment: None,
+            }),
             metadata: vec![],
             display_options: None,
         };

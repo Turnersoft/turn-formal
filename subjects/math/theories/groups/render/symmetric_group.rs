@@ -6,7 +6,7 @@ use crate::subjects::math::formalism::traits::abstraction_level::{
     AbstractionLevel, GetAbstractionLevel,
 };
 use crate::subjects::math::theories::groups::definitions::SymmetricGroup;
-use crate::turn_render::*;
+use crate::turn_render::{CollapsibleBlockNode, TextStyle, *};
 
 impl ToTurnMath for SymmetricGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
@@ -227,28 +227,44 @@ impl ToSectionNode for SymmetricGroup {
                 segments: title_segments,
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title_text.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title_text),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title_text)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: if selectable_props.is_empty() {
-                        vec![]
-                    } else {
-                        selectable_props
-                    },
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!(
+                            "Definition ({})",
+                            title_text
+                        ))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![("type".to_string(), "SymmetricGroupDefinition".to_string())],
             display_options: None,
         }

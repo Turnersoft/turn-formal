@@ -45,24 +45,41 @@ impl ToSectionNode for ModularAdditiveGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![(
                 "type".to_string(),
                 "ModularAdditiveGroupDefinition".to_string(),
@@ -157,13 +174,13 @@ impl ModularAdditiveGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "The additive group ℤ/{} of integers modulo {} under addition. This is a cyclic group of order {}.",
                     self.modulus, self.modulus, self.modulus
                 ))],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }
@@ -200,24 +217,41 @@ impl ToSectionNode for ModularMultiplicativeGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::StructuredMath(
-                StructuredMathNode::Definition {
-                    term_display: RichText {
-                        segments: vec![RichTextSegment::Text(title.clone())],
+            content: SectionContentNode::SubSection(vec![
+                Section {
+                    id: format!("{}-definition-text", id_prefix),
+                    title: None,
+                    content: SectionContentNode::RichText(RichText {
+                        segments: vec![RichTextSegment::StyledText {
+                            text: format!("Definition: {}", title),
+                            styles: vec![TextStyle::Bold],
+                        }],
                         alignment: None,
-                    },
-                    formal_term: Some(self.core.to_turn_math(format!("{}-formalTerm", id_prefix))),
-                    label: Some(format!("Definition ({})", title)),
-                    body: content_nodes,
-                    abstraction_meta: Some(AbstractionMetadata {
-                        level: Some(formalism_obj_level as u8),
-                        source_template_id: None,
-                        specified_parameters: vec![],
-                        universally_quantified_properties: vec![],
                     }),
-                    selectable_properties: vec![],
+                    metadata: vec![],
+                    display_options: None,
                 },
-            )],
+                Section {
+                    id: format!("{}-formal-term", id_prefix),
+                    title: None,
+                    content: SectionContentNode::Math(
+                        self.core.to_turn_math(format!("{}-formalTerm", id_prefix)),
+                    ),
+                    metadata: vec![],
+                    display_options: None,
+                },
+                Section {
+                    id: format!("{}-collapsible-definition", id_prefix),
+                    title: None,
+                    content: SectionContentNode::CollapsibleBlock(CollapsibleBlockNode {
+                        summary: vec![RichTextSegment::Text(format!("Definition ({})", title))],
+                        details: content_nodes,
+                        initially_collapsed: Some(false),
+                    }),
+                    metadata: vec![],
+                    display_options: None,
+                },
+            ]),
             metadata: vec![(
                 "type".to_string(),
                 "ModularMultiplicativeGroupDefinition".to_string(),
@@ -312,13 +346,13 @@ impl ModularMultiplicativeGroup {
                 segments: vec![RichTextSegment::Text(title.clone())],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(format!(
                     "The multiplicative group (ℤ/{})× of units modulo {} under multiplication. This group consists of integers coprime to the modulus.",
                     self.modulus, self.modulus
                 ))],
                 alignment: None,
-            })],
+            }),
             metadata: vec![("schema_level".to_string(), "1".to_string())],
             display_options: None,
         }

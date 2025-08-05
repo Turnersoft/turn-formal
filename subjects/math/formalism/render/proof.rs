@@ -1,46 +1,45 @@
 use super::super::proof::{ProofForest, ProofNode};
 use crate::{
     subjects::math::formalism::proof::{NodeRole, SubgoalCombination},
-    turn_render::section_node::{
-        ProofDisplayNode, ProofStepNode, RichText, RichTextSegment, ToProofDisplay,
+    turn_render::{
+        BranchingContainer, BranchingNode, ContainerLayout, ContainerType, LayoutAlignment,
+        LayoutDirection, LayoutType, NodeState, NodeType, RichText, RichTextSegment, Section,
+        SectionContentNode, ToSectionNode,
     },
 };
 
 impl ProofForest {
-    /// Build a tree of ProofDisplayNodes from a single root node
-    fn build_proof_tree(&self, node: &ProofNode) -> ProofDisplayNode {
-        let mut steps = Vec::new();
+    // build_proof_tree method removed since proof types are not exported from section_node
 
-        // Add this node as a step
-        steps.push(node.to_tactic_display_node(self));
+    /// Convert ProofForest to BranchingContainer for export
+    pub fn to_branching_container(&self, id_prefix: &str) -> BranchingContainer {
+        let mut nodes = Vec::new();
 
-        // For each child, either add it as a step or create a sub-tree
-        for child_id in &node.children {
-            if let Some(child_node) = self.get_node(child_id) {
-                if child_node.children.is_empty() {
-                    // Leaf node - add as a step
-                    steps.push(child_node.to_tactic_display_node(self));
-                } else {
-                    // Non-leaf node - recursively build its subtree
-                    let child_tree = self.build_proof_tree(child_node);
-                    // Add the child tree's steps to our steps
-                    steps.extend(child_tree.steps);
-                }
-            }
+        // Convert all ProofNodes to BranchingNodes using public methods
+        for node in self.node_values() {
+            let branching_node = node.to_branching_node(id_prefix);
+            nodes.push(branching_node);
         }
 
-        // Determine if this branch is complete
-        let is_complete = self.is_branch_complete_for_display(&node.id);
-
-        ProofDisplayNode {
-            title: None,
-            strategy: vec![],
-            steps,
-            qed_symbol: if is_complete {
-                Some("∎".to_string())
-            } else {
-                None
-            },
+        BranchingContainer {
+            container_id: format!("{}-proof-forest", id_prefix),
+            container_type: ContainerType::ProofForest,
+            nodes,
+            layout_config: Some(ContainerLayout {
+                layout_type: LayoutType::Tree,
+                direction: LayoutDirection::TopDown,
+                spacing: Some("20px".to_string()),
+                alignment: Some(LayoutAlignment::Center),
+                max_depth: Some(5),
+                collapse_branches: Some(true),
+            }),
+            container_metadata: vec![
+                ("type".to_string(), "proof_forest".to_string()),
+                (
+                    "initial_goal".to_string(),
+                    format!("{:?}", self.initial_goal),
+                ),
+            ],
         }
     }
 
@@ -101,126 +100,120 @@ impl ProofForest {
     }
 }
 
-impl ToProofDisplay for ProofForest {
-    fn to_proof_display(&self) -> ProofDisplayNode {
-        // If there's only one root, return its tree directly
-        if self.roots.len() == 1 {
-            if let Some(root_node) = self.get_node(&self.roots[0]) {
-                let mut tree = self.build_proof_tree(root_node);
-                tree.title = Some(RichText {
-                    segments: vec![RichTextSegment::Text("Proof".to_string())],
-                    alignment: None,
-                });
-                return tree;
-            }
+impl ProofNode {
+    /// Convert ProofNode to BranchingNode for export
+    pub fn to_branching_node(&self, id_prefix: &str) -> BranchingNode {
+        let node_type = match &self.role {
+            NodeRole::Goal(_) => NodeType::ProofGoal,
+            NodeRole::SubgoalManager { .. } => NodeType::ProofManager,
+            NodeRole::Completed => NodeType::ProofCompleted,
+            NodeRole::Disproved(_) => NodeType::ProofDisproved,
+            NodeRole::AutomatedTacticStep { .. } => NodeType::ProofStep,
+            NodeRole::RewriteStep { .. } => NodeType::ProofStep,
+        };
+
+        let node_state = match &self.role {
+            NodeRole::Completed => NodeState::Completed,
+            NodeRole::Disproved(_) => NodeState::Disproved,
+            NodeRole::Goal(_) => NodeState::Active,
+            _ => NodeState::Active,
+        };
+
+        let mut content = Vec::new();
+
+        // Add tactic description
+        if let Some(description) = &self.description {
+            content.push(SectionContentNode::RichText(description.clone()));
         }
 
-        // Multiple roots - create a master node containing all trees
-        let mut all_steps = Vec::new();
-        for (i, root_id) in self.roots.iter().enumerate() {
-            if let Some(root_node) = self.get_node(root_id) {
-                let tree = self.build_proof_tree(root_node);
-
-                // Add a branch header if multiple roots
-                if self.roots.len() > 1 {
-                    all_steps.push(ProofStepNode::TacticApplication(
-                        crate::turn_render::section_node::TacticDisplayNode::Auto {
-                            automated_tactic_type:
-                                crate::turn_render::section_node::AutomatedTacticDisplay::Auto {
-                                    search_tree: None,
-                                    successful_tactics: vec![],
-                                    failed_attempts: vec![],
-                                },
-                            search_depth: Some(0),
-                            tactics_attempted: vec![],
-                            successful_path: None,
-                            execution_summary: RichText {
-                                segments: vec![RichTextSegment::Text(format!("Branch {}", i + 1))],
-                                alignment: None,
-                            },
-                        },
-                    ));
-                }
-
-                all_steps.extend(tree.steps);
-            }
+        // Add goal content if it's a goal node
+        if let NodeRole::Goal(goal) = &self.role {
+            content.push(SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::StyledText {
+                    text: "Goal: ".to_string(),
+                    styles: vec![crate::turn_render::TextStyle::Bold],
+                }],
+                alignment: None,
+            }));
+            // Note: Full goal rendering would require converting ProofGoal to SectionContentNode
+            // For now, we'll add a placeholder
+            content.push(SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::Text(format!(
+                    "{:?} variables, {:?} quantifiers",
+                    goal.context.len(),
+                    goal.quantifiers.len()
+                ))],
+                alignment: None,
+            }));
         }
 
-        // Check if the entire proof is complete
-        let is_fully_complete = self
-            .roots
-            .iter()
-            .all(|root_id| self.is_branch_complete_for_display(root_id));
+        // Add tactic information
+        content.push(SectionContentNode::RichText(RichText {
+            segments: vec![
+                RichTextSegment::StyledText {
+                    text: "Tactic: ".to_string(),
+                    styles: vec![crate::turn_render::TextStyle::Bold],
+                },
+                RichTextSegment::Text(format!("{:?}", self.tactic)),
+            ],
+            alignment: None,
+        }));
 
-        ProofDisplayNode {
+        BranchingNode {
+            node_id: self.id.clone(),
+            parent_id: self.parent.clone(),
+            node_type,
+            content,
+            node_metadata: vec![
+                ("tactic".to_string(), format!("{:?}", self.tactic)),
+                (
+                    "children_count".to_string(),
+                    self.children.len().to_string(),
+                ),
+            ],
+            children: self.children.clone(),
+            node_state,
+        }
+    }
+}
+
+// ToProofDisplay trait implementation removed since proof types are not exported from section_node
+
+impl ToSectionNode for ProofForest {
+    fn to_section_node(&self, id_prefix: &str) -> Section {
+        let mut content = vec![];
+
+        for node in self.node_values() {
+            content.push(node.to_section_node(&format!("{}-node", id_prefix)));
+        }
+        Section {
+            id: format!("{}-proof-forest", id_prefix),
             title: Some(RichText {
-                segments: vec![RichTextSegment::Text("Proof".to_string())],
+                segments: vec![RichTextSegment::Text("Proof Forest".to_string())],
                 alignment: None,
             }),
-            strategy: vec![],
-            steps: all_steps,
-            qed_symbol: if is_fully_complete {
-                Some("∎".to_string())
-            } else {
-                None
-            },
-        }
-    }
-
-    fn to_proof_display_vec(&self) -> Vec<ProofDisplayNode> {
-        // Return each root as a separate proof tree
-        let mut trees = Vec::new();
-
-        for (i, root_id) in self.roots.iter().enumerate() {
-            if let Some(root_node) = self.get_node(root_id) {
-                let mut tree = self.build_proof_tree(root_node);
-                tree.title = Some(RichText {
-                    segments: vec![RichTextSegment::Text(if self.roots.len() > 1 {
-                        format!("Proof Branch {}", i + 1)
-                    } else {
-                        "Proof".to_string()
-                    })],
-                    alignment: None,
-                });
-                trees.push(tree);
-            }
-        }
-
-        if trees.is_empty() {
-            // Fallback: return a single empty proof
-            vec![ProofDisplayNode {
-                title: Some(RichText {
-                    segments: vec![RichTextSegment::Text("Proof".to_string())],
-                    alignment: None,
-                }),
-                strategy: vec![],
-                steps: vec![],
-                qed_symbol: None,
-            }]
-        } else {
-            trees
+            content: SectionContentNode::SubSection(content),
+            metadata: vec![],
+            display_options: None,
         }
     }
 }
 
-impl ProofNode {
-    fn to_tactic_display_node(&self, _forest: &ProofForest) -> ProofStepNode {
-        let tactic_display = self.tactic.to_display_node();
-        ProofStepNode::TacticApplication(tactic_display)
-    }
-}
-
-impl ToProofDisplay for ProofNode {
-    fn to_proof_display(&self) -> ProofDisplayNode {
-        // For a single ProofNode, create a simplified display
-        let tactic_display = self.tactic.to_display_node();
-        let step = ProofStepNode::TacticApplication(tactic_display);
-
-        ProofDisplayNode {
-            title: None,
-            strategy: vec![],
-            steps: vec![step],
-            qed_symbol: None,
+impl ToSectionNode for ProofNode {
+    fn to_section_node(&self, id_prefix: &str) -> Section {
+        // For now, just create a simple section with the node info
+        Section {
+            id: format!("{}-proof-node", id_prefix),
+            title: Some(RichText {
+                segments: vec![RichTextSegment::Text(format!("Proof Node {}", self.id))],
+                alignment: None,
+            }),
+            content: SectionContentNode::RichText(RichText {
+                segments: vec![RichTextSegment::Text(format!("Tactic: {:?}", self.tactic))],
+                alignment: None,
+            }),
+            metadata: vec![],
+            display_options: None,
         }
     }
 }

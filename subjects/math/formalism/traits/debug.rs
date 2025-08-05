@@ -490,6 +490,9 @@ fn rich_text_to_string(rich_text: &RichText) -> String {
                 .collect::<String>(),
             RichTextSegment::FootnoteReference(id) => format!("[{}]", id),
             RichTextSegment::CodeInline(code) => format!("`{}`", code),
+            RichTextSegment::InteractiveVariable { display_name, .. } => {
+                format!("[{}]", display_name)
+            }
         })
         .collect::<Vec<String>>()
         .join("")

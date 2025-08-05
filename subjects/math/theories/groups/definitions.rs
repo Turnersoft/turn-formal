@@ -13,7 +13,8 @@ use super::super::zfc::definitions::{Set, SetProperty};
 
 use crate::subjects::math::theories::number_theory::{self, NumberTheoryRelation};
 use crate::turn_render::math_node::MathNode;
-use crate::turn_render::section_node::{RichText, RichTextSegment, Section, SectionContentNode};
+use crate::turn_render::section_node::{Section, SectionContentNode};
+use crate::turn_render::{RichText, RichTextSegment};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{self, Display};

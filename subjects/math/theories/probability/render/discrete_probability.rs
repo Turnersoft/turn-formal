@@ -11,13 +11,13 @@ impl ToSectionNode for DiscreteProbabilitySpace {
                 )],
                 alignment: None,
             }),
-            content: vec![SectionContentNode::RichText(RichText {
+            content: SectionContentNode::RichText(RichText {
                 segments: vec![RichTextSegment::Text(
                     "A discrete probability space with finite or countable sample space."
                         .to_string(),
                 )],
                 alignment: None,
-            })],
+            }),
             metadata: vec![],
             display_options: None,
         }

@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1751646074",
+  "exported_at": "1754407929",
   "content": [
     {
       "id": "generic_probability_space.generic.schema.doc",
@@ -46,18 +46,16 @@
                   ],
                   "alignment": null
                 },
-                "content": [
-                  {
-                    "RichText": {
-                      "segments": [
-                        {
-                          "Text": "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure."
-                        }
-                      ],
-                      "alignment": null
-                    }
+                "content": {
+                  "RichText": {
+                    "segments": [
+                      {
+                        "Text": "Abstract schema for probability spaces with sample space, σ-algebra, and probability measure."
+                      }
+                    ],
+                    "alignment": null
                   }
-                ],
+                },
                 "metadata": [],
                 "display_options": null
               }
@@ -113,61 +111,74 @@
                   ],
                   "alignment": null
                 },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "Definition": {
-                        "term_display": {
+                "content": {
+                  "SubSection": [
+                    {
+                      "id": "event_probability-probability-expression-definition",
+                      "title": null,
+                      "content": {
+                        "RichText": {
                           "segments": [
                             {
-                              "Math": {
-                                "id": "event_probability",
-                                "content": {
-                                  "FunctionCall": {
-                                    "name": {
-                                      "id": "event_probability-prob-name",
-                                      "content": {
-                                        "Identifier": {
-                                          "body": "P",
-                                          "pre_script": null,
-                                          "mid_script": null,
-                                          "post_script": null,
-                                          "primes": 0,
-                                          "is_function": true
-                                        }
-                                      }
-                                    },
-                                    "parameters": [
-                                      {
-                                        "id": "event_probability-event",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "A",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      }
-                                    ]
-                                  }
-                                }
+                              "StyledText": {
+                                "text": "Definition: Probability Expression",
+                                "styles": [
+                                  "Bold"
+                                ]
                               }
                             }
                           ],
                           "alignment": null
-                        },
-                        "formal_term": null,
-                        "label": "Probability Expression",
-                        "body": [],
-                        "abstraction_meta": null,
-                        "selectable_properties": []
-                      }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "event_probability-probability-expression-math",
+                      "title": null,
+                      "content": {
+                        "Math": {
+                          "id": "event_probability",
+                          "content": {
+                            "FunctionCall": {
+                              "name": {
+                                "id": "event_probability-prob-name",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "P",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": true
+                                  }
+                                }
+                              },
+                              "parameters": [
+                                {
+                                  "id": "event_probability-event",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "A",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
                     }
-                  }
-                ],
+                  ]
+                },
                 "metadata": [],
                 "display_options": null
               }
@@ -223,61 +234,74 @@
                   ],
                   "alignment": null
                 },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "Definition": {
-                        "term_display": {
+                "content": {
+                  "SubSection": [
+                    {
+                      "id": "expected_value-probability-expression-definition",
+                      "title": null,
+                      "content": {
+                        "RichText": {
                           "segments": [
                             {
-                              "Math": {
-                                "id": "expected_value",
-                                "content": {
-                                  "FunctionCall": {
-                                    "name": {
-                                      "id": "expected_value-exp-name",
-                                      "content": {
-                                        "Identifier": {
-                                          "body": "E",
-                                          "pre_script": null,
-                                          "mid_script": null,
-                                          "post_script": null,
-                                          "primes": 0,
-                                          "is_function": true
-                                        }
-                                      }
-                                    },
-                                    "parameters": [
-                                      {
-                                        "id": "expected_value-rv",
-                                        "content": {
-                                          "Identifier": {
-                                            "body": "X",
-                                            "pre_script": null,
-                                            "mid_script": null,
-                                            "post_script": null,
-                                            "primes": 0,
-                                            "is_function": false
-                                          }
-                                        }
-                                      }
-                                    ]
-                                  }
-                                }
+                              "StyledText": {
+                                "text": "Definition: Probability Expression",
+                                "styles": [
+                                  "Bold"
+                                ]
                               }
                             }
                           ],
                           "alignment": null
-                        },
-                        "formal_term": null,
-                        "label": "Probability Expression",
-                        "body": [],
-                        "abstraction_meta": null,
-                        "selectable_properties": []
-                      }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "expected_value-probability-expression-math",
+                      "title": null,
+                      "content": {
+                        "Math": {
+                          "id": "expected_value",
+                          "content": {
+                            "FunctionCall": {
+                              "name": {
+                                "id": "expected_value-exp-name",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "E",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": true
+                                  }
+                                }
+                              },
+                              "parameters": [
+                                {
+                                  "id": "expected_value-rv",
+                                  "content": {
+                                    "Identifier": {
+                                      "body": "X",
+                                      "pre_script": null,
+                                      "mid_script": null,
+                                      "post_script": null,
+                                      "primes": 0,
+                                      "is_function": false
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
                     }
-                  }
-                ],
+                  ]
+                },
                 "metadata": [],
                 "display_options": null
               }
@@ -333,60 +357,73 @@
                   ],
                   "alignment": null
                 },
-                "content": [
-                  {
-                    "StructuredMath": {
-                      "Definition": {
-                        "term_display": {
+                "content": {
+                  "SubSection": [
+                    {
+                      "id": "events_independent-probability-relation-definition",
+                      "title": null,
+                      "content": {
+                        "RichText": {
                           "segments": [
                             {
-                              "Math": {
-                                "id": "events_independent",
-                                "content": {
-                                  "Relationship": {
-                                    "lhs": {
-                                      "id": "events_independent-lhs",
-                                      "content": {
-                                        "Identifier": {
-                                          "body": "P(A∩B)",
-                                          "pre_script": null,
-                                          "mid_script": null,
-                                          "post_script": null,
-                                          "primes": 0,
-                                          "is_function": false
-                                        }
-                                      }
-                                    },
-                                    "rhs": {
-                                      "id": "events_independent-rhs",
-                                      "content": {
-                                        "Identifier": {
-                                          "body": "P(A)P(B)",
-                                          "pre_script": null,
-                                          "mid_script": null,
-                                          "post_script": null,
-                                          "primes": 0,
-                                          "is_function": false
-                                        }
-                                      }
-                                    },
-                                    "operator": "Equal"
-                                  }
-                                }
+                              "StyledText": {
+                                "text": "Definition: Probability Relation",
+                                "styles": [
+                                  "Bold"
+                                ]
                               }
                             }
                           ],
                           "alignment": null
-                        },
-                        "formal_term": null,
-                        "label": "Probability Relation",
-                        "body": [],
-                        "abstraction_meta": null,
-                        "selectable_properties": []
-                      }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "events_independent-probability-relation-math",
+                      "title": null,
+                      "content": {
+                        "Math": {
+                          "id": "events_independent",
+                          "content": {
+                            "Relationship": {
+                              "lhs": {
+                                "id": "events_independent-lhs",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "P(A∩B)",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "id": "events_independent-rhs",
+                                "content": {
+                                  "Identifier": {
+                                    "body": "P(A)P(B)",
+                                    "pre_script": null,
+                                    "mid_script": null,
+                                    "post_script": null,
+                                    "primes": 0,
+                                    "is_function": false
+                                  }
+                                }
+                              },
+                              "operator": "Equal"
+                            }
+                          }
+                        }
+                      },
+                      "metadata": [],
+                      "display_options": null
                     }
-                  }
-                ],
+                  ]
+                },
                 "metadata": [],
                 "display_options": null
               }
