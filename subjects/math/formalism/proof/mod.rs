@@ -53,7 +53,7 @@ pub enum DefinitionState {
 
 /// Represents a single named entry in a proof context. This can be a variable
 /// declaration, a hypothesis, or a local definition (abbreviation).
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ContextEntry {
     pub name: Identifier,
     pub ty: Located<MathExpression>,
@@ -136,7 +136,7 @@ impl Quantifier {
 /// Represents a complete state in a proof, structured with a unified, ordered context.
 /// It cleanly separates the context (declarations, hypotheses, definitions) from the
 /// core statement to be proven.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProofGoal {
     /// A single, **ordered list** representing the proof context.
     /// Order is crucial: an entry can only refer to names defined in previous entries.
@@ -153,6 +153,93 @@ pub struct ProofGoal {
 }
 
 impl ProofGoal {
+    /// Convert ProofGoal to Judgement for rendering
+    pub fn to_judgement(&self, id_prefix: &str) -> crate::turn_render::Judgement {
+        use crate::subjects::math::formalism::extract::Parametrizable;
+        use crate::turn_render::{
+            QuantifiedVariableDeclarationGroup, RichText, RichTextSegment, ToLogicalNode,
+            VariableDeclaration,
+        };
+
+        // Process context once to create both non_quantifiers and quantifiers
+        let mut non_quantifiers = Vec::new();
+        let mut quantifiers = Vec::new();
+        let mut current_universal_group = Vec::new();
+
+        // Process each context entry
+        for entry in &self.context {
+            let variable_declaration = VariableDeclaration {
+                name: entry
+                    .name
+                    .to_turn_math(format!("context-name-{}", entry.name)),
+                type_info: match &entry.ty.data {
+                    Parametrizable::Concrete(arc_expr) => arc_expr.to_rich_text(),
+                    Parametrizable::Variable(id) => RichText {
+                        segments: vec![RichTextSegment::Text(id.to_string())],
+                        alignment: None,
+                    },
+                },
+            };
+
+            // Check if this variable is quantified
+            if let Some(quantifier) = self
+                .quantifiers
+                .iter()
+                .find(|q| q.variable_name == entry.name)
+            {
+                // This is a quantified variable
+                match quantifier.quantification {
+                    crate::subjects::math::formalism::proof::Quantification::Universal => {
+                        // Add to current universal group
+                        current_universal_group.push(variable_declaration);
+                    }
+                    crate::subjects::math::formalism::proof::Quantification::Existential => {
+                        // First, finalize any pending universal group
+                        if !current_universal_group.is_empty() {
+                            quantifiers.push(QuantifiedVariableDeclarationGroup::ForAll(
+                                current_universal_group.clone(),
+                            ));
+                            current_universal_group.clear();
+                        }
+                        // Create single existential quantifier group
+                        quantifiers.push(QuantifiedVariableDeclarationGroup::Exists(
+                            variable_declaration,
+                        ));
+                    }
+                    crate::subjects::math::formalism::proof::Quantification::UniqueExistential => {
+                        // First, finalize any pending universal group
+                        if !current_universal_group.is_empty() {
+                            quantifiers.push(QuantifiedVariableDeclarationGroup::ForAll(
+                                current_universal_group.clone(),
+                            ));
+                            current_universal_group.clear();
+                        }
+                        // Create single unique existential quantifier group
+                        quantifiers.push(QuantifiedVariableDeclarationGroup::UniqueExists(
+                            variable_declaration,
+                        ));
+                    }
+                }
+            } else {
+                // This is a non-quantified variable
+                non_quantifiers.push(variable_declaration);
+            }
+        }
+
+        // Finalize any remaining universal group
+        if !current_universal_group.is_empty() {
+            quantifiers.push(QuantifiedVariableDeclarationGroup::ForAll(
+                current_universal_group,
+            ));
+        }
+
+        crate::turn_render::Judgement {
+            non_quantifiers,
+            quantifiers,
+            statement: self.statement.to_logical_node(),
+        }
+    }
+
     /// Add a variable declaration to the context (e.g., `g: Group`).
     /// This is for fundamental variables that will be quantified over or used in hypotheses.
     pub fn with_variable(
@@ -305,7 +392,7 @@ impl ProofGoal {
 }
 
 /// Represents what role a ProofNode plays in the proof structure
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum NodeRole {
     /// A normal goal that needs to be proven
     Goal(ProofGoal),
@@ -451,7 +538,7 @@ impl TacticOutcome {
 }
 
 /// A single node in a proof tree, representing the application of a tactic
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProofNode {
     /// Unique identifier for this node
     pub id: String,
@@ -666,7 +753,7 @@ impl ProofNode {
 }
 
 /// A forest of proof exploration nodes
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProofForest {
     pub initial_goal: ProofGoal,
     /// All nodes in the forest

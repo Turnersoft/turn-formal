@@ -5,7 +5,7 @@ echo "Building Turn-Formal..."
 
 # Compile Rust content to JSON
 echo "Compiling content to JSON..."
-cargo run --bin content_compiler
+cargo run --bin export_math_content
 
 # Build React frontend
 echo "Building React frontend..."

@@ -17,7 +17,7 @@ use std::collections::HashMap;
 /// Represents a single, logical step in a formal proof.
 /// This enum includes both primitive, single-step rules of inference and
 /// higher-level automated tactics that execute complex procedures.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Tactic {
     //=================================================================//
     // I.   PRIMITIVE: GOAL-DIRECTED TACTICS (Introduction Rules)
@@ -218,7 +218,7 @@ pub enum ContextOrStatement {
 }
 
 /// Represents a single branch in a case analysis proof.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Case {
     /// A human-readable description for this case branch, e.g., "Case: G is Abelian".
     pub description: RichText,

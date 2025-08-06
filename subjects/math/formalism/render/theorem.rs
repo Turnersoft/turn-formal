@@ -129,26 +129,6 @@ impl ToSectionNode for ProofGoal {
 impl ToSectionNode for Theorem {
     fn to_section_node(&self, id_prefix: &str) -> Section {
         let mut content = vec![
-            // Theorem as structured mathematical content - using basic rich text for now
-            Section {
-                id: format!("{}-theorem", id_prefix),
-                title: Some(RichText {
-                    segments: vec![RichTextSegment::Text(self.name.clone())],
-                    alignment: None,
-                }),
-                content: SectionContentNode::RichText(RichText {
-                    segments: vec![
-                        RichTextSegment::StyledText {
-                            text: "Theorem: ".to_string(),
-                            styles: vec![TextStyle::Bold],
-                        },
-                        RichTextSegment::Text(self.name.clone()),
-                    ],
-                    alignment: None,
-                }),
-                metadata: vec![],
-                display_options: None,
-            },
             // Show the formal statement as Judgement
             self.proofs
                 .initial_goal
@@ -157,7 +137,7 @@ impl ToSectionNode for Theorem {
             Section {
                 id: format!("{}-description", id_prefix),
                 title: Some(RichText {
-                    segments: vec![RichTextSegment::Text(self.name.clone())],
+                    segments: vec![RichTextSegment::Text("Description".to_string())],
                     alignment: None,
                 }),
                 content: SectionContentNode::RichText(RichText {

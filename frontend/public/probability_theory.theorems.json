@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1754407929",
+  "exported_at": "1754480237",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -63,37 +63,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.weak_law_of_large_numbers-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Weak Law of Large Numbers"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Weak Law of Large Numbers"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.weak_law_of_large_numbers-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -114,7 +83,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "532402c8-36ce-4e68-8ad0-2504c39b74dc",
+                                      "id": "bd8aec5c-82a3-4b6c-92b9-b1e918956835",
                                       "content": {
                                         "Identifier": {
                                           "body": "sample_mean",
@@ -127,7 +96,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "965aa798-d4f5-4340-9ffa-2ba7fde1d8d3",
+                                      "id": "be5b8ae9-9036-4e61-9292-b87be15d2e24",
                                       "content": {
                                         "Identifier": {
                                           "body": "population_mean",
@@ -155,7 +124,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Weak Law of Large Numbers"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -269,37 +238,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.strong_law_of_large_numbers-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Strong Law of Large Numbers"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Strong Law of Large Numbers"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.strong_law_of_large_numbers-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -320,7 +258,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "123c3c53-11ca-43a4-8016-be0c887066f1",
+                                      "id": "f7c68841-f768-451d-9d7b-1bf8a61d9ebe",
                                       "content": {
                                         "Identifier": {
                                           "body": "sample_mean",
@@ -333,7 +271,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "1acafc9f-c295-41a3-b621-2260e90cfb04",
+                                      "id": "92e38c08-ec4a-4ced-ad9f-7a9b97c0e850",
                                       "content": {
                                         "Identifier": {
                                           "body": "population_mean",
@@ -361,7 +299,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Strong Law of Large Numbers"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -475,37 +413,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.central_limit_theorem-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Central Limit Theorem"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Central Limit Theorem"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.central_limit_theorem-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -526,7 +433,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "2dec2c26-6206-4351-8f2d-d062463e28d5",
+                                      "id": "46db3ec4-ab7b-4eb0-b780-4987ebe6d437",
                                       "content": {
                                         "Identifier": {
                                           "body": "standardized_sum",
@@ -539,7 +446,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "c29a26e3-5af8-42bf-ac92-a61f1d55966d",
+                                      "id": "76a8a652-523f-4968-9e90-6194113a436d",
                                       "content": {
                                         "Identifier": {
                                           "body": "standard_normal",
@@ -567,7 +474,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Central Limit Theorem"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -681,37 +588,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.bayes_theorem-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Bayes' Theorem"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Bayes' Theorem"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.bayes_theorem-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -732,7 +608,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "819d9cd7-e27d-4c41-b244-24f264fdc13c",
+                                      "id": "6d44981b-633c-4aea-ab02-b39e094842c2",
                                       "content": {
                                         "Identifier": {
                                           "body": "P(A|B)",
@@ -745,7 +621,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "c929c379-eaa5-499a-a292-d70053915cd6",
+                                      "id": "96dc4ef4-dfe8-4d80-a2ab-d50c76d4cf9f",
                                       "content": {
                                         "Identifier": {
                                           "body": "P(B|A)P(A)/P(B)",
@@ -773,7 +649,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Bayes' Theorem"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -887,37 +763,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.law_of_total_probability-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Law of Total Probability"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Law of Total Probability"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.law_of_total_probability-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -938,7 +783,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "31cd4529-069b-4ea1-bf0d-d5b7ac506110",
+                                      "id": "1c7cfc9b-2afd-47d9-b1e4-5635bc2399e2",
                                       "content": {
                                         "Identifier": {
                                           "body": "P(A)",
@@ -951,7 +796,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "f77207e8-63ad-4269-8e94-995c89359525",
+                                      "id": "7afa6d1e-c579-47e5-be9b-f671f7087a4a",
                                       "content": {
                                         "Identifier": {
                                           "body": "Σ P(A|B_i)P(B_i)",
@@ -979,7 +824,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Law of Total Probability"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -1093,37 +938,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.chebyshev_inequality-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Chebyshev's Inequality"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Chebyshev's Inequality"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.chebyshev_inequality-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -1185,7 +999,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Chebyshev's Inequality"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -1299,37 +1113,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.markov_inequality-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Markov's Inequality"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Markov's Inequality"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.markov_inequality-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -1391,7 +1174,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Markov's Inequality"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -1505,37 +1288,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.jensen_inequality-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Jensen's Inequality"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Jensen's Inequality"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.jensen_inequality-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -1597,7 +1349,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Jensen's Inequality"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -1711,37 +1463,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.martingale_convergence-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Martingale Convergence Theorem"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Martingale Convergence Theorem"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.martingale_convergence-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -1762,7 +1483,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "cc8dc8fc-b5a7-461f-b69f-81823cd845f8",
+                                      "id": "8178b151-1e98-45db-bfd6-12ab73044996",
                                       "content": {
                                         "Identifier": {
                                           "body": "X_n",
@@ -1775,7 +1496,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "b3c5d294-1769-4f3d-b1ea-b445d81ad025",
+                                      "id": "17714885-2e31-4982-b38e-782706ddd7ff",
                                       "content": {
                                         "Identifier": {
                                           "body": "X_∞",
@@ -1803,7 +1524,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Martingale Convergence Theorem"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -1917,37 +1638,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.optional_stopping-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Optional Stopping Theorem"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Optional Stopping Theorem"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.optional_stopping-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -1968,7 +1658,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "a73835f3-8185-495a-9ba1-530b864570fd",
+                                      "id": "614f990f-f139-47c2-98df-5134add3647b",
                                       "content": {
                                         "Identifier": {
                                           "body": "E[X_τ]",
@@ -1981,7 +1671,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "72e31bb6-cc5d-4452-a187-51f10ef97f74",
+                                      "id": "fb30c02f-6dea-46a7-a525-964b2075fddc",
                                       "content": {
                                         "Identifier": {
                                           "body": "E[X_0]",
@@ -2009,7 +1699,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Optional Stopping Theorem"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -2123,37 +1813,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.kolmogorov_three_series-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Kolmogorov's Three-Series Theorem"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Kolmogorov's Three-Series Theorem"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.kolmogorov_three_series-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -2174,7 +1833,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "a0c3bf9e-4093-4f94-8980-1fe0da0671a2",
+                                      "id": "b25fc8a9-0eb7-4623-a7be-6fa3acab523d",
                                       "content": {
                                         "Identifier": {
                                           "body": "Σ X_n converges a.s.",
@@ -2187,7 +1846,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "e2ca7af1-7e60-4346-ba1d-95adb92c0fbc",
+                                      "id": "474e0d06-aefa-4bb8-ac48-eab70b520730",
                                       "content": {
                                         "Identifier": {
                                           "body": "Three series converge",
@@ -2215,7 +1874,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Kolmogorov's Three-Series Theorem"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null
@@ -2329,37 +1988,6 @@
                 "content": {
                   "SubSection": [
                     {
-                      "id": "probability.glivenko_cantelli-main-theorem",
-                      "title": {
-                        "segments": [
-                          {
-                            "Text": "Glivenko-Cantelli Theorem"
-                          }
-                        ],
-                        "alignment": null
-                      },
-                      "content": {
-                        "RichText": {
-                          "segments": [
-                            {
-                              "StyledText": {
-                                "text": "Theorem: ",
-                                "styles": [
-                                  "Bold"
-                                ]
-                              }
-                            },
-                            {
-                              "Text": "Glivenko-Cantelli Theorem"
-                            }
-                          ],
-                          "alignment": null
-                        }
-                      },
-                      "metadata": [],
-                      "display_options": null
-                    },
-                    {
                       "id": "probability.glivenko_cantelli-main-proof-goal-proof-goal",
                       "title": {
                         "segments": [
@@ -2380,7 +2008,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "26e7e1bb-35e3-46fd-bf60-ab7f3a68bb57",
+                                      "id": "8b584b38-598e-4269-8f78-c138c0f7c1ef",
                                       "content": {
                                         "Identifier": {
                                           "body": "F_n(x)",
@@ -2393,7 +2021,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "bb4faa32-c244-4cbf-8012-f261938dcb07",
+                                      "id": "20ba58d1-fbc3-4d35-be31-939e4d504863",
                                       "content": {
                                         "Identifier": {
                                           "body": "F(x)",
@@ -2421,7 +2049,7 @@
                       "title": {
                         "segments": [
                           {
-                            "Text": "Glivenko-Cantelli Theorem"
+                            "Text": "Description"
                           }
                         ],
                         "alignment": null

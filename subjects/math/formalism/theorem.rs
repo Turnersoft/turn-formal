@@ -22,7 +22,7 @@ use crate::turn_render::{
 };
 
 /// A unified representation of a mathematical theorem from any domain
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Theorem {
     /// Unique identifier for the theorem
     pub id: String,
