@@ -1,5 +1,6 @@
 //! Defines the axioms of group theory as formal theorems.
 
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use crate::subjects::math::formalism::expressions::{MathExpression, TheoryExpression};
@@ -12,7 +13,10 @@ use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
 use crate::subjects::math::formalism::theorem::{Axiom, Theorem};
 use crate::turn_render::{Identifier, RichText, RichTextSegment};
 
-use super::definitions::{Group, GroupExpression};
+use super::definitions::{
+    GenericGroup, Group, GroupExpression, GroupRelation, InterceptionGroup, SubGroup,
+};
+use crate::subjects::math::theories::VariantSet;
 
 /// Returns the closure axiom as a formal theorem.
 /// Statement: ∀ a, b ∈ G, a ∘ b ∈ G

@@ -230,6 +230,10 @@ impl ProofNode {
             Tactic::DisproveByTheorem { theorem_id } => {
                 ("Disprove By Theorem".to_string(), vec![theorem_id.clone()])
             }
+            Tactic::RefineVariable { variable, theorem_id } => {
+                (format!("Refine {}", variable.body), vec![theorem_id.clone()])
+            }
+            
         };
 
         let mut segments = vec![
@@ -300,6 +304,7 @@ impl ProofNode {
             Tactic::Simplify { .. } => "Simplify".to_string(),
             Tactic::Auto { .. } => "Auto".to_string(),
             Tactic::DisproveByTheorem { .. } => "Disprove By Theorem".to_string(),
+            Tactic::RefineVariable { .. } => "Refine Variable".to_string(),
         }
     }
 
@@ -397,6 +402,10 @@ impl ProofNode {
             Tactic::DisproveByTheorem { theorem_id } => {
                 vec![theorem_id.clone()]
             }
+            Tactic::RefineVariable { variable, theorem_id } => {
+                vec![variable.body.clone(), theorem_id.clone()]
+            }
+            
         }
     }
 
@@ -771,6 +780,8 @@ impl ProofNode {
             | Tactic::Simplify { .. }
             | Tactic::Auto { .. } => "automated".to_string(),
             Tactic::DisproveByTheorem { .. } => "meta-logical".to_string(),
+            Tactic::RefineVariable { .. } => "type-roles".to_string(),
+            
         }
     }
 
@@ -929,6 +940,9 @@ impl ProofNode {
             }
             Tactic::DisproveByTheorem { theorem_id } => {
                 format!("Disproves goal using theorem {}", theorem_id)
+            }
+            Tactic::RefineVariable { variable, theorem_id } => {
+                format!("Refines {} using equality {}", variable.body, theorem_id)
             }
         }
     }

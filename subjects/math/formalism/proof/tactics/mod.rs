@@ -129,6 +129,17 @@ pub enum Tactic {
     Revert { hypothesis_to_revert: Identifier },
 
     //=================================================================//
+    // VI.  VARIABLE VIEW MANAGEMENT (Type Roles)
+    //=================================================================//
+    /// Refines (strengthens) a variable's primary type using an equality theorem whose two sides
+    /// are of the exact same role (SameRole). Only collection-like fields may be extended.
+    /// Fails otherwise. This never introduces multi-views.
+    RefineVariable {
+        variable: Identifier,
+        theorem_id: String,
+    },
+
+    //=================================================================//
     // V.   AUTOMATED TACTICS (Macros)
     //=================================================================//
     /// **Automated**: Searches the context to find a hypothesis that exactly
@@ -210,10 +221,10 @@ impl Target {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ContextOrStatement {
-    // deals with multiple identity at once.
-    Context(Vec<Identifier>),
+    /// Target a single context variable, optionally specifying one secondary type index.
+    /// None = primary type; Some(i) = i-th secondary type.
+    Context(Identifier, Option<usize>),
     Statement,
-    // this checks all variables and the statement
     Both,
 }
 

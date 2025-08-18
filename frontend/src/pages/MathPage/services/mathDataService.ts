@@ -246,10 +246,10 @@ export class MathDataService {
         
         // Extract preview text from first paragraph
         let preview = 'No preview available';
-        if (paper.structure?.abstract_content?.content?.[0] && 
-            typeof paper.structure.abstract_content.content[0] === 'object' && 
-            'RichText' in paper.structure.abstract_content.content[0]) {
-          const paragraph = paper.structure.abstract_content.content[0].RichText;
+        if (paper.structure?.abstract_content?.content && 
+            typeof paper.structure.abstract_content.content === 'object' && 
+            'RichText' in paper.structure.abstract_content.content) {
+          const paragraph = paper.structure.abstract_content.content.RichText;
           if (paragraph.segments?.[0] && typeof paragraph.segments[0] === 'object' && 'Text' in paragraph.segments[0]) {
             preview = paragraph.segments[0].Text.substring(0, 150) + '...';
           }

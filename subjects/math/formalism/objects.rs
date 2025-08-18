@@ -11,6 +11,7 @@ use super::super::theories::rings::definitions::{
 };
 
 use super::super::theories::zfc::definitions::Set;
+use crate::subjects::math::formalism::traits::is_compatible::SameRole;
 use serde::{Deserialize, Serialize};
 /// A unified wrapper for all mathematical objects across theories
 /// This is just a reference to objects defined in their respective theory modules
@@ -45,4 +46,20 @@ pub enum MathObject {
     // Type(UnverseLevel),
     // FunctionType(FunctionType),
     // Todo(String),
+}
+
+impl SameRole for MathObject {
+    fn same_role(
+        &self,
+        target_context: &Vec<crate::subjects::math::formalism::proof::ContextEntry>,
+        candidate: &Self,
+        candidate_context: &Vec<crate::subjects::math::formalism::proof::ContextEntry>,
+    ) -> bool {
+        match (self, candidate) {
+            (MathObject::Group(a), MathObject::Group(b)) => {
+                a.same_role(target_context, b, candidate_context)
+            }
+            _ => false,
+        }
+    }
 }

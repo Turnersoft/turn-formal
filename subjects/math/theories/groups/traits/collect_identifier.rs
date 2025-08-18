@@ -91,6 +91,9 @@ impl CollectIdentifier for GroupRelation {
             GroupRelation::HasAlternatingPermutationProperty { target, property } => todo!(),
             GroupRelation::HasFreeProperty { target, property } => todo!(),
             GroupRelation::HasQuotientProperty { target, property } => todo!(),
+            // Removed element/subgroup-test standalone relations; these are embedded
+            // into GroupExpression/Group variants instead.
+            _ => HashSet::new(),
         }
     }
 }

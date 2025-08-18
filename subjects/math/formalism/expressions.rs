@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::turn_render::Identifier;
 
-use super::super::theories::groups::definitions::GroupExpression;
+use super::super::theories::groups::definitions::{Group, GroupExpression};
 use super::super::theories::rings::definitions::{FieldExpression, RingExpression};
 
 use super::traits::complexity::Complexity;
@@ -20,6 +20,7 @@ use super::super::theories::{
 use super::super::formalism::interpretation::TypeViewOperator;
 use super::extract::Parametrizable;
 use super::{location::Located, objects::MathObject, relations::MathRelation};
+use crate::subjects::math::formalism::traits::is_compatible::SameRole;
 use crate::turn_render::{RichText, RichTextSegment};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
@@ -175,6 +176,24 @@ impl MathExpression {
             MathExpression::Relation(_) => "Relation",
             MathExpression::Number(_) => "Number",
             MathExpression::ViewAs { .. } => "ViewAs",
+        }
+    }
+}
+
+// RoleRelation for MathExpression: defer to underlying theory/object where sensible
+impl SameRole for MathExpression {
+    fn same_role(
+        &self,
+        target_context: &Vec<crate::subjects::math::formalism::proof::ContextEntry>,
+        candidate: &Self,
+        candidate_context: &Vec<crate::subjects::math::formalism::proof::ContextEntry>,
+    ) -> bool {
+        use MathExpression::*;
+        match (self, candidate) {
+            (Object(a), Object(b)) => a.same_role(target_context, b, candidate_context),
+            // We don't attempt to compare TheoryExpression variants deeply here.
+            // They are considered different roles by default unless lifted to MathObject.
+            _ => false,
         }
     }
 }

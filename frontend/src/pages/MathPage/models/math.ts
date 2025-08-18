@@ -65,17 +65,14 @@ export interface MathBlock {
   caption?: string;
 }
 
-export interface SectionContentNode {
-  Paragraph?: ParagraphNode;
-  MathBlock?: MathBlock;
-  StructuredMath?: any; // Will contain theorem structures
-  [key: string]: any;
-}
+// Import the correct types from bindings
+import type { SectionContentNode } from '../components/turn-render/bindings/SectionContentNode';
+import type { RichText } from '../components/turn-render/bindings/RichText';
 
 export interface Section {
   id: string;
-  title?: ParagraphNode;
-  content: SectionContentNode[];
+  title?: RichText | null;
+  content: SectionContentNode;
   metadata: any[];
   display_options?: any;
 }
@@ -284,18 +281,14 @@ export function convertMathematicalContentToDefinition(content: MathDocument): D
     return {
         name: paper.title,
         docs: paper.structure?.abstract_content ?
-        extractTextFromSegments(paper.structure.abstract_content.content
-            ?.map((c: any) => c.Paragraph?.segments)
-            ?.filter(Boolean)
-            ?.flat() || [])
+        extractTextFromSegments(paper.structure.abstract_content.content && typeof paper.structure.abstract_content.content === 'object' && 'RichText' in paper.structure.abstract_content.content ? 
+            paper.structure.abstract_content.content.RichText?.segments || [] : [])
           : '',
         kind: 'class',
       members: [],
         description: paper.structure?.abstract_content ?
-          extractTextFromSegments(paper.structure.abstract_content.content
-            ?.map((c: any) => c.Paragraph?.segments)
-            ?.filter(Boolean)
-            ?.flat() || [])
+          extractTextFromSegments(paper.structure.abstract_content.content && typeof paper.structure.abstract_content.content === 'object' && 'RichText' in paper.structure.abstract_content.content ? 
+              paper.structure.abstract_content.content.RichText?.segments || [] : [])
           : '',
         source: 'mathematical_content',
         tags: paper.academic_metadata?.keywords,
@@ -319,16 +312,12 @@ export function convertMathematicalContentToTheorem(content: MathDocument): Theo
       id: content.id,
       name: paper.title,
         statement: paper.structure?.abstract_content ?
-          extractTextFromSegments(paper.structure.abstract_content.content
-            ?.map((c: any) => c.Paragraph?.segments)
-            ?.filter(Boolean)
-            ?.flat() || [])
+          extractTextFromSegments(paper.structure.abstract_content.content && typeof paper.structure.abstract_content.content === 'object' && 'RichText' in paper.structure.abstract_content.content ? 
+              paper.structure.abstract_content.content.RichText?.segments || [] : [])
           : '',
         description: paper.structure?.abstract_content ?
-        extractTextFromSegments(paper.structure.abstract_content.content
-            ?.map((c: any) => c.Paragraph?.segments)
-            ?.filter(Boolean)
-            ?.flat() || [])
+        extractTextFromSegments(paper.structure.abstract_content.content && typeof paper.structure.abstract_content.content === 'object' && 'RichText' in paper.structure.abstract_content.content ? 
+            paper.structure.abstract_content.content.RichText?.segments || [] : [])
           : '',
         tags: paper.academic_metadata?.keywords,
         references: [],

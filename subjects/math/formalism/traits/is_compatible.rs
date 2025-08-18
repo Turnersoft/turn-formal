@@ -17,6 +17,17 @@ pub trait IsCompatible<P> {
     ) -> bool;
 }
 
+/// Returns true if `self` and `other` have the same enum variant (same type-form).
+/// Implementations can optionally do deeper checks, but should be fast and deterministic.
+pub trait SameRole {
+    fn same_role(
+        &self,
+        target_context: &Vec<ContextEntry>,
+        other: &Self,
+        other_context: &Vec<ContextEntry>,
+    ) -> bool;
+}
+
 impl IsCompatible<i32> for i32 {
     fn is_compatible(
         &self,

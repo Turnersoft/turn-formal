@@ -40,7 +40,7 @@ impl<T: 'static + Clone + Debug> Parametrizable<Arc<T>> {
         match self {
             Parametrizable::Concrete(arc_t) => arc_t.clone(),
             Parametrizable::Variable(id) => {
-                let math_expr = &context
+                let entry = context
                     .iter()
                     .find(|entry| entry.name == *id)
                     .unwrap_or_else(|| {
@@ -48,27 +48,25 @@ impl<T: 'static + Clone + Debug> Parametrizable<Arc<T>> {
                             "Variable with id {:?} not found in context: {:#?}",
                             id, context
                         )
-                    })
-                    .ty
-                    .data
-                    .unwrap_arc(context);
+                    });
 
-                // Try to get Arc<T> directly
-                match TryDetag::<Arc<T>>::try_detag(math_expr) {
-                    Ok(result) => result.clone(),
-                    Err(_) => {
-                        // If that fails, try to get T and wrap it in Arc
-                        match TryDetag::<T>::try_detag(math_expr) {
-                            Ok(inner) => Arc::new(inner.clone()),
-                            Err(e) => panic!(
-                                "Could not extract {} or Arc<{}> from context: {}",
-                                std::any::type_name::<T>(),
-                                std::any::type_name::<T>(),
-                                e
-                            ),
-                        }
+                // 1) Try primary type first (deterministic default)
+                if let Some(expr_arc) = entry.ty.concrete_value() {
+                    let expr = expr_arc.as_ref();
+                    if let Ok(res) = TryDetag::<Arc<T>>::try_detag(expr) {
+                        return res.clone();
+                    }
+                    if let Ok(inner) = TryDetag::<T>::try_detag(expr) {
+                        return Arc::new(inner.clone());
                     }
                 }
+
+                // No secondary types: primary-only unwrap to keep semantics stable
+                panic!(
+                    "Could not extract {} for variable {} from primary type",
+                    std::any::type_name::<T>(),
+                    id
+                )
             }
         }
     }

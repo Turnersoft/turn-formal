@@ -7,14 +7,21 @@ use crate::subjects::math::formalism::extract::Parametrizable;
 use crate::subjects::math::formalism::location::Located;
 use crate::subjects::math::formalism::theorem::Theorem;
 use crate::subjects::math::theories::groups::definitions::{
-    CenterGroup, CommutatorSubgroup, GroupHomomorphism, SylowSubgroup,
+    AbelianPropertyVariant, AlternatingGroup, CenterGroup, CentralProductGroup, CentralizerGroup, CommutatorSubgroup,
+    CompactPropertyVariant, ConnectedPropertyVariant, CyclicGroup, DihedralGroup, FinitePropertyVariant, FreeGroup, GeneralLinearGroup, GeneratedSubgroup, GenericGroup,
+    Group, GroupElement, GroupExpression, GroupHomomorphism, GroupOperation, GroupProperty,
+    GroupRelation, ImageGroup, KernelGroup, LieGroup, MetrizablePropertyVariant, ModularAdditiveGroup,
+    ModularMultiplicativeGroup, NilpotentPropertyVariant, NormalizerGroup, OrthogonalGroup, ProductGroup, ProductOperation,
+    PullbackGroup, QuotientGroup, RestrictionGroup, SimplePropertyVariant, SolvablePropertyVariant, SpecialLinearGroup, SpecialOrthogonalGroup,
+    SpecialUnitaryGroup, SubGroup, SylowSubgroup, SymmetricGroup, TopologicalGroup,
+    TopologicalGroupProperty, TrivialGroup, UnitaryGroup, WreathProductGroup,
 };
 //--- Imports from crate::turn_render ---
 use crate::turn_render::math_node::{
-    Identifier, IntegralType, MathNode, MathNodeContent, MulSymbol, RefinedMulOrDivOperation,
+    Identifier, IntegralType, MathNode, MathNodeContent, MathTextSegment, MulSymbol, RefinedMulOrDivOperation,
     RelationOperatorNode, ToTurnMath, UnaryRelationOperatorNode,
 };
-use crate::turn_render::{RichText, RichTextSegment, ToRichText, *};
+use crate::turn_render::{RichText, RichTextSegment, TextStyle, ToRichText, *};
 
 //--- Imports from this crate (subjects) ---
 use crate::subjects::math::formalism::traits::abstraction_level::{
@@ -26,18 +33,11 @@ use crate::subjects::math::theories::fields::{FieldBasic, render::*};
 use crate::subjects::math::theories::topology::definitions::{TopologicalSpace, Topology};
 use crate::subjects::math::theories::zfc::definitions::Set;
 
-//--- Imports from groups definitions ---
-use crate::subjects::math::theories::groups::definitions::{
-    AlternatingGroup, CentralProductGroup, CentralizerGroup, CyclicGroup, DihedralGroup, FreeGroup,
-    GeneralLinearGroup, GeneratedSubgroup, GenericGroup, Group, GroupElement, GroupExpression,
-    GroupOperation, GroupProperty, GroupRelation, ImageGroup, KernelGroup, LieGroup,
-    ModularAdditiveGroup, ModularMultiplicativeGroup, NormalizerGroup, OrthogonalGroup,
-    ProductGroup, ProductOperation, PullbackGroup, QuotientGroup, RestrictionGroup,
-    SpecialLinearGroup, SpecialOrthogonalGroup, SpecialUnitaryGroup, SymmetricGroup,
-    TopologicalGroup, TopologicalGroupProperty, TrivialGroup, UnitaryGroup, WreathProductGroup,
+use super::theorems::{
+    group_inverse_uniqueness, subgroup_intersection_is_subgroup, first_isomorphism_theorem,
+    element_order_divides_group_order, lagrange_theorem, cayley_theorem, sylow_first_theorem,
+    fundamental_theorem_finite_abelian, normal_subgroup_test, cauchy_theorem, center_is_normal_subgroup,
 };
-
-use super::theorems::group_inverse_uniqueness;
 
 // use super::theorems::{
 //     prove_abelian_squared_criterion, prove_deduction_using_identity_uniqueness,
@@ -77,36 +77,340 @@ impl ToTurnMath for Group {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
             Group::Generic(g) => g.to_turn_math(master_id),
-            Group::Trivial(g) => g.core.to_turn_math(master_id),
+            Group::Trivial(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Trivial group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
             Group::Symmetric(g) => g.to_turn_math(master_id),
             Group::Alternating(g) => g.to_turn_math(master_id),
-            Group::Cyclic(g) => g.to_turn_math(master_id),
-            Group::Dihedral(g) => g.to_turn_math(master_id),
-            Group::GeneralLinear(g) => g.to_turn_math(master_id),
-            Group::SpecialLinear(g) => g.to_turn_math(master_id),
-            Group::Orthogonal(g) => g.to_turn_math(master_id),
-            Group::SpecialOrthogonal(g) => g.to_turn_math(master_id),
-            Group::Unitary(g) => g.to_turn_math(master_id),
-            Group::SpecialUnitary(g) => g.to_turn_math(master_id),
-            Group::Topological(g) => g.to_turn_math(master_id),
-            Group::Lie(g) => g.to_turn_math(master_id),
-            Group::Product(g) => g.to_turn_math(master_id),
-            Group::ModularAdditive(g) => g.to_turn_math(master_id),
-            Group::ModularMultiplicative(g) => g.to_turn_math(master_id),
-            Group::Free(g) => g.core.to_turn_math(master_id),
-            Group::Quotient(g) => g.core.to_turn_math(master_id),
-            Group::Kernel(g) => g.core.to_turn_math(master_id),
-            Group::Image(g) => g.core.to_turn_math(master_id),
-            Group::Center(g) => g.core.to_turn_math(master_id),
-            Group::GeneratedSubgroup(g) => g.core.to_turn_math(master_id),
-            Group::Normalizer(g) => g.core.to_turn_math(master_id),
-            Group::Centralizer(g) => g.core.to_turn_math(master_id),
-            Group::CommutatorSubgroup(g) => g.core.to_turn_math(master_id),
-            Group::SylowSubgroup(g) => g.core.to_turn_math(master_id),
-            Group::CentralProduct(g) => g.core.to_turn_math(master_id),
-            Group::WreathProduct(g) => g.core.to_turn_math(master_id),
-            Group::Pullback(g) => g.core.to_turn_math(master_id),
-            Group::Restriction(g) => g.core.to_turn_math(master_id),
+            Group::Cyclic(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Cyclic group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Dihedral(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Dihedral group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::GeneralLinear(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("General linear group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::SpecialLinear(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Special linear group ".to_string()),
+                        MathTextSegment::Math(g.general_linear.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Orthogonal(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Orthogonal group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::SpecialOrthogonal(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Special orthogonal group ".to_string()),
+                        MathTextSegment::Math(g.orthogonal.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Unitary(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Unitary group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::SpecialUnitary(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Special unitary group ".to_string()),
+                        MathTextSegment::Math(g.unitary.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Topological(g) => {
+                let id = master_id.clone();
+                // Extract the core group properties and format them
+                let core_props = g.core.to_turn_math(format!("{}-core", id.clone()));
+                
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Topological Group ".to_string()),
+                        MathTextSegment::Math(core_props),
+                        MathTextSegment::Text(" [".to_string()),
+                        MathTextSegment::Text("]".to_string()),
+                    ])),
+                }
+            },
+            Group::Lie(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Lie group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Product(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Product group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::ModularAdditive(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Modular additive group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::ModularMultiplicative(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Modular multiplicative group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Free(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Free group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Quotient(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::BinaryOperation {
+                        operation_type: BinaryOperationType::GroupQuotient,
+                        terms: vec![
+                            (BinaryOperator::Slash, g.group.to_turn_math(format!("{}-group", id.clone()))),
+                            (BinaryOperator::Slash, g.normal_subgroup.to_turn_math(format!("{}-normal", id))),
+                        ],
+                    }),
+                }
+            },
+            Group::Kernel(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::FunctionCall {
+                        name: Arc::new(MathNode {
+                            id: format!("{}-ker-name", id.clone()),
+                            content: Arc::new(MathNodeContent::Identifier(Identifier {
+                                body: "Ker".to_string(),
+                                pre_script: None,
+                                mid_script: None,
+                                post_script: None,
+                                primes: 0,
+                                is_function: true,
+                            })),
+                        }),
+                        parameters: vec![g.defining_homomorphism.to_turn_math("".to_string())],
+                    }),
+                }
+            },
+            Group::Image(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::FunctionCall {
+                        name: Arc::new(MathNode {
+                            id: format!("{}-im-name", id.clone()),
+                            content: Arc::new(MathNodeContent::Identifier(Identifier {
+                                body: "Im".to_string(),
+                                pre_script: None,
+                                mid_script: None,
+                                post_script: None,
+                                primes: 0,
+                                is_function: true,
+                            })),
+                        }),
+                        parameters: vec![g.defining_homomorphism.to_turn_math("".to_string())],
+                    }),
+                }
+            },
+            Group::Center(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Center group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::GeneratedSubgroup(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Generated subgroup ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Normalizer(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Normalizer group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Centralizer(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Centralizer group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::CommutatorSubgroup(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Commutator subgroup ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::SylowSubgroup(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Sylow subgroup ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::CentralProduct(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Central product group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::WreathProduct(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Wreath product group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Pullback(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Pullback group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Restriction(g) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Restriction group ".to_string()),
+                        MathTextSegment::Math(g.core.to_turn_math(format!("{}-core", id))),
+                    ])),
+                }
+            },
+            Group::Interception(g) => {
+                // Render as "H ∩ K" using the actual subgroup fields
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::BinaryOperation {
+                        operation_type: BinaryOperationType::SetIntersection,
+                        terms: vec![
+                            (BinaryOperator::Intersection, g.first_subgroup.to_turn_math(format!("{}-first", id.clone()))),
+                            (BinaryOperator::Intersection, g.second_subgroup.to_turn_math(format!("{}-second", id))),
+                        ],
+                    }),
+                }
+            },
+            Group::SubGroup(g) => {
+                // Render as "Subgroup of G" where G is the parent group
+                MathNode {
+                    id: master_id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Subgroup of ".to_string()),
+                        MathTextSegment::Math(g.parent_group.value().to_turn_math(format!("{}-parent", master_id))),
+                    ])),
+                }
+            },
         }
     }
 }
@@ -145,6 +449,8 @@ impl ToSectionNode for Group {
             Group::WreathProduct(g) => g.core.to_section_node(id_prefix),
             Group::Pullback(g) => g.core.to_section_node(id_prefix),
             Group::Restriction(g) => g.core.to_section_node(id_prefix),
+            Group::Interception(g) => g.core.to_section_node(id_prefix),
+            Group::SubGroup(g) => g.core.to_section_node(id_prefix),
         }
     }
 }
@@ -207,6 +513,16 @@ impl ToMathDocument for Group {
             Group::WreathProduct(g) => g.to_math_document(&format!("{}.wreath_product", id_prefix)),
             Group::Pullback(g) => g.to_math_document(&format!("{}.pullback", id_prefix)),
             Group::Restriction(g) => g.to_math_document(&format!("{}.restriction", id_prefix)),
+            Group::Interception(g) => {
+                // For now, use the core group rendering but with a custom ID
+                // TODO: Implement proper intersection rendering as "H ∩ K"
+                g.core.to_math_document(&format!("{}.interception", id_prefix))
+            },
+            Group::SubGroup(g) => {
+                // For now, use the core group rendering but with a custom ID
+                // TODO: Implement proper subgroup rendering as "SubGroup(G)"
+                g.core.to_math_document(&format!("{}.subgroup", id_prefix))
+            },
         }
     }
 }
@@ -298,17 +614,14 @@ impl ToTurnMath for GroupExpression {
                         // Render as the group name (e.g., "G")
                         group.value().to_turn_math(master_id)
                     } else {
-                        // Render as a generic element
+                                // Just render as a generic element g
+                                let id = master_id.clone();
                         MathNode {
-                            id: master_id,
-                            content: Arc::new(MathNodeContent::Identifier(Identifier {
-                                body: "g".to_string(),
-                                pre_script: None,
-                                mid_script: None,
-                                post_script: None,
-                                primes: 0,
-                                is_function: false,
-                            })),
+                                    id: id.clone(),
+                                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                                        MathTextSegment::Text("Element of ".to_string()),
+                                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                                    ])),
                         }
                     }
                 }
@@ -320,26 +633,26 @@ impl ToTurnMath for GroupExpression {
                     // Render as the group name (e.g., "G")
                     group.value().to_turn_math(master_id)
                 } else {
-                    // Render as the identity element
+                            // Just render as the identity element e
+                            let id = master_id.clone();
                     MathNode {
-                        id: master_id,
-                        content: Arc::new(MathNodeContent::Identifier(Identifier {
-                            body: "e".to_string(),
-                            pre_script: None,
-                            mid_script: None,
-                            post_script: None,
-                            primes: 0,
-                            is_function: false,
-                        })),
-                    }
-                }
-            },
-            GroupExpression::Inverse { element, .. } => MathNode {
-                id: master_id.clone(),
+                                id: id.clone(),
+                                content: Arc::new(MathNodeContent::RichTextContent(vec![
+                                    MathTextSegment::Text("Identity of ".to_string()),
+                                    MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                                ])),
+                            }
+                        }
+                    },
+            GroupExpression::Inverse { element, .. } => {
+                        // Just render as the inverse power g⁻¹
+                        let id = master_id.clone();
+                        MathNode {
+                            id: id.clone(),
                 content: Arc::new(MathNodeContent::Power {
-                    base: Arc::new(element.value().to_turn_math(format!("{}-base", master_id))),
+                                base: Arc::new(element.value().to_turn_math(format!("{}-base", id.clone()))),
                     exponent: Arc::new(MathNode {
-                        id: format!("{}-exp", master_id),
+                                    id: format!("{}-exp", id.clone()),
                         content: Arc::new(MathNodeContent::Quantity {
                             number: "-1".to_string(),
                             scientific_notation: None,
@@ -347,12 +660,88 @@ impl ToTurnMath for GroupExpression {
                         }),
                     }),
                 }),
+                        }
+                    },
+            GroupExpression::Commutator { group, a, b } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Commutator in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
             },
-            _ => MathNode {
-                id: master_id,
-                content: Arc::new(MathNodeContent::Text("⟨expr⟩".to_string())),
+            GroupExpression::Coset { group, element, subgroup, is_left } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text(if *is_left { "Left coset in " } else { "Right coset in " }.to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
             },
-        }
+            GroupExpression::ActionOnElement { action, element } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Action on element".to_string()),
+                    ])),
+                }
+            },
+            GroupExpression::Power { group, base, exponent } => {
+                let id = master_id.clone();
+                let exp_value = match &exponent.data {
+                    Parametrizable::Concrete(val) => val.to_string(),
+                    Parametrizable::Variable(_) => "n".to_string(), // Use generic variable name
+                };
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::Power {
+                        base: Arc::new(base.value().to_turn_math(format!("{}-base", id.clone()))),
+                        exponent: Arc::new(MathNode {
+                            id: format!("{}-exp", id),
+                            content: Arc::new(MathNodeContent::Quantity {
+                                number: exp_value,
+                                scientific_notation: None,
+                                unit: None,
+                            }),
+                        }),
+                    }),
+                }
+            },
+            GroupExpression::GroupOrder { group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Order of ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupExpression::ElementOrder { element, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Order of element in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupExpression::Homomorphism(located) => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Homomorphism".to_string()),
+                    ])),
+                }
+            },
+                    }
     }
 }
 
@@ -420,10 +809,90 @@ impl ToRichText for GroupExpression {
                     alignment: None,
                 }
             }
-            _ => RichText {
-                segments: vec![RichTextSegment::Text("group expression".to_string())],
+            GroupExpression::Commutator { group, a, b } => {
+                RichText {
+                    segments: vec![
+                        RichTextSegment::Text("Commutator in ".to_string()),
+                        RichTextSegment::Math(group.value().to_turn_math("commutator-group".to_string())),
+                    ],
                 alignment: None,
+                }
             },
+            GroupExpression::Coset { group, element, subgroup, is_left } => {
+                RichText {
+                    segments: vec![
+                        RichTextSegment::Text(if *is_left { "Left coset in " } else { "Right coset in " }.to_string()),
+                        RichTextSegment::Math(group.value().to_turn_math("coset-group".to_string())),
+                    ],
+                    alignment: None,
+                }
+            },
+            GroupExpression::ActionOnElement { action, element } => {
+                RichText {
+                    segments: vec![
+                        RichTextSegment::Text("Action on element".to_string()),
+                    ],
+                    alignment: None,
+                }
+            },
+            GroupExpression::Power { group, base, exponent } => {
+                RichText {
+                    segments: vec![
+                        RichTextSegment::Text("Power in ".to_string()),
+                        RichTextSegment::Math(group.value().to_turn_math("power-group".to_string())),
+                    ],
+                    alignment: None,
+                }
+            },
+            GroupExpression::GroupOrder { group } => {
+                RichText {
+                    segments: vec![
+                        RichTextSegment::Text("Order of ".to_string()),
+                        RichTextSegment::Math(group.value().to_turn_math("order-group".to_string())),
+                    ],
+                    alignment: None,
+                }
+            },
+            GroupExpression::ElementOrder { element, group } => {
+                RichText {
+                    segments: vec![
+                        RichTextSegment::Text("Order of element in ".to_string()),
+                        RichTextSegment::Math(group.value().to_turn_math("element-order-group".to_string())),
+                    ],
+                    alignment: None,
+                }
+            },
+            GroupExpression::Homomorphism(located) => {
+                located.to_rich_text()
+            },
+                    }
+    }
+}
+
+impl ToRichText for GroupHomomorphism {
+    fn to_rich_text(&self) -> RichText {
+        RichText {
+            segments: vec![
+                RichTextSegment::Text("group homomorphism from ".to_string()),
+                RichTextSegment::Math(self.domain.to_turn_math("domain".to_string())),
+                RichTextSegment::Text(" to ".to_string()),
+                RichTextSegment::Math(self.codomain.to_turn_math("codomain".to_string())),
+            ],
+            alignment: None,
+        }
+    }
+}
+
+impl ToTurnMath for GroupHomomorphism {
+    fn to_turn_math(&self, master_id: String) -> MathNode {
+        MathNode {
+            id: master_id,
+            content: Arc::new(MathNodeContent::RichTextContent(vec![
+                MathTextSegment::Text("Group homomorphism from ".to_string()),
+                MathTextSegment::Math(self.domain.to_turn_math("domain".to_string())),
+                MathTextSegment::Text(" to ".to_string()),
+                MathTextSegment::Math(self.codomain.to_turn_math("codomain".to_string())),
+            ])),
         }
     }
 }
@@ -433,68 +902,431 @@ impl ToRichText for GroupExpression {
 impl ToTurnMath for GroupRelation {
     fn to_turn_math(&self, master_id: String) -> MathNode {
         match self {
-            GroupRelation::IsSubgroupOf { subgroup, group } => MathNode {
-                id: master_id.clone(),
+            GroupRelation::IsSubgroupOf { subgroup, group } => {
+                        // Use proper Relationship for H ⊆ G
+                        let id = master_id.clone();
+                        MathNode {
+                            id: id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
                     lhs: Arc::new(MathNode {
-                        id: format!("{}-sub", master_id),
-                        content: Arc::new(MathNodeContent::Text("H".to_string())),
+                                    id: format!("{}-sub", id.clone()),
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
+                                        body: "H".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    })),
                     }),
                     operator: RelationOperatorNode::SubsetOf,
                     rhs: Arc::new(MathNode {
-                        id: format!("{}-group", master_id),
-                        content: Arc::new(MathNodeContent::Text("G".to_string())),
+                                    id: format!("{}-group", id.clone()),
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
+                                        body: "G".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    })),
                     }),
                 }),
+                        }
+                    },
+            GroupRelation::IsIsomorphicTo { first, second } => {
+                // Use proper Relationship for G ≅ H
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                content: Arc::new(MathNodeContent::Relationship {
+                        lhs: Arc::new(first.to_turn_math(format!("{}-first", id.clone()))),
+                        operator: RelationOperatorNode::IsIsomorphicTo,
+                        rhs: Arc::new(second.to_turn_math(format!("{}-second", id.clone()))),
+                    }),
+                }
             },
-            GroupRelation::IsIsomorphicTo { first, second } => MathNode {
-                id: master_id.clone(),
+            GroupRelation::HasOrder { group, order } => {
+                        // Use proper Relationship for |G| = n
+                        let id = master_id.clone();
+                        MathNode {
+                            id: id.clone(),
                 content: Arc::new(MathNodeContent::Relationship {
                     lhs: Arc::new(MathNode {
-                        id: format!("{}-first", master_id),
-                        content: Arc::new(MathNodeContent::Text("G".to_string())),
-                    }),
-                    operator: RelationOperatorNode::Equal,
-                    rhs: Arc::new(MathNode {
-                        id: format!("{}-second", master_id),
-                        content: Arc::new(MathNodeContent::Text("H".to_string())),
-                    }),
-                }),
-            },
-            GroupRelation::HasOrder { group, order } => MathNode {
-                id: master_id.clone(),
-                content: Arc::new(MathNodeContent::Relationship {
-                    lhs: Arc::new(MathNode {
-                        id: format!("{}-order", master_id),
+                                    id: format!("{}-order", id.clone()),
                         content: Arc::new(MathNodeContent::Text("|G|".to_string())),
                     }),
                     operator: RelationOperatorNode::Equal,
                     rhs: Arc::new(MathNode {
-                        id: format!("{}-value", master_id),
-                        content: Arc::new(MathNodeContent::Text("n".to_string())),
+                                    id: format!("{}-value", id.clone()),
+                                    content: Arc::new(MathNodeContent::Identifier(Identifier {
+                                        body: "n".to_string(),
+                                        pre_script: None,
+                                        mid_script: None,
+                                        post_script: None,
+                                        primes: 0,
+                                        is_function: false,
+                                    })),
                     }),
                 }),
+                        }
+                    },
+            GroupRelation::IsNormalSubgroupOf { subgroup, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Normal subgroup of ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
             },
-            _ => MathNode {
-                id: master_id,
-                content: Arc::new(MathNodeContent::Text("relation".to_string())),
+            GroupRelation::IsQuotientOf { quotient, group, normal_subgroup } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Quotient of ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
             },
-        }
+            GroupRelation::IsInCenterOf { element, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Element in center of ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::AreConjugateIn { element1, element2, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Conjugate elements in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::HasOrderInGroup { element, group, order } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Element order in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::HasIndexInGroup { subgroup, group, index } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Subgroup index in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::IsCyclicWithGenerator { group, generator } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Cyclic group with generator ".to_string()),
+                        MathTextSegment::Math(generator.value().to_turn_math(format!("{}-gen", id))),
+                    ])),
+                }
+            },
+            GroupRelation::NormalizesSubgroup { element, subgroup, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Element normalizes subgroup in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::CentralizesSubgroup { element, subgroup, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Element centralizes subgroup in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::IsCharacteristicSubgroupOf { subgroup, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Characteristic subgroup of ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::OrderDivides { group1, group2 } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Order of ".to_string()),
+                        MathTextSegment::Math(group1.value().to_turn_math(format!("{}-group1", id.clone()))),
+                        MathTextSegment::Text(" divides order of ".to_string()),
+                        MathTextSegment::Math(group2.value().to_turn_math(format!("{}-group2", id.clone()))),
+                    ])),
+                }
+            },
+            GroupRelation::HasUniqueInverse { element, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Element has unique inverse in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::SylowSubgroupProperties { prime, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Sylow subgroup properties in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::IsInverseOf { element, inverse, group } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Inverse relationship in ".to_string()),
+                        MathTextSegment::Math(group.value().to_turn_math(format!("{}-group", id))),
+                    ])),
+                }
+            },
+            GroupRelation::IsHomomorphism { homomorphism, domain, codomain } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Homomorphism from ".to_string()),
+                        MathTextSegment::Math(domain.value().to_turn_math(format!("{}-domain", id.clone()))),
+                        MathTextSegment::Text(" to ".to_string()),
+                        MathTextSegment::Math(codomain.value().to_turn_math(format!("{}-codomain", id))),
+                    ])),
+                }
+            },
+            GroupRelation::IsomorphicEmbedding { source, target } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Isomorphic embedding from ".to_string()),
+                        MathTextSegment::Math(source.value().to_turn_math(format!("{}-source", id.clone()))),
+                        MathTextSegment::Text(" to ".to_string()),
+                        MathTextSegment::Math(target.value().to_turn_math(format!("{}-target", id))),
+                    ])),
+                }
+            },
+            GroupRelation::HasBasicProperty { target, property } => {
+                let id = master_id.clone();
+                let property_text = match property {
+                    GroupProperty::Abelian(AbelianPropertyVariant::Abelian) => "abelian",
+                    GroupProperty::Abelian(AbelianPropertyVariant::NonAbelian) => "non-abelian",
+                    GroupProperty::Finite(FinitePropertyVariant::Finite(n)) => &format!("finite of order {}", n),
+                    GroupProperty::Finite(FinitePropertyVariant::Infinite) => "infinite",
+                    GroupProperty::Finite(FinitePropertyVariant::LocallyFinite) => "locally finite",
+                    GroupProperty::Simple(SimplePropertyVariant::Simple) => "simple",
+                    GroupProperty::Simple(SimplePropertyVariant::NonSimple) => "non-simple",
+                    GroupProperty::Simple(SimplePropertyVariant::QuasiSimple) => "quasi-simple",
+                    GroupProperty::Solvable(SolvablePropertyVariant::Solvable) => "solvable",
+                    GroupProperty::Solvable(SolvablePropertyVariant::NonSolvable) => "non-solvable",
+                    GroupProperty::Solvable(SolvablePropertyVariant::Polysolvable) => "polysolvable",
+                    GroupProperty::Nilpotent(NilpotentPropertyVariant::Nilpotent(n)) => &format!("nilpotent of class {}", n),
+                    GroupProperty::Nilpotent(NilpotentPropertyVariant::NonNilpotent) => "non-nilpotent",
+                };
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has ".to_string()),
+                        MathTextSegment::Text(property_text.to_string()),
+                        MathTextSegment::Text(" property in ".to_string()),
+                        MathTextSegment::Math(target.value().to_turn_math(format!("{}-target", id))),
+                    ])),
+                }
+            },
+            GroupRelation::HasTopologicalProperty { target, property } => {
+                let id = master_id.clone();
+                let property_text = match property {
+                    TopologicalGroupProperty::Compact(CompactPropertyVariant::Compact) => "compact",
+                    TopologicalGroupProperty::Compact(CompactPropertyVariant::NonCompact) => "non-compact",
+                    TopologicalGroupProperty::Compact(CompactPropertyVariant::LocallyCompact) => "locally compact",
+                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::Connected) => "connected",
+                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::SimplyConnected) => "simply connected",
+                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::TotallyDisconnected) => "totally disconnected",
+                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::LocallyConnected) => "locally connected",
+                    TopologicalGroupProperty::Connected(ConnectedPropertyVariant::LocallySimplyConnected) => "locally simply connected",
+                    TopologicalGroupProperty::Metrizable(MetrizablePropertyVariant::Metrizable) => "metrizable",
+                    TopologicalGroupProperty::Metrizable(MetrizablePropertyVariant::NonMetrizable) => "non-metrizable",
+                };
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has ".to_string()),
+                        MathTextSegment::Text(property_text.to_string()),
+                        MathTextSegment::Text(" topological property in ".to_string()),
+                        MathTextSegment::Math(target.value().to_turn_math(format!("{}-target", id))),
+                    ])),
+                }
+            },
+            GroupRelation::HasLieProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has Lie property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasActionProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has action property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasProductProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has product property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasModularAdditiveProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has modular additive property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasModularMultiplicativeProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: master_id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has modular multiplicative property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasGeneralLinearMatrixProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has general linear matrix property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasGeneralLinearLinearProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has general linear property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasSpecialLinearProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has special linear property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasOrthogonalMatrixProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has orthogonal matrix property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasSpecialOrthogonalProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has special orthogonal property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasUnitaryMatrixProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has unitary matrix property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasSpecialUnitaryProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has special unitary property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasAlternatingPermutationProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has alternating permutation property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasFreeProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has free property".to_string()),
+                    ])),
+                }
+            },
+            GroupRelation::HasQuotientProperty { target, property } => {
+                let id = master_id.clone();
+                MathNode {
+                    id: id.clone(),
+                    content: Arc::new(MathNodeContent::RichTextContent(vec![
+                        MathTextSegment::Text("Has quotient property".to_string()),
+                    ])),
+                }
+            },
+                    }
     }
 }
 
-impl GroupRelation {
-    pub fn to_structured_group_relation(&self) -> String {
-        match self {
-            GroupRelation::IsSubgroupOf { subgroup, group } => {
-                "H ⊆ G (subgroup relation)".to_string()
-            }
-            GroupRelation::IsIsomorphicTo { first, second } => "G ≅ H (isomorphism)".to_string(),
-            GroupRelation::HasOrder { group, order } => "|G| = n (order relation)".to_string(),
-            _ => format!("{:?}", self),
-        }
-    }
-}
 
 /// Group Theory Exporter Implementation
 pub struct GroupTheoryExporter;
@@ -901,10 +1733,52 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
         // Initializing the registry is now handled automatically by the OnceLock
         // in get_theorem_registry(). We can call it here to be explicit.
 
-        let theorems: Vec<(String, Theorem)> = vec![(
-            "group_inverse_uniqueness".to_string(),
-            group_inverse_uniqueness(),
-        )];
+        let theorems: Vec<(String, Theorem)> = vec![
+            (
+                "group_inverse_uniqueness".to_string(),
+                group_inverse_uniqueness(),
+            ),
+            (
+                "subgroup_intersection_is_subgroup".to_string(),
+                subgroup_intersection_is_subgroup(),
+            ),
+            (
+                "first_isomorphism_theorem".to_string(),
+                first_isomorphism_theorem(),
+            ),
+            (
+                "element_order_divides_group_order".to_string(),
+                element_order_divides_group_order(),
+            ),
+            (
+                "lagrange_theorem".to_string(),
+                lagrange_theorem(),
+            ),
+            (
+                "cayley_theorem".to_string(),
+                cayley_theorem(),
+            ),
+            (
+                "sylow_first_theorem".to_string(),
+                sylow_first_theorem(),
+            ),
+            (
+                "fundamental_theorem_finite_abelian".to_string(),
+                fundamental_theorem_finite_abelian(),
+            ),
+            (
+                "normal_subgroup_test".to_string(),
+                normal_subgroup_test(),
+            ),
+            (
+                "cauchy_theorem".to_string(),
+                cauchy_theorem(),
+            ),
+            (
+                "center_is_normal_subgroup".to_string(),
+                center_is_normal_subgroup(),
+            ),
+        ];
 
         theorems
             .into_iter()
@@ -950,6 +1824,8 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
                 Group::WreathProduct(_) => "wreath_product_group",
                 Group::Pullback(_) => "pullback_group",
                 Group::Restriction(_) => "restriction_group",
+                Group::Interception(_) => "interception_group",
+                Group::SubGroup(_) => "subgroup",
             };
 
             // Use new clear ID pattern: group_theory.def.{group_type}
@@ -1095,21 +1971,21 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             }),
             Group::Quotient(QuotientGroup {
                 core: GenericGroup::default(),
-                group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract group
-                normal_subgroup: Arc::new(Group::Generic(GenericGroup::default())), // Abstract normal subgroup
+                group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract group
+                normal_subgroup: Located::new_variable(Identifier::new_simple("H".to_string())), // Abstract normal subgroup
                 quotient_props: VariantSet::new(),
             }),
             // ===== HOMOMORPHISM-BASED CONSTRUCTIONS =====
             Group::Kernel(KernelGroup {
                 core: GenericGroup::default(),
-                defining_homomorphism: Arc::new(GroupHomomorphism {
+                defining_homomorphism: Located::new_concrete(GroupHomomorphism {
                     domain: Located::new_variable(Identifier::new_simple("G".to_string())),
                     codomain: Located::new_variable(Identifier::new_simple("H".to_string())),
                 }),
             }),
             Group::Image(ImageGroup {
                 core: GenericGroup::default(),
-                defining_homomorphism: Arc::new(GroupHomomorphism {
+                defining_homomorphism: Located::new_concrete(GroupHomomorphism {
                     domain: Located::new_variable(Identifier::new_simple("G".to_string())),
                     codomain: Located::new_variable(Identifier::new_simple("H".to_string())),
                 }),
@@ -1117,37 +1993,37 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             // ===== SUBGROUP CONSTRUCTIONS =====
             Group::Center(CenterGroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
             }),
             Group::GeneratedSubgroup(GeneratedSubgroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
                 generators: vec![GroupElement::Symbol("g".to_string())], // Abstract generators
             }),
             Group::Normalizer(NormalizerGroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
-                subgroup_normalized: Arc::new(Group::Generic(GenericGroup::default())), // Abstract subgroup
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
+                subgroup_normalized: Located::new_variable(Identifier::new_simple("H".to_string())), // Abstract subgroup
             }),
             Group::Centralizer(CentralizerGroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
                 element_centralized: GroupElement::Symbol("x".to_string()),      // Abstract element
             }),
             Group::CommutatorSubgroup(CommutatorSubgroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
             }),
             Group::SylowSubgroup(SylowSubgroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
                 prime: 0, // Abstract - represents p-Sylow for any prime p
             }),
             // ===== ADVANCED CONSTRUCTIONS =====
             Group::WreathProduct(WreathProductGroup {
                 core: GenericGroup::default(),
-                base_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract base
-                acting_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract acting group
+                base_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract base
+                acting_group: Located::new_variable(Identifier::new_simple("H".to_string())), // Abstract acting group
             }),
             Group::CentralProduct(CentralProductGroup {
                 core: GenericGroup::default(),
@@ -1157,13 +2033,18 @@ impl TheoryExporter<Group, GroupExpression, GroupRelation> for GroupTheoryExport
             Group::Pullback(PullbackGroup {
                 core: GenericGroup::default(),
                 source_groups: vec![], // Abstract - no specific sources
-                target_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract target
+                target_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract target
                 defining_homomorphisms: vec![], // Abstract - no specific homomorphisms
             }),
             Group::Restriction(RestrictionGroup {
                 core: GenericGroup::default(),
-                parent_group: Arc::new(Group::Generic(GenericGroup::default())), // Abstract parent
+                parent_group: Located::new_variable(Identifier::new_simple("G".to_string())), // Abstract parent
                 restriction_description: "subset_restriction".to_string(),
+            }),
+            Group::SubGroup(SubGroup {
+                core: GenericGroup::default(),
+                parent_group: Located::new_concrete(Group::Generic(GenericGroup::default())), // Abstract parent
+                subgroup_props: VariantSet::new(),
             }),
         ]
     }
@@ -1207,5 +2088,43 @@ pub fn render_context_variable(
     MathNode {
         id: format!("context-{}", name),
         content: Arc::new(MathNodeContent::Text(format!("{} : group element", name))),
+    }
+}
+
+#[cfg(test)]
+mod export_tests {
+    use super::*;
+
+    #[test]
+    fn test_export_theorems() {
+        let exporter = GroupTheoryExporter;
+        let theorems = exporter.export_theorems();
+        
+        // Should export 11 theorems
+        assert_eq!(theorems.len(), 11);
+        
+        println!("Successfully exported {} theorems:", theorems.len());
+        for theorem in &theorems {
+            println!("  - {}", theorem.id);
+        }
+        
+        // Check that each theorem has the expected ID format
+        for theorem in &theorems {
+            assert!(theorem.id.starts_with("group_theory.thm."));
+        }
+        
+        // Check that we have the expected theorem IDs
+        let theorem_ids: Vec<&str> = theorems.iter().map(|t| t.id.as_str()).collect();
+        assert!(theorem_ids.contains(&"group_theory.thm.group_inverse_uniqueness-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.subgroup_intersection_is_subgroup-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.first_isomorphism_theorem-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.element_order_divides_group_order-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.lagrange_theorem-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.cayley_theorem-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.sylow_first_theorem-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.fundamental_theorem_finite_abelian-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.normal_subgroup_test-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.cauchy_theorem-doc"));
+        assert!(theorem_ids.contains(&"group_theory.thm.center_is_normal_subgroup-doc"));
     }
 }

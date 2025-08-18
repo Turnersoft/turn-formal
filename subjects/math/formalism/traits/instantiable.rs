@@ -1,5 +1,6 @@
 use crate::subjects::math::theories::groups::definitions::{
     GenericGroup, Group, GroupElement, GroupExpression, GroupHomomorphism, GroupOperation,
+    GroupRelation,
 };
 use crate::subjects::math::theories::rings::definitions::Ring;
 use crate::subjects::math::theories::zfc::definitions::Set;
@@ -296,7 +297,11 @@ impl Instantiable for MathRelation {
             }
             // Theory-specific relations
             (MathRelation::GroupTheory(target_rel), MathRelation::GroupTheory(pattern_rel)) => {
-                // TODO: Implement when GroupRelation has Instantiable
+                instantiations.extend(target_rel.instantiate(
+                    target_context,
+                    pattern_rel,
+                    pattern_context,
+                ));
             }
             // Other theory relations...
             _ => {

@@ -13,14 +13,11 @@ use crate::turn_render::*;
 
 impl ToTurnMath for GenericGroup {
     fn to_turn_math(&self, master_id: String) -> MathNode {
-        let base_set_str = "∅"; // Use clean notation for empty set
-        let op_char = "×"; // Use clean notation for operation
+        // Render as a generic group with proper mathematical notation
+        // Instead of (∅, ×), use G to represent a generic group
         MathNode {
             id: master_id,
-            content: Arc::new(MathNodeContent::Text(format!(
-                "({}, {})",
-                base_set_str, op_char
-            ))),
+            content: Arc::new(MathNodeContent::Text("Group".to_string())),
         }
     }
 }

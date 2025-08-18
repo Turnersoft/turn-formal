@@ -80,6 +80,8 @@ impl<T: 'static + Debug> TryDetag<T> for Group {
             Group::CentralProduct(central_product_group) => central_product_group.try_detag(),
             Group::Pullback(pullback_group) => pullback_group.try_detag(),
             Group::Restriction(restriction_group) => restriction_group.try_detag(),
+            Group::Interception(interception_group) => interception_group.core.try_detag(),
+            Group::SubGroup(subgroup) => subgroup.core.try_detag(),
         }
     }
 }
@@ -174,6 +176,8 @@ impl Group {
             Group::CentralProduct(g) => &g.core,
             Group::Pullback(g) => &g.core,
             Group::Restriction(g) => &g.core,
+            Group::Interception(g) => &g.core,
+            Group::SubGroup(g) => &g.core,
         }
     }
 
@@ -213,6 +217,8 @@ impl Group {
             Group::CentralProduct(g) => &mut g.core.props,
             Group::Pullback(g) => &mut g.core.props,
             Group::Restriction(g) => &mut g.core.props,
+            Group::Interception(g) => &mut g.core.props,
+            Group::SubGroup(g) => &mut g.core.props,
         }
     }
 }

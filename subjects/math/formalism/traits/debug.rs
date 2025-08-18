@@ -1,16 +1,3 @@
-use crate::subjects::math::formalism::{
-    expressions::{MathExpression, TheoryExpression},
-    extract::Parametrizable,
-    interpretation::TypeViewOperator,
-    location::Located,
-    objects::MathObject,
-    proof::{
-        ContextEntry, DefinitionState, NodeRole, ProofForest, ProofGoal, ProofNode,
-        QuantifiedMathObject, Quantifier, SubgoalCombination, TacticOutcome, ValueBindedVariable,
-        tactics::{ContextOrStatement, RelationSource, RewriteDirection, Tactic, Target},
-    },
-    relations::{MathRelation, Quantification},
-};
 use crate::subjects::math::theories::groups::definitions::GroupAction;
 use crate::subjects::math::theories::{
     groups::definitions::{
@@ -19,6 +6,23 @@ use crate::subjects::math::theories::{
     },
     number_theory::definitions::Number,
     zfc::definitions::{GenericSet, Set, SetElement},
+};
+use crate::subjects::math::{
+    formalism::{
+        expressions::{MathExpression, TheoryExpression},
+        extract::Parametrizable,
+        interpretation::TypeViewOperator,
+        location::Located,
+        objects::MathObject,
+        proof::{
+            ContextEntry, DefinitionState, NodeRole, ProofForest, ProofGoal, ProofNode,
+            QuantifiedMathObject, Quantifier, SubgoalCombination, TacticOutcome,
+            ValueBindedVariable,
+            tactics::{ContextOrStatement, RelationSource, RewriteDirection, Tactic, Target},
+        },
+        relations::{MathRelation, Quantification},
+    },
+    theories::groups::definitions::GroupRelation,
 };
 use crate::turn_render::{Identifier, RichText, RichTextSegment};
 use std::fmt;
@@ -97,6 +101,12 @@ impl ShortDebug for i64 {
     }
 }
 
+impl ShortDebug for usize {
+    fn short_debug(&self) -> String {
+        self.to_string()
+    }
+}
+
 impl ShortDebug for String {
     fn short_debug(&self) -> String {
         if self.len() > 30 {
@@ -167,15 +177,10 @@ impl ShortDebug for SetElement {
 impl ShortDebug for Target {
     fn short_debug(&self) -> String {
         let scope_str = match &self.scope {
-            ContextOrStatement::Context(ids) => {
-                if ids.is_empty() {
-                    "Context[]".to_string()
-                } else if ids.len() == 1 {
-                    format!("Context[{}]", ids[0].body)
-                } else {
-                    format!("Context[{} items]", ids.len())
-                }
-            }
+            ContextOrStatement::Context(id, sec_idx_opt) => match sec_idx_opt {
+                Some(i) => format!("Context[{}#sec({})]", id.body, i),
+                None => format!("Context[{}]", id.body),
+            },
             ContextOrStatement::Statement => "Statement".to_string(),
             ContextOrStatement::Both => "Both".to_string(),
         };
@@ -359,6 +364,12 @@ impl ShortDebug for Tactic {
             }
             Tactic::DisproveByTheorem { theorem_id } => {
                 format!("DisproveBy({})", theorem_id)
+            }
+            Tactic::RefineVariable {
+                variable,
+                theorem_id,
+            } => {
+                format!("RefineVariable({}: {})", variable.body, theorem_id)
             }
         }
     }
@@ -619,6 +630,14 @@ impl ShortDebug for MathRelation {
             }
             MathRelation::True => "MathRelation::True".to_string(),
             MathRelation::False => "MathRelation::False".to_string(),
+
+            MathRelation::GroupTheory(rel) => rel.short_debug(),
+            // MathRelation::SetTheory(rel) => rel.short_debug(),
+            // MathRelation::NumberTheory(rel) => rel.short_debug(),
+            // MathRelation::RingTheory(rel) => rel.short_debug(),
+            // MathRelation::TopologyTheory(rel) => rel.short_debug(),
+            // MathRelation::CategoryTheory(rel) => rel.short_debug(),
+            // MathRelation::ProbabilityTheory(rel) => rel.short_debug(),
             _ => "MathRelation::Other".to_string(),
         }
     }
@@ -647,14 +666,236 @@ impl ShortDebug for Group {
             Group::Alternating(n) => {
                 format!("Group::Alternating(\n{}\n)", indent(&n.short_debug(), 1))
             }
-            _ => "Group::Other".to_string(),
+            Group::GeneralLinear(g) => {
+                format!("Group::GeneralLinear(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::SpecialLinear(g) => {
+                format!("Group::SpecialLinear(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::Orthogonal(g) => {
+                format!("Group::Orthogonal(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::SpecialOrthogonal(g) => format!(
+                "Group::SpecialOrthogonal(\n{}\n)",
+                indent(&g.short_debug(), 1)
+            ),
+            Group::Unitary(g) => format!("Group::Unitary(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::SpecialUnitary(g) => {
+                format!("Group::SpecialUnitary(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::Topological(g) => {
+                format!("Group::Topological(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::Lie(g) => format!("Group::Lie(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::ModularAdditive(g) => format!(
+                "Group::ModularAdditive(\n{}\n)",
+                indent(&g.short_debug(), 1)
+            ),
+            Group::ModularMultiplicative(g) => format!(
+                "Group::ModularMultiplicative(\n{}\n)",
+                indent(&g.short_debug(), 1)
+            ),
+            Group::Product(g) => format!("Group::Product(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::Quotient(g) => format!("Group::Quotient(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::Kernel(g) => format!("Group::Kernel(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::Image(g) => format!("Group::Image(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::Center(g) => format!("Group::Center(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::GeneratedSubgroup(g) => format!(
+                "Group::GeneratedSubgroup(\n{}\n)",
+                indent(&g.short_debug(), 1)
+            ),
+            Group::Normalizer(g) => {
+                format!("Group::Normalizer(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::Centralizer(g) => {
+                format!("Group::Centralizer(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::CommutatorSubgroup(g) => format!(
+                "Group::CommutatorSubgroup(\n{}\n)",
+                indent(&g.short_debug(), 1)
+            ),
+            Group::WreathProduct(g) => {
+                format!("Group::WreathProduct(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::CentralProduct(g) => {
+                format!("Group::CentralProduct(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::Pullback(g) => format!("Group::Pullback(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::Restriction(g) => {
+                format!("Group::Restriction(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::Interception(g) => {
+                format!("Group::Interception(\n{}\n)", indent(&g.short_debug(), 1))
+            }
+            Group::SubGroup(g) => format!("Group::SubGroup(\n{}\n)", indent(&g.short_debug(), 1)),
+            Group::SylowSubgroup(g) => {
+                format!("Group::SylowSubgroup(\n{}\n)", indent(&g.short_debug(), 1))
+            }
         }
     }
 }
 
 impl ShortDebug for GroupAction {
     fn short_debug(&self) -> String {
-        todo!()
+        "GroupAction".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::TopologicalGroup {
+    fn short_debug(&self) -> String {
+        "TopologicalGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::LieGroup {
+    fn short_debug(&self) -> String {
+        "LieGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::ProductGroup {
+    fn short_debug(&self) -> String {
+        "ProductGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::ModularAdditiveGroup {
+    fn short_debug(&self) -> String {
+        "ModularAdditiveGroup".to_string()
+    }
+}
+
+impl ShortDebug
+    for crate::subjects::math::theories::groups::definitions::ModularMultiplicativeGroup
+{
+    fn short_debug(&self) -> String {
+        "ModularMultiplicativeGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::GeneralLinearGroup {
+    fn short_debug(&self) -> String {
+        "GeneralLinearGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::SpecialLinearGroup {
+    fn short_debug(&self) -> String {
+        "SpecialLinearGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::OrthogonalGroup {
+    fn short_debug(&self) -> String {
+        "OrthogonalGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::SpecialOrthogonalGroup {
+    fn short_debug(&self) -> String {
+        "SpecialOrthogonalGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::UnitaryGroup {
+    fn short_debug(&self) -> String {
+        "UnitaryGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::SpecialUnitaryGroup {
+    fn short_debug(&self) -> String {
+        "SpecialUnitaryGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::QuotientGroup {
+    fn short_debug(&self) -> String {
+        "QuotientGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::KernelGroup {
+    fn short_debug(&self) -> String {
+        "KernelGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::ImageGroup {
+    fn short_debug(&self) -> String {
+        "ImageGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::CenterGroup {
+    fn short_debug(&self) -> String {
+        "CenterGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::GeneratedSubgroup {
+    fn short_debug(&self) -> String {
+        "GeneratedSubgroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::NormalizerGroup {
+    fn short_debug(&self) -> String {
+        "NormalizerGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::CentralizerGroup {
+    fn short_debug(&self) -> String {
+        "CentralizerGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::CommutatorSubgroup {
+    fn short_debug(&self) -> String {
+        "CommutatorSubgroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::WreathProductGroup {
+    fn short_debug(&self) -> String {
+        "WreathProductGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::CentralProductGroup {
+    fn short_debug(&self) -> String {
+        "CentralProductGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::PullbackGroup {
+    fn short_debug(&self) -> String {
+        "PullbackGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::RestrictionGroup {
+    fn short_debug(&self) -> String {
+        "RestrictionGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::InterceptionGroup {
+    fn short_debug(&self) -> String {
+        "InterceptionGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::SubGroup {
+    fn short_debug(&self) -> String {
+        "SubGroup".to_string()
+    }
+}
+
+impl ShortDebug for crate::subjects::math::theories::groups::definitions::SylowSubgroup {
+    fn short_debug(&self) -> String {
+        "SylowSubgroup".to_string()
     }
 }
 
@@ -760,6 +1001,306 @@ impl ShortDebug for GroupHomomorphism {
             indent(&self.domain.short_debug(), 1),
             indent(&self.codomain.short_debug(), 1)
         )
+    }
+}
+
+impl ShortDebug for GroupRelation {
+    fn short_debug(&self) -> String {
+        match self {
+            GroupRelation::IsSubgroupOf { subgroup, group } => {
+                format!(
+                    "{} ≤ {}",
+                    extract_variable_name(subgroup),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::IsNormalSubgroupOf { subgroup, group } => {
+                format!(
+                    "{} ⊴ {}",
+                    extract_variable_name(subgroup),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::IsIsomorphicTo { first, second } => {
+                format!(
+                    "{} ≅ {}",
+                    extract_variable_name(first),
+                    extract_variable_name(second)
+                )
+            }
+            GroupRelation::IsQuotientOf {
+                quotient,
+                group,
+                normal_subgroup,
+            } => {
+                format!(
+                    "{} = {}/{}",
+                    extract_variable_name(quotient),
+                    extract_variable_name(group),
+                    extract_variable_name(normal_subgroup)
+                )
+            }
+            GroupRelation::IsInCenterOf { element, group } => {
+                format!(
+                    "{} ∈ Z({})",
+                    extract_variable_name(element),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::AreConjugateIn {
+                element1,
+                element2,
+                group,
+            } => {
+                format!(
+                    "{} ~ {} in {}",
+                    extract_variable_name(element1),
+                    extract_variable_name(element2),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::HasOrderInGroup {
+                element,
+                group,
+                order,
+            } => {
+                format!(
+                    "ord({}) = {} in {}",
+                    extract_variable_name(element),
+                    extract_variable_name(order),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::HasIndexInGroup {
+                subgroup,
+                group,
+                index,
+            } => {
+                format!(
+                    "[{} : {}] = {}",
+                    extract_variable_name(group),
+                    extract_variable_name(subgroup),
+                    extract_variable_name(index)
+                )
+            }
+            GroupRelation::HasOrder { group, order } => {
+                format!(
+                    "|{}| = {}",
+                    extract_variable_name(group),
+                    extract_variable_name(order)
+                )
+            }
+            GroupRelation::IsCyclicWithGenerator { group, generator } => {
+                format!(
+                    "{} = ⟨{}⟩",
+                    extract_variable_name(group),
+                    extract_variable_name(generator)
+                )
+            }
+            GroupRelation::NormalizesSubgroup {
+                element,
+                subgroup,
+                group,
+            } => {
+                format!(
+                    "{} normalizes {} in {}",
+                    extract_variable_name(element),
+                    extract_variable_name(subgroup),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::CentralizesSubgroup {
+                element,
+                subgroup,
+                group,
+            } => {
+                format!(
+                    "{} centralizes {} in {}",
+                    extract_variable_name(element),
+                    extract_variable_name(subgroup),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::IsCharacteristicSubgroupOf { subgroup, group } => {
+                format!(
+                    "{} char {}",
+                    extract_variable_name(subgroup),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::OrderDivides { group1, group2 } => {
+                format!(
+                    "|{}| divides |{}|",
+                    extract_variable_name(group1),
+                    extract_variable_name(group2)
+                )
+            }
+            GroupRelation::HasUniqueInverse { element, group } => {
+                format!(
+                    "{} has unique inverse in {}",
+                    extract_variable_name(element),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::SylowSubgroupProperties { prime, group } => {
+                format!(
+                    "Sylow {}-subgroup properties of {}",
+                    extract_variable_name(prime),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::IsInverseOf {
+                element,
+                inverse,
+                group,
+            } => {
+                format!(
+                    "{} = {}⁻¹ in {}",
+                    extract_variable_name(inverse),
+                    extract_variable_name(element),
+                    extract_variable_name(group)
+                )
+            }
+            GroupRelation::IsHomomorphism {
+                homomorphism,
+                domain,
+                codomain,
+            } => {
+                format!(
+                    "{}: {} → {}",
+                    extract_variable_name(homomorphism),
+                    extract_variable_name(domain),
+                    extract_variable_name(codomain)
+                )
+            }
+            GroupRelation::IsomorphicEmbedding { source, target } => {
+                format!(
+                    "{} ↪ {}",
+                    extract_variable_name(source),
+                    extract_variable_name(target)
+                )
+            }
+            GroupRelation::HasBasicProperty { target, property } => {
+                format!(
+                    "{} has property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasTopologicalProperty { target, property } => {
+                format!(
+                    "{} has topological property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasLieProperty { target, property } => {
+                format!(
+                    "{} has Lie property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasActionProperty { target, property } => {
+                format!(
+                    "{} has action property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasProductProperty { target, property } => {
+                format!(
+                    "{} has product property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasModularAdditiveProperty { target, property } => {
+                format!(
+                    "{} has modular additive property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasModularMultiplicativeProperty { target, property } => {
+                format!(
+                    "{} has modular multiplicative property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasGeneralLinearMatrixProperty { target, property } => {
+                format!(
+                    "{} has GL matrix property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasGeneralLinearLinearProperty { target, property } => {
+                format!(
+                    "{} has GL linear property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasSpecialLinearProperty { target, property } => {
+                format!(
+                    "{} has SL property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasOrthogonalMatrixProperty { target, property } => {
+                format!(
+                    "{} has orthogonal matrix property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasSpecialOrthogonalProperty { target, property } => {
+                format!(
+                    "{} has SO property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasUnitaryMatrixProperty { target, property } => {
+                format!(
+                    "{} has unitary matrix property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasSpecialUnitaryProperty { target, property } => {
+                format!(
+                    "{} has SU property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasAlternatingPermutationProperty { target, property } => {
+                format!(
+                    "{} has alternating permutation property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasFreeProperty { target, property } => {
+                format!(
+                    "{} has free property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            }
+            GroupRelation::HasQuotientProperty { target, property } => {
+                format!(
+                    "{} has quotient property {:?}",
+                    extract_variable_name(target),
+                    property
+                )
+            } // Newer element/subgroup-test relations were removed in favor of embedding
+              // closure/identity/inverse into GroupExpression.
+        }
     }
 }
 
@@ -909,6 +1450,7 @@ impl ShortDebug for ProofGoal {
                     let cons_summary = extract_variable_name(cons);
                     format!("{} → {}", ant_summary, cons_summary)
                 }
+                MathRelation::GroupTheory(rel) => rel.short_debug(),
                 _ => "Relation".to_string(),
             },
         };

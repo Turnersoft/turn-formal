@@ -160,6 +160,8 @@ impl ElementMembershipChecker for Group {
             Group::CentralProduct(g) => g.check_element_membership(element),
             Group::Pullback(g) => g.check_element_membership(element),
             Group::Restriction(g) => g.check_element_membership(element),
+            Group::Interception(g) => g.core.check_element_membership(element),
+            Group::SubGroup(g) => g.core.check_element_membership(element),
         }
     }
 }

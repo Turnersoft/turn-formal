@@ -15,7 +15,7 @@
         {
           "file_path": "group_theory.definitions.json",
           "content_type": "definitions",
-          "item_count": 31,
+          "item_count": 32,
           "items": [
             "group_theory.def.generic_group.generic-l1-doc",
             "group_theory.def.topological_group.topological-doc",
@@ -47,19 +47,30 @@
             "group_theory.def.wreath_product_group.wreath_product-doc",
             "group_theory.def.central_product_group.central_product-doc",
             "group_theory.def.pullback_group.pullback-doc",
-            "group_theory.def.restriction_group.restriction-doc"
+            "group_theory.def.restriction_group.restriction-doc",
+            "group_theory.def.subgroup.subgroup-l1-doc"
           ]
         },
         {
           "file_path": "group_theory.theorems.json",
           "content_type": "theorems",
-          "item_count": 1,
+          "item_count": 11,
           "items": [
-            "group_theory.thm.group_inverse_uniqueness-doc"
+            "group_theory.thm.group_inverse_uniqueness-doc",
+            "group_theory.thm.subgroup_intersection_is_subgroup-doc",
+            "group_theory.thm.first_isomorphism_theorem-doc",
+            "group_theory.thm.element_order_divides_group_order-doc",
+            "group_theory.thm.lagrange_theorem-doc",
+            "group_theory.thm.cayley_theorem-doc",
+            "group_theory.thm.sylow_first_theorem-doc",
+            "group_theory.thm.fundamental_theorem_finite_abelian-doc",
+            "group_theory.thm.normal_subgroup_test-doc",
+            "group_theory.thm.cauchy_theorem-doc",
+            "group_theory.thm.center_is_normal_subgroup-doc"
           ]
         }
       ],
-      "item_count": 33
+      "item_count": 44
     },
     {
       "theory_id": "probability_theory",
@@ -107,7 +118,7 @@
       "item_count": 17
     }
   ],
-  "total_items": 50,
-  "generated_at": "1754480237",
+  "total_items": 61,
+  "generated_at": "1755397174",
   "version": "1.0.0"
 }

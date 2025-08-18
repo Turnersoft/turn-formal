@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "definitions",
   "version": "1.0.0",
-  "exported_at": "1754480237",
+  "exported_at": "1755397174",
   "content": [
     {
       "id": "group_theory.def.generic_group.generic-l1-doc",
@@ -1787,7 +1787,7 @@
                         "Math": {
                           "id": "group_theory.def.general_linear_group.general_linear-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -2071,7 +2071,7 @@
                         "Math": {
                           "id": "group_theory.def.orthogonal_group.orthogonal-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -2345,7 +2345,7 @@
                         "Math": {
                           "id": "group_theory.def.unitary_group.unitary-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -2847,7 +2847,7 @@
                         "Math": {
                           "id": "group_theory.def.modular_additive_group.modular_additive-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -2994,7 +2994,7 @@
                         "Math": {
                           "id": "group_theory.def.modular_multiplicative_group.modular_multiplicative-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -3141,7 +3141,7 @@
                         "Math": {
                           "id": "group_theory.def.free_group.free-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -3288,7 +3288,7 @@
                         "Math": {
                           "id": "group_theory.def.trivial_group.trivial-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -3599,7 +3599,7 @@
                         "Math": {
                           "id": "group_theory.def.quotient_group.quotient-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -3746,7 +3746,7 @@
                         "Math": {
                           "id": "group_theory.def.kernel_group.kernel-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -3893,7 +3893,7 @@
                         "Math": {
                           "id": "group_theory.def.image_group.image-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4040,7 +4040,7 @@
                         "Math": {
                           "id": "group_theory.def.center_group.center-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4187,7 +4187,7 @@
                         "Math": {
                           "id": "group_theory.def.generated_subgroup.generated_subgroup-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4334,7 +4334,7 @@
                         "Math": {
                           "id": "group_theory.def.normalizer_group.normalizer-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4481,7 +4481,7 @@
                         "Math": {
                           "id": "group_theory.def.centralizer_group.centralizer-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4628,7 +4628,7 @@
                         "Math": {
                           "id": "group_theory.def.commutator_subgroup.commutator_subgroup-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4775,7 +4775,7 @@
                         "Math": {
                           "id": "group_theory.def.sylow_subgroup.sylow_subgroup-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -4922,7 +4922,7 @@
                         "Math": {
                           "id": "group_theory.def.wreath_product_group.wreath_product-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -5144,7 +5144,7 @@
                         "Math": {
                           "id": "group_theory.def.pullback_group.pullback-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -5291,7 +5291,7 @@
                         "Math": {
                           "id": "group_theory.def.restriction_group.restriction-formalTerm",
                           "content": {
-                            "Text": "(∅, ×)"
+                            "Text": "Group"
                           }
                         }
                       },
@@ -5352,6 +5352,603 @@
                   [
                     "type",
                     "RestrictionGroupDefinition"
+                  ]
+                ],
+                "display_options": null
+              }
+            ],
+            "footnotes": [],
+            "glossary": [],
+            "bibliography": []
+          },
+          "relationships": {
+            "parent_documents": [],
+            "child_documents": [],
+            "related_concepts": [],
+            "cross_references": [],
+            "dependency_graph": null
+          }
+        }
+      }
+    },
+    {
+      "id": "group_theory.def.subgroup.subgroup-l1-doc",
+      "content_type": {
+        "ScientificPaper": {
+          "title": "Basic Group",
+          "paper_type": "Research",
+          "venue": null,
+          "peer_reviewed": false,
+          "content_metadata": {
+            "language": "en-US",
+            "version": "1.0",
+            "created_at": null,
+            "last_modified": null,
+            "content_hash": null
+          },
+          "academic_metadata": {
+            "authors": [],
+            "date_published": null,
+            "date_modified": null,
+            "venue": null,
+            "doi": null,
+            "keywords": []
+          },
+          "structure": {
+            "abstract_content": {
+              "id": "group_theory.def.subgroup.subgroup-l1-abstract",
+              "title": null,
+              "content": {
+                "RichText": {
+                  "segments": [
+                    {
+                      "Text": "A comprehensive document covering the general theory of groups, including definitions, properties, and examples."
+                    }
+                  ],
+                  "alignment": null
+                }
+              },
+              "metadata": [],
+              "display_options": null
+            },
+            "table_of_contents": null,
+            "body": [
+              {
+                "id": "group_theory.def.subgroup.subgroup-main.main_section",
+                "title": {
+                  "segments": [
+                    {
+                      "Text": "Group Theory"
+                    }
+                  ],
+                  "alignment": null
+                },
+                "content": {
+                  "SubSection": [
+                    {
+                      "id": "group_theory.def.subgroup.subgroup-main.definition_section",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Definition"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "SubSection": [
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-definition-text",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "A group (G, *) consists of a set G and a binary operation * such that:"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-closure-axiom",
+                            "title": null,
+                            "content": {
+                              "Math": {
+                                "id": "group_theory.def.subgroup.subgroup-main-closure",
+                                "content": {
+                                  "QuantifiedExpression": {
+                                    "quantifier": "Universal",
+                                    "variables": [],
+                                    "domain": {
+                                      "id": "group_theory.def.subgroup.subgroup-main-closure_membership",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-closure_var_list",
+                                            "content": {
+                                              "Multiplications": {
+                                                "terms": [
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-closure_el_a",
+                                                      "content": {
+                                                        "Text": "a"
+                                                      }
+                                                    }
+                                                  ],
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-closure_comma",
+                                                      "content": {
+                                                        "Identifier": {
+                                                          "body": ",",
+                                                          "pre_script": null,
+                                                          "mid_script": null,
+                                                          "post_script": null,
+                                                          "primes": 0,
+                                                          "is_function": false
+                                                        }
+                                                      }
+                                                    }
+                                                  ],
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-closure_el_b",
+                                                      "content": {
+                                                        "Text": "b"
+                                                      }
+                                                    }
+                                                  ]
+                                                ]
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-closure_set_g",
+                                            "content": {
+                                              "Text": "G"
+                                            }
+                                          },
+                                          "operator": "ElementOf"
+                                        }
+                                      }
+                                    },
+                                    "predicate": {
+                                      "id": "group_theory.def.subgroup.subgroup-main-closure_result",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-closure_ab",
+                                            "content": {
+                                              "FunctionCall": {
+                                                "name": {
+                                                  "id": "group_theory.def.subgroup.subgroup-main-closure_func",
+                                                  "content": {
+                                                    "Identifier": {
+                                                      "body": "∘",
+                                                      "pre_script": null,
+                                                      "mid_script": null,
+                                                      "post_script": null,
+                                                      "primes": 0,
+                                                      "is_function": false
+                                                    }
+                                                  }
+                                                },
+                                                "parameters": [
+                                                  {
+                                                    "id": "group_theory.def.subgroup.subgroup-main-closure_el_a",
+                                                    "content": {
+                                                      "Text": "a"
+                                                    }
+                                                  },
+                                                  {
+                                                    "id": "group_theory.def.subgroup.subgroup-main-closure_el_b",
+                                                    "content": {
+                                                      "Text": "b"
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-closure_set_g",
+                                            "content": {
+                                              "Text": "G"
+                                            }
+                                          },
+                                          "operator": "ElementOf"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-associativity-axiom",
+                            "title": null,
+                            "content": {
+                              "Math": {
+                                "id": "group_theory.def.subgroup.subgroup-main-assoc",
+                                "content": {
+                                  "QuantifiedExpression": {
+                                    "quantifier": "Universal",
+                                    "variables": [],
+                                    "domain": {
+                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_membership",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-assoc_var_list",
+                                            "content": {
+                                              "Multiplications": {
+                                                "terms": [
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_el_a",
+                                                      "content": {
+                                                        "Text": "a"
+                                                      }
+                                                    }
+                                                  ],
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_comma1",
+                                                      "content": {
+                                                        "Text": ","
+                                                      }
+                                                    }
+                                                  ],
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_el_b",
+                                                      "content": {
+                                                        "Text": "b"
+                                                      }
+                                                    }
+                                                  ],
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_comma2",
+                                                      "content": {
+                                                        "Text": ","
+                                                      }
+                                                    }
+                                                  ],
+                                                  [
+                                                    "None",
+                                                    {
+                                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_el_c",
+                                                      "content": {
+                                                        "Text": "c"
+                                                      }
+                                                    }
+                                                  ]
+                                                ]
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-assoc_set_g",
+                                            "content": {
+                                              "Text": "G"
+                                            }
+                                          },
+                                          "operator": "ElementOf"
+                                        }
+                                      }
+                                    },
+                                    "predicate": {
+                                      "id": "group_theory.def.subgroup.subgroup-main-assoc_eq",
+                                      "content": {
+                                        "Relationship": {
+                                          "lhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-assoc_left",
+                                            "content": {
+                                              "Text": "(a ∘ b) ∘ c"
+                                            }
+                                          },
+                                          "rhs": {
+                                            "id": "group_theory.def.subgroup.subgroup-main-assoc_right",
+                                            "content": {
+                                              "Text": "a ∘ (b ∘ c)"
+                                            }
+                                          },
+                                          "operator": "Equal"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-identity-axiom",
+                            "title": null,
+                            "content": {
+                              "Math": {
+                                "id": "group_theory.def.subgroup.subgroup-main-identity",
+                                "content": {
+                                  "Text": "∃ e ∈ G : ∀ a ∈ G : e ∘ a = a ∘ e = a"
+                                }
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-inverse-axiom",
+                            "title": null,
+                            "content": {
+                              "Math": {
+                                "id": "group_theory.def.subgroup.subgroup-main-inverse",
+                                "content": {
+                                  "Text": "∀ a ∈ G : ∃ a⁻¹ ∈ G : a ∘ a⁻¹ = a⁻¹ ∘ a = e"
+                                }
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          }
+                        ]
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "group_theory.def.subgroup.subgroup-main.properties_section",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Properties"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "SubSection": [
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-properties-intro",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Groups can have various properties:"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-abelian-property",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Abelian/Commutative: If a * b = b * a for all a, b ∈ G"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-finite-property",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Finite/Infinite: Whether the group has a finite or infinite number of elements"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-simple-property",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Simple: If the group has no proper normal subgroups"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-solvable-property",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Solvable: If the group has a subnormal series with abelian factors"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-nilpotent-property",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Nilpotent: If the lower central series terminates at the identity"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          }
+                        ]
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    },
+                    {
+                      "id": "group_theory.def.subgroup.subgroup-main.examples_section",
+                      "title": {
+                        "segments": [
+                          {
+                            "Text": "Examples"
+                          }
+                        ],
+                        "alignment": null
+                      },
+                      "content": {
+                        "SubSection": [
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-examples-intro",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "Common examples of groups include:"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-integers-example",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Integers under addition: (Z, +)"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-rationals-example",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Non-zero rational numbers under multiplication: (Q\\{0}, ×)"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-symmetric-example",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Symmetric groups: S_n (permutations of n elements)"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-cyclic-example",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Cyclic groups: Z_n or C_n (integers modulo n)"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          },
+                          {
+                            "id": "group_theory.def.subgroup.subgroup-main-matrix-example",
+                            "title": null,
+                            "content": {
+                              "RichText": {
+                                "segments": [
+                                  {
+                                    "Text": "- Matrix groups: GL(n, F) (n×n invertible matrices over a field F)"
+                                  }
+                                ],
+                                "alignment": null
+                              }
+                            },
+                            "metadata": [],
+                            "display_options": null
+                          }
+                        ]
+                      },
+                      "metadata": [],
+                      "display_options": null
+                    }
+                  ]
+                },
+                "metadata": [
+                  [
+                    "type",
+                    "GroupBasicDefinition"
+                  ],
+                  [
+                    "abstraction_level",
+                    "1"
                   ]
                 ],
                 "display_options": null

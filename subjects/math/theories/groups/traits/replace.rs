@@ -12,7 +12,7 @@ use crate::{
         },
         theories::groups::definitions::{
             GenericGroup, Group, GroupAction, GroupElement, GroupExpression, GroupHomomorphism,
-            GroupOperation,
+            GroupOperation, SubGroup,
         },
     },
     turn_render::Identifier,
@@ -89,6 +89,12 @@ impl<U: 'static + Clone + Debug + Search> Substitutable<U> for Group {
             Group::CentralProduct(central_product_group) => todo!(),
             Group::Pullback(pullback_group) => todo!(),
             Group::Restriction(restriction_group) => todo!(),
+            Group::Interception(interception_group) => todo!(),
+            Group::SubGroup(subgroup) => Group::SubGroup(SubGroup {
+                core: subgroup.core.substitute(instantiations, target, context),
+                parent_group: subgroup.parent_group.clone(),
+                subgroup_props: subgroup.subgroup_props.clone(),
+            }),
         }
     }
 }

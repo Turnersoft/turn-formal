@@ -2,7 +2,7 @@
   "theory_name": "Probability Theory",
   "content_type": "theorems",
   "version": "1.0.0",
-  "exported_at": "1754480237",
+  "exported_at": "1755397174",
   "content": [
     {
       "id": "probability.weak_law_of_large_numbers-doc",
@@ -83,7 +83,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "bd8aec5c-82a3-4b6c-92b9-b1e918956835",
+                                      "id": "3a427013-7b23-4b37-b47d-96ba32b7a3ea",
                                       "content": {
                                         "Identifier": {
                                           "body": "sample_mean",
@@ -96,7 +96,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "be5b8ae9-9036-4e61-9292-b87be15d2e24",
+                                      "id": "230a2f19-d1ce-41fa-90db-6729aaf47a71",
                                       "content": {
                                         "Identifier": {
                                           "body": "population_mean",
@@ -258,7 +258,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "f7c68841-f768-451d-9d7b-1bf8a61d9ebe",
+                                      "id": "59624399-5223-415a-87e9-e2defc5a2950",
                                       "content": {
                                         "Identifier": {
                                           "body": "sample_mean",
@@ -271,7 +271,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "92e38c08-ec4a-4ced-ad9f-7a9b97c0e850",
+                                      "id": "dfbc0a5a-898c-4921-8de4-70506fc07ce6",
                                       "content": {
                                         "Identifier": {
                                           "body": "population_mean",
@@ -433,7 +433,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "46db3ec4-ab7b-4eb0-b780-4987ebe6d437",
+                                      "id": "e1ffa310-b067-4cd4-8c75-f9dfe891aa41",
                                       "content": {
                                         "Identifier": {
                                           "body": "standardized_sum",
@@ -446,7 +446,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "76a8a652-523f-4968-9e90-6194113a436d",
+                                      "id": "8d4d1854-0f32-4f58-97d3-7dee03c0d371",
                                       "content": {
                                         "Identifier": {
                                           "body": "standard_normal",
@@ -608,7 +608,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "6d44981b-633c-4aea-ab02-b39e094842c2",
+                                      "id": "a7e58068-78cc-4099-9955-546058cc935b",
                                       "content": {
                                         "Identifier": {
                                           "body": "P(A|B)",
@@ -621,7 +621,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "96dc4ef4-dfe8-4d80-a2ab-d50c76d4cf9f",
+                                      "id": "549eb14b-35a2-49aa-ad36-403b870f25b9",
                                       "content": {
                                         "Identifier": {
                                           "body": "P(B|A)P(A)/P(B)",
@@ -783,7 +783,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "1c7cfc9b-2afd-47d9-b1e4-5635bc2399e2",
+                                      "id": "6c7742b1-93c0-4cc9-ae3c-2de92b616674",
                                       "content": {
                                         "Identifier": {
                                           "body": "P(A)",
@@ -796,7 +796,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "7afa6d1e-c579-47e5-be9b-f671f7087a4a",
+                                      "id": "d4e7cf90-fc45-46ae-bb42-90b96ab25865",
                                       "content": {
                                         "Identifier": {
                                           "body": "Σ P(A|B_i)P(B_i)",
@@ -1483,7 +1483,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "8178b151-1e98-45db-bfd6-12ab73044996",
+                                      "id": "84399f7b-e210-4677-9abe-04787182e058",
                                       "content": {
                                         "Identifier": {
                                           "body": "X_n",
@@ -1496,7 +1496,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "17714885-2e31-4982-b38e-782706ddd7ff",
+                                      "id": "b39fe159-f0e6-4ce5-a9e2-7b904fd61484",
                                       "content": {
                                         "Identifier": {
                                           "body": "X_∞",
@@ -1658,7 +1658,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "614f990f-f139-47c2-98df-5134add3647b",
+                                      "id": "869b83c5-b9d8-48f1-b474-69702e842e33",
                                       "content": {
                                         "Identifier": {
                                           "body": "E[X_τ]",
@@ -1671,7 +1671,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "fb30c02f-6dea-46a7-a525-964b2075fddc",
+                                      "id": "dd907a29-71b7-4c0f-9051-d7f884c8d146",
                                       "content": {
                                         "Identifier": {
                                           "body": "E[X_0]",
@@ -1833,7 +1833,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "b25fc8a9-0eb7-4623-a7be-6fa3acab523d",
+                                      "id": "c6bc14c9-52e7-4641-8313-a48f14fd35b7",
                                       "content": {
                                         "Identifier": {
                                           "body": "Σ X_n converges a.s.",
@@ -1846,7 +1846,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "474e0d06-aefa-4bb8-ac48-eab70b520730",
+                                      "id": "76bc1391-1330-46c8-b14f-ecee2d508f57",
                                       "content": {
                                         "Identifier": {
                                           "body": "Three series converge",
@@ -2008,7 +2008,7 @@
                                 "content": {
                                   "Relationship": {
                                     "lhs": {
-                                      "id": "8b584b38-598e-4269-8f78-c138c0f7c1ef",
+                                      "id": "f30dbac7-5e3c-4ed8-873b-c65408deac87",
                                       "content": {
                                         "Identifier": {
                                           "body": "F_n(x)",
@@ -2021,7 +2021,7 @@
                                       }
                                     },
                                     "rhs": {
-                                      "id": "20ba58d1-fbc3-4d35-be31-939e4d504863",
+                                      "id": "beca9e50-ff80-4521-9a70-d804d2f8dd2f",
                                       "content": {
                                         "Identifier": {
                                           "body": "F(x)",

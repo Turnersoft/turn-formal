@@ -21,7 +21,8 @@ use crate::turn_render::{Identifier, MathNode, RichText, RichTextSegment};
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use super::{RelationSource, RewriteDirection, Target};
+use super::{ContextOrStatement, RelationSource, RewriteDirection, Target};
+use crate::subjects::math::formalism::traits::is_compatible::SameRole;
 
 use std::thread;
 
@@ -263,6 +264,9 @@ impl Tactic {
                 definition_to_unfold,
                 target,
             } => Self::apply_unfold_definition(goal, target, definition_to_unfold),
+            Tactic::RefineVariable { variable, theorem_id } => {
+                Self::apply_refine_variable_primary_only(goal, variable, theorem_id)
+            }
             Tactic::IntroduceLetBinding {
                 target_expression,
                 with_name,
@@ -285,6 +289,69 @@ impl Tactic {
             } => todo!(),
             Tactic::DisproveByTheorem { theorem_id } => todo!(),
         }
+    }
+
+    /// RefindVariable implementation
+    /// Preconditions:
+    /// - theorem must be an equality with both sides of the same type-form
+    /// - the targeted variable's selected view (primary or secondary by index) must be compatible
+    /// Behavior:
+    /// - replaces the targeted view with the other side of the equality (same type-form)
+    fn apply_refine_variable_primary_only(
+        goal: &ProofGoal,
+        variable: &Identifier,
+        theorem_id: &String,
+    ) -> TacticApplicationResult {
+        let registry = get_theorem_registry();
+        let Some(theorem) = registry.get(theorem_id) else {
+            return TacticApplicationResult::Error(format!("Theorem {} not found", theorem_id));
+        };
+        let Some(rule_arc) = theorem.proofs.initial_goal.statement.concrete_value() else {
+            return TacticApplicationResult::Error("Theorem statement is not concrete".to_string());
+        };
+        let MathRelation::Equal { left, right } = rule_arc.as_ref() else {
+            return TacticApplicationResult::Error("RefindVariable requires an equality theorem".to_string());
+        };
+
+        // Enforce same role (enum variant) on both sides
+        let left_expr = left.data.clone().unwrap(&theorem.proofs.initial_goal.context);
+        let right_expr = right.data.clone().unwrap(&theorem.proofs.initial_goal.context);
+        if !left_expr.same_role(&theorem.proofs.initial_goal.context, &right_expr, &theorem.proofs.initial_goal.context) {
+            return TacticApplicationResult::Error(
+                "RefindVariable requires both sides of equality to have the same role".to_string(),
+            );
+        }
+
+        // Locate target entry
+        let mut new_goal = goal.clone();
+        let target_context_snapshot = new_goal.context.clone();
+        let Some(entry) = new_goal.context.iter_mut().find(|e| &e.name == variable) else {
+            return TacticApplicationResult::Error(format!("Variable {} not found", variable));
+        };
+
+        // Always refine the primary type only
+        let current_view_loc = &mut entry.ty;
+
+        // Try match current view with left; if compatible, replace with right. Else try right → left
+        let curr_conc = if let Some(cv) = current_view_loc.concrete_value() { cv } else {
+            return TacticApplicationResult::Error("Target view is not concrete".to_string());
+        };
+
+        // Minimal compatibility: same_role with current view
+        let target_expr = curr_conc.as_ref().clone();
+        let left_form = left.data.clone().unwrap(&theorem.proofs.initial_goal.context);
+        let right_form = right.data.clone().unwrap(&theorem.proofs.initial_goal.context);
+
+        if target_expr.same_role(&target_context_snapshot, &left_form, &theorem.proofs.initial_goal.context) {
+            *current_view_loc = Located::new_concrete(right_form);
+            return TacticApplicationResult::SingleGoal(new_goal);
+        }
+        if target_expr.same_role(&target_context_snapshot, &right_form, &theorem.proofs.initial_goal.context) {
+            *current_view_loc = Located::new_concrete(left_form);
+            return TacticApplicationResult::SingleGoal(new_goal);
+        }
+
+        TacticApplicationResult::Error("Target type is incompatible with theorem sides".to_string())
     }
 
     fn apply_unfold_definition(

@@ -20,44 +20,48 @@ impl GetAbstractionLevel for Group {
     fn level(&self) -> AbstractionLevel {
         match self {
             // Basic group definition with the axioms is Level 1 or 2 depending on specifications
-            Group::Generic(basic) => {
+            &Group::Generic(ref basic) => {
                 // Delegate to the basic group implementation
                 basic.level()
             }
 
             // More specialized group types are Level 2 (partially specified)
-            Group::Topological(topological) => topological.level(),
-            Group::Lie(lie) => lie.core.level(),
-            Group::Cyclic(cyclic) => cyclic.core.level(),
-            Group::Symmetric(symmetric) => symmetric.level(),
-            Group::Dihedral(dihedral) => dihedral.level(),
-            Group::GeneralLinear(general_linear) => general_linear.level(),
-            Group::SpecialLinear(special_linear) => special_linear.level(),
-            Group::Orthogonal(orthogonal) => orthogonal.level(),
-            Group::SpecialOrthogonal(special_orthogonal) => special_orthogonal.level(),
-            Group::Unitary(unitary) => unitary.level(),
-            Group::SpecialUnitary(special_unitary) => special_unitary.level(),
-            Group::Alternating(alternating) => alternating.level(),
-            Group::ModularAdditive(modular_additive) => modular_additive.level(),
-            Group::ModularMultiplicative(modular_multiplicative) => modular_multiplicative.level(),
-            Group::Free(free) => free.level(),
-            Group::Trivial(trivial) => trivial.level(),
+            &Group::Topological(ref topological) => topological.level(),
+            &Group::Lie(ref lie) => lie.core.level(),
+            &Group::Cyclic(ref cyclic) => cyclic.core.level(),
+            &Group::Symmetric(ref symmetric) => symmetric.level(),
+            &Group::Dihedral(ref dihedral) => dihedral.level(),
+            &Group::GeneralLinear(ref general_linear) => general_linear.level(),
+            &Group::SpecialLinear(ref special_linear) => special_linear.level(),
+            &Group::Orthogonal(ref orthogonal) => orthogonal.level(),
+            &Group::SpecialOrthogonal(ref special_orthogonal) => special_orthogonal.level(),
+            &Group::Unitary(ref unitary) => unitary.level(),
+            &Group::SpecialUnitary(ref special_unitary) => special_unitary.level(),
+            &Group::Alternating(ref alternating) => alternating.level(),
+            &Group::ModularAdditive(ref modular_additive) => modular_additive.level(),
+            &Group::ModularMultiplicative(ref modular_multiplicative) => {
+                modular_multiplicative.level()
+            }
+            &Group::Free(ref free) => free.level(),
+            &Group::Trivial(ref trivial) => trivial.level(),
 
             // L3 Constructor Variants (these structs now have their own GetAbstractionLevel)
-            Group::Product(product) => product.level(),
-            Group::Quotient(quotient) => quotient.level(),
-            Group::Kernel(kernel) => kernel.level(),
-            Group::Image(image) => image.level(),
-            Group::Center(center) => center.level(),
-            Group::GeneratedSubgroup(generated_subgroup) => generated_subgroup.level(),
-            Group::Normalizer(normalizer) => normalizer.level(),
-            Group::Centralizer(centralizer) => centralizer.level(),
-            Group::CommutatorSubgroup(commutator_subgroup) => commutator_subgroup.level(),
-            Group::SylowSubgroup(sylow_subgroup) => sylow_subgroup.level(),
-            Group::WreathProduct(wreath_product) => wreath_product.level(),
-            Group::CentralProduct(central_product) => central_product.level(),
-            Group::Pullback(pullback) => pullback.level(),
-            Group::Restriction(restriction) => restriction.level(),
+            &Group::Product(ref product) => product.level(),
+            &Group::Quotient(ref quotient) => quotient.level(),
+            &Group::Kernel(ref kernel) => kernel.level(),
+            &Group::Image(ref image) => image.level(),
+            &Group::Center(ref center) => center.level(),
+            &Group::GeneratedSubgroup(ref generated_subgroup) => generated_subgroup.level(),
+            &Group::Normalizer(ref normalizer) => normalizer.level(),
+            &Group::Centralizer(ref centralizer) => centralizer.level(),
+            &Group::CommutatorSubgroup(ref commutator_subgroup) => commutator_subgroup.level(),
+            &Group::SylowSubgroup(ref sylow_subgroup) => sylow_subgroup.level(),
+            &Group::WreathProduct(ref wreath_product) => wreath_product.level(),
+            &Group::CentralProduct(ref central_product) => central_product.level(),
+            &Group::Pullback(ref pullback) => pullback.level(),
+            &Group::Restriction(ref restriction) => restriction.level(),
+            &Group::Interception(ref interception) => interception.core.level(),
+            &Group::SubGroup(ref subgroup) => subgroup.core.level(),
         }
     }
 }

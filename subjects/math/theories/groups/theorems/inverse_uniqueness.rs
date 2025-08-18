@@ -21,8 +21,7 @@ use crate::subjects::math::formalism::relations::{MathRelation, Quantification};
 use crate::subjects::math::formalism::theorem::Theorem;
 use crate::turn_render::{Identifier, RichText, RichTextSegment};
 
-use super::super::VariantSet;
-use super::definitions::{
+use super::super::definitions::{
     AbelianPropertyVariant, CanonicityVariant, CenterGroup, CommutatorSubgroup, ComplexityVariant,
     FinitePropertyVariant, FreeGroup, GenericGroup, Group, GroupAction, GroupActionProperty,
     GroupElement, GroupExpression, GroupHomomorphism, GroupIdentity, GroupInverse,
@@ -30,6 +29,7 @@ use super::definitions::{
     GroupRelation, GroupSymbol, ImageGroup, KernelGroup, LieGroup, LieGroupProperty,
     MatrixProperty, ModularAdditiveGroup, ModularMultiplicativeGroup, ModularProperty,
 };
+use crate::subjects::math::theories::VariantSet;
 
 /// Prove the theorem that in a group, inverses are unique
 pub fn group_inverse_uniqueness() -> Theorem {

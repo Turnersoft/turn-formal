@@ -91,19 +91,19 @@ impl ToRichText for MathExpression {
     fn to_rich_text(&self) -> RichText {
         match self {
             MathExpression::Object(obj) => match obj.as_ref() {
-                super::super::objects::MathObject::Group(_) => RichText {
-                    segments: vec![RichTextSegment::Text("Group".to_string())],
+                MathObject::Group(g) => RichText {
+                    segments: vec![RichTextSegment::Math(g.to_turn_math("".to_string()))],
                     alignment: None,
                 },
-                super::super::objects::MathObject::Ring(_) => RichText {
+                MathObject::Ring(_) => RichText {
                     segments: vec![RichTextSegment::Text("Ring".to_string())],
                     alignment: None,
                 },
-                super::super::objects::MathObject::Field(_) => RichText {
+                MathObject::Field(_) => RichText {
                     segments: vec![RichTextSegment::Text("Field".to_string())],
                     alignment: None,
                 },
-                super::super::objects::MathObject::Set(_) => RichText {
+                MathObject::Set(_) => RichText {
                     segments: vec![RichTextSegment::Text("Set".to_string())],
                     alignment: None,
                 },
@@ -126,16 +126,9 @@ impl ToRichText for MathExpression {
                     },
                 }
             }
-            MathExpression::Expression(TheoryExpression::Ring(ring_expr)) => RichText {
-                segments: vec![RichTextSegment::Text("ring element".to_string())],
-                alignment: None,
-            },
-            MathExpression::Expression(TheoryExpression::Field(field_expr)) => RichText {
-                segments: vec![RichTextSegment::Text("field element".to_string())],
-                alignment: None,
-            },
-            MathExpression::Relation(_) => RichText {
-                segments: vec![RichTextSegment::Text("relation".to_string())],
+
+            MathExpression::Relation(rel) => RichText {
+                segments: vec![RichTextSegment::Math(rel.to_turn_math("".to_string()))],
                 alignment: None,
             },
             MathExpression::Number(_) => RichText {

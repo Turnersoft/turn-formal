@@ -2,7 +2,7 @@
   "theory_name": "Group Theory",
   "content_type": "theory_overview",
   "version": "1.0.0",
-  "exported_at": "1754480237",
+  "exported_at": "1755397174",
   "content": [
     {
       "id": "group_theory.theory_overview.main",
@@ -39,7 +39,7 @@
                 "RichText": {
                   "segments": [
                     {
-                      "Text": "Welcome to the comprehensive Group Theory framework. This theory encompasses 31 distinct group objects, 0 expressions, 0 relations, and 1 fundamental theorems. Navigate through the organized sections below to explore the complete mathematical landscape of group theory, from basic algebraic structures to advanced constructions."
+                      "Text": "Welcome to the comprehensive Group Theory framework. This theory encompasses 32 distinct group objects, 0 expressions, 0 relations, and 11 fundamental theorems. Navigate through the organized sections below to explore the complete mathematical landscape of group theory, from basic algebraic structures to advanced constructions."
                     }
                   ],
                   "alignment": null
@@ -64,7 +64,7 @@
                   "RichText": {
                     "segments": [
                       {
-                        "Text": "Explore 31 group definitions organized by mathematical category:"
+                        "Text": "Explore 32 group definitions organized by mathematical category:"
                       }
                     ],
                     "alignment": null
@@ -271,7 +271,7 @@
                   "RichText": {
                     "segments": [
                       {
-                        "Text": "Discover 1 fundamental theorems that establish the theoretical foundation of group theory, providing essential insights into group structure and behavior."
+                        "Text": "Discover 11 fundamental theorems that establish the theoretical foundation of group theory, providing essential insights into group structure and behavior."
                       }
                     ],
                     "alignment": null
@@ -368,7 +368,18 @@
               "group_theory.def.central_product_group.central_product-doc",
               "group_theory.def.pullback_group.pullback-doc",
               "group_theory.def.restriction_group.restriction-doc",
-              "group_theory.thm.group_inverse_uniqueness-doc"
+              "group_theory.def.subgroup.subgroup-l1-doc",
+              "group_theory.thm.group_inverse_uniqueness-doc",
+              "group_theory.thm.subgroup_intersection_is_subgroup-doc",
+              "group_theory.thm.first_isomorphism_theorem-doc",
+              "group_theory.thm.element_order_divides_group_order-doc",
+              "group_theory.thm.lagrange_theorem-doc",
+              "group_theory.thm.cayley_theorem-doc",
+              "group_theory.thm.sylow_first_theorem-doc",
+              "group_theory.thm.fundamental_theorem_finite_abelian-doc",
+              "group_theory.thm.normal_subgroup_test-doc",
+              "group_theory.thm.cauchy_theorem-doc",
+              "group_theory.thm.center_is_normal_subgroup-doc"
             ],
             "related_concepts": [],
             "cross_references": [],

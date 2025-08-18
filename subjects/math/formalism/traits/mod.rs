@@ -5,6 +5,7 @@ pub mod debug;
 pub mod detag;
 pub mod instantiable;
 pub mod is_compatible;
+pub use is_compatible::SameRole;
 pub mod replace;
 pub mod search;
 pub mod substitutable;
