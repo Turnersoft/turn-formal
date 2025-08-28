@@ -1,0 +1,10 @@
+Turn-Formal
+Copyright 2025 Turnersoft Co., Limited.
+
+This product includes software developed by third parties.
+
+This product includes font software licensed under the SIL Open Font License, Version 1.1:
+  - MathJax Fonts (Copyright (c) 2008-2017, The STIX Project; Copyright (c) 2017, The MathJax Consortium)
+
+The full text of the SIL Open Font License 1.1 is available in the file:
+frontend/src/pages/MathPage/components/turn-render/fonts/OFL.txt
